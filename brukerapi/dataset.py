@@ -179,8 +179,7 @@ class Dataset:
 
     def load_data(self, **kwargs):
         """
-
-        :return:
+        Load the data binary file.
         """
         if kwargs.get('READ_DATA') is False:
             return None
