@@ -6,9 +6,7 @@
 Welcome to brukerapi's documentation!
 =====================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Bruker API documentation.
 
 Modules
 =========
