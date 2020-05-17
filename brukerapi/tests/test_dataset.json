@@ -1,0 +1,384 @@
+{
+  "test_read_write": {
+    "FID_TRIPILOT": {
+      "path":"20200418_124909_lego_phantom_3_1_1/2/fid",
+      "acq_scheme": "CART_2D",
+      "description": "FLASH 3 slice packages, 5 slices each",
+      "layouts": {
+        "encoding_space": [128, 4, 128, 15, 1, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [128, 128, 15, 1, 4]
+      },
+      "block_size": 512,
+      "single_acq_length": 512,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_RARE": {
+      "path":"20200418_124909_lego_phantom_3_1_1/3/fid",
+      "acq_scheme": "CART_2D",
+      "description": "PVM_RareFactor=8",
+      "layouts": {
+        "encoding_space": [256, 4, 8, 5, 24, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [256, 192, 5, 1, 4]
+      },
+      "block_size": 1024,
+      "single_acq_length": 1024,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_FIELD_MAP": {
+      "path":"20200418_124909_lego_phantom_3_1_1/4/fid",
+      "acq_scheme": "FIELD_MAP",
+      "description": "3D acquisition, 2 echoes in rep dimension",
+      "layouts": {
+        "encoding_space": [64, 4, 2, 64, 64],
+        "permute": [0, 3, 4, 2, 1],
+        "k_space": [64, 64, 64, 2, 4]
+      },
+      "block_size": 256,
+      "single_acq_length": 256,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "kspace_encode_step_2", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_RAREVTR": {
+      "path":"20200418_124909_lego_phantom_3_1_1/6/fid",
+      "acq_scheme": "CART_2D",
+      "description": "3D acquisition, 2 echoes in rep dimension",
+      "layouts": {
+        "encoding_space": [256, 4, 2, 5, 96, 6],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [256, 192, 5, 6, 4]
+      },
+      "block_size": 1024,
+      "single_acq_length": 1024,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_CSI": {
+      "path":"20200418_124909_lego_phantom_3_1_1/7/fid",
+      "acq_scheme": "CSI",
+      "description": "csi",
+      "layouts": {
+        "encoding_space": [2048, 16, 16],
+        "permute": [0, 1, 2],
+        "k_space": [2048, 16, 16]
+      },
+      "block_size": 2048,
+      "single_acq_length": 2048,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "kspace_encode_step_2"],
+      "tested": "None"
+    },
+    "FID_SWI": {
+      "path":"20200418_124909_lego_phantom_3_1_1/10/fid",
+      "acq_scheme": "CART_2D",
+      "description": "swi",
+      "layouts": {
+        "encoding_space": [512, 4, 1, 10, 256, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [512, 256, 10, 1, 4]
+      },
+      "block_size": 2048,
+      "single_acq_length": 2048,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_MGE": {
+      "path":"20200418_124909_lego_phantom_3_1_1/11/fid",
+      "acq_scheme": "CART_2D",
+      "description": "mge",
+      "layouts": {
+        "encoding_space": [128, 4, 1, 45, 96, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [128, 96, 45, 1, 4]
+      },
+      "block_size": 512,
+      "single_acq_length": 512,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_UTE_3D": {
+      "path":"20200418_124909_lego_phantom_3_1_1/12/fid",
+      "acq_scheme": "RADIAL",
+      "description": "mge",
+      "layouts": {
+        "encoding_space": [71, 4, 1, 1, 51360, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [71, 51360, 1, 1, 4],
+        "raw_traj": [3, 71, 51360],
+        "traj_permute": [0,1,2],
+        "traj": [3, 71, 51360]
+      },
+      "block_size": 384,
+      "single_acq_length": 284,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "kspace_encode_step_2", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_UTE_2D": {
+      "path":"20200418_124909_lego_phantom_3_1_1/13/fid",
+      "acq_scheme": "RADIAL",
+      "description": "2d ute",
+      "layouts": {
+        "encoding_space": [71, 4, 1, 1, 402, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [71, 402, 1, 1, 4],
+        "raw_traj": [2, 71, 402],
+        "traj_permute": [0,1,2],
+        "traj": [2, 71, 402]
+      },
+      "block_size": 384,
+      "single_acq_length": 284,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "kspace_encode_step_2", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_EPI": {
+      "path":"20200418_124909_lego_phantom_3_1_1/14/fid",
+      "acq_scheme": "EPI",
+      "description": "2d epi, 4 segments",
+      "layouts": {
+        "encoding_space": [3072, 4, 4, 4, 1],
+        "permute": [0, 2, 3, 4, 1],
+        "k_space": [128, 96, 4, 1, 4]
+      },
+      "block_size": 12288,
+      "single_acq_length": 12288,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_DTIEPI":{
+      "path":"20200418_124909_lego_phantom_3_1_1/17/fid",
+      "acq_scheme": "EPI",
+      "description": "2d epi, 4 segments",
+      "layouts": {
+        "encoding_space": [5760, 4, 1, 5, 45],
+        "permute": [0, 2, 3, 4, 1],
+        "k_space": [96, 60, 5, 45, 4]
+      },
+      "block_size": 23040,
+      "single_acq_length": 23040,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_DTISTANDARD":{
+      "path":"20200418_124909_lego_phantom_3_1_1/18/fid",
+      "acq_scheme": "CART_2D",
+      "description": "2d epi, 4 segments",
+      "layouts": {
+        "encoding_space": [128, 4, 1, 10, 96, 1],
+        "permute": [0, 2, 4, 3, 5, 1],
+        "k_space": [128, 96, 10, 1, 4]
+      },
+      "block_size": 512,
+      "single_acq_length": 512,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "FID_STEAM":{
+      "path":"20200418_124909_lego_phantom_3_1_1/19/fid",
+      "acq_scheme": "SPECTROSCOPY",
+      "description": "2d epi, 4 segments",
+      "layouts": {
+        "encoding_space": [2048, 1],
+        "permute": [0, 1],
+        "k_space": [2048, 1]
+      },
+      "block_size": 2048,
+      "single_acq_length": 2048,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1"],
+      "tested": "None"
+    },
+    "FID_PRESS":{
+      "path":"20200418_124909_lego_phantom_3_1_1/20/fid",
+      "acq_scheme": "SPECTROSCOPY",
+      "description": "2d epi, 4 segments",
+      "layouts": {
+        "encoding_space": [2048, 1],
+        "permute": [0, 1],
+        "k_space": [2048, 1]
+      },
+      "block_size": 2048,
+      "single_acq_length": 2048,
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1"],
+      "tested": "None"
+    },
+    "2DSEQ_TRIPILOT": {
+      "path":"20200418_124909_lego_phantom_3_1_1/2/pdata/1/2dseq",
+      "description": "FLASH 3 slice packages, 5 slices each",
+      "layouts": {
+        "frame_groups": [128, 128, 15],
+        "frames": [128, 128, 15]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE"],
+      "tested": "None"
+    },
+    "2DSEQ_FIELD_MAP": {
+      "path":"20200418_124909_lego_phantom_3_1_1/4/pdata/1/2dseq",
+      "description": "3D acquisition",
+      "layouts": {
+        "frame_groups": [64, 64, 64],
+        "frames": [64, 64, 64, 1]
+      },
+      "dim_type": ["spatial", "spatial", "spatial"],
+      "tested": "None"
+    },
+    "2DSEQ_RAREVTR": {
+      "path":"20200418_124909_lego_phantom_3_1_1/6/pdata/1/2dseq",
+      "description": "3D acquisition",
+      "layouts": {
+        "frame_groups": [256, 192, 1, 5, 6],
+        "frames": [256, 192, 30]
+      },
+      "dim_type": ["spatial", "spatial", "spatial", "FG_ECHO", "FG_MOVIE"],
+      "tested": "None"
+    },
+    "2DSEQ_CSI": {
+      "path":"20200418_124909_lego_phantom_3_1_1/7/pdata/1/2dseq",
+      "description": "3D acquisition",
+      "layouts": {
+        "frame_groups": [2048, 16, 16],
+        "frames": [2048, 16, 16,1]
+      },
+      "dim_type": ["spectroscopic", "spatial", "spatial"],
+      "tested": "None"
+  },
+    "2DSEQ_SWI":{
+      "path":"20200418_124909_lego_phantom_3_1_1/10/pdata/1/2dseq",
+      "description": "SWI",
+      "layouts": {
+        "frame_groups": [512, 256, 10],
+        "frames": [512, 256, 10]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE"],
+      "tested": "None"
+  },
+    "2DSEQ_MGE_RAW":{
+      "path":"20200418_124909_lego_phantom_3_1_1/11/pdata/1/2dseq",
+      "description": "MGE",
+      "layouts": {
+        "frame_groups": [128, 128, 9, 5],
+        "frames": [128, 128, 45]
+      },
+      "dim_type": ["spatial", "spatial", "FG_ECHO", "FG_SLICE"],
+      "tested": "None"
+    },
+    "2DSEQ_MGE_PROC":{
+      "path":"20200418_124909_lego_phantom_3_1_1/11/pdata/2/2dseq",
+      "description": "MGE",
+      "layouts": {
+        "frame_groups": [128, 128, 5, 5],
+        "frames": [128, 128, 25]
+      },
+      "dim_type": ["spatial", "spatial", "FG_ISA", "FG_SLICE"],
+      "tested": "None"
+    },
+    "2DSEQ_UTE_3D":{
+      "path":"20200418_124909_lego_phantom_3_1_1/12/pdata/1/2dseq",
+      "description": "3D ute",
+      "layouts": {
+        "frame_groups": [128, 128, 128],
+        "frames": [128, 128, 128, 1]
+      },
+      "dim_type": ["spatial", "spatial", "spatial"],
+      "tested": "None"
+  },
+    "2DSEQ_UTE_2D":{
+      "path":"20200418_124909_lego_phantom_3_1_1/13/pdata/1/2dseq",
+      "description": "2D ute",
+      "layouts": {
+        "frame_groups": [128, 128, 1],
+        "frames": [128, 128, 1]
+      },
+      "dim_type": ["spatial", "spatial", "spatial"],
+      "tested": "None"
+  },
+    "2DSEQ_EPI":{
+      "path":"20200418_124909_lego_phantom_3_1_1/14/pdata/1/2dseq",
+      "description": "EPI",
+      "layouts": {
+        "frame_groups": [128, 96, 4],
+        "frames": [128, 96, 4]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE"],
+      "tested": "None"
+  },
+    "2DSEQ_DTIEPI_RAW":{
+      "path":"20200418_124909_lego_phantom_3_1_1/17/pdata/1/2dseq",
+      "description": "EPI",
+      "layouts": {
+        "frame_groups": [96, 96, 5, 45],
+        "frames": [96, 96, 225]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE", "FG_DIFFUSION"],
+      "tested": "None"
+    },
+    "2DSEQ_DTIEPI_PROC":{
+      "path":"20200418_124909_lego_phantom_3_1_1/17/pdata/2/2dseq",
+      "description": "DTI EPI",
+      "layouts": {
+        "frame_groups": [96, 96, 22, 5],
+        "frames": [96, 96, 110]
+      },
+      "dim_type": ["spatial", "spatial", "FG_DTI", "FG_SLICE"],
+      "tested": "None"
+  },
+    "2DSEQ_DTISTANDARD":{
+      "path":"20200418_124909_lego_phantom_3_1_1/18/pdata/1/2dseq",
+      "description": "DTI STANDARD",
+      "layouts": {
+        "frame_groups": [128, 128, 5, 2],
+        "frames": [128, 128, 10]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE", "FG_DIFFUSION"],
+      "tested": "None"
+  },
+    "2DSEQ_STEAM":{
+      "path":"20200418_124909_lego_phantom_3_1_1/19/pdata/1/2dseq",
+      "description": "STEAM spectrum",
+      "layouts": {
+        "frame_groups": [2048,1],
+        "frames": [2048,1]
+      },
+      "dim_type": ["spectroscopic"],
+      "tested": "None"
+    },
+    "2DSEQ_PRESS":{
+      "path":"20200418_124909_lego_phantom_3_1_1/20/pdata/1/2dseq",
+      "description": "PRESS spectrum",
+      "layouts": {
+        "frame_groups": [2048,1],
+        "frames": [2048,1]
+      },
+      "dim_type": ["spectroscopic"],
+      "tested": "None"
+    },
+    "RAWDATAJOB0_PRESS":{
+      "path":"20200418_124909_lego_phantom_3_1_1/20/rawdata.job0",
+      "layouts": {
+        "raw": [2048, 4, 128]
+      },
+      "dim_type": ["kspace_encode_step_0","channel", "kspace_encode_step_1"],
+      "tested": "None"
+    },
+    "RAWDATAJOB1_PRESS":{
+      "path":"20200418_124909_lego_phantom_3_1_1/20/rawdata.job1",
+      "layouts": {
+        "raw": [136, 4, 128]
+      },
+      "dim_type": ["kspace_encode_step_0","channel", "kspace_encode_step_1"],
+      "tested": "None"
+    }
+  },
+  "test_exceptions": {
+    "INCOMPLETE_FID":{
+      "path":"20200418_124909_lego_phantom_3_1_1/corrupted_1/fid",
+      "error": "IncompleteDataset"
+    },
+    "INCOMPLETE_2DSEQ":{
+      "path":"20200418_124909_lego_phantom_3_1_1/corrupted_1/pdata/1/2dseq",
+      "error": "IncompleteDataset"
+    }
+  }
+}
+
+
