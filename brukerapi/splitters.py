@@ -160,8 +160,12 @@ class SlicePackageSplitter(Splitter):
             split_VisuCoreDataMax(visu_pars_, dataset.scheme, frame_range, fg_ind)
             split_VisuCoreDataOffs(visu_pars_, dataset.scheme, frame_range, fg_ind)
             split_VisuCoreDataSlope(visu_pars_, dataset.scheme, frame_range, fg_ind)
+            split_VisuCoreTransposition(visu_pars_, dataset.scheme, frame_range, fg_ind)
             split_VisuCoreFrameCount(visu_pars_, dataset.scheme, frame_count, fg_ind)
             split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
+            split_VisuCoreSlicePacksDef(visu_pars_)
+            split_VisuCoreSlicePacksSlices(visu_pars_, sp_index)
+            split_VisuCoreSlicePacksSliceDist(visu_pars_, sp_index)
 
             print(visu_pars_.get_value('VisuFGOrderDesc'))
 

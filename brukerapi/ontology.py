@@ -43,6 +43,15 @@ def split_VisuCoreDataOffs(visu_pars, scheme, index, fg_index):
     VisuCoreDataOffs.size = (np.prod(value.shape),)
     VisuCoreDataOffs.value = value.flatten()
 
+def split_VisuCoreTransposition(visu_pars, scheme, index, fg_index):
+    VisuCoreTransposition = visu_pars.get_parameter('VisuCoreTransposition')
+    value = np.reshape(VisuCoreTransposition.value, scheme.layouts['frame_groups'][scheme.encoded_dim:])
+    slc = index_to_slice(index, value.shape, fg_index - scheme.encoded_dim)
+    value = value[slc]
+    VisuCoreTransposition.size = (np.prod(value.shape),)
+    VisuCoreTransposition.value = value.flatten()
+
+
 def split_VisuCoreDataMin(visu_pars, scheme, index, fg_index):
     VisuCoreDataMin = visu_pars.get_parameter('VisuCoreDataMin')
     value = np.reshape(VisuCoreDataMin.value, scheme.layouts['frame_groups'][scheme.encoded_dim:])
@@ -116,4 +125,20 @@ def split_VisuFGOrderDesc(visu_pars, fg_rel_ind, frame_count):
         value[0] = frame_count
 
     VisuFGOrderDesc.value = value
+
+def split_VisuCoreSlicePacksDef(visu_pars):
+    VisuCoreSlicePacksDef = visu_pars.get_parameter('VisuCoreSlicePacksDef')
+    value = VisuCoreSlicePacksDef.value
+    value[1] = 1
+    VisuCoreSlicePacksDef.value = value
+
+def split_VisuCoreSlicePacksSlices(visu_pars_, sp_index):
+    VisuCoreSlicePacksSlices = visu_pars_.get_parameter('VisuCoreSlicePacksSlices')
+    VisuCoreSlicePacksSlices.value = [VisuCoreSlicePacksSlices.value[sp_index]]
+
+def split_VisuCoreSlicePacksSliceDist(visu_pars_, sp_index):
+    VisuCoreSlicePacksSliceDist = visu_pars_.get_parameter('VisuCoreSlicePacksSliceDist')
+    value = int(VisuCoreSlicePacksSliceDist.value[sp_index])
+    VisuCoreSlicePacksSliceDist.value = value
+    VisuCoreSlicePacksSliceDist.size = 1
 
