@@ -8,19 +8,24 @@ Welcome to brukerapi's documentation!
 
 Bruker API documentation.
 
-Modules
-=========
+.. toctree::
+   :maxdepth: 3
+   :caption: Tutorials:
+
+   tutorials/installation
+   tutorials/how-to-study
+   tutorials/how-to-2dseq
+   tutorials/how-to-fid
+
 .. toctree::
    :maxdepth: 3
    :caption: Modules:
 
    dataset
-   schemes
-   jcampdx
 
 
 Indices and tables
-==================
+-------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
