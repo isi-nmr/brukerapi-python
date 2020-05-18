@@ -59,7 +59,7 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not self.path.exists():
+        if not self.path.exists() and load:
             raise FileNotFoundError(self.path)
 
         # directory constructor
@@ -272,7 +272,7 @@ class Dataset:
         traj = self._read_binary_file(path, 'float64')
         return self.scheme.reshape_traj_fw(traj)
 
-    def write(self, path, **kwargs):
+    def write(self, path=None, **kwargs):
         """
         Write a Dataset into a file given by file.
 
@@ -281,8 +281,11 @@ class Dataset:
         :return:
         """
 
-        path = Path(path)
+        path = self.path
         parent = path.parent
+
+        if not parent.exists():
+            os.mkdir(parent)
 
         if self.type not in SUPPORTED:
             raise UnsuportedDatasetType
@@ -439,15 +442,12 @@ class Dataset:
 
 
     @property
-    def shape(self,index=None):
+    def shape(self):
         """shape of data array
 
         :type: tuple
         """
-        if index is not None:
-            return self.data.shape[index]
-        else:
-            return self.data.shape
+        return self.data.shape
 
 
     @property
