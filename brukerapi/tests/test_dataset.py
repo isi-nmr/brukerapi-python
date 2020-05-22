@@ -4,7 +4,7 @@ import numpy as np
 import json
 import unittest
 import os
-from pathlib2 import Path
+from pathlib import Path
 import shutil
 
 data_path = Path('C:/data/') # ['C:/data/', '/home/tomas/data/']

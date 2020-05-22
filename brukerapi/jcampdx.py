@@ -1,6 +1,6 @@
 import numpy as np
 from .exceptions import *
-from pathlib2 import Path
+from pathlib import Path
 import re
 import ast
 

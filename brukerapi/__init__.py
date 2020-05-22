@@ -1,1 +1,1 @@
-__all__ = ["dataset","exceptions","filters","jcampdx","ontology","schemes","study","utils"]
+__all__ = ["dataset","exceptions","filters","jcampdx","schemes","study","utils"]

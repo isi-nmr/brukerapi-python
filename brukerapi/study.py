@@ -2,7 +2,7 @@ from .dataset import Dataset, SUPPORTED
 from .jcampdx import JCAMPDX
 from .exceptions import *
 
-from pathlib2 import Path
+from pathlib import Path
 
 import os
 
