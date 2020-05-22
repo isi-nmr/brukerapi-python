@@ -133,3 +133,9 @@ dmypy.json
 
 #docs
 docs/build
+
+# test results
+brukerapi/tests/results/
+
+# tmp
+examples/tmp/

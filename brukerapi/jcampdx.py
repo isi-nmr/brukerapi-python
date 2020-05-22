@@ -130,7 +130,10 @@ class GenericParameter(Parameter):
                 value.append(GenericParameter.parse_value(val_str))
 
         if isinstance(value, np.ndarray) and self.size:
-            return np.reshape(value, self.size, order='C')
+            if not 'str' in value.dtype.name:
+                return np.reshape(value, self.size, order='C')
+            else:
+                return value
         else:
             return value
 
@@ -209,8 +212,15 @@ class GenericParameter(Parameter):
         val_str = re.sub('\n','', val_str)
 
         # sharp string
-        if val_str.startswith('<') and val_str.endswith('>') and '<' not in val_str[1:-1]:
-            return val_str
+        if val_str.startswith('<') and val_str.endswith('>'):
+
+            val_strs = re.findall('<[^<>]*>', val_str)
+
+            if len(val_strs) == 1:
+                return val_strs[0]
+            else:
+                return np.array(val_strs)
+
 
         # int/float
         try:
@@ -456,7 +466,7 @@ class JCAMPDX(object):
 
             jcampdx_serial += '{}\n'.format(param_str)
 
-        return jcampdx_serial[0:-1] + "\nEND= "
+        return jcampdx_serial[0:-1] + "\n##END= "
 
     def __enter__(self):
         self.load()

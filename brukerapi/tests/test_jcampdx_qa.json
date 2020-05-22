@@ -1,0 +1,146 @@
+{
+  "test_parameter": {
+    "ACQP": {
+      "path": "raw/Cyceron_DWI/20170719_075627_Lego_1_1/2/acqp",
+      "parameters": {
+        "TITLE": {
+          "size": "None",
+          "type": "str",
+          "value": "Parameter List, ParaVision 6.0.1"
+        },
+        "PULPROG": {
+          "size": 32,
+          "type": "str",
+          "value": "<DtiEpi.ppg>"
+        },
+        "ACQ_experiment_mode": {
+          "size": "None",
+          "type": "str",
+          "value": "ParallelExperiment"
+        },
+        "ACQ_ReceiverSelect": {
+          "size": 4,
+          "type": "ndarray",
+          "value": ["Yes","Yes","Yes","Yes"]
+        },
+        "ACQ_jobs": {
+          "size": 1,
+          "type": "list",
+          "value": [0, 1, 0, 1, 64, 100, 0, 0]
+        },
+        "ACQ_dim": {
+          "size": "None",
+          "type": "int",
+          "value": 2
+        },
+        "ACQ_size": {
+          "size": 2,
+          "type": "ndarray",
+          "value": [11312, 4]
+        },
+        "SW_h": {
+          "size": "None",
+          "type": "float",
+          "value": 208333.333333333
+        },
+        "ACQ_branch_preload": {
+          "size": [10, 2],
+          "type": "ndarray",
+          "value": [
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [1000000, 1000000],
+                    [500, 500]
+          ]
+        }
+        }
+    },
+    "SPNAM": {
+      "path": "raw/Cyceron_DWI/20170719_075627_Lego_1_1/1/spnam0",
+      "parameters": {
+        "NPOINTS": {
+          "size": "None",
+          "type": "int",
+          "value": 2
+        },
+        "XYPOINTS": {
+          "size": "XY..XY",
+          "type": "ndarray",
+          "value": [
+              [100.0, 0.0],
+              [100.0, 0.0]
+            ]
+        }
+      }
+    },
+    "VISU": {
+      "path": "raw/Cyceron_DWI/20170719_075627_Lego_1_1/2/pdata/1/visu_pars",
+      "parameters": {
+        "VisuCreatorVersion": {
+          "size": 65,
+          "type": "str",
+          "value": "<6.0.1>"
+        },
+        "VisuCoreFrameCount": {
+          "size": "None",
+          "type": "int",
+          "value": 45
+        },
+        "VisuCoreFrameThickness": {
+          "size": 1,
+          "type": "float",
+          "value": 0.8
+        },
+        "VisuCorePosition": {
+          "size": [5,3],
+          "type": "ndarray",
+          "value": [
+            [-12.5, -9.07831, -2.415348],
+            [-12.5, -9.07831, -1.615348],
+            [-12.5, -9.07831, -0.815348],
+            [-12.5, -9.07831, -0.0153479999999999],
+            [-12.5, -9.07831, 0.784652]]
+        },
+        "VisuCreatorVersion": {
+          "size": 65,
+          "type": "str",
+          "value": "<6.0.1>"
+        },
+        "VisuFGElemComment": {
+          "size": [9,65],
+          "type": "ndarray",
+          "value": ["<A0 1 B 18>", "<A0 2 B 18>", "<A0 3 B 18>", "<Dir 1 B 668>", "<Dir 2 B 664>", "<Dir 3 B 660>",
+                    "<Dir 4 B 657>", "<Dir 5 B 660>", "<Dir 6 B 664>"]
+        },
+        "VisuGroupDepVals": {
+          "size": 4,
+          "type": "list",
+          "value": [
+            ["<VisuCoreOrientation>", 0],
+            ["<VisuCorePosition>", 0],
+            ["<VisuFGElemComment>", 0],
+            ["<VisuAcqDiffusionBMatrix>", 0]]
+        },
+        "VisuSubjectWeight": {
+          "size": "None",
+          "type": "float",
+          "value": 0.001
+        },
+        "VisuAcqGradEncoding": {
+          "size": 2,
+          "type": "ndarray",
+          "value": ["read_enc", "phase_enc"]
+        }
+      }
+    }
+  },
+  "test_exceptions": {
+
+  }
+}

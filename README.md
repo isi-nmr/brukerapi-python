@@ -1,9 +1,26 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3831320.svg)](https://doi.org/10.5281/zenodo.3831320)
 
 # brukerapi-python
-A Python package providing I/O interface for Bruker data sets.
+A Python package providing I/O interface for Bruker data sets
 
-- [Documentation](https://bruker-api.readthedocs.io/en/latest/)
+**Features**
+- read/write any fid
+- read/write 2dseq
+- read/write ser
+- read/write rawdata
+- Split
+- Filter
+
+**Examples**
+- [Read 2dseq file](examples/read_2dseq.ipynb)
+- [Read fid file](examples/read_fid.ipynb)
+- [Split slice packages](examples/split_sp_demo.ipynb)
+- [Split FG_ECHO](examples/split_fg_echo_demo.ipynb)
+- [Split FG_ISA](examples/split_fg_isa_demo.ipynb)
+
+**Resources:**
+
+- [documentation](https://bruker-api.readthedocs.io/en/latest/)
 
 
 Install using pip

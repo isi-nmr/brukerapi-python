@@ -1,7 +1,7 @@
 from .exceptions import *
 from .schemes import *
 
-from pathlib2 import Path
+from pathlib import Path
 import json
 import numpy as np
 import os
@@ -93,6 +93,9 @@ class Dataset:
         """String representation"""
         return self.type
 
+    def __getattr__(self, item):
+        return self.get_value(item)
+
     def validate(self, load):
         """Validate Dataset
 
@@ -155,6 +158,26 @@ class Dataset:
         Load all parameters essential for reading of given dataset type. For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
         """
         self._parameters = self._read_parameters()
+
+    def add_parameters(self, file):
+        try:
+            parameters = JCAMPDX(self.path.parent / file)
+        except FileNotFoundError:
+            if self.type in ['2dseq','1r','1i']:
+                try:
+                    parameters = JCAMPDX(self.path.parents[2] / file)
+                except FileNotFoundError:
+                    raise FileNotFoundError(file)
+            if self.type in ['fid','ser','rawdata']:
+                try:
+                    parameters = JCAMPDX(self.path.parent / Path('pdata/1') / file)
+                except FileNotFoundError:
+                    raise FileNotFoundError(file)
+
+        self.parameters[file] = parameters
+
+
+
 
     def load_scheme(self):
         """
@@ -281,7 +304,11 @@ class Dataset:
         :return:
         """
 
-        path = self.path
+        if path:
+            path = Path(path)
+        else:
+            path = self.path
+
         parent = path.parent
 
         if not parent.exists():

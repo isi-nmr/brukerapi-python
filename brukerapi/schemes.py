@@ -1,6 +1,5 @@
 from .jcampdx import JCAMPDX
 from .exceptions import *
-from .ontology import *
 
 import numpy as np
 import re
@@ -34,12 +33,15 @@ class Scheme():
     def sw(self):
         """Sweep width
 
-        :return: Sweep width [s]
+        :return: Sweep width [Hz]
         """
         if self.dataset.type in ['fid','rawdata','ser']:
             return self.dataset.get_float('SW_h')
         elif self.dataset.type in ['2dseq',]:
-            return self.dataset.get_array('VisuCoreSize', dtype='float')[0] * self.get_parameter('VisuAcqPixelBandwidth')
+            try:
+                return self.dataset.get_float('VisuAcqPixelBandwidth')
+            except KeyError:
+                return None
         else:
             return None
 
@@ -52,7 +54,10 @@ class Scheme():
         if self.dataset.type in ['fid','rawdata','ser']:
             return self.dataset.get_float('BF1')
         elif self.dataset.type in ['2dseq', ]:
-            return self.dataset.get_float('VisuAcqImagingFrequency')
+            try:
+                return self.dataset.get_float('VisuAcqImagingFrequency')
+            except KeyError:
+                return None
         else:
             return None
 
@@ -67,7 +72,10 @@ class Scheme():
         if self.dataset.type in ['fid','rawdata','ser']:
             return self.dataset.get_value('ACQ_flip_angle')
         elif self.dataset.type in ['2dseq', ]:
-            return self.dataset.get_float('VisuAcqFlipAngle')
+            try:
+                return self.dataset.get_float('VisuAcqFlipAngle')
+            except KeyError:
+                return None
         else:
             return None
 
@@ -80,7 +88,10 @@ class Scheme():
         if self.dataset.type in ['fid','rawdata','ser']:
             return self.dataset.get_value('PVM_RepetitionTime')
         elif self.dataset.type in ['2dseq', ]:
-            return self.dataset.get_float('VisuAcqRepetitionTime')
+            try:
+                return self.dataset.get_float('VisuAcqRepetitionTime')
+            except KeyError:
+                return None
         else:
             return None
 
@@ -93,7 +104,10 @@ class Scheme():
         if self.dataset.type in ['fid','rawdata','ser']:
             return self.dataset.get_array('ACQ_echo_time')[0]
         elif self.dataset.type in ['2dseq', ]:
-            return self.dataset.get_float('VisuAcqEchoTime')
+            try:
+                return self.dataset.get_float('VisuAcqEchoTime')
+            except KeyError:
+                return None
         else:
             return None
 
@@ -233,6 +247,9 @@ class SchemeFid(Scheme):
 
         if "traj_permute_scheme" in self.meta:
             layouts['traj_permute'] = self.meta['traj_permute_scheme']
+
+        if "trim_acq" in self.meta:
+            layouts['trim_acq'] = self.proc_shape_list(self.meta['trim_acq'])
 
         return layouts
 
@@ -486,6 +503,11 @@ class SchemeFid(Scheme):
         # Trim blocks to acquisitions
         data = self._blocks_to_acquisitions(data)
 
+        # Trim acquisition
+        if 'trim_acq' in self.meta:
+            data = self._trim_acq(data)
+
+
         # Form encoding space
         data = self._acquisitions_to_encode(data)
 
@@ -515,6 +537,21 @@ class SchemeFid(Scheme):
             return data[0:self.single_acq_length,:]
         else:
             return data
+
+    def _trim_acq(self, data):
+        acquisitions=data.shape[1]
+        channels = self.dim_type.index('channel')
+        offset = self.layouts['trim_acq'][0]
+        acq_len = self.layouts['trim_acq'][1]
+
+        if acq_len*channels == data.shape[0]:
+            return data
+
+        shape = (-1,channels, acquisitions)
+        shape_ = (acq_len,channels, acquisitions)
+        data_ = np.zeros(shape_, dtype=data.dtype)
+        data_[:] = np.reshape(data, shape,'F')[offset:offset+acq_len,:,:]
+        return np.reshape(data_, (-1, acquisitions),'F')
 
     def _acquisitions_to_encode(self, data):
         return np.reshape(data, self.layouts['encoding_space'], order='F')

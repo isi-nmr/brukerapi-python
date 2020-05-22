@@ -14,6 +14,23 @@ WRITE_TOLERANCE = 1.e6
 with open('test_dataset.json') as json_file:
     reference = json.load(json_file)
 
+def clear_results():
+    for filename in os.listdir(results_path):
+        file_path = os.path.join(results_path, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+try:
+    os.mkdir(results_path)
+except:
+    clear_results()
+
+
 
 class TestDataset(unittest.TestCase):
 
@@ -35,11 +52,6 @@ class TestDataset(unittest.TestCase):
 
         reference_ = reference['test_read_write']
 
-        try:
-            os.mkdir(results_path)
-        except:
-            self.clear_results(results_path)
-
         for ref in reference_.items():
             print("test_write: {}".format(ref[0]))
             self.write_one(ref[1])
@@ -55,21 +67,6 @@ class TestDataset(unittest.TestCase):
         path = data_path / reference_['INCOMPLETE_2DSEQ']['path']
         with self.assertRaises(IncompleteDataset):
             Dataset(path)
-
-
-
-
-
-    def clear_results(self, folder):
-        for filename in os.listdir(folder):
-            file_path = os.path.join(folder, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     def schemes_one(self, d, r):
         if isinstance(d.scheme, SchemeFid):
@@ -118,4 +115,4 @@ class TestDataset(unittest.TestCase):
 
         self.schemes_one(d_test, ref)
 
-        self.clear_results(results_path)
+        clear_results()

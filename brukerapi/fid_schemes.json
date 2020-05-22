@@ -253,7 +253,7 @@
     "pv_version": ["5.1", "6.0","6.0.1","360"],
     "sequences": ["EPI.ppg","DtiEpi.ppg","navigatorEPI_OM.ppg","EPSI.ppg"],
     "encoding_space_shape": [
-      "ACQ_size[0]/2",
+      "PVM_EncMatrix[0] * PVM_EncMatrix[1] / NSegments",
       "PVM_EncNReceivers",
       "NSegments",
       "NI",
@@ -272,7 +272,9 @@
       "NI",
       "PVM_EncMatrix",
       "NR",
-      "PVM_EncNReceivers"
+      "PVM_EncNReceivers",
+      "PVM_EpiReadDephTrim",
+      "PVM_EpiPrefixNavSize"
     ],
     "conditions": [],
     "k_space_dim_desc": [
@@ -281,7 +283,12 @@
       "slice",
       "repetition",
       "channel"
+    ],
+    "trim_acq": [
+      "PVM_EpiReadDephTrim + PVM_EpiPrefixNavSize",
+      "PVM_EncMatrix[0] * PVM_EncMatrix[1] / NSegments"
     ]
+
   },
   "GA" : {
     "id":"GA",
