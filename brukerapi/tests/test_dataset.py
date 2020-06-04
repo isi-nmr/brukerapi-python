@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import shutil
 
-data_path = Path('C:/data/') # ['C:/data/', '/home/tomas/data/']
+data_path = Path('/home/tomas/data/bruker2nifti_qa/raw')
 config_path = Path('test_dataset_qa.json')
 results_path = Path('results')
 WRITE_TOLERANCE = 1.e6
@@ -58,6 +58,9 @@ class TestDataset(unittest.TestCase):
             self.write_one(ref[1])
 
     def test_exceptions(self):
+        if not 'test_exceptions' in reference:
+            return
+
         reference_ = reference['test_exceptions']
 
         path = data_path / reference_['INCOMPLETE_FID']['path']
@@ -71,9 +74,9 @@ class TestDataset(unittest.TestCase):
 
     def schemes_one(self, d, r):
         if isinstance(d.scheme, SchemeFid):
-            self.assertEqual(r['block_size'], d.scheme.block_size)
-            self.assertEqual(r['single_acq_length'], d.scheme.single_acq_length)
-            self.assertEqual(r['acq_scheme'], d.scheme.meta['id'])
+            self.assertEqual(r['acq_scheme'], d.scheme._meta['id'])
+            self.assertEqual(r['layouts']['storage'], list(d.scheme.layouts['storage']))
+            self.assertEqual(r['layouts']['acquisition_position'], list(d.scheme.layouts['acquisition_position']))
             self.assertEqual(r['layouts']['encoding_space'], list(d.scheme.layouts['encoding_space']))
             self.assertEqual(r['layouts']['k_space'], list(d.scheme.layouts['k_space']))
         elif isinstance(d.scheme, Scheme2dseq):

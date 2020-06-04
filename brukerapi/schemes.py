@@ -9,7 +9,7 @@ class Scheme():
     """Base class for all schemes
 
     """
-    def reshape(self, data, dir='FW', **kwargs):
+    def reshape(self, data, dir='FW', layouts=None, **kwargs):
         """ Reshape data according to the content of layouts
 
         :param data:
@@ -17,10 +17,14 @@ class Scheme():
         :param kwargs:
         :return:
         """
+
+        if layouts is None:
+            layouts = self.layouts
+
         if dir == 'FW':
-            return self.reshape_fw(data, self.layouts, **kwargs)
+            return self.reshape_fw(data, layouts, **kwargs)
         elif dir == 'BW':
-            return self.reshape_bw(data, self.layouts, **kwargs)
+            return self.reshape_bw(data, layouts, **kwargs)
 
     def reload(self):
         """Update contents of scheme, typically after change of parameters
@@ -307,7 +311,11 @@ class SchemeFid(Scheme):
         layouts = {'storage': (block_size,) + self.proc_shape_list(self._meta['block_count'])}
         layouts['encoding_space'] = self.proc_shape_list(self._meta['encoding_space_shape'])
         layouts['permute'] = tuple(self._meta['permute_scheme'])
+        layouts['encoding_permuted'] = tuple(np.array(layouts['encoding_space'])[np.array(layouts['permute'])])
+        layouts['inverse_permute'] = self.permutation_inverse(layouts['permute'])
+
         layouts['k_space'] = self.proc_shape_list(self._meta['k_space_shape'])
+
 
         if "EPI" in self._meta['id']:
             layouts['acquisition_position'] = (block_size - acquisition_length, acquisition_length)
@@ -570,7 +578,7 @@ class SchemeFid(Scheme):
     def _permute_to_kspace(self, data, layouts):
         return np.reshape(data, layouts['k_space'], order='F')
 
-    def _reorder_fid_lines(self,data, dir):
+    def _reorder_fid_lines(self,data, dir='FW'):
         """
         Function to sort phase encoding lines using PVM_EncSteps1
         :param data ndarray in k-space layout:
@@ -617,40 +625,35 @@ class SchemeFid(Scheme):
             data[index_odd] = tmp[::-1,:]
         return data
 
-    def reshape_bw(self, data, **kwargs):
+    def reshape_bw(self, data, layouts, **kwargs):
 
         if self._meta['id'] == 'EPI':
             data = self._mirror_odd_lines(data)
 
         data = self._reorder_fid_lines(data, dir='BW')
 
+        data = np.reshape(data, layouts['encoding_permuted'], order='F')
 
+        data = np.transpose(data, layouts['inverse_permute'])
 
-        p = np.array(self.layouts['permute'])
-        e = np.array(self.layouts['encoding_space'])
-        k = np.array(self.layouts['k_space'])
-        ip = self.permutation_inverse(self.layouts['permute'])
+        data = np.reshape(data, (layouts['acquisition_position'][1]//2, layouts['storage'][1]), order='F')
 
-        # 4
-        data = np.reshape(data, e[p], order='F')
+        data_ = np.zeros(layouts['storage'], dtype=self.numpy_dtype, order='F')
 
-        # 3
-        data = np.transpose(data, ip)
-
-        # 2
-        data = np.reshape(data, (self.single_acq_length, -1), order='F')
-
-        # 1
-        if self.single_acq_length != self.block_size:
-            data_ = np.zeros((self.block_size, data.shape[1]), dtype=data.dtype)
-            data_[0:self.single_acq_length,:] = data
-            data = data_
-
-        data = data.flatten(order='F')
-
-        data_ = np.zeros(2*len(data), dtype=self.numpy_dtype)
-        data_[0::2] = np.real(data)
-        data_[1::2] = np.imag(data)
+        if layouts['acquisition_position'][0]>0:
+            channels = layouts['k_space'][self.dim_type.index('channel')]
+            data = np.reshape(data, (-1,channels, data.shape[-1]),order='F')
+            data_ = np.reshape(data_, (-1,channels, data_.shape[-1]),order='F')
+            data_[layouts['acquisition_position'][0]//channels::2,:,:] = data.real
+            data_[layouts['acquisition_position'][0]//channels+1::2,:,:] = data.imag
+            data = np.reshape(data, (-1, data.shape[-1]),order='F')
+            data_ = np.reshape(data_, (-1, data_.shape[-1]),order='F')
+        elif layouts['acquisition_position'][1] != layouts['storage'][0]:
+            data_[0:layouts['acquisition_position'][1]:2,:] = data.real
+            data_[1:layouts['acquisition_position'][1]+1:2,:] = data.imag
+        else:
+            data_[0::2,:] = data.real
+            data_[1::2,:] = data.imag
 
         return data_
 
@@ -1295,7 +1298,7 @@ class Scheme2dseq(Scheme):
 
     def reshape_bw(self, data, layouts, scale=True, ra_mask=None, **kwargs):
         data = self._framegroups_to_frames(data, layouts, **kwargs)
-        data = self._scale_frames(data, 'BW', scale=scale, ra_mask=ra_mask)
+        data = self._scale_frames(data, 'BW', layouts, scale=scale)
         return data
 
     def _frames_to_vector(self, data):

@@ -7,7 +7,7 @@
       "layouts": {
         "storage": [256, 1920],
         "acquisition_position": [0, 256],
-        "encoding_space": [128, 4, 128, 15, 1, 1],
+        "encoding_space": [128, 1, 1, 15, 128, 1],
         "k_space": [128, 128, 15, 1, 1]
       },
       "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
@@ -38,25 +38,25 @@
     },
     "FID_EPI": {
       "path":"McGill_Orientation/bb20130412_APM_DEV_Orient.jl1/7/fid",
-      "acq_scheme": "CART_2D",
+      "acq_scheme": "EPI",
       "description": "RARE factor 64",
       "layouts": {
-        "storage": [256, 10240],
-        "acquisition_position": [0, 256],
-        "encoding_space": [128, 1, 4, 128, 20, 1],
-        "k_space": [128, 80, 128, 1, 1]
+        "storage": [6788, 32],
+        "acquisition_position": [644, 6144],
+        "encoding_space": [3072, 1, 1, 32, 1],
+        "k_space": [64, 48, 32, 1, 1]
       },
       "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
     },
-    "FID_OFFSET_EPI": {
+    "FID_DtiEpi": {
       "path":"Cyceron_DWI/20170719_075627_Lego_1_1/2/fid",
       "acq_scheme": "EPI",
       "description": "DtiEpi",
       "layouts": {
         "storage": [45248, 180],
-        "acquisition_position": [1032, 5120],
-        "encoding_space": [128, 4, 128, 15, 1, 1],
-        "k_space": [128, 128, 15, 1, 4]
+        "acquisition_position": [24768, 20480],
+        "encoding_space": [2560, 4, 4, 5, 9],
+        "k_space": [128, 80, 5, 9, 4]
       },
       "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
       "tested": "None"
@@ -105,7 +105,7 @@
         "frames": [18],
         "block": [128,128]
       },
-      "dim_type": ["spatial", "spatial", "FG_CYCLE", "FG_SLICE"]
+      "dim_type": ["spatial", "spatial", "FG_SLICE", "FG_CYCLE"]
     },
     "2DSEQ_3D_ACQUISITION": {
       "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/2/pdata/1/2dseq",

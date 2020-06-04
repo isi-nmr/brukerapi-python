@@ -351,16 +351,9 @@ class Dataset:
     def _write_data(self, path):
         data = self.data.copy()
         data = self.scheme.reshape(data, dir="BW")
-        data = data.astype(self.scheme.numpy_dtype)
-        # self._write_binary_file(path, self.scheme.numpy_dtype, data)
-        self._write_binary_file2(path, data, self.scheme.layouts['storage'], self.scheme.numpy_dtype)
+        self._write_binary_file(path, data, self.scheme.layouts['storage'], self.scheme.numpy_dtype)
 
-
-    def _write_binary_file(self, path, dtype, data):
-        with path.open("wb") as f:
-            return data.tofile(f)
-
-    def _write_binary_file2(self, path, data, storage_layout, dtype):
+    def _write_binary_file(self, path, data, storage_layout, dtype):
         fp = np.memmap(path, mode='w+', dtype=dtype, shape=storage_layout, order='F')
         fp[:] = data
 
