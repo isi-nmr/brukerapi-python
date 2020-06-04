@@ -33,7 +33,6 @@ except:
     clear_results()
 
 
-
 class TestDataset(unittest.TestCase):
 
     def test_read(self):

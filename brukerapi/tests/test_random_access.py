@@ -17,32 +17,26 @@ with open(config_data) as json_file:
     reference = json.load(json_file)
 
 class TestRandomAccess(unittest.TestCase):
-    def test_2dseq(self):
-        pass
-
-    def test_fid(self):
-        reference_ = reference['fid']
-        dim = 2
-        core_index = tuple(slice(None) for i in range(dim))
-
-        for r in reference_.items():
-            print("TestRandomAccess/test_fid:{}".format(r[0]))
+    def test_ra(self):
+        for r in reference.items():
+            print("TestRandomAccess/test_ra:{}".format(r[0]))
             d1 = Dataset(path_data/r[1]['path'])
+            core_index = tuple(slice(None) for i in range(d1.encoded_dim))
             d2 = Dataset(path_data/r[1]['path'], random_access=True)
 
             if "slices" in r[1].keys():
                 for s in r[1]['slices']:
                     slice_ = self.json_to_slice(s)
-                    print("TestRandomAccess/test_fid:{}/{}".format(r[0],slice_))
+                    print("TestRandomAccess/test_ra:{}/{}".format(r[0],slice_))
                     self.assertTrue(np.array_equal(d1.data[slice_], d2.data[slice_]))
             else:
                 # test by single slice - index
-                for index in np.ndindex(d1.shape[dim:]):
-                    print("TestRandomAccess/test_fid:{}/{}".format(r[0], core_index + index))
+                for index in np.ndindex(d1.shape[d1.encoded_dim:]):
+                    print("TestRandomAccess/test_ra:{}/{}".format(r[0], core_index + index))
                     self.assertTrue(np.array_equal(d1.data[core_index+index], d2.data[core_index+index]))
 
                 # test all possible slices
-                for slice_ in self.generate_slices(d1.shape[dim:]):
+                for slice_ in self.generate_slices(d1.shape[d1.encoded_dim:]):
                     print("TestRandomAccess/test_fid:{}/{}".format(r[0],core_index + slice_))
                     self.assertTrue(np.array_equal(d1.data[core_index + slice_], d2.data[core_index + slice_]))
 

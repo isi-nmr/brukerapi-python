@@ -62,14 +62,59 @@
       "tested": "None"
     },
     "2DSEQ_TRIPILOT": {
-      "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/1/pdata/1/2dseq",
+      "path":"Cyceron_DWI/20170719_075627_Lego_1_1/1/pdata/1/2dseq",
       "description": "FLASH 3 slice packages, 5 slices each",
       "layouts": {
-        "frame_groups": [128, 128, 15],
-        "frames": [128, 128, 15]
+        "frame_groups": [15],
+        "frames": [15],
+        "block": [192,192]
       },
-      "dim_type": ["spatial", "spatial", "FG_SLICE"],
-      "tested": "None"
+      "dim_type": ["spatial", "spatial", "FG_SLICE"]
+    },
+    "2DSEQ_DTI_RAW": {
+      "path":"Cyceron_DWI/20170719_075627_Lego_1_1/2/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [5, 9],
+        "frames": [45],
+        "block": [128,128]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE", "FG_DIFFUSION"]
+    },
+    "2DSEQ_DTI_PROC": {
+      "path":"Cyceron_DWI/20170719_075627_Lego_1_1/2/pdata/2/2dseq",
+      "layouts": {
+        "frame_groups": [22, 5],
+        "frames": [110],
+        "block": [128,128]
+      },
+      "dim_type": ["spatial", "spatial", "FG_DTI", "FG_SLICE"]
+    },
+    "2DSEQ_FG_ECHO": {
+      "path":"Cyceron_MultiEcho/20170720_080545_Lego_1_2/2/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [2, 9],
+        "frames": [18],
+        "block": [128,128]
+      },
+      "dim_type": ["spatial", "spatial", "FG_ECHO", "FG_SLICE"]
+    },
+    "2DSEQ_FG_CYCLE": {
+      "path":"Cyceron_MultiEcho/20170720_080545_Lego_1_2/4/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [9, 2],
+        "frames": [18],
+        "block": [128,128]
+      },
+      "dim_type": ["spatial", "spatial", "FG_CYCLE", "FG_SLICE"]
+    },
+    "2DSEQ_3D_ACQUISITION": {
+      "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/2/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [64, 64, 32]
+      },
+      "dim_type": ["spatial", "spatial", "spatial"]
     }
   }
 }

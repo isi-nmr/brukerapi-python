@@ -419,7 +419,7 @@ class SchemeFid(Scheme):
         if GO_block_size == 'Standard_KBlock_Format':
             return ACQ_size[0] * PVM_EncNReceivers
         else:
-            return 2 * np.prod(self._dataset.PVM_EncMatrix)  * PVM_EncNReceivers // self._dataset.NSegments
+            return 2 * np.prod(self._dataset.PVM_EncMatrix,dtype=int)  * PVM_EncNReceivers // self._dataset.NSegments
 
 
     @property
@@ -765,15 +765,6 @@ class SchemeFid(Scheme):
         index = (slice(index[0], index[0]+layout['k_space'][0]),index[1])
 
         return index
-
-    def ra_mask_to_indices(self, ra_mask):
-        ra_index = []
-
-        for index in np.ndindex(self.layouts['k_space']):
-            if ra_mask[index]:
-                ra_index.append(np.ravel_multi_index(index, self.layouts['k_space'], mode='raise',
-                                                                   order='F'))
-        return ra_index
 
     def _get_e_ra(self, layout_full, layout_ra):
         min_enc_index, max_enc_index = self._extrema_init(layout_full['encoding_space'][1:])
@@ -1133,7 +1124,7 @@ class Scheme2dseq(Scheme):
         shapes['frame_groups'] = tuple(dim_size)
         shapes['frames'] = (self.frame_count,)
         shapes['block'] = tuple(self._dataset.VisuCoreSize)
-        shapes['storage'] = shapes['block'] + (np.prod(dim_size),)
+        shapes['storage'] = shapes['block'] + (np.prod(dim_size, dtype=int),)
         shapes['final'] = shapes['block'] + shapes['frame_groups']
 
         return shapes
@@ -1264,17 +1255,17 @@ class Scheme2dseq(Scheme):
         except:
             raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
 
-    def reshape_fw(self, data, layouts, scale=True, ra_mask=None):
+    def reshape_fw(self, data, layouts, scale=True):
 
         # scale
-        data = self._scale_frames(data, 'FW', scale=scale, ra_mask=ra_mask)
+        data = self._scale_frames(data, 'FW', layouts, scale=scale)
 
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
 
         return data
 
-    def _scale_frames(self, data, dir, scale=True, ra_mask=None, **kwargs):
+    def _scale_frames(self, data, dir, layouts, scale=True, **kwargs):
 
         if not scale:
             return data
@@ -1282,9 +1273,9 @@ class Scheme2dseq(Scheme):
         data = data.astype(np.float)
         VisuCoreDataSlope = self._dataset.get_array('VisuCoreDataSlope', dtype='f4')
         VisuCoreDataOffs = self._dataset.get_array('VisuCoreDataOffs', dtype='f4')
-        if ra_mask is not None:
-            VisuCoreDataSlope = VisuCoreDataSlope[self.ra_mask_to_indices(ra_mask)]
-            VisuCoreDataOffs = VisuCoreDataOffs[self.ra_mask_to_indices(ra_mask)]
+        if 'mask' in layouts:
+            VisuCoreDataSlope = VisuCoreDataSlope[layouts['mask'].flatten(order='F')]
+            VisuCoreDataOffs = VisuCoreDataOffs[layouts['mask'].flatten(order='F')]
 
         for frame in range(data.shape[-1]):
             if dir == 'FW':
@@ -1319,35 +1310,67 @@ class Scheme2dseq(Scheme):
     """
     Random access
     """
-    def ra(self, index):
-        ra_index, ra_mask, layouts = self.get_ra_info(index)
+    def ra(self, slice_):
 
-        sub_array = np.zeros(layouts['final'], dtype=self.numpy_dtype)
-        sub_array = self.reshape_bw(sub_array, layouts, ra_mask=ra_mask, scale=False)
+        layouts, layouts_ra = self._get_ra_layouts(slice_)
+
+        array_ra = np.zeros(layouts_ra['storage'], dtype=self.numpy_dtype)
 
         fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode='r',
                        shape=layouts['storage'], order='F')
 
-        # fill querry in storage layout
-        for index_, ra_index_ in zip(range(len(ra_index)),ra_index):
-            sub_array[...,index_] = fp[...,ra_index_]
+        for slice_ra, slice_full in self._generate_ra_indices(layouts_ra, layouts):
+            array_ra[slice_ra] = np.array(fp[slice_full])
 
-        sub_array = self.reshape_fw(sub_array, layouts, ra_mask=ra_mask, scale=True)
+        array_ra = self.reshape_fw(array_ra, layouts_ra)
 
-        return sub_array
+        singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))
+
+        return np.squeeze(array_ra, axis=singletons)
 
 
-    def get_ra_info(self, index):
-        ra_mask = np.zeros(self._layouts['final'], dtype=bool, order='F')
-        ra_mask[index[self.encoded_dim:]] = True
 
-        ra_shape = self.get_ra_shape(index[self.encoded_dim:])
-        ra_index = self.ra_mask_to_indices(ra_mask)
-
+    def _get_ra_layouts(self, slice_full):
 
         layouts = deepcopy(self.layouts)
-        layouts['frame_groups'] = ra_shape
-        layouts['frames'] = (np.prod(ra_shape),)
-        layouts['final'] = layouts['block'] + layouts['frame_groups']
+        layouts_ra = deepcopy(self.layouts)
 
-        return ra_index, ra_mask, layouts
+        layouts_ra['mask'] = np.zeros(layouts['frame_groups'], dtype=bool, order='F')
+        layouts_ra['mask'][slice_full[self.encoded_dim:]] = True
+        layouts_ra['frame_groups'], layouts_ra['frame_groups_offset'] = self._get_ra_shape(layouts_ra['mask'])
+        layouts_ra['frames'] = (np.prod(layouts_ra['frame_groups'],dtype=int),)
+        layouts_ra['storage'] = layouts_ra['block'] + layouts_ra['frames']
+        layouts_ra['final'] = layouts_ra['block'] + layouts_ra['frame_groups']
+
+        return layouts, layouts_ra
+
+    def _get_ra_shape(self, mask):
+
+        axes = []
+        for axis in range(mask.ndim):
+            axes.append(tuple(i for i in range(mask.ndim) if i!=axis))
+
+        ra_shape = []
+        ra_offset = []
+        for axis in axes:
+            ra_shape.append(np.count_nonzero(np.count_nonzero(mask,axis=axis)))
+            ra_offset.append(np.argmax(np.count_nonzero(mask, axis=axis)))
+
+        return tuple(ra_shape), np.array(ra_offset)
+
+    def _generate_ra_indices(self, layouts_ra, layouts):
+
+        for index_ra in np.ndindex(layouts_ra['final'][self.encoded_dim:]):
+            index = tuple(np.array(index_ra) + layouts_ra['frame_groups_offset'])
+            index = tuple(0 for i in range(self.encoded_dim)) + index
+            index_ra = tuple(0 for i in range(self.encoded_dim)) + index_ra
+
+            index_ra = np.ravel_multi_index(index_ra, layouts_ra['final'], order='F')
+            index = np.ravel_multi_index(index, layouts['final'], order='F')
+
+            index_ra = np.unravel_index(index_ra, layouts_ra['storage'], order='F')
+            index = np.unravel_index(index, layouts['storage'], order='F')
+
+            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra[self.encoded_dim:]
+            slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim:]
+            yield slice_ra, slice_full
