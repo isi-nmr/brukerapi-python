@@ -8,10 +8,12 @@ from pathlib import Path
 import shutil
 
 data_path = Path('C:/data/') # ['C:/data/', '/home/tomas/data/']
+config_path = Path('test_dataset_qa.json')
 results_path = Path('results')
 WRITE_TOLERANCE = 1.e6
 
-with open('test_dataset.json') as json_file:
+
+with open(config_path) as json_file:
     reference = json.load(json_file)
 
 def clear_results():

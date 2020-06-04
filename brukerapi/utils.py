@@ -17,11 +17,11 @@ def index_to_slice(index, data_shape, dim_index):
 
 def simple_measurement(dataset):
 
-        if dataset.encded_dim == 1:
+        if dataset.encoded_dim == 1:
             axes = (0,)
-        elif dataset.encded_dim == 2:
+        elif dataset.encoded_dim == 2:
             axes = (0,1)
-        elif dataset.encded_dim == 3:
+        elif dataset.encoded_dim == 3:
             axes = (0,1,2)
 
         return np.fft.fftshift(np.fft.fft2(dataset.data,axes=axes),axes=axes)
@@ -31,11 +31,11 @@ def simple_reconstruction(dataset, **kwargs):
         Simple Fourier reconstruction
         :return: image
         """
-        if dataset.encded_dim == 1:
+        if dataset.encoded_dim == 1:
             axes = (0,)
-        elif dataset.encded_dim == 2:
+        elif dataset.encoded_dim == 2:
             axes = (0,1)
-        elif dataset.encded_dim == 3:
+        elif dataset.encoded_dim == 3:
             axes = (0,1,2)
 
         data = np.fft.fftshift(np.fft.ifft2(dataset.data, axes=axes),

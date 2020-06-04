@@ -1,0 +1,77 @@
+{
+  "test_read_write": {
+    "FID_FLASH": {
+      "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/1/fid",
+      "acq_scheme": "CART_2D",
+      "description": "FLASH tripilot - 3 slice packages, 5 slices each",
+      "layouts": {
+        "storage": [256, 1920],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 4, 128, 15, 1, 1],
+        "k_space": [128, 128, 15, 1, 1]
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_FISP": {
+      "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/2/fid",
+      "acq_scheme": "CART_3D",
+      "description": "FISP 3D acquisition",
+      "layouts": {
+        "storage": [256, 4096],
+        "acquisition_position": [0, 128],
+        "encoding_space": [64, 1, 64, 64, 1, 1],
+        "k_space": [64, 64, 64, 1, 1]
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "kspace_encode_step_2", "repetition", "channel"]
+    },
+    "FID_RARE": {
+      "path":"McGill_Orientation/bb20130412_APM_DEV_Orient.jl1/3/fid",
+      "acq_scheme": "CART_2D",
+      "description": "RARE factor 64",
+      "layouts": {
+        "storage": [256, 10240],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 4, 128, 20, 1],
+        "k_space": [128, 80, 128, 1, 1]
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_EPI": {
+      "path":"McGill_Orientation/bb20130412_APM_DEV_Orient.jl1/7/fid",
+      "acq_scheme": "CART_2D",
+      "description": "RARE factor 64",
+      "layouts": {
+        "storage": [256, 10240],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 4, 128, 20, 1],
+        "k_space": [128, 80, 128, 1, 1]
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_OFFSET_EPI": {
+      "path":"Cyceron_DWI/20170719_075627_Lego_1_1/2/fid",
+      "acq_scheme": "EPI",
+      "description": "DtiEpi",
+      "layouts": {
+        "storage": [45248, 180],
+        "acquisition_position": [1032, 5120],
+        "encoding_space": [128, 4, 128, 15, 1, 1],
+        "k_space": [128, 128, 15, 1, 4]
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"],
+      "tested": "None"
+    },
+    "2DSEQ_TRIPILOT": {
+      "path":"McGill_Orientation/a20130329_APM_DEV_Orient.j71/1/pdata/1/2dseq",
+      "description": "FLASH 3 slice packages, 5 slices each",
+      "layouts": {
+        "frame_groups": [128, 128, 15],
+        "frames": [128, 128, 15]
+      },
+      "dim_type": ["spatial", "spatial", "FG_SLICE"],
+      "tested": "None"
+    }
+  }
+}
+
+

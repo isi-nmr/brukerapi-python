@@ -1,5 +1,6 @@
 from .exceptions import *
 from .schemes import *
+from .data import *
 
 from pathlib import Path
 import json
@@ -8,8 +9,12 @@ import os
 import os.path
 
 FID_SCHEMES_PATH = str(Path(__file__).parents[0]  / 'fid_schemes.json')
+
+# Dict of supported data sets. In order to read type of dataset specified by key value, all files listed in value
+# need to be present in the same directory.
 SUPPORTED = {
     'fid': ['acqp', 'method'],
+    'traj': ['acqp','method'],
     '2dseq': ['visu_pars'],
     'ser': ['acqp', 'method'],
     'rawdata': ['acqp','method'],
@@ -48,7 +53,7 @@ class Dataset:
 
     """
 
-    def __init__(self, path, load=True, **kwargs):
+    def __init__(self, path, load=True, random_access=False, **kwargs):
         """Constructor of Dataset
 
         Dataset can be constructed either by passing a path to one of the SUPPORTED binary files, or to a directory
@@ -58,7 +63,7 @@ class Dataset:
         :param load: **bool** when false, empty Dataset is created
         """
         self.path = Path(path)
-
+        self.random_access = random_access
         if not self.path.exists() and load:
             raise FileNotFoundError(self.path)
 
@@ -82,6 +87,9 @@ class Dataset:
         if load:
             self.load()
 
+
+
+
     def __enter__(self):
         self.load()
         return self
@@ -91,7 +99,7 @@ class Dataset:
 
     def __str__(self):
         """String representation"""
-        return self.type
+        return str(self.path)
 
     def __getattr__(self, item):
         return self.get_value(item)
@@ -141,25 +149,31 @@ class Dataset:
     """
     LOADERS/UNLOADERS
     """
-    def load(self):
+    def load(self, **kwargs):
         """
         Load parameters, scheme and data. In case, there is a traj file related to a fid file, traj is loaded as well.
         """
-
         self.load_parameters()
         self.load_scheme()
-        self.load_data()
+        self.load_data(**kwargs)
+        self.load_traj()
 
-        if 'traj_shape' in self.scheme.layouts:
-            self.load_traj()
-
-    def load_parameters(self):
+    def load_parameters(self, parameters=None):
         """
         Load all parameters essential for reading of given dataset type. For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
         """
-        self._parameters = self._read_parameters()
+        if parameters:
+            self._parameters = parameters
+        else:
+            self._parameters = self._read_parameters()
 
     def add_parameters(self, file):
+        """
+        Load additional jcamp-dx file and add it to Dataset parameter space. It is later available via getters,
+        or using the dot notation.
+        :param file: file
+        :return:
+        """
         try:
             parameters = JCAMPDX(self.path.parent / file)
         except FileNotFoundError:
@@ -168,16 +182,13 @@ class Dataset:
                     parameters = JCAMPDX(self.path.parents[2] / file)
                 except FileNotFoundError:
                     raise FileNotFoundError(file)
-            if self.type in ['fid','ser','rawdata']:
+            if self.type in ['fid','ser','rawdata','traj']:
                 try:
                     parameters = JCAMPDX(self.path.parent / Path('pdata/1') / file)
                 except FileNotFoundError:
                     raise FileNotFoundError(file)
 
         self.parameters[file] = parameters
-
-
-
 
     def load_scheme(self):
         """
@@ -204,13 +215,20 @@ class Dataset:
         """
         Load the data binary file.
         """
-        if kwargs.get('READ_DATA') is False:
-            return None
+        if self.random_access:
+            self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
 
     def load_traj(self, **kwargs):
-        self._traj = self._read_traj(self.path.parent/ 'traj', self.scheme)
+        if Path(self.path.parent / 'traj').exists() and self.type != 'traj':
+            self._traj = Dataset(self.path.parent / 'traj', load=False, random_access=self.random_access)
+            self._traj._parameters = self.parameters
+            self._traj._scheme = SchemeTraj(self._traj, meta=self.scheme._meta, sub_params=self.scheme._sub_params,
+                                           fid=self)
+            self._traj.load_data()
+        else:
+            self._traj = None
 
     def unload(self):
         self.unload_parameters()
@@ -257,10 +275,10 @@ class Dataset:
         return parameters
 
     def _read_data(self):
-        data = self._read_binary_file(self.path, self._scheme.numpy_dtype)
+        data = self._read_binary_file(self.path, self._scheme.numpy_dtype, self._scheme.layouts['storage'])
         return self._scheme.reshape(data, dir='FW')
 
-    def _read_binary_file(self, path, dtype):
+    def _read_binary_file(self, path, dtype, shape):
         """Read Bruker binary file
 
         Parameters
@@ -272,8 +290,8 @@ class Dataset:
         -------
         1D ndarray containing the full data vector
         """
-        with path.open("rb") as f:
-            return np.fromfile(f, dtype=dtype)
+        return np.array(np.memmap(path, dtype=dtype, shape=shape, order='F')[:])
+
 
     def _read_traj(self, path, scheme, **kwargs):
         """Read trajectory data
@@ -334,11 +352,18 @@ class Dataset:
         data = self.data.copy()
         data = self.scheme.reshape(data, dir="BW")
         data = data.astype(self.scheme.numpy_dtype)
-        self._write_binary_file(path, self.scheme.numpy_dtype, data)
+        # self._write_binary_file(path, self.scheme.numpy_dtype, data)
+        self._write_binary_file2(path, data, self.scheme.layouts['storage'], self.scheme.numpy_dtype)
+
 
     def _write_binary_file(self, path, dtype, data):
         with path.open("wb") as f:
             return data.tofile(f)
+
+    def _write_binary_file2(self, path, data, storage_layout, dtype):
+        fp = np.memmap(path, mode='w+', dtype=dtype, shape=storage_layout, order='F')
+        fp[:] = data
+
 
     """
     GETTERS
@@ -412,7 +437,7 @@ class Dataset:
     PROPERTIES
     """
     @property
-    def data(self, slc=None):
+    def data(self):
         """Data array.
 
         :type: numpyp.ndarray
@@ -433,13 +458,9 @@ class Dataset:
         :type: numpy.ndarray
         """
         if self._traj is not None:
-            return self._traj
+            return self._traj.data
         else:
             raise TrajNotLoaded
-
-    @traj.setter
-    def traj(self,value):
-        self._traj = value
 
     @property
     def parameters(self):

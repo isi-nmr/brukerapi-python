@@ -3,6 +3,7 @@ from .exceptions import *
 
 import numpy as np
 import re
+from copy import deepcopy
 
 class Scheme():
     """Base class for all schemes
@@ -17,9 +18,9 @@ class Scheme():
         :return:
         """
         if dir == 'FW':
-            return self.reshape_fw(data, **kwargs)
+            return self.reshape_fw(data, self.layouts, **kwargs)
         elif dir == 'BW':
-            return self.reshape_bw(data, **kwargs)
+            return self.reshape_bw(data, self.layouts, **kwargs)
 
     def reload(self):
         """Update contents of scheme, typically after change of parameters
@@ -35,11 +36,11 @@ class Scheme():
 
         :return: Sweep width [Hz]
         """
-        if self.dataset.type in ['fid','rawdata','ser']:
-            return self.dataset.get_float('SW_h')
-        elif self.dataset.type in ['2dseq',]:
+        if self._dataset.type in ['fid','rawdata','ser']:
+            return self._dataset.get_float('SW_h')
+        elif self._dataset.type in ['2dseq',]:
             try:
-                return self.dataset.get_float('VisuAcqPixelBandwidth')
+                return self._dataset.get_float('VisuAcqPixelBandwidth')
             except KeyError:
                 return None
         else:
@@ -51,11 +52,11 @@ class Scheme():
 
         :return: Transmitter frequency [Hz]
         """
-        if self.dataset.type in ['fid','rawdata','ser']:
-            return self.dataset.get_float('BF1')
-        elif self.dataset.type in ['2dseq', ]:
+        if self._dataset.type in ['fid','rawdata','ser']:
+            return self._dataset.get_float('BF1')
+        elif self._dataset.type in ['2dseq', ]:
             try:
-                return self.dataset.get_float('VisuAcqImagingFrequency')
+                return self._dataset.get_float('VisuAcqImagingFrequency')
             except KeyError:
                 return None
         else:
@@ -69,11 +70,11 @@ class Scheme():
         """
 
 
-        if self.dataset.type in ['fid','rawdata','ser']:
-            return self.dataset.get_value('ACQ_flip_angle')
-        elif self.dataset.type in ['2dseq', ]:
+        if self._dataset.type in ['fid','rawdata','ser']:
+            return self._dataset.get_value('ACQ_flip_angle')
+        elif self._dataset.type in ['2dseq', ]:
             try:
-                return self.dataset.get_float('VisuAcqFlipAngle')
+                return self._dataset.get_float('VisuAcqFlipAngle')
             except KeyError:
                 return None
         else:
@@ -85,11 +86,11 @@ class Scheme():
 
         :return: epetition time [s]
         """
-        if self.dataset.type in ['fid','rawdata','ser']:
-            return self.dataset.get_value('PVM_RepetitionTime')
-        elif self.dataset.type in ['2dseq', ]:
+        if self._dataset.type in ['fid','rawdata','ser']:
+            return self._dataset.get_value('PVM_RepetitionTime')
+        elif self._dataset.type in ['2dseq', ]:
             try:
-                return self.dataset.get_float('VisuAcqRepetitionTime')
+                return self._dataset.get_float('VisuAcqRepetitionTime')
             except KeyError:
                 return None
         else:
@@ -101,11 +102,11 @@ class Scheme():
 
         :return: echo time [s]
         """
-        if self.dataset.type in ['fid','rawdata','ser']:
-            return self.dataset.get_array('ACQ_echo_time')[0]
-        elif self.dataset.type in ['2dseq', ]:
+        if self._dataset.type in ['fid','rawdata','ser']:
+            return self._dataset.get_array('ACQ_echo_time')[0]
+        elif self._dataset.type in ['2dseq', ]:
             try:
-                return self.dataset.get_float('VisuAcqEchoTime')
+                return self._dataset.get_float('VisuAcqEchoTime')
             except KeyError:
                 return None
         else:
@@ -116,7 +117,7 @@ class Scheme():
 
         :return: ParaVision version: str
         """
-        ACQ_sw_version = self.dataset.get_str('ACQ_sw_version')
+        ACQ_sw_version = self._dataset.get_str('ACQ_sw_version')
         if '6.0.1' in ACQ_sw_version:
             return '6.0.1'
         elif '6.0' in ACQ_sw_version:
@@ -126,14 +127,14 @@ class Scheme():
         elif '360' in ACQ_sw_version:
             return '360'
 
-        return self.dataset.get_str('ACQ_sw_version')
+        return self._dataset.get_str('ACQ_sw_version')
 
     def pv_version_visu(self):
         """Get version of ParaVision software  from visu_pars file using VisuCreatorVersion parameter.
 
         :return: ParaVision version: str
         """
-        VisuCreatorVersion = self.dataset.get_str('VisuCreatorVersion')
+        VisuCreatorVersion = self._dataset.get_str('VisuCreatorVersion')
         if '6.0.1' in VisuCreatorVersion:
             return '6.0.1'
         elif '6.0' in VisuCreatorVersion:
@@ -154,6 +155,76 @@ class Scheme():
             inverse[p] = i
         return inverse
 
+    def load_sub_params(self):
+        sub_params = {}
+        for sub_param in self._meta['sub_params']:
+            sub_params[sub_param] = self.value_filter(self._dataset.get_value(sub_param))
+
+        return sub_params
+
+    def value_filter(self, value):
+        if isinstance(value, str):
+            if value=='Yes':
+                return True
+            elif value == 'No':
+                return False
+            else:
+                return value
+        else:
+            return value
+
+    def proc_shape_list(self, shape_list):
+
+        shape = ()
+
+        # this is necessary to allow to calculate
+        for shape_entry in shape_list:
+            for parameter in self._sub_params:
+                shape_entry = re.sub(re.compile(r'\b%s\b' % parameter, re.I),
+                                              "self._sub_params[\'%s\']" % parameter,
+                                              shape_entry)
+            shape += (int(eval(shape_entry)),)
+
+        return shape
+
+    def validate_sequence(self):
+        PULPROG = self._dataset.get_str('PULPROG', strip_sharp=True)
+        for sequence in self._meta['sequences']:
+            if sequence == PULPROG:
+                return
+        raise SequenceNotMet
+
+    def validate_pv(self):
+        if self.pv_version not in self._meta['pv_version']:
+            raise PvVersionNotMet
+
+    def validate_conditions(self):
+        for condition in self._meta['conditions']:
+            # substitute parameters in expression string
+            for sub_params in self._sub_params:
+                condition = condition.replace(sub_params,
+                                            "self._sub_params[\'%s\']" %
+                                   sub_params)
+            if not eval(condition):
+                raise ConditionNotMet(condition)
+
+    def _get_ra_k_space_info(self, layouts, slice_full):
+
+        k_space = []
+        k_space_offset = []
+
+        for slc_, size_ in zip(slice_full, layouts['k_space']):
+            if isinstance(slc_, slice):
+                start = slc_.start if slc_.start else 0
+                stop = slc_.stop if slc_.stop else size_
+            elif isinstance(slc_, int):
+                start = slc_
+                stop = slc_ + 1
+            k_space.append(stop-start)
+            k_space_offset.append(start)
+        return tuple(k_space), np.array(k_space_offset)
+
+
 class SchemeFid(Scheme):
     """
     AcquisitionScheme class
@@ -166,15 +237,15 @@ class SchemeFid(Scheme):
         :param meta: on of the dicts fid_schemes.json
         :param load: bool
         """
-        self.dataset = dataset
-        self.meta = meta
+        self._dataset = dataset
+        self._meta = meta
         self.unload()
 
         # rises SequenceNotMet exception
         self.validate_sequence()
 
         # get values of parameters
-        self.load_parameters()
+        self._sub_params = self.load_sub_params()
 
         # validate pv version
         self.validate_pv()
@@ -192,10 +263,9 @@ class SchemeFid(Scheme):
         """
         self._pv_version = self.pv_version
         self._numpy_dtype = self.numpy_dtype
-        self._block_size = self.block_size
-        self._single_acq_length = self.single_acq_length
         self._encoded_dim = self.encoded_dim
         self._layouts = self.layouts
+
 
     def unload(self):
         """Delete private copies of properties
@@ -204,8 +274,6 @@ class SchemeFid(Scheme):
         """
         self._pv_version = None
         self._numpy_dtype = None
-        self._block_size = None
-        self._single_acq_length = None
         self._encoded_dim = None
         self._layouts = None
 
@@ -233,23 +301,18 @@ class SchemeFid(Scheme):
         if self._layouts is not None:
             return self._layouts
 
-        layouts = {}
+        acquisition_length = self.get_acquisition_length()
+        block_size = self.get_block_size()
 
-        layouts['encoding_space'] = self.proc_shape_list(self.meta['encoding_space_shape'])
-        layouts['permute'] = tuple(self.meta['permute_scheme'])
-        layouts['k_space'] = self.proc_shape_list(self.meta['k_space_shape'])
+        layouts = {'storage': (block_size,) + self.proc_shape_list(self._meta['block_count'])}
+        layouts['encoding_space'] = self.proc_shape_list(self._meta['encoding_space_shape'])
+        layouts['permute'] = tuple(self._meta['permute_scheme'])
+        layouts['k_space'] = self.proc_shape_list(self._meta['k_space_shape'])
 
-        if "raw_traj_shape" in self.meta:
-            layouts['raw_traj'] = self.proc_shape_list(self.meta['raw_traj_shape'])
-
-        if "traj_shape" in self.meta:
-            layouts['traj'] = self.proc_shape_list(self.meta['traj_shape'])
-
-        if "traj_permute_scheme" in self.meta:
-            layouts['traj_permute'] = self.meta['traj_permute_scheme']
-
-        if "trim_acq" in self.meta:
-            layouts['trim_acq'] = self.proc_shape_list(self.meta['trim_acq'])
+        if "EPI" in self._meta['id']:
+            layouts['acquisition_position'] = (block_size - acquisition_length, acquisition_length)
+        else:
+            layouts['acquisition_position'] = (0,acquisition_length)
 
         return layouts
 
@@ -268,8 +331,8 @@ class SchemeFid(Scheme):
             return self._numpy_dtype_pv_5_6()
 
     def _numpy_dtype_pv_360(self):
-        data_format = self.dataset.get_str('ACQ_word_size')
-        byte_order = self.dataset.get_str('BYTORDA')
+        data_format = self._dataset.get_str('ACQ_word_size')
+        byte_order = self._dataset.get_str('BYTORDA')
 
         if data_format == '_32_BIT' and byte_order == 'little':
             return np.dtype('i4').newbyteorder('<')
@@ -277,8 +340,8 @@ class SchemeFid(Scheme):
             raise NotImplemented('Bruker to numpy data type conversion not implemented for ACQ_word_size '.format(data_format))
 
     def _numpy_dtype_pv_5_6(self):
-        data_format = self.dataset.get_str('GO_raw_data_format')
-        byte_order = self.dataset.get_str('BYTORDA')
+        data_format = self._dataset.get_str('GO_raw_data_format')
+        byte_order = self._dataset.get_str('BYTORDA')
 
         if data_format == 'GO_32BIT_SGN_INT' and byte_order == 'little':
             return np.dtype('i4').newbyteorder('<')
@@ -295,29 +358,27 @@ class SchemeFid(Scheme):
         else:
             return np.dtype('i4').newbyteorder('<')
 
-    @property
-    def block_size(self):
+    def get_block_size(self, channels=None):
         """Size of acquisition block
 
         :return: block_size: int
         """
-
-        if self._block_size is not None:
-            return self._block_size
-
         if self.pv_version == '360':
-            return self._block_size_pv_360()
+            return self._block_size_pv_360(channels)
         else:
-            return self._block_size_pv_5_6()
+            return self._block_size_pv_5_6(channels)
 
-    def _block_size_pv_360(self):
-        return int(self.dataset.get_value('ACQ_jobs')[0][0] / 2)
+    def _block_size_pv_360(self, channels=None):
+        return int(self._dataset.get_value('ACQ_jobs')[0][0] / 2)
 
-    def _block_size_pv_5_6(self):
-        ACQ_size = self.dataset.get_array('ACQ_size')
-        PVM_EncNReceivers = self.dataset.get_int('PVM_EncNReceivers')
-        GO_block_size = self.dataset.get_str('GO_block_size')
-        ACQ_dim_desc = self.dataset.get_array('ACQ_dim_desc')
+    def _block_size_pv_5_6(self, channels=None):
+        ACQ_size = self._dataset.get_array('ACQ_size')
+        if channels:
+            PVM_EncNReceivers = channels
+        else:
+            PVM_EncNReceivers = self._dataset.get_int('PVM_EncNReceivers')
+        GO_block_size = self._dataset.get_str('GO_block_size')
+        ACQ_dim_desc = self._dataset.get_array('ACQ_dim_desc')
 
         # TODO ASSUMPTION - spectroscopic data have averaged channel dimension.
         if ACQ_dim_desc[0] == 'Spectroscopic':
@@ -326,44 +387,47 @@ class SchemeFid(Scheme):
         single_acq = ACQ_size[0] * PVM_EncNReceivers
 
         if GO_block_size == 'Standard_KBlock_Format':
-            return int((np.ceil(single_acq * self.numpy_dtype.itemsize / 1024.) * 1024. / self.numpy_dtype.itemsize) / 2)
+            return int((np.ceil(single_acq * self.numpy_dtype.itemsize / 1024.) * 1024. / self.numpy_dtype.itemsize))
         else:
-            return int(single_acq / 2)
+            return int(single_acq)
 
-    @property
-    def single_acq_length(self):
+    def get_acquisition_length(self, channels=None):
         """ Length of single acquisition
 
         :return:
         """
-
-        if self._single_acq_length is not None:
-            return self._single_acq_length
-
         if self.pv_version == '360':
-            return self._single_acq_length_pv_360()
+            return self._single_acq_length_pv_360(channels)
         else:
-            return self._single_acq_length_pv_5_6()
+            return self._single_acq_length_pv_5_6(channels)
 
-    def _single_acq_length_pv_360(self):
-        return int(self.dataset.get_value('ACQ_jobs')[0][0] / 2)
+    def _single_acq_length_pv_360(self, channels=None):
+        return int(self._dataset.get_value('ACQ_jobs')[0][0])
 
-    def _single_acq_length_pv_5_6(self):
-        ACQ_size = self.dataset.get_array('ACQ_size')
-        PVM_EncNReceivers = self.dataset.get_int('PVM_EncNReceivers')
-        ACQ_dim_desc = self.dataset.get_list('ACQ_dim_desc')
+    def _single_acq_length_pv_5_6(self, channels=None):
+        ACQ_size = self._dataset.get_array('ACQ_size')
+        GO_block_size = self._dataset.get_str('GO_block_size')
+        if channels:
+            PVM_EncNReceivers = channels
+        else:
+            PVM_EncNReceivers = self._dataset.get_int('PVM_EncNReceivers')
+        ACQ_dim_desc = self._dataset.get_list('ACQ_dim_desc')
 
         if ACQ_dim_desc[0] == 'Spectroscopic':
             PVM_EncNReceivers = 1
 
-        return ACQ_size[0] * PVM_EncNReceivers // 2
+        if GO_block_size == 'Standard_KBlock_Format':
+            return ACQ_size[0] * PVM_EncNReceivers
+        else:
+            return 2 * np.prod(self._dataset.PVM_EncMatrix)  * PVM_EncNReceivers // self._dataset.NSegments
+
 
     @property
     def encoded_dim(self):
         if self._encoded_dim is not None:
             return self._encoded_dim
 
-        return self.dataset.get_int('ACQ_dim')
+        return self._dataset.get_int('ACQ_dim')
 
     @property
     def dim_size(self):
@@ -371,7 +435,7 @@ class SchemeFid(Scheme):
 
     @property
     def dim_type(self):
-        return self.meta['k_space_dim_desc']
+        return self._meta['k_space_dim_desc']
 
     @property
     def dim_extent(self):
@@ -380,22 +444,22 @@ class SchemeFid(Scheme):
 
         for dim in self.dim_type:
             if dim == "kspace_encode_step_0":
-                if self.dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spatial':
-                    value = 10./self.dataset.get_parameter('ACQ_fov').value[0]
-                elif self.dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spectral':
-                    value = 1./self.dataset.get_parameter('PVM_EffSWh')
+                if self._dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spatial':
+                    value = 10./self._dataset.get_parameter('ACQ_fov').value[0]
+                elif self._dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spectral':
+                    value = 1./self._dataset.get_parameter('PVM_EffSWh')
             elif dim == "kspace_encode_step_1":
-                if self.dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spatial':
-                    value = 10./self.dataset.get_parameter('ACQ_fov').value[1]
-                elif self.dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spectral':
-                    value = 1./self.dataset.get_parameter('PVM_EffSWh')
+                if self._dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spatial':
+                    value = 10./self._dataset.get_parameter('ACQ_fov').value[1]
+                elif self._dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spectral':
+                    value = 1./self._dataset.get_parameter('PVM_EffSWh')
             elif dim == "kspace_encode_step_2":
-                value = 10./self.dataset.get_parameter('ACQ_fov').value[2]
+                value = 10./self._dataset.get_parameter('ACQ_fov').value[2]
             elif dim == "slice":
-                value = self.dim_size[dim] * self.dataset.get_value("PVM_SliceThick")\
-                        + (self.dim_size[dim] - 1) * self.dataset.get_value("PVM_SPackArrSliceGap")
+                value = self.dim_size[dim] * self._dataset.get_value("PVM_SliceThick")\
+                        + (self.dim_size[dim] - 1) * self._dataset.get_value("PVM_SPackArrSliceGap")
             elif dim == "repetition":
-                value = self.dataset.get_value("NR") * self.dataset.get_value("PVM_RepetitionTime") / 1000.
+                value = self._dataset.get_value("NR") * self._dataset.get_value("PVM_RepetitionTime") / 1000.
             elif dim == "channel":
                 value = self.dim_size[dim]
             else:
@@ -412,22 +476,22 @@ class SchemeFid(Scheme):
 
         for dim in self.dim_type:
             if dim == "kspace_encode_step_0":
-                if self.dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spatial':
-                    value = 10./self.dataset.get_parameter('ACQ_fov').value[0]
-                elif self.dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spectral':
-                    value = 1./self.dataset.get_parameter('PVM_EffSWh')
+                if self._dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spatial':
+                    value = 10./self._dataset.get_parameter('ACQ_fov').value[0]
+                elif self._dataset.get_parameter('ACQ_dim_desc').value[0] == 'Spectral':
+                    value = 1./self._dataset.get_parameter('PVM_EffSWh')
             elif dim == "kspace_encode_step_1":
-                if self.dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spatial':
-                    value = 10./self.dataset.get_parameter('ACQ_fov').value[1]
-                elif self.dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spectral':
-                    value = 1./self.dataset.get_parameter('PVM_EffSWh')
+                if self._dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spatial':
+                    value = 10./self._dataset.get_parameter('ACQ_fov').value[1]
+                elif self._dataset.get_parameter('ACQ_dim_desc').value[1] == 'Spectral':
+                    value = 1./self._dataset.get_parameter('PVM_EffSWh')
             elif dim == "kspace_encode_step_2":
-                value = 10./self.dataset.get_parameter('ACQ_fov').value[2]
+                value = 10./self._dataset.get_parameter('ACQ_fov').value[2]
             elif dim == "slice":
-                value = self.dim_size[dim] * self.dataset.get_value("PVM_SliceThick")\
-                        + (self.dim_size[dim] - 1) * self.dataset.get_value("PVM_SPackArrSliceGap")
+                value = self.dim_size[dim] * self._dataset.get_value("PVM_SliceThick")\
+                        + (self.dim_size[dim] - 1) * self._dataset.get_value("PVM_SPackArrSliceGap")
             elif dim == "repetition":
-                value = self.dataset.get_value("NR") * self.dataset.get_value("PVM_RepetitionTime") / 1000.
+                value = self._dataset.get_value("NR") * self._dataset.get_value("PVM_RepetitionTime") / 1000.
             elif dim == "channel":
                 value = self.dim_size[dim]
             else:
@@ -452,115 +516,59 @@ class SchemeFid(Scheme):
 
         return axes
 
-    def validate_sequence(self):
-        PULPROG = self.dataset.get_str('PULPROG', strip_sharp=True)
-        for sequence in self.meta['sequences']:
-            if sequence == PULPROG:
-                return
-        raise SequenceNotMet
 
-    def validate_pv(self):
-        if self.pv_version not in self.meta['pv_version']:
-            raise PvVersionNotMet
+    def reshape_fw(self, data, layouts, **kwargs):
 
-    def validate_conditions(self):
-        for condition in self.meta['conditions']:
-            # substitute parameters in expression string
-            for parameter in self.parameters:
-                condition = condition.replace(parameter,
-                                            "self.parameters[\'%s\']" %
-                                   parameter)
-            if not eval(condition):
-                raise ConditionNotMet(condition)
+        data = self._acquisition_trim(data, layouts)
 
-    def load_parameters(self):
-        self.parameters = {}
-        for parameter in self.meta['parameters']:
-            self.parameters[parameter] = self.dataset.get_value(parameter)
-
-    def proc_shape_list(self, shape_list):
-
-        shape = ()
-
-        # this is necessary to allow to calculate
-        for shape_entry in shape_list:
-            for parameter in self.parameters:
-                shape_entry = re.sub(re.compile(r'\b%s\b' % parameter, re.I),
-                                              "self.parameters[\'%s\']" % parameter,
-                                              shape_entry)
-            shape += (int(eval(shape_entry)),)
-
-        return shape
-
-    def reshape_fw(self, data, **kwargs):
-
-        # Form complex data entries
-        data = self._vector_to_vectorcplx(data)
-
-        # Form blocks
-        data = self._vectorcplx_to_blocks(data)
-
-        # Trim blocks to acquisitions
-        data = self._blocks_to_acquisitions(data)
-
-        # Trim acquisition
-        if 'trim_acq' in self.meta:
-            data = self._trim_acq(data)
-
+        data = data[0::2, ...] + 1j * data[1::2, ...]
 
         # Form encoding space
-        data = self._acquisitions_to_encode(data)
+        data = self._acquisitions_to_encode(data, layouts)
 
         # Permute acquisition dimensions
-        data = self._encode_to_permute(data)
+        data = self._encode_to_permute(data, layouts)
 
         # Form k-space
-        data = self._permute_to_kspace(data)
+        data = self._permute_to_kspace(data, layouts)
 
         # Typically for RARE, or EPI
         data = self._reorder_fid_lines(data, dir='FW')
 
-        if self.meta['id'] == 'EPI':
+        if self._meta['id'] == 'EPI':
             data = self._mirror_odd_lines(data)
 
         return data
 
-    def _vector_to_vectorcplx(self, data):
-        return data[0::2] + 1j * data[1::2]
+    def _acquisition_trim(self, data, layouts):
 
-    def _vectorcplx_to_blocks(self, data):
-        return np.reshape(data, (self.block_size,-1), order='F')
+        acquisition_offset =  layouts['acquisition_position'][0]
+        acquisition_length = layouts['acquisition_position'][1]
+        block_length = self.layouts['storage'][0]
 
-    def _blocks_to_acquisitions(self, data):
-
-        if self.block_size != self.single_acq_length:
-            return data[0:self.single_acq_length,:]
+        if acquisition_offset>0:
+            # trim on channel level acquisition
+            blocks = layouts['storage'][-1]
+            channels = layouts['k_space'][self.dim_type.index('channel')]
+            acquisition_offset=acquisition_offset//channels
+            acquisition_length = acquisition_length // channels
+            data = np.reshape(data, (-1, channels, blocks), order='F')
+            return np.reshape(data[acquisition_offset:acquisition_offset+acquisition_length,:,:],(acquisition_length * channels, blocks), order='F')
         else:
-            return data
+            # trim on acq level
+            if acquisition_length != block_length:
+                return data[0:acquisition_length,:]
+            else:
+                return data
 
-    def _trim_acq(self, data):
-        acquisitions=data.shape[1]
-        channels = self.dim_type.index('channel')
-        offset = self.layouts['trim_acq'][0]
-        acq_len = self.layouts['trim_acq'][1]
+    def _acquisitions_to_encode(self, data, layouts):
+        return np.reshape(data, layouts['encoding_space'], order='F')
 
-        if acq_len*channels == data.shape[0]:
-            return data
+    def _encode_to_permute(self, data, layouts):
+        return np.transpose(data, layouts['permute'])
 
-        shape = (-1,channels, acquisitions)
-        shape_ = (acq_len,channels, acquisitions)
-        data_ = np.zeros(shape_, dtype=data.dtype)
-        data_[:] = np.reshape(data, shape,'F')[offset:offset+acq_len,:,:]
-        return np.reshape(data_, (-1, acquisitions),'F')
-
-    def _acquisitions_to_encode(self, data):
-        return np.reshape(data, self.layouts['encoding_space'], order='F')
-
-    def _encode_to_permute(self, data):
-        return np.transpose(data, self.layouts['permute'])
-
-    def _permute_to_kspace(self, data):
-        return np.reshape(data, self.layouts['k_space'], order='F')
+    def _permute_to_kspace(self, data, layouts):
+        return np.reshape(data, layouts['k_space'], order='F')
 
     def _reorder_fid_lines(self,data, dir):
         """
@@ -572,7 +580,7 @@ class SchemeFid(Scheme):
 
         # Create local copies of variables
         try:
-            PVM_EncSteps1 = self.dataset.get_parameter('PVM_EncSteps1').value
+            PVM_EncSteps1 = self._dataset.get_parameter('PVM_EncSteps1').value
         except KeyError:
             return data
 
@@ -611,7 +619,7 @@ class SchemeFid(Scheme):
 
     def reshape_bw(self, data, **kwargs):
 
-        if self.meta['id'] == 'EPI':
+        if self._meta['id'] == 'EPI':
             data = self._mirror_odd_lines(data)
 
         data = self._reorder_fid_lines(data, dir='BW')
@@ -646,20 +654,264 @@ class SchemeFid(Scheme):
 
         return data_
 
-    def reshape_traj_fw(self, traj):
-        traj = np.reshape(traj, self.layouts['raw_traj'], order='F')
-        traj = np.transpose(traj, self.layouts['traj_permute'])
-        return np.reshape(traj, self.layouts['traj'], order='F')
+    def ra(self, slice_):
 
-    def reshape_traj_bw(self, traj):
-        traj = np.reshape(traj, self.layouts['raw_traj'], order='F')
-        traj = np.transpose(traj, self.layouts['traj_permute'])
-        return np.reshape(traj, self.layouts['traj'], order='F').copy()
+        layouts, layouts_ra = self.get_ra_layouts(slice_)
+
+        """
+        random access
+        """
+        array_ra =  np.zeros(layouts_ra['storage'], dtype=self.numpy_dtype)
+        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode='r',
+                       shape=layouts['storage'], order='F')
+
+        for index_ra in np.ndindex(layouts_ra['k_space'][1:]):
+            # index of line in the original k_space
+            index_full = tuple(i + o for i, o  in zip(index_ra, layouts_ra['k_space_offset'][1:]))
+
+            # index of line in the subarray
+            # index_full = self.index_to_data(layouts, (0,) + index_full)
+            try:
+                index_full = self.index_to_data(layouts, (0,) + index_full)
+            except:
+                print(index_full)
+                index_full = self.index_to_data(layouts, (0,) + index_full)
+
+            # index of line in the subarray
+            # index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
+            try:
+                index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
+            except:
+                print(index_ra)
+                index_ra = self.index_to_data(layouts_ra, (0,) + index_ra)
+
+
+            try:
+                array_ra[index_ra] = np.array(fp[index_full])
+            except:
+                print(index_full)
+
+        layouts_ra['k_space'] = (layouts_ra['k_space'][0]//2,)+layouts_ra['k_space'][1:]
+        layouts_ra['encoding_space'] = (layouts_ra['encoding_space'][0]//2,)+layouts_ra['encoding_space'][1:]
+
+        array_ra = self.reshape_fw(array_ra, layouts_ra)
+
+        singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))
+
+        return np.squeeze(array_ra, axis=singletons)
+
+    def get_ra_layouts(self, slice_):
+        layouts = deepcopy(self.layouts)
+        layouts['k_space'] = (layouts['k_space'][0]*2,)+layouts['k_space'][1:]
+        layouts['encoding_space'] = (layouts['encoding_space'][0]*2,)+layouts['encoding_space'][1:]
+        layouts['inverse_permute'] = tuple(self.permutation_inverse(layouts['permute']))
+        layouts['encoding_permute'] = tuple(layouts['encoding_space'][i] for i in layouts['permute'])
+        layouts['channel_index'] = self.dim_type.index('channel')
+        layouts['channels'] = layouts['k_space'][layouts['channel_index']]
+        layouts['acquisition_position_ch'] = (layouts['acquisition_position'][0]//layouts['channels'],
+                                                      layouts['acquisition_position'][1]//layouts['channels'])
+        layouts['storage_clear'] = (layouts['acquisition_position'][1], layouts['storage'][1])
+        layouts['storage_clear_ch'] = (layouts['storage_clear'][0]//layouts['channels'], layouts['channels'],
+                                  layouts['storage'][1])
+        layouts['storage_ch'] = (layouts['storage'][0]//layouts['channels'], layouts['channels'], layouts['storage'][1])
+
+        layouts_ra = deepcopy(layouts)
+
+        layouts_ra['k_space'], layouts_ra['k_space_offset'] = self._get_ra_k_space_info(layouts, slice_)
+        layouts_ra['channels'] = layouts_ra['k_space'][layouts_ra['channel_index']]
+        layouts_ra['acquisition_position'] = (0,self.get_acquisition_length(channels=layouts_ra['channels'])) # delete offset
+        # delete offset
+
+        layouts_ra['encoding_space'], layouts_ra['storage'] = self._get_e_ra(layouts, layouts_ra)
+        layouts_ra['encoding_permute'] = tuple(layouts_ra['encoding_space'][i] for i in layouts['permute'])
+
+        return layouts, layouts_ra
+
+
+    def _extrema_init(self, shape):
+        min_index = np.array(shape)
+        max_index = np.zeros(len(shape), dtype=int)
+        return min_index, max_index
+
+    def encode_extrema_update(self, min_enc_index, max_enc_index, enc_index):
+        for i in range(len(min_enc_index)):
+            if enc_index[i] < min_enc_index[i]:
+                min_enc_index[i] = enc_index[i]
+            if enc_index[i] > max_enc_index[i]:
+                max_enc_index[i] = enc_index[i]
+
+    def index_to_data(self, layout, index):
+
+        # kspace to linear
+        channel = index[layout['channel_index']]+1
+        index = np.ravel_multi_index(index, layout['k_space'], order='F')
+
+        # linear to encoding permuted
+        index = np.unravel_index(index, layout['encoding_permute'], order='F')
+        #permute
+        index = tuple(index[i] for i in layout['inverse_permute'])
+        # encoding space to linear
+        index = np.ravel_multi_index(index, layout['encoding_space'], order='F')
+        if layout['acquisition_position'][0]>0:
+            index = np.unravel_index(index, layout['storage_clear_ch'], order='F')
+            index = (index[0] + layout['acquisition_position_ch'][0],)+index[1:]
+            index = np.ravel_multi_index(index, layout['storage_ch'], order='F')
+        elif layout['acquisition_position'][1] != layout['storage'][0]:
+            index = np.unravel_index(index, layout['storage_clear'], order='F')
+            index = np.ravel_multi_index(index, layout['storage'], order='F')
+
+        index = np.unravel_index(index, layout['storage'], order='F')
+
+        index = (slice(index[0], index[0]+layout['k_space'][0]),index[1])
+
+        return index
+
+    def ra_mask_to_indices(self, ra_mask):
+        ra_index = []
+
+        for index in np.ndindex(self.layouts['k_space']):
+            if ra_mask[index]:
+                ra_index.append(np.ravel_multi_index(index, self.layouts['k_space'], mode='raise',
+                                                                   order='F'))
+        return ra_index
+
+    def _get_e_ra(self, layout_full, layout_ra):
+        min_enc_index, max_enc_index = self._extrema_init(layout_full['encoding_space'][1:])
+        storage_ra = []
+        for index_ra in np.ndindex(layout_ra['k_space'][1:]):
+            index_full = (0,)+tuple(i + o for i, o in zip(index_ra, layout_ra['k_space_offset'][1:]))
+            channel = index_full[layout_full['channel_index']]+1
+
+            """
+            index_k_to_encode
+            """
+
+            index_full = np.ravel_multi_index(index_full, layout_full['k_space'], order='F')
+
+            # linear to encoding permuted
+            index_full = np.unravel_index(index_full, layout_full['encoding_permute'], order='F')
+            # permute
+            index_full = tuple(index_full[i] for i in layout_full['inverse_permute'])
+
+            """
+            Update encoding space extrema
+            """
+            self.encode_extrema_update(min_enc_index, max_enc_index, index_full[1:])
+
+            """
+            index_encode_to_data
+            """
+            index_full = np.ravel_multi_index(index_full, layout_full['encoding_space'], order='F')
+            index_full = np.unravel_index(index_full, layout_full['storage_clear'], order='F')
+            if not index_full[1] in storage_ra:
+                storage_ra.append(index_full[1])
+
+        encoding_space_ra = max_enc_index - min_enc_index + 1
+        encoding_space_ra = (layout_full['encoding_space'][0],) + tuple(encoding_space_ra)
+
+        storage_ra = (self.get_acquisition_length(channels=layout_ra['channels']), len(storage_ra))
+
+        return encoding_space_ra, storage_ra
+
+    def index_k_to_encode(self, layout, index):
+        index = np.ravel_multi_index(index, layout['k_space'], order='F')
+        # linear to encoding permuted
+        index = np.unravel_index(index, layout['encoding_permute'], order='F')
+        #permute
+        index = tuple(index[i] for i in layout['inverse_permute'])
+        return index
+
+    def index_encode_to_data(self, layout, index):
+        channel = index[layout['channel_index']]+1
+
+        index = np.ravel_multi_index(index, layout['encoding_space'], order='F')
+        index = np.unravel_index(index, layout['storage'], order='F')
+
+        if layout['acquisition_position'][0]>0:
+            first = index[0] + (layout['acquisition_position'][0]// layout['channels']) * channel
+        else:
+            first = index[0]
+        index = (slice(first,first+layout['k_space'][0]),index[1])
+        return index
+
+
+
+class SchemeTraj(Scheme):
+    def __init__(self, dataset, meta=None, load=True, sub_params=None, fid=None):
+        self._dataset = dataset
+        self._meta = meta
+        self._fid = fid
+        self.unload()
+
+        # rises SequenceNotMet exception
+        self.validate_sequence()
+
+        # get values of subset of parameters used for evaluation of shape lists
+        if sub_params:
+            self._sub_params = sub_params
+        else:
+            self._sub_params = self.load_sub_params()
+
+        # validate pv version
+        self.validate_pv()
+
+        # rises ConditionNotMet exception
+        self.validate_conditions()
+
+
+        if load:
+            self.load()
+
+    def load(self):
+        self._pv_version = self.pv_version
+        self._layouts = self.layouts
+
+    def unload(self):
+        self._pv_version = None
+        self._layouts = None
+
+    @property
+    def pv_version(self):
+        """Version of ParaVision software
+
+        :return: version: str
+        """
+        if self._pv_version is not None:
+            return self._pv_version
+        return self.pv_version_acqp()
+
+    @property
+    def layouts(self):
+
+        if self._layouts is not None:
+            return self._layouts
+
+        layouts = {}
+
+        layouts['storage'] = self.proc_shape_list(self._meta['traj']['storage'])
+
+        layouts['final'] = self.proc_shape_list(self._meta['traj']['final'])
+
+        layouts['permute'] = self._meta['traj']['permute']
+
+        return layouts
+
+    @property
+    def numpy_dtype(self):
+        return 'float64'
+
+    def reshape_fw(self, data, layouts):
+        data = np.transpose(data, layouts['permute'])
+        return np.reshape(data, layouts['final'], order='F')
+
+    def reshape_bw(self, data, layouts):
+        data = np.transpose(data, layouts['traj_permute'])
+        return np.reshape(data, layouts['traj'], order='F')
 
 
 class SchemeRawdata(Scheme):
     def __init__(self, dataset, load=True):
-        self.dataset = dataset
+        self._dataset = dataset
 
         self.unload()
 
@@ -690,15 +942,15 @@ class SchemeRawdata(Scheme):
         if self._job is not None:
             return self._job
 
-        ACQ_jobs = self.dataset.get_nested_list('ACQ_jobs')
+        ACQ_jobs = self._dataset.get_nested_list('ACQ_jobs')
 
         if self.pv_version in ['5.1','6.0','6.0.1']:
-            jobid = self.dataset.subtype.replace('job','')
+            jobid = self._dataset.subtype.replace('job','')
             jobid = int(jobid)
             return ACQ_jobs[jobid]
         else:
             for job in ACQ_jobs:
-                if '<{}>'.format(self.dataset.subtype) == job[-1].lower():
+                if '<{}>'.format(self._dataset.subtype).lower() == job[-1].lower():
                     return job
 
 
@@ -707,10 +959,12 @@ class SchemeRawdata(Scheme):
         if self._layouts is not None:
             return self._layouts
 
-        PVM_EncNReceivers = self.dataset.get_value('PVM_EncNReceivers')
+        PVM_EncNReceivers = self._dataset.get_value('PVM_EncNReceivers')
 
         layouts={}
         layouts['raw']=(int(self.job[0]/2),PVM_EncNReceivers , int(self.job[3]))
+        layouts['storage'] = (2, int(self.job[0]/2),PVM_EncNReceivers , int(self.job[3]))
+        layouts['final'] = layouts['raw']
 
         return layouts
 
@@ -725,24 +979,19 @@ class SchemeRawdata(Scheme):
     def dim_type(self):
         return ["kspace_encode_step_0","channel", "kspace_encode_step_1"]
 
-    def reshape_fw(self, data, **kwargs):
-        data = data[0::2] + 1j * data[1::2]
-        data = np.reshape(data, self.layouts['raw'], order='F')
-        return data
+    def reshape_fw(self, data, layouts, **kwargs):
+        return data[0,...] + 1j * data[1,...]
 
-    def reshape_bw(self, data, **kwargs):
-        data = data.copy()
-        data = data.flatten(order='F')
-        re = np.real(data)
-        im = np.imag(data)
-        data = np.zeros((2*len(data)), dtype=self.numpy_dtype)
-        data[0::2] = re
-        data[1::2] = im
-        return data
+    def reshape_bw(self, data, layouts, **kwargs):
+        data_ = np.zeros(layouts['storage'], dtype=self.numpy_dtype, order='F')
+        data_[0,...] = data.real
+        data_[1, ...] = data.imag
+        return data_
+
 
 class SchemeSer(Scheme):
     def __init__(self, dataset, load=True):
-        self.dataset = dataset
+        self._dataset = dataset
         self.unload()
 
         if load:
@@ -771,9 +1020,9 @@ class SchemeSer(Scheme):
         if self._layouts is not None:
             return self._layouts
 
-        PVM_SpecMatrix = self.dataset.get_value('PVM_SpecMatrix')
-        PVM_Matrix = self.dataset.get_value('PVM_Matrix')
-        PVM_EncNReceivers = self.dataset.get_value('PVM_EncNReceivers')
+        PVM_SpecMatrix = self._dataset.get_value('PVM_SpecMatrix')
+        PVM_Matrix = self._dataset.get_value('PVM_Matrix')
+        PVM_EncNReceivers = self._dataset.get_value('PVM_EncNReceivers')
 
         layouts={}
         layouts['raw']=(PVM_SpecMatrix,PVM_EncNReceivers , PVM_Matrix[0], PVM_Matrix[1])
@@ -806,7 +1055,7 @@ class Scheme2dseq(Scheme):
 
     """
     def __init__(self, dataset, load=True):
-        self.dataset = dataset
+        self._dataset = dataset
         self.unload()  # sets local copies of properties to None
         if load:
             self.load()
@@ -868,26 +1117,30 @@ class Scheme2dseq(Scheme):
         shapes = {}
 
         try:
-            VisuFGOrderDesc = self.dataset.get_nested_list('VisuFGOrderDesc')
+            VisuFGOrderDesc = self._dataset.get_nested_list('VisuFGOrderDesc')
         except:
             VisuFGOrderDesc = []
 
         dim_size = []
-
-        for i in range(len(self.core_size)):
-            dim_size.append(self.core_size[i])
 
         for i in range(len(VisuFGOrderDesc)):
             dim_size.append(VisuFGOrderDesc[i][0])
 
         # insert a dummy spatial dimension for single frame acquisitions
         if self.is_single_slice:
-            dim_size.insert(2, 1)
+            dim_size.insert(0, 1)
 
         shapes['frame_groups'] = tuple(dim_size)
-        shapes['frames'] = self.core_size + (self.frame_count,)
+        shapes['frames'] = (self.frame_count,)
+        shapes['block'] = tuple(self._dataset.VisuCoreSize)
+        shapes['storage'] = shapes['block'] + (np.prod(dim_size),)
+        shapes['final'] = shapes['block'] + shapes['frame_groups']
 
         return shapes
+
+    @property
+    def final_layout(self):
+        return self.layouts['frame_groups']
 
     @property
     def dim_size(self):
@@ -898,10 +1151,10 @@ class Scheme2dseq(Scheme):
         if self._dim_type is not None:
             return self._dim_type
 
-        VisuCoreDimDesc = self.dataset.get_array('VisuCoreDimDesc')
-        VisuCoreDim = self.dataset.get_int('VisuCoreDim')
+        VisuCoreDimDesc = self._dataset.get_array('VisuCoreDimDesc')
+        VisuCoreDim = self._dataset.get_int('VisuCoreDim')
         try:
-            VisuFGOrderDesc = self.dataset.get_nested_list('VisuFGOrderDesc')
+            VisuFGOrderDesc = self._dataset.get_nested_list('VisuFGOrderDesc')
         except:
             VisuFGOrderDesc = []
 
@@ -943,15 +1196,15 @@ class Scheme2dseq(Scheme):
     def frame_count(self):
         if self._frame_count is not None:
             return self._frame_count
-        return self.dataset.get_int('VisuCoreFrameCount')
+        return self._dataset.get_int('VisuCoreFrameCount')
 
     @property
     def numpy_dtype(self):
         if self._numpy_dtype is not None:
             return self._numpy_dtype
 
-        VisuCoreWordType = self.dataset.get_str('VisuCoreWordType')
-        VisuCoreByteOrder = self.dataset.get_str('VisuCoreByteOrder')
+        VisuCoreWordType = self._dataset.get_str('VisuCoreWordType')
+        VisuCoreByteOrder = self._dataset.get_str('VisuCoreByteOrder')
 
         if VisuCoreWordType == '_32BIT_SGN_INT' and VisuCoreByteOrder == 'littleEndian':
             return np.dtype('int32').newbyteorder('<')
@@ -976,7 +1229,7 @@ class Scheme2dseq(Scheme):
     def core_size(self):
         if self._core_size is not None:
             return self._core_size
-        return tuple(self.dataset.get_array('VisuCoreSize'))
+        return tuple(self._dataset.get_array('VisuCoreSize'))
 
     @property
     def encoded_dim(self):
@@ -989,7 +1242,7 @@ class Scheme2dseq(Scheme):
         if self._is_single_slice is not None:
             return self._is_single_slice
 
-        VisuCoreDim = self.dataset.get_int('VisuCoreDim')
+        VisuCoreDim = self._dataset.get_int('VisuCoreDim')
 
         if 'FG_SLICE' in self.dim_type:
             is_fg_size = True
@@ -1011,29 +1264,29 @@ class Scheme2dseq(Scheme):
         except:
             raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
 
-    def reshape_fw(self, data, **kwargs):
-
-        data = self._vector_to_frames(data, **kwargs)
+    def reshape_fw(self, data, layouts, scale=True, ra_mask=None):
 
         # scale
-        data = self._scale_frame_groups(data, 'FW', **kwargs)
+        data = self._scale_frames(data, 'FW', scale=scale, ra_mask=ra_mask)
 
         # frames -> frame_groups
-        data = self._frames_to_framegroups(data, **kwargs)
+        data = self._frames_to_framegroups(data, layouts)
 
         return data
 
-    def _vector_to_frames(self, data, **kwargs):
+    def _scale_frames(self, data, dir, scale=True, ra_mask=None, **kwargs):
 
-        return np.reshape(data, self.layouts['frames'], order='F')
-
-    def _scale_frame_groups(self, data, dir, **kwargs):
+        if not scale:
+            return data
 
         data = data.astype(np.float)
-        VisuCoreDataSlope = self.dataset.get_array('VisuCoreDataSlope', dtype='f4')
-        VisuCoreDataOffs = self.dataset.get_array('VisuCoreDataOffs', dtype='f4')
+        VisuCoreDataSlope = self._dataset.get_array('VisuCoreDataSlope', dtype='f4')
+        VisuCoreDataOffs = self._dataset.get_array('VisuCoreDataOffs', dtype='f4')
+        if ra_mask is not None:
+            VisuCoreDataSlope = VisuCoreDataSlope[self.ra_mask_to_indices(ra_mask)]
+            VisuCoreDataOffs = VisuCoreDataOffs[self.ra_mask_to_indices(ra_mask)]
 
-        for frame in range(self.frame_count):
+        for frame in range(data.shape[-1]):
             if dir == 'FW':
                 data[..., frame] *= VisuCoreDataSlope[frame]
                 data[..., frame] += VisuCoreDataOffs[frame]
@@ -1043,20 +1296,58 @@ class Scheme2dseq(Scheme):
 
         return data
 
-    def _frames_to_framegroups(self, data, **kwargs):
-        return np.reshape(data, self.layouts['frame_groups'], order='F')
+    def _frames_to_framegroups(self, data, layouts, mask=False, **kwargs):
+        if mask:
+            return np.reshape(data, (-1,) + layouts['frame_groups'], order='F')
+        else:
+            return np.reshape(data, layouts['block'] + layouts['frame_groups'], order='F')
 
-    def _frames_to_framegroups(self, data, **kwargs):
-        return np.reshape(data, self.layouts['frame_groups'], order='F')
-
-    def reshape_bw(self, data, **kwargs):
-        data = self._framegroups_to_frames(data, **kwargs)
-        data = self._scale_frame_groups(data, 'BW', **kwargs)
-        data = self._frames_to_vector(data)
+    def reshape_bw(self, data, layouts, scale=True, ra_mask=None, **kwargs):
+        data = self._framegroups_to_frames(data, layouts, **kwargs)
+        data = self._scale_frames(data, 'BW', scale=scale, ra_mask=ra_mask)
         return data
 
     def _frames_to_vector(self, data):
         return data.flatten(order='F')
 
-    def _framegroups_to_frames(self, data, **kwargs):
-        return np.reshape(data, self.layouts['frames'], order='F')
+    def _framegroups_to_frames(self, data, layouts, mask=False, **kwargs):
+        if mask:
+            return np.reshape(data, (-1,) + layouts['frames'], order='F')
+        else:
+            return np.reshape(data, layouts['block'] + layouts['frames'], order='F')
+
+    """
+    Random access
+    """
+    def ra(self, index):
+        ra_index, ra_mask, layouts = self.get_ra_info(index)
+
+        sub_array = np.zeros(layouts['final'], dtype=self.numpy_dtype)
+        sub_array = self.reshape_bw(sub_array, layouts, ra_mask=ra_mask, scale=False)
+
+        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode='r',
+                       shape=layouts['storage'], order='F')
+
+        # fill querry in storage layout
+        for index_, ra_index_ in zip(range(len(ra_index)),ra_index):
+            sub_array[...,index_] = fp[...,ra_index_]
+
+        sub_array = self.reshape_fw(sub_array, layouts, ra_mask=ra_mask, scale=True)
+
+        return sub_array
+
+
+    def get_ra_info(self, index):
+        ra_mask = np.zeros(self._layouts['final'], dtype=bool, order='F')
+        ra_mask[index[self.encoded_dim:]] = True
+
+        ra_shape = self.get_ra_shape(index[self.encoded_dim:])
+        ra_index = self.ra_mask_to_indices(ra_mask)
+
+
+        layouts = deepcopy(self.layouts)
+        layouts['frame_groups'] = ra_shape
+        layouts['frames'] = (np.prod(ra_shape),)
+        layouts['final'] = layouts['block'] + layouts['frame_groups']
+
+        return ra_index, ra_mask, layouts
