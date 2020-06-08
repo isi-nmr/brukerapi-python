@@ -1252,26 +1252,40 @@ class Scheme2dseq(Scheme):
     def rot_matrix(self):
         pass
 
+    @property
+    def num_slice_packages(self):
+        try:
+            return len(self._dataset.get_nested_list('VisuCoreSlicePacksSlices'))
+        except KeyError:
+            return 1
+
     def get_rel_fg_index(self, fg_type):
         try:
             return self.fg_list.index(fg_type)
         except:
             raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
 
-    def reshape_fw(self, data, layouts, scale=True):
+    def scale(self):
+        self._dataset.data = np.reshape(self._dataset.data, self.layouts['storage'], order='F')
+        self._dataset.data = self._scale_frames(self._dataset.data,'FW', self.layouts)
+        self._dataset.data = np.reshape(self._dataset.data, self.layouts['final'], order='F')
 
+    def reshape_fw(self, data, layouts,**kwargs):
+
+        if kwargs.get('scale') is None:
+            scale = True
+        else:
+            scale = kwargs.get('scale')
         # scale
-        data = self._scale_frames(data, 'FW', layouts, scale=scale)
+        if scale:
+            data = self._scale_frames(data, 'FW', layouts)
 
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
 
         return data
 
-    def _scale_frames(self, data, dir, layouts, scale=True, **kwargs):
-
-        if not scale:
-            return data
+    def _scale_frames(self, data, dir, layouts, **kwargs):
 
         data = data.astype(np.float)
         VisuCoreDataSlope = self._dataset.get_array('VisuCoreDataSlope', dtype='f4')

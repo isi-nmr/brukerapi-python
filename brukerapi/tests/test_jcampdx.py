@@ -4,8 +4,10 @@ import numpy as np
 import json
 from pathlib import Path
 
-data_path = Path('C:/data/bruker2nifti_qa') # ['C:/data/', '/home/tomas/data/']
-with open('test_jcampdx_qa.json') as json_file:
+data_path = Path('/home/tomas/data/bruker2nifti_qa')
+config_path = Path('test_jcampdx_qa.json')
+
+with open(config_path) as json_file:
     reference = json.load(json_file)['test_parameter']
 
 class TestJcampdx(unittest.TestCase):
@@ -14,7 +16,9 @@ class TestJcampdx(unittest.TestCase):
 
         for r in reference.values():
             j = JCAMPDX(data_path / r['path'])
+            print("TestJCAMPDX/test_value:{}".format(r['path']))
             for key, ref in r['parameters'].items():
+                print("TestJCAMPDX/test_value:{}/{}".format(r['path'],key))
                 parameter_test  = j.get_parameter(key)
                 size_test= parameter_test.size
                 value_test= parameter_test.value

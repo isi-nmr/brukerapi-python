@@ -15,6 +15,7 @@ GRAMMAR = {
         'SIZE_BRACKET': '^\([^\(\)<>]*\)(?!$)',
         'LIST_DELIMETER': ', ',
         'EQUAL_SIGN': '=',
+        'SINGLE_NUMBER':'-?[\d.]+(?:e[+-]?\d+)?',
         'PARALLEL_BRACKET': '\) ',
         'GEO_OBJ': '\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)',
         'HEADER':'TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER',
@@ -230,14 +231,15 @@ class GenericParameter(Parameter):
 
 
         # int/float
-        try:
-            value = ast.literal_eval(val_str)
+        if len(re.findall(GRAMMAR['SINGLE_NUMBER'],val_str))==1:
+            try:
+                value = ast.literal_eval(val_str)
 
-            # if value is int, or float, return, tuple will be parsed as list later on
-            if isinstance(value, float) or isinstance(value, int):
-                return value
-        except (ValueError, SyntaxError):
-            pass
+                # if value is int, or float, return, tuple will be parsed as list later on
+                if isinstance(value, float) or isinstance(value, int):
+                    return value
+            except (ValueError, SyntaxError):
+                pass
 
         # list
         if val_str.startswith('(') and val_str.endswith(''):
@@ -543,6 +545,9 @@ class JCAMPDX(object):
     @version.setter
     def version(self, value):
         self.version = value
+
+    def keys(self):
+        return self.params.keys()
 
     """
     PUBLIC INTERFACE

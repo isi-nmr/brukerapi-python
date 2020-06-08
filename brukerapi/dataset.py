@@ -85,7 +85,7 @@ class Dataset:
 
         # load data
         if load:
-            self.load()
+            self.load(**kwargs)
 
 
 
@@ -218,7 +218,7 @@ class Dataset:
         if self.random_access:
             self._data = DataRandomAccess(self)
         else:
-            self._data = self._read_data()
+            self._data = self._read_data(**kwargs)
 
     def load_traj(self, **kwargs):
         if Path(self.path.parent / 'traj').exists() and self.type != 'traj':
@@ -274,9 +274,9 @@ class Dataset:
 
         return parameters
 
-    def _read_data(self):
+    def _read_data(self,**kwargs):
         data = self._read_binary_file(self.path, self._scheme.numpy_dtype, self._scheme.layouts['storage'])
-        return self._scheme.reshape(data, dir='FW')
+        return self._scheme.reshape(data, dir='FW',**kwargs)
 
     def _read_binary_file(self, path, dtype, shape):
         """Read Bruker binary file

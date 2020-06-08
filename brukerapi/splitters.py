@@ -37,7 +37,7 @@ class Splitter(object):
         :return:
         """
         VisuCoreDataMin = visu_pars.get_parameter('VisuCoreDataMin')
-        value = np.reshape(VisuCoreDataMin.value, scheme.layouts['frame_groups'][scheme.encoded_dim:], order='F')
+        value = np.reshape(VisuCoreDataMin.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataMin.size = (np.prod(value.shape),)
         VisuCoreDataMin.value = value.flatten(order='F')
@@ -51,7 +51,7 @@ class Splitter(object):
         :return:
         """
         VisuCoreDataMax = visu_pars.get_parameter('VisuCoreDataMax')
-        value = np.reshape(VisuCoreDataMax.value, scheme.layouts['frame_groups'][scheme.encoded_dim:], order='F')
+        value = np.reshape(VisuCoreDataMax.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataMax.size = (np.prod(value.shape),)
         VisuCoreDataMax.value = value.flatten(order='F')
@@ -65,7 +65,7 @@ class Splitter(object):
         :return:
         """
         VisuCoreDataOffs = visu_pars.get_parameter('VisuCoreDataOffs')
-        value = np.reshape(VisuCoreDataOffs.value, scheme.layouts['frame_groups'][scheme.encoded_dim:],order='F')
+        value = np.reshape(VisuCoreDataOffs.value, scheme.layouts['final'][scheme.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataOffs.size = (np.prod(value.shape),)
         VisuCoreDataOffs.value = value.flatten(order='F')
@@ -79,7 +79,7 @@ class Splitter(object):
         :return:
         """
         VisuCoreDataSlope = visu_pars.get_parameter('VisuCoreDataSlope')
-        value = np.reshape(VisuCoreDataSlope.value, scheme.layouts['frame_groups'][scheme.encoded_dim:],order='F')
+        value = np.reshape(VisuCoreDataSlope.value, scheme.layouts['final'][scheme.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataSlope.size = (np.prod(value.shape),)
         VisuCoreDataSlope.value = value.flatten(order='F')
@@ -90,7 +90,7 @@ class Splitter(object):
         except KeyError:
             return VisuCoreTransposition
 
-        value = np.reshape(VisuCoreTransposition.value, scheme.layouts['frame_groups'][scheme.encoded_dim:], order='F')
+        value = np.reshape(VisuCoreTransposition.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
         value = value[index_to_slice(index, value.shape, fg_index - scheme.encoded_dim)]
         VisuCoreTransposition.size = (np.prod(value.shape),)
         VisuCoreTransposition.value = value.flatten(order='F')
@@ -332,7 +332,7 @@ class SlicePackageSplitter(Splitter):
     def split_VisuCoreFrameCount(self, visu_pars, scheme, frame_count, fg_ind_abs):
         VisuCoreFrameCount = visu_pars.get_parameter('VisuCoreFrameCount')
 
-        layout = np.array(scheme.layouts['frame_groups'])
+        layout = np.array(scheme.layouts['final'])
         layout[0:scheme.encoded_dim] = 1
         layout[fg_ind_abs] = 1
         frames = int(frame_count * np.prod(layout))

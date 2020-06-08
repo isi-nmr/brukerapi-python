@@ -58,8 +58,13 @@
                     [1000000, 1000000],
                     [500, 500]
           ]
+        },
+        "ACQ_vd_list": {
+          "size": 1,
+          "type": "float",
+          "value": 1e-6
         }
-        }
+      }
     },
     "SPNAM": {
       "path": "raw/Cyceron_DWI/20170719_075627_Lego_1_1/1/spnam0",
