@@ -120,7 +120,14 @@ class GenericParameter(Parameter):
 
     @property
     def value(self, **kwargs):
-        val_str_list = GenericParameter.split_parallel_lists(self.val_str)
+
+        val_str = re.sub('\n', '', self.val_str)
+
+        # unwrap wrapped list
+        if re.match('@[0-9]*\*',val_str) is not None:
+            val_str = self._unwrap_list(val_str)
+
+        val_str_list = GenericParameter.split_parallel_lists(val_str)
 
         if isinstance(val_str_list, str):
             value = GenericParameter.parse_value(val_str_list)
@@ -342,6 +349,22 @@ class GenericParameter(Parameter):
             lst[i] = restore_right_bra(lst[i])
 
         return lst
+
+    def _unwrap_list(self, val_str):
+
+        while re.search('@[0-9]*\*\(\d*\.?\d*\)', val_str):
+            match = re.search('@[0-9]*\*\(\d*\.?\d*\)', val_str)
+            left = val_str[0:match.start()]
+            right = val_str[match.end():]
+            sub = val_str[match.start():match.end()]
+            size, value = re.split('\*', sub)
+            size = int(size[1:])
+            middle = ''
+            for i in range(size):
+                middle += '{} '.format(value[1:-1])
+            val_str = left + middle[0:-1] + right
+
+        return val_str
 
 
 class HeaderParameter(Parameter):
