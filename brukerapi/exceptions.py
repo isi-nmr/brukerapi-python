@@ -278,3 +278,45 @@ class TrajNotLoaded(Exception):
             return '{}'.format(self.message)
         else:
             return 'TrajNotLoaded'
+
+
+class NotStudyFolder(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return '{}'.format(self.message)
+        else:
+            return 'Not a Bruker study folder.'
+
+
+class NotExperimentFolder(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return '{}'.format(self.message)
+        else:
+            return 'Not a Bruker experiment folder.'
+
+
+class NotProcessingFolder(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return '{}'.format(self.message)
+        else:
+            return 'Not a Bruker processing folder.'

@@ -1,5 +1,5 @@
 from .dataset import Dataset
-from .study import *
+from .folders import *
 from .jcampdx import JCAMPDX
 from .exceptions import *
 import operator
@@ -15,8 +15,9 @@ ops = { "==": operator.eq,
 
 
 class Filter():
-    def __init__(self, in_place=True):
+    def __init__(self, in_place=True, recursive=True):
         self.in_place = in_place
+        self.recursive = recursive
 
     def filter(self, folder):
 
@@ -44,8 +45,9 @@ class Filter():
             except FilterEvalFalse:
                 pass
             finally:
-                if isinstance(node, Folder) or isinstance(node, Study):
-                    q += node._children
+                if self.recursive:
+                    if isinstance(node, Folder) or isinstance(node, Study):
+                        q += node._children
         return count
 
     def list(self, folder):
@@ -60,8 +62,9 @@ class Filter():
             except FilterEvalFalse:
                 pass
             finally:
-                if isinstance(node, Folder) or isinstance(node, Study):
-                    q += node._children
+                if self.recursive:
+                    if isinstance(node, Folder):
+                        q += node._children
         return list
 
     def filter_pass(self, node):
@@ -127,4 +130,23 @@ class DatasetTypeFilter(Filter):
             raise FilterEvalFalse
 
         if node.type != self.value:
+            raise FilterEvalFalse
+
+
+class TypeFilter(Filter):
+    def __init__(self, value, in_place=True, recursive=True):
+        super(TypeFilter, self).__init__(in_place, recursive)
+        self.type = value
+
+    def filter_eval(self, node):
+        if not isinstance(node, self.type):
+            raise FilterEvalFalse
+
+class NameFilter(Filter):
+    def __init__(self, value, in_place=True, recursive=False):
+        super(TypeFilter, self).__init__(in_place, recursive)
+        self.name = value
+
+    def filter_eval(self, node):
+        if node.path.name != node:
             raise FilterEvalFalse

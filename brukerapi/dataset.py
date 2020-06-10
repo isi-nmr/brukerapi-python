@@ -80,12 +80,15 @@ class Dataset:
         # validate path
         self.validate(load)
 
+        # save kwargs
+        self._kwargs = kwargs
+
         # create an empty data set
         self.unload()
 
         # load data
         if load:
-            self.load(**kwargs)
+            self.load()
 
 
 
@@ -103,6 +106,10 @@ class Dataset:
 
     def __getattr__(self, item):
         return self.get_value(item)
+
+    def __call__(self, **kwargs):
+        self._kwargs.update(kwargs)
+        return self
 
     def validate(self, load):
         """Validate Dataset
@@ -149,13 +156,13 @@ class Dataset:
     """
     LOADERS/UNLOADERS
     """
-    def load(self, **kwargs):
+    def load(self):
         """
         Load parameters, scheme and data. In case, there is a traj file related to a fid file, traj is loaded as well.
         """
         self.load_parameters()
         self.load_scheme()
-        self.load_data(**kwargs)
+        self.load_data()
         self.load_traj()
 
     def load_parameters(self, parameters=None):
@@ -211,14 +218,14 @@ class Dataset:
         elif self.type == 'ser':
             self._scheme = SchemeSer(self)
 
-    def load_data(self, **kwargs):
+    def load_data(self):
         """
         Load the data binary file.
         """
         if self.random_access:
             self._data = DataRandomAccess(self)
         else:
-            self._data = self._read_data(**kwargs)
+            self._data = self._read_data()
 
     def load_traj(self, **kwargs):
         if Path(self.path.parent / 'traj').exists() and self.type != 'traj':
@@ -274,9 +281,9 @@ class Dataset:
 
         return parameters
 
-    def _read_data(self,**kwargs):
+    def _read_data(self):
         data = self._read_binary_file(self.path, self._scheme.numpy_dtype, self._scheme.layouts['storage'])
-        return self._scheme.reshape(data, dir='FW',**kwargs)
+        return self._scheme.reshape(data, dir='FW')
 
     def _read_binary_file(self, path, dtype, shape):
         """Read Bruker binary file
@@ -400,6 +407,15 @@ class Dataset:
             except:
                 pass
         raise KeyError
+
+    def get_tuple(self, key):
+        for param_file in self.parameters.values():
+            try:
+                return param_file.get_tuple(key)
+            except:
+                pass
+        raise KeyError
+
 
     def get_array(self, key, dtype=None, shape=None, order='C'):
         for param_file in self.parameters.values():

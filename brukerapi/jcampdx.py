@@ -597,6 +597,14 @@ class JCAMPDX(object):
     def get_float(self, key):
         return float(self.get_value(key))
 
+    def get_tuple(self, key):
+        value = self.get_value(key)
+
+        if isinstance(value, int) or isinstance(value, float):
+            return (value,)
+        else:
+            return tuple(value)
+
     def get_array(self, key, dtype=None, shape=(-1,), order='C'):
         parameter=self.get_parameter(key)
         value = parameter.value

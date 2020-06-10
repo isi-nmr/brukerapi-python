@@ -9,7 +9,7 @@ class Scheme():
     """Base class for all schemes
 
     """
-    def reshape(self, data, dir='FW', layouts=None, **kwargs):
+    def reshape(self, data, dir='FW', layouts=None):
         """ Reshape data according to the content of layouts
 
         :param data:
@@ -22,9 +22,9 @@ class Scheme():
             layouts = self.layouts
 
         if dir == 'FW':
-            return self.reshape_fw(data, layouts, **kwargs)
+            return self.reshape_fw(data, layouts)
         elif dir == 'BW':
-            return self.reshape_bw(data, layouts, **kwargs)
+            return self.reshape_bw(data, layouts)
 
     def reload(self):
         """Update contents of scheme, typically after change of parameters
@@ -525,7 +525,7 @@ class SchemeFid(Scheme):
         return axes
 
 
-    def reshape_fw(self, data, layouts, **kwargs):
+    def reshape_fw(self, data, layouts):
 
         data = self._acquisition_trim(data, layouts)
 
@@ -625,7 +625,7 @@ class SchemeFid(Scheme):
             data[index_odd] = tmp[::-1,:]
         return data
 
-    def reshape_bw(self, data, layouts, **kwargs):
+    def reshape_bw(self, data, layouts):
 
         if self._meta['id'] == 'EPI':
             data = self._mirror_odd_lines(data)
@@ -973,10 +973,10 @@ class SchemeRawdata(Scheme):
     def dim_type(self):
         return ["kspace_encode_step_0","channel", "kspace_encode_step_1"]
 
-    def reshape_fw(self, data, layouts, **kwargs):
+    def reshape_fw(self, data, layouts):
         return data[0,...] + 1j * data[1,...]
 
-    def reshape_bw(self, data, layouts, **kwargs):
+    def reshape_bw(self, data, layouts):
         data_ = np.zeros(layouts['storage'], dtype=self.numpy_dtype, order='F')
         data_[0,...] = data.real
         data_[1, ...] = data.imag
@@ -1030,12 +1030,12 @@ class SchemeSer(Scheme):
 
         return np.dtype('i4')
 
-    def reshape_fw(self, data, **kwargs):
+    def reshape_fw(self, data):
         data = data[0::2] + 1j * data[1::2]
         data = np.reshape(data, self.layouts['raw'], order='F')
         return data
 
-    def reshape_bw(self, data, **kwargs):
+    def reshape_bw(self, data):
         raise NotImplemented
 
 
@@ -1126,15 +1126,11 @@ class Scheme2dseq(Scheme):
 
         shapes['frame_groups'] = tuple(dim_size)
         shapes['frames'] = (self.frame_count,)
-        shapes['block'] = tuple(self._dataset.VisuCoreSize)
+        shapes['block'] = self._dataset.get_tuple('VisuCoreSize')
         shapes['storage'] = shapes['block'] + (np.prod(dim_size, dtype=int),)
         shapes['final'] = shapes['block'] + shapes['frame_groups']
 
         return shapes
-
-    @property
-    def final_layout(self):
-        return self.layouts['frame_groups']
 
     @property
     def dim_size(self):
@@ -1270,12 +1266,12 @@ class Scheme2dseq(Scheme):
         self._dataset.data = self._scale_frames(self._dataset.data,'FW', self.layouts)
         self._dataset.data = np.reshape(self._dataset.data, self.layouts['final'], order='F')
 
-    def reshape_fw(self, data, layouts,**kwargs):
+    def reshape_fw(self, data, layouts):
 
-        if kwargs.get('scale') is None:
+        if self._dataset._kwargs.get('scale') is None:
             scale = True
         else:
-            scale = kwargs.get('scale')
+            scale = self._dataset._kwargs.get('scale')
         # scale
         if scale:
             data = self._scale_frames(data, 'FW', layouts)
@@ -1285,7 +1281,7 @@ class Scheme2dseq(Scheme):
 
         return data
 
-    def _scale_frames(self, data, dir, layouts, **kwargs):
+    def _scale_frames(self, data, dir, layouts):
 
         data = data.astype(np.float)
         VisuCoreDataSlope = self._dataset.get_array('VisuCoreDataSlope', dtype='f4')
@@ -1304,21 +1300,21 @@ class Scheme2dseq(Scheme):
 
         return data
 
-    def _frames_to_framegroups(self, data, layouts, mask=False, **kwargs):
+    def _frames_to_framegroups(self, data, layouts, mask=False):
         if mask:
             return np.reshape(data, (-1,) + layouts['frame_groups'], order='F')
         else:
             return np.reshape(data, layouts['block'] + layouts['frame_groups'], order='F')
 
-    def reshape_bw(self, data, layouts, scale=True, ra_mask=None, **kwargs):
-        data = self._framegroups_to_frames(data, layouts, **kwargs)
+    def reshape_bw(self, data, layouts, scale=True, ra_mask=None):
+        data = self._framegroups_to_frames(data, layouts)
         data = self._scale_frames(data, 'BW', layouts, scale=scale)
         return data
 
     def _frames_to_vector(self, data):
         return data.flatten(order='F')
 
-    def _framegroups_to_frames(self, data, layouts, mask=False, **kwargs):
+    def _framegroups_to_frames(self, data, layouts, mask=False):
         if mask:
             return np.reshape(data, (-1,) + layouts['frames'], order='F')
         else:
