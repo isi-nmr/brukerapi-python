@@ -136,6 +136,7 @@ docs/build
 
 # test results
 brukerapi/tests/results/
+test/results
 
 # tmp
 examples/tmp/

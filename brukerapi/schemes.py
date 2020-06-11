@@ -1306,9 +1306,9 @@ class Scheme2dseq(Scheme):
         else:
             return np.reshape(data, layouts['block'] + layouts['frame_groups'], order='F')
 
-    def reshape_bw(self, data, layouts, scale=True, ra_mask=None):
+    def reshape_bw(self, data, layouts, ra_mask=None):
         data = self._framegroups_to_frames(data, layouts)
-        data = self._scale_frames(data, 'BW', layouts, scale=scale)
+        data = self._scale_frames(data, 'BW', layouts)
         return data
 
     def _frames_to_vector(self, data):
