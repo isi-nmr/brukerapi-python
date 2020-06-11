@@ -30,7 +30,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Download test data
       run: |
-        apt-get install git-lfs
         git lfs clone https://gitlab.com/naveau/bruker2nifti_qa.git
     - name: Install brukerapi
       run: |
