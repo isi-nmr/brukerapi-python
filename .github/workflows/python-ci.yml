@@ -31,8 +31,6 @@ jobs:
     - name: Download test data
       run: |
         git clone https://gitlab.com/naveau/bruker2nifti_qa.git
-        export DATA_DIR=$PWD/bruker2nifti_qa
-        echo $DATA_DIR
     - name: Install brukerapi
       run: |
         git clone https://github.com/isi-nmr/brukerapi-python.git
@@ -41,5 +39,4 @@ jobs:
     - name: Test with pytest
       run: |
         cd brukerapi-python
-        echo $DATA_DIR
-        python -m pytest --test_data $DATA_DIR --test_config test_config.json
+        python -m pytest --test_data /home/runner/work/brukerapi-python/brukerapi-python/bruker2nifti_qa/raw --test_config test_config.json
