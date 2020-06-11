@@ -1,14 +1,16 @@
 from brukerapi.dataset import Dataset
 import numpy as np
 
-def test_ra(test_ra_data, data_path):
+from pathlib import Path
 
-    d1 = Dataset(data_path/test_ra_data['path'])
+def test_ra(test_ra_data):
+
+    d1 = Dataset(Path(test_ra_data[1])/test_ra_data[0]['path'])
     core_index = tuple(slice(None) for i in range(d1.encoded_dim))
-    d2 = Dataset(data_path/test_ra_data['path'], random_access=True)
+    d2 = Dataset(Path(test_ra_data[1])/test_ra_data[0]['path'], random_access=True)
 
-    if "slices" in test_ra_data.keys():
-        for s in test_ra_data['slices']:
+    if "slices" in test_ra_data[0].keys():
+        for s in test_ra_data[0]['slices']:
             slice_ = json_to_slice(s)
             assert np.array_equal(d1.data[slice_], d2.data[slice_])
     else:

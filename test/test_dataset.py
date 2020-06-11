@@ -8,19 +8,19 @@ import shutil
 import pytest
 
 
-def test_read(test_io_data, data_path):
-    d = Dataset(data_path / test_io_data['path'], load=False)
+def test_read(test_io_data):
+    d = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'], load=False)
     d.load_parameters()
     d.load_scheme()
     # Test if schemes are loaded correctly
-    schemes_one(d, test_io_data)
+    schemes_one(d, test_io_data[0])
     d.load_data()
     # Test if schemes are loaded correctly
     read_one(d)
 
 
-def test_write(test_io_data, data_path, tmp_path, WRITE_TOLERANCE):
-    d_ref = Dataset(data_path / test_io_data['path'])
+def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
+    d_ref = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'])
 
     if d_ref.subtype is None:
         path_out = tmp_path / d_ref.type
@@ -45,7 +45,7 @@ def test_write(test_io_data, data_path, tmp_path, WRITE_TOLERANCE):
         except AssertionError as e:
             raise e
 
-    schemes_one(d_test, test_io_data)
+    schemes_one(d_test, test_io_data[0])
 
 
 def schemes_one(d, r):

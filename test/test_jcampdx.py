@@ -1,11 +1,11 @@
 from brukerapi.jcampdx import JCAMPDX
 import numpy as np
+from pathlib import Path
 
+def test_jcampdx(test_jcampdx_data):
 
-def test_jcampdx(test_jcampdx_data, data_path):
-
-    j = JCAMPDX(data_path / test_jcampdx_data['path'])
-    for key, ref in test_jcampdx_data['parameters'].items():
+    j = JCAMPDX(Path(test_jcampdx_data[1]) / test_jcampdx_data[0]['path'])
+    for key, ref in test_jcampdx_data[0]['parameters'].items():
         parameter_test  = j.get_parameter(key)
         size_test= parameter_test.size
         value_test= parameter_test.value
