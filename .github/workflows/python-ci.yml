@@ -30,7 +30,8 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Download test data
       run: |
-        git lfs clone https://gitlab.com/naveau/bruker2nifti_qa.git
+        git clone https://gitlab.com/naveau/bruker2nifti_qa.git
+        export DATA_DIR=$PWD/bruker2nifti_qa
     - name: Install brukerapi
       run: |
         git clone https://github.com/isi-nmr/brukerapi-python.git
@@ -38,4 +39,5 @@ jobs:
         python brukerapi-python/setup.py install
     - name: Test with pytest
       run: |
-        python -m pytest --test_data test_data.json
+        cd brukerapi-python
+        python -m pytest --test_data $DATA_DIR --test_config test_config.json
