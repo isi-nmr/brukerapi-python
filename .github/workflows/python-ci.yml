@@ -31,12 +31,13 @@ jobs:
     - name: Download test data
       run: |
         git clone https://gitlab.com/naveau/bruker2nifti_qa.git
-    - name: Install brukerapi
+    - name: Install brukerapi and test with pytest
       run: |
         git clone https://github.com/isi-nmr/brukerapi-python.git
-        python brukerapi-python/setup.py build
-        python brukerapi-python/setup.py install
-    - name: Test with pytest
-      run: |
         cd brukerapi-python
-        python -m pytest --test_data /home/runner/work/brukerapi-python/brukerapi-python/bruker2nifti_qa/raw --test_config test_config.json
+        python setup.py build
+        python setup.py install
+        cd test
+        git clone https://gitlab.com/naveau/bruker2nifti_qa.git
+        python -m pytest --test_data bruker2nifti_qa/raw --test_config test_config.json
+
