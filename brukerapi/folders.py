@@ -130,6 +130,25 @@ class Folder():
         else:
             return True
 
+    def print(self, level=0, recursive=True):
+        """
+        Function to print structure of the folder recursively
+        :param level:
+        :return:
+        """
+        if level == 0:
+            prefix=''
+        else:
+            prefix = '{}|--'.format('  ' * level)
+
+        print('{} {}[{}]'.format(prefix,self.path.name, self.__class__.__name__))
+
+        for child in self._children:
+            if isinstance(child, Folder) and recursive:
+                child.print(level=level+1)
+            else:
+                print('{} {}[{}]'.format('  '+prefix,child.path.name, child.__class__.__name__))
+
 class Study(Folder):
     def __init__(self, path, recursive=True):
         path = Path(path)
