@@ -1,0 +1,1092 @@
+{
+  "test_io":{
+    "FID_FLASH":{
+      "comment": "angio mode off",
+      "path":"20200612_094625_lego_phantom_3_1_2/3/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_FLASH_AM_ON":{
+      "comment": "angio mode on",
+      "path":"20200612_094625_lego_phantom_3_1_2/4/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_IgFLASH":{
+      "comment":"segments, oversampling",
+      "path":"20200612_094625_lego_phantom_3_1_2/5/fid",
+            "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_MGE":{
+      "comment":"slice gap 2mm",
+      "path":"20200612_094625_lego_phantom_3_1_2/6/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_MSME":{
+      "comment":"single slice, 2mm, 2echo images, 2 echo averages",
+      "path":"20200612_094625_lego_phantom_3_1_2/7/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_RARE":{
+      "comment":"3 slice packages 5,3,5",
+      "path":"20200612_094625_lego_phantom_3_1_2/8/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_FAIR_RARE":{
+      "comment":"3 TI images, offsets",
+      "path":"20200612_094625_lego_phantom_3_1_2/9/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_RAREVTR":{
+      "comment":"offsets",
+      "path":"20200612_094625_lego_phantom_3_1_2/10/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+      
+    },
+    "FID_RAREst":{
+      "comment":"rare factor 71, slices, reverse interlaced",
+      "path":"20200612_094625_lego_phantom_3_1_2/11/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_MDEFT":{
+      "comment":"3d acq",
+      "path":"20200612_094625_lego_phantom_3_1_2/12/fid",
+            "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_FISP":{
+      "comment":"3 seg, 2 movie frames,6 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/13/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_FLOWMAP":{
+      "comment":"reverse interleaced",
+      "path":"20200612_094625_lego_phantom_3_1_2/14/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_DTI_STANDARD":{
+      "comment":"2 slices, 5 directions",
+      "path":"20200612_094625_lego_phantom_3_1_2/15/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_EPI":{
+      "comment":"3 segments, pf 1.2, navigators",
+      "path":"20200612_094625_lego_phantom_3_1_2/16/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_FAIR_EPI":{
+      "comment":"4 segments, 3 ti images",
+      "path":"20200612_094625_lego_phantom_3_1_2/17/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_CASL_EPI":{
+      "comment":"2 segments, 3 control images, 1 label image",
+      "path":"20200612_094625_lego_phantom_3_1_2/18/fid","acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_DtiEpi":{
+      "comment":"2 segments, 7 dir, 4exp, single nav",
+      "path":"20200612_094625_lego_phantom_3_1_2/19/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_T1_EPI":{
+      "comment":"2 segments, 7 dir, 4exp, single nav",
+      "path":"20200612_094625_lego_phantom_3_1_2/20/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T2_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/21/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T2S_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/22/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_SPIRAL":{
+      "comment":"16 inter, 3 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/23/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_DtiSpiral":{
+      "comment":"16 inter, 3 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/24/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_UTE_Axial":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/25/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_UTE_Sagital":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/26/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_UTE_Coronal":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/27/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_UTE3D":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/28/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_ZTE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/29/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_CSI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/30/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_FieldMap":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/31/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_SinglePulse":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/32/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_NSPECT":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/33/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_EPSI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/34/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_PRESS":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/35/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_STEAM":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/36/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_ISIS":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/37/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_CPMG":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/38/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_RfProfile":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/39/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_Velocity_map":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/40/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_DTI_EPI_3D_40Dir":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/48/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "FID_Perfusion_FAIR_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/42/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T1map_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/43/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T2map_MSME":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/44/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T2star_FID_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/45/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+
+    },
+    "FID_T2_TURBO_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/47/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [],
+        "acquisition_position": [],
+        "encoding_space": [],
+        "k_space": []
+      },
+      "dim_type": ["kspace_encode_step_0", "kspace_encode_step_1", "slice", "repetition", "channel"]
+    },
+    "2DSEQ_FLASH":{
+      "comment": "angio mode off",
+      "path":"20200612_094625_lego_phantom_3_1_2/3/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_FLASH_AM_ON":{
+      "comment": "angio mode on",
+      "path":"20200612_094625_lego_phantom_3_1_2/4/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_IgFLASH":{
+      "comment":"segments, oversampling",
+      "path":"20200612_094625_lego_phantom_3_1_2/5/pdata/1/2dseq",
+      
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_MGE":{
+      "comment":"slice gap 2mm",
+      "path":"20200612_094625_lego_phantom_3_1_2/6/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_MSME":{
+      "comment":"single slice, 2mm, 2echo images, 2 echo averages",
+      "path":"20200612_094625_lego_phantom_3_1_2/7/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_RARE":{
+      "comment":"3 slice packages 5,3,5",
+      "path":"20200612_094625_lego_phantom_3_1_2/8/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_FAIR_RARE":{
+      "comment":"3 TI images, offsets",
+      "path":"20200612_094625_lego_phantom_3_1_2/9/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_RAREVTR":{
+      "comment":"offsets",
+      "path":"20200612_094625_lego_phantom_3_1_2/10/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+      
+    },
+    "2DSEQ_RAREst":{
+      "comment":"rare factor 71, slices, reverse interlaced",
+      "path":"20200612_094625_lego_phantom_3_1_2/11/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_MDEFT":{
+      "comment":"3d acq",
+      "path":"20200612_094625_lego_phantom_3_1_2/12/pdata/1/2dseq",
+      
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_FISP":{
+      "comment":"3 seg, 2 movie frames,6 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/13/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_FLOWMAP":{
+      "comment":"reverse interleaced",
+      "path":"20200612_094625_lego_phantom_3_1_2/14/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_DTI_STANDARD":{
+      "comment":"2 slices, 5 directions",
+      "path":"20200612_094625_lego_phantom_3_1_2/15/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_EPI":{
+      "comment":"3 segments, pf 1.2, navigators",
+      "path":"20200612_094625_lego_phantom_3_1_2/16/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_FAIR_EPI":{
+      "comment":"4 segments, 3 ti images",
+      "path":"20200612_094625_lego_phantom_3_1_2/17/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_CASL_EPI":{
+      "comment":"2 segments, 3 control images, 1 label image",
+      "path":"20200612_094625_lego_phantom_3_1_2/18/pdata/1/2dseq","acq_scheme": "CART_2D",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_DtiEpi":{
+      "comment":"2 segments, 7 dir, 4exp, single nav",
+      "path":"20200612_094625_lego_phantom_3_1_2/19/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_T1_EPI":{
+      "comment":"2 segments, 7 dir, 4exp, single nav",
+      "path":"20200612_094625_lego_phantom_3_1_2/20/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T2_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/21/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T2S_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/22/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_SPIRAL":{
+      "comment":"16 inter, 3 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/23/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_DtiSpiral":{
+      "comment":"16 inter, 3 slices",
+      "path":"20200612_094625_lego_phantom_3_1_2/24/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_UTE_Axial":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/25/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_UTE_Sagital":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/26/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_UTE_Coronal":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/27/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_UTE3D":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/28/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_ZTE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/29/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_CSI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/30/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_FieldMap":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/31/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_SinglePulse":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/32/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_NSPECT":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/33/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_EPSI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/34/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_PRESS":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/35/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_STEAM":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/36/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_ISIS":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/37/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_CPMG":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/38/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_RfProfile":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/39/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_Velocity_map":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/40/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_DTI_EPI_3D_40Dir":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/48/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    },
+    "2DSEQ_Perfusion_FAIR_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/42/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T1map_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/43/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T2map_MSME":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/44/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T2star_FID_EPI":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/45/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+
+    },
+    "2DSEQ_T2_TURBO_RARE":{
+      "comment":"",
+      "path":"20200612_094625_lego_phantom_3_1_2/47/pdata/1/2dseq",
+
+      "layouts": {
+        "frame_groups": [],
+        "frames": [],
+        
+        "block": []
+      },
+      "dim_type": []
+    }
+  }
+}

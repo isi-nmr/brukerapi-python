@@ -39,5 +39,5 @@ jobs:
         python setup.py install
         cd test
         git clone https://gitlab.com/naveau/bruker2nifti_qa.git
-        python -m pytest --test_data bruker2nifti_qa/raw --test_config test_config.json
+        python -m pytest --test_data bruker2nifti_qa/raw --test_config config/test_config_qa.json
 
