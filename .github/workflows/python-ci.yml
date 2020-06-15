@@ -40,7 +40,7 @@ jobs:
       run: |
         cd brukerapi-python/test
         git clone https://gitlab.com/naveau/bruker2nifti_qa.git
-        python -m pytest --test_data bruker2nifti_qa/raw --test_config config/test_config_qa.json
+        python -m pytest --test_data bruker2nifti_qa/raw --test_config config/test_config_qa.json -v
 
 
     - name: Test using the PV6.0.1 test data set
@@ -48,4 +48,4 @@ jobs:
         cd brukerapi-python/test
         zenodo_get 10.5281/zenodo.3894651
         unzip 20200612_094625_lego_phantom_3_1_2.zip
-        python -m pytest --test_data "" --test_config "config/test_config_pv601.json"
+        python -m pytest --test_data "" --test_config "config/test_config_pv601.json" -v
