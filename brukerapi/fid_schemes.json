@@ -12,7 +12,10 @@
       "FcFLASH.ppg",
       "DtiStandard.ppg",
       "FISP.ppg",
-      "MSME.ppg"
+      "MSME.ppg",
+      "FAIR_RARE.ppg",
+      "RAREst.ppg",
+      "FLOWMAP.ppg"
     ],
     "block_count": [
       "NI*NR*PVM_EncMatrix[1]"
@@ -60,7 +63,8 @@
       "RAREVTR.ppg",
       "MGE.ppg","RARE.ppg",
       "FLASHAngio.ppg",
-      "FISP.ppg"
+      "FISP.ppg",
+      "MDEFT.ppg"
     ],
     "block_count": [
       "PVM_EncMatrix[1]*PVM_EncMatrix[2]*NR"
@@ -190,6 +194,54 @@
       "channel"
     ]
   },
+  "ZTE" : {
+    "id":"ZTE",
+    "pv_version": ["5.1", "6.0","6.0.1","360"],
+    "sequences": [
+      "ZTE.ppg"
+    ],
+    "encoding_space_shape": [
+      "ACQ_size[0]/2",
+      "PVM_EncNReceivers",
+      "ACQ_phase_factor",
+      "NI",
+      "NPro / ACQ_phase_factor",
+      "NR"
+    ],
+    "k_space_shape":[
+      "ACQ_size[0]/2",
+      "NPro",
+      "NI",
+      "NR",
+      "PVM_EncNReceivers"
+    ],
+    "permute_scheme":[0,2,4,3,5,1],
+    "block_count": ["NPro*NI*NR"],
+    "traj": {
+      "traj_type": "radial",
+      "storage":["ACQ_dim","ACQ_size[0]/2","NPro"],
+      "final":["ACQ_dim","ACQ_size[0]/2","NPro"],
+      "permute":[0, 1, 2]
+    },
+    "sub_params": [
+      "ACQ_size",
+      "ACQ_dim",
+      "ACQ_phase_factor",
+      "PVM_EncMatrix",
+      "NI",
+      "NPro",
+      "NR",
+      "PVM_EncNReceivers"
+    ],
+    "conditions": [],
+    "k_space_dim_desc": [
+      "kspace_encode_step_0",
+      "kspace_encode_step_1",
+      "kspace_encode_step_2",
+      "repetition",
+      "channel"
+    ]
+  },
   "CSI_360" : {
     "id":"CSI",
     "pv_version": ["360"],
@@ -251,10 +303,17 @@
     "pv_version": ["5.1", "6.0","6.0.1","360"],
     "sequences": [
       "PRESS.ppg",
-      "STEAM.ppg"],
+      "STEAM.ppg",
+      "SINGLEPULSE.ppg",
+      "NSPECT.ppg",
+      "ISIS.ppg",
+      "CPMG.ppg",
+      "RfProfile.ppg"
+    ],
     "encoding_space_shape": ["ACQ_size/2", "NR"],
     "k_space_shape":["ACQ_size/2", "NR"],
     "permute_scheme":[0,1],
+    "block_count": ["NR"],
     "sub_params":[
       "ACQ_size",
       "NR",
@@ -263,14 +322,24 @@
     "conditions": [],
     "k_space_dim_desc": [
       "kspace_encode_step_0",
-      "kspace_encode_step_1"
+      "repetition"
     ]
 
   },
   "EPI" : {
     "id":"EPI",
     "pv_version": ["5.1", "6.0","6.0.1","360"],
-    "sequences": ["EPI.ppg","DtiEpi.ppg","navigatorEPI_OM.ppg","EPSI.ppg"],
+    "sequences": [
+      "EPI.ppg",
+      "DtiEpi.ppg",
+      "navigatorEPI_OM.ppg",
+      "EPSI.ppg",
+      "FAIR_EPI.ppg",
+      "CASL_EPI.ppg",
+      "T1_EPI.ppg",
+      "T2_EPI.ppg",
+      "T2S_EPI.ppg"
+    ],
     "encoding_space_shape": [
       "PVM_EncMatrix[0] * PVM_EncMatrix[1] / NSegments",
       "PVM_EncNReceivers",
@@ -307,6 +376,57 @@
     ],
     "block_count": [
       "NSegments*NI*NR"
+    ]
+  },
+  "SPIRAL" : {
+    "id":"SPIRAL",
+    "pv_version": ["5.1", "6.0","6.0.1","360"],
+    "sequences": [
+      "SPIRAL.ppg",
+      "DtiSpiral.ppg"
+    ],
+    "block_count": [
+      "PVM_SpiralNbOfInterleaves*NI*NR"
+    ],
+    "traj": {
+      "traj_type": "spiral",
+      "storage":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
+      "final":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
+      "permute":[0, 1, 2]
+    },
+    "encoding_space_shape": [
+      "ACQ_size[0]/2",
+      "PVM_EncNReceivers",
+      "PVM_SpiralNbOfInterleaves",
+      "NI",
+      "NR"
+    ],
+    "k_space_shape":[
+      "ACQ_size[0]/2",
+      "PVM_SpiralNbOfInterleaves",
+      "NI",
+      "NR",
+      "PVM_EncNReceivers"
+    ],
+    "permute_scheme":[0,2,3,4,1],
+    "sub_params":[
+      "ACQ_size",
+      "PVM_SpiralNbOfInterleaves",
+      "NI",
+      "NR",
+      "PVM_EncNReceivers",
+      "NR",
+      "PVM_TrajDims",
+      "PVM_TrajSamples",
+      "PVM_TrajIntAll"
+    ],
+    "conditions": [],
+    "k_space_dim_desc": [
+      "kspace_encode_step_0",
+      "kspace_encode_step_1",
+      "slice",
+      "repetition",
+      "channel"
     ]
   },
   "GA" : {

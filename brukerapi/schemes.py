@@ -182,6 +182,7 @@ class Scheme():
         shape = ()
 
         # this is necessary to allow to calculate
+        # TODO add exception indicating parameter missing in scheme
         for shape_entry in shape_list:
             for parameter in self._sub_params:
                 shape_entry = re.sub(re.compile(r'\b%s\b' % parameter, re.I),
@@ -427,7 +428,8 @@ class SchemeFid(Scheme):
         if GO_block_size == 'Standard_KBlock_Format':
             return ACQ_size[0] * PVM_EncNReceivers
         else:
-            return 2 * np.prod(self._dataset.PVM_EncMatrix,dtype=int)  * PVM_EncNReceivers // self._dataset.NSegments
+            return 2 * np.prod(self._dataset.PVM_EncMatrix[0:2],dtype=int)  * PVM_EncNReceivers // \
+                   self._dataset.NSegments
 
 
     @property
