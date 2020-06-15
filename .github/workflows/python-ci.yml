@@ -29,7 +29,7 @@ jobs:
         pip install pytest
         pip install zenodo_get
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Install brukerapi and test with pytest
+    - name: Install brukerapi
       run: |
         git clone https://github.com/isi-nmr/brukerapi-python.git
         cd brukerapi-python
@@ -48,4 +48,4 @@ jobs:
         cd brukerapi-python/test
         zenodo_get 10.5281/zenodo.3894651
         unzip 20200612_094625_lego_phantom_3_1_2.zip
-        python -m pytest --test_data "20200612_094625_lego_phantom_3_1_2" --test_config "config/test_config_pv601.json"
+        python -m pytest --test_data "" --test_config "config/test_config_pv601.json"
