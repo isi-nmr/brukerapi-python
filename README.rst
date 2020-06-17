@@ -97,6 +97,7 @@ Testing
 To ensure reliability, every commit to this repository is tested against the following, publicly available
 data sets:
 
+* `BrukerAPI test data set (Bruker ParaVision v5.1) <https://doi.org/10.5281/zenodo.3899268>`_
 * `BrukerAPI test data set (Bruker ParaVision v6.0.1) <https://doi.org/10.5281/zenodo.3894651>`_
 * `bruker2nifti_qa data set <https://gitlab.com/naveau/bruker2nifti_qa>`_
 
@@ -118,18 +119,33 @@ Compatible data set types:
 Compatible pulse sequences for **fid** data sets:
 
 * FLASH.ppg
-* FISP.ppg
+* MGE.ppg
+* MSME.ppg
 * RARE.ppg
+* FAIR_RARE.ppg
+* RAREVTR.ppg
+* RAREst.ppg
+* MDEFT.ppg
+* FISP.ppg
+* FLOWMAP.ppg
+* DtiStandard.ppg
 * EPI.ppg
+* FAIR_EPI.ppg
 * DtiEpi.ppg
+* T1_EPI.ppg
+* T2_EPI.ppg
+* T2S_EPI.ppg
+* SPIRAL.ppg
+* DtiSpiral.ppg
 * UTE.ppg
 * UTE3D.ppg
+* ZTE.ppg
 * CSI.ppg
 * FieldMap.ppg
+* NSPECT.ppg
 * PRESS.ppg
 * STEAM.ppg
-
-
+* igFLASH.ppg
 
 ParaVision v6.0.1
 """""""""""""""""
