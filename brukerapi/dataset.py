@@ -297,6 +297,12 @@ class Dataset:
         -------
         1D ndarray containing the full data vector
         """
+        # TODO debug with this
+        # try:
+        #     assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
+        # except AssertionError:
+        #     raise ValueError('Dimension missmatch')
+
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order='F')[:])
 
 

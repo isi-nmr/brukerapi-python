@@ -15,7 +15,9 @@
       "MSME.ppg",
       "FAIR_RARE.ppg",
       "RAREst.ppg",
-      "FLOWMAP.ppg"
+      "FLOWMAP.ppg",
+      "MDEFT.ppg",
+      "igFLASH.ppg"
     ],
     "block_count": [
       "NI*NR*PVM_EncMatrix[1]"
@@ -67,19 +69,19 @@
       "MDEFT.ppg"
     ],
     "block_count": [
-      "PVM_EncMatrix[1]*PVM_EncMatrix[2]*NR"
+      "ACQ_size[1]*ACQ_size[2]*NR"
     ],
     "encoding_space_shape": [
       "ACQ_size[0]/2",
       "PVM_EncNReceivers",
       "ACQ_phase_factor",
-      "PVM_EncMatrix[2]",
-      "PVM_EncMatrix[1] / ACQ_phase_factor",
+      "ACQ_size[2]",
+      "ACQ_size[1] / ACQ_phase_factor",
       "NR"],
     "k_space_shape":[
       "PVM_EncMatrix[0]",
-      "PVM_EncMatrix[1]",
-      "PVM_EncMatrix[2]",
+      "ACQ_size[1]",
+      "ACQ_size[2]",
       "NR",
       "PVM_EncNReceivers"
     ],
@@ -168,8 +170,8 @@
     "block_count": ["NPro*NI*NR"],
     "traj": {
       "traj_type": "radial",
-      "storage":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
-      "final":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
+      "storage":["ACQ_dim","ACQ_size[0]/2","NPro"],
+      "final":["ACQ_dim","ACQ_size[0]/2","NPro"],
       "permute":[0, 1, 2]
     },
     "sub_params": [
@@ -180,10 +182,7 @@
       "NI",
       "NPro",
       "NR",
-      "PVM_EncNReceivers",
-      "PVM_TrajDims",
-      "PVM_TrajSamples",
-      "PVM_TrajIntAll"
+      "PVM_EncNReceivers"
     ],
     "conditions": [],
     "k_space_dim_desc": [
@@ -308,7 +307,8 @@
       "NSPECT.ppg",
       "ISIS.ppg",
       "CPMG.ppg",
-      "RfProfile.ppg"
+      "RfProfile.ppg",
+      "fmap_fq.ppg"
     ],
     "encoding_space_shape": ["ACQ_size/2", "NR"],
     "k_space_shape":["ACQ_size/2", "NR"],
@@ -390,8 +390,8 @@
     ],
     "traj": {
       "traj_type": "spiral",
-      "storage":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
-      "final":["PVM_TrajDims","PVM_TrajSamples", "PVM_TrajIntAll"],
+      "storage":["ACQ_dim","ACQ_size[0]/2", "PVM_SpiralNbOfInterleaves"],
+      "final":["ACQ_dim","ACQ_size[0]/2", "PVM_SpiralNbOfInterleaves"],
       "permute":[0, 1, 2]
     },
     "encoding_space_shape": [
@@ -410,15 +410,13 @@
     ],
     "permute_scheme":[0,2,3,4,1],
     "sub_params":[
+      "ACQ_dim",
       "ACQ_size",
       "PVM_SpiralNbOfInterleaves",
       "NI",
       "NR",
       "PVM_EncNReceivers",
-      "NR",
-      "PVM_TrajDims",
-      "PVM_TrajSamples",
-      "PVM_TrajIntAll"
+      "NR"
     ],
     "conditions": [],
     "k_space_dim_desc": [

@@ -1,0 +1,563 @@
+{
+  "test_io":{
+    "FID_TRIPILOT":{
+      "path":"0.2H2/1/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 1920],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 1, 15, 128, 1],
+        "k_space": [128, 128, 15, 1, 1]
+      }
+    },
+    "FID_FLASH":{
+      "path":"0.2H2/2/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [512, 768],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 1, 3, 256, 1],
+        "k_space": [256, 256, 3, 1, 1]
+      }
+    },
+    "FID_MGE":{
+      "path":"0.2H2/3/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [512, 18432],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 1, 72, 256, 1],
+        "k_space": [256, 256, 72, 1, 1]
+      }
+    },
+    "FID_MSME":{
+      "path":"0.2H2/4/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [512, 2048],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 1, 8, 256, 1],
+        "k_space": [256, 256, 8, 1, 1]
+      }
+    },
+    "FID_RARE":{
+      "path":"0.2H2/5/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [512, 4608],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 8, 6, 32, 3],
+        "k_space": [256, 256, 6, 3, 1]
+      }
+    },
+    "FID_FAIR_RARE":{
+      "path":"0.2H2/6/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 1240],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 31, 1, 2, 20],
+        "k_space": [128, 62, 1, 20, 1]
+      }
+    },
+    "FID_RAREVTR":{
+      "path":"0.2H2/7/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 2560],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 2, 20, 64, 1],
+        "k_space": [128, 128, 20, 1, 1]
+      }
+    },
+    "FID_RAREst":{
+      "path":"0.2H2/8/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [512, 264],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 33, 1, 4, 2],
+        "k_space": [256, 132, 1, 2, 1]
+      }
+    },
+    "FID_MDEFT":{
+      "path":"0.2H2/9/fid",
+      "acq_scheme": "CART_3D",
+      "layouts": {
+        "storage": [512, 2560],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 32, 10, 8, 1],
+        "k_space": [256, 256, 10, 1, 1]
+      }
+    },
+    "FID_FISP_3D":{
+      "path":"0.2H2/10/fid",
+      "acq_scheme": "CART_3D",
+      "layouts": {
+        "storage": [256, 16000],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 25, 128, 5, 1],
+        "k_space": [128, 125, 128, 1, 1]
+      }
+    },
+    "FID_FLOWMAP":{
+      "path":"0.2H2/11/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [1024, 768],
+        "acquisition_position": [0, 1024],
+        "encoding_space": [512, 1, 1, 2, 384, 1],
+        "k_space": [512, 384, 2, 1, 1]
+      }
+    },
+    "FID_DTI_STANDARD":{
+      "path":"0.2H2/12/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 1792],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 1, 14, 128, 1],
+        "k_space": [128, 128, 14, 1, 1]
+      }
+    },
+    "FID_EPI":{
+      "path":"0.2H2/13/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [2690, 12],
+        "acquisition_position": [514, 2176],
+        "encoding_space": [1088, 1, 3, 4, 1],
+        "k_space": [64, 51, 4, 1, 1]
+      }
+    },
+    "FID_FAIR_EPI":{
+      "path":"0.2H2/14/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [2562, 40],
+        "acquisition_position": [514, 2048],
+        "encoding_space": [1024, 1, 4, 1, 10],
+        "k_space": [64, 64, 1, 10, 1]
+      }
+    },
+    "FID_DtiEpi":{
+      "path":"0.2H2/15/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [1536, 135],
+        "acquisition_position": [0, 1536],
+        "encoding_space": [768, 1, 5, 3, 9],
+        "k_space": [64, 60, 3, 9, 1]
+      }
+    },
+    "FID_T1_EPI":{
+      "path":"0.2H2/16/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [16384, 32],
+        "acquisition_position": [0, 16384],
+        "encoding_space": [8192, 1, 2, 16, 1],
+        "k_space": [128, 128, 16, 1, 1]
+      }
+    },
+    "FID_T2_EPI":{
+      "path":"0.2H2/17/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [32768, 120],
+        "acquisition_position": [0, 32768],
+        "encoding_space": [16384, 1, 1, 120, 1],
+        "k_space": [128, 128, 120, 1, 1]
+      }
+    },
+    "FID_T2S_EPI":{
+      "path":"0.2H2/18/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [8192, 4],
+        "acquisition_position": [0, 8192],
+        "encoding_space": [4096, 1, 1, 4, 1],
+        "k_space": [64, 64, 4, 1, 1]
+      }
+    },
+    "FID_SPIRAL":{
+      "path":"0.2H2/19/fid",
+      "acq_scheme": "SPIRAL",
+      "layouts": {
+        "storage": [1024, 32],
+        "acquisition_position": [0, 1024],
+        "encoding_space": [512, 1, 8, 4, 1],
+        "k_space": [512, 8, 4, 1, 1]
+      }
+    },
+    "FID_DtiSpiral":{
+      "path":"0.2H2/20/fid",
+      "acq_scheme": "SPIRAL",
+      "layouts": {
+        "storage": [512, 72],
+        "acquisition_position": [0, 512],
+        "encoding_space": [256, 1, 4, 6, 3],
+        "k_space": [256, 4, 6, 3, 1]
+      }    },
+    "FID_UTE":{
+      "path":"0.2H2/21/fid",
+      "acq_scheme": "RADIAL",
+      "layouts": {
+        "storage": [256, 1608],
+        "acquisition_position": [0, 128],
+        "encoding_space": [64, 1, 1, 4, 402, 1],
+        "k_space": [64, 402, 4, 1, 1]
+      }
+    },
+    "FID_UTE3D":{
+      "path":"0.2H2/22/fid",
+      "acq_scheme": "RADIAL",
+      "layouts": {
+        "storage": [256, 51360],
+        "acquisition_position": [0, 128],
+        "encoding_space": [64, 1, 1, 1, 51360, 1],
+        "k_space": [64, 51360, 1, 1, 1]
+      }
+    },
+    "FID_ZTE":{
+      "path":"0.2H2/23/fid",
+      "acq_scheme": "ZTE",
+      "layouts": {
+        "storage": [1024, 51896],
+        "acquisition_position": [0, 1024],
+        "encoding_space": [512, 1, 2, 1, 25948, 1],
+        "k_space": [512, 51896, 1, 1, 1]
+      }
+    },
+    "FID_CSI":{
+      "path":"0.2H2/24/fid",
+      "acq_scheme": "CSI",
+      "layouts": {
+        "storage": [4096, 361],
+        "acquisition_position": [0, 4096],
+        "encoding_space": [2048, 19, 19],
+        "k_space": [2048, 19, 19]
+      }
+    },
+    "FID_FieldMap":{
+      "path":"0.2H2/25/fid",
+      "acq_scheme": "FIELD_MAP",
+      "layouts": {
+        "storage": [256, 32768],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 2, 128, 128],
+        "k_space": [128, 128, 128, 2, 1]
+      }
+    },
+    "FID_NSPECT":{
+      "path":"0.2H2/26/fid",
+      "acq_scheme": "SPECTROSCOPY",
+      "layouts": {
+        "storage": [2048, 3],
+        "acquisition_position": [0, 2048],
+        "encoding_space": [1024, 3],
+        "k_space": [1024, 3]
+      }
+    },
+    "FID_PRESS":{
+      "path":"0.2H2/27/fid",
+      "acq_scheme": "SPECTROSCOPY",
+      "layouts": {
+        "storage": [4096, 1],
+        "acquisition_position": [0, 4096],
+        "encoding_space": [2048, 1],
+        "k_space": [2048, 1]
+      }
+    },
+    "FID_STEAM":{
+      "path":"0.2H2/28/fid",
+      "acq_scheme": "SPECTROSCOPY",
+      "layouts": {
+        "storage": [4096, 1],
+        "acquisition_position": [0, 4096],
+        "encoding_space": [2048, 1],
+        "k_space": [2048, 1]
+      }
+    },
+    "FID_T1_T2":{
+      "path":"0.2H2/31/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 2880],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 2, 5, 48, 6],
+        "k_space": [128, 96, 5, 6, 1]
+      }
+    },
+    "FID_DtiEpi2":{
+      "path":"0.2H2/32/fid",
+      "acq_scheme": "EPI",
+      "layouts": {
+        "storage": [4974, 2100],
+        "acquisition_position": [858, 4116],
+        "encoding_space": [2058, 1, 4, 15, 35],
+        "k_space": [98, 84, 15, 35, 1]
+      }
+    },
+    "FID_T2_MSE":{
+      "path":"0.2H2/33/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 1536],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 1, 16, 96, 1],
+        "k_space": [128, 96, 16, 1, 1]
+      }
+    },
+    "FID_IgFLASH":{
+      "path":"0.2H2/35/fid",
+      "acq_scheme": "CART_2D",
+      "layouts": {
+        "storage": [256, 38400],
+        "acquisition_position": [0, 256],
+        "encoding_space": [128, 1, 1, 1, 128, 300],
+        "k_space": [128, 128, 1, 300, 1]
+      }
+    },
+    "2DSEQ_TRIPILOT":{
+      "path":"0.2H2/1/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [15],
+        "frames": [15],
+        "block": [256,256]
+      }
+    },
+    "2DSEQ_FLASH":{
+      "path":"0.2H2/2/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [3],
+        "frames": [3],
+        "block": [256,256]
+      }
+    },
+    "2DSEQ_MGE":{
+      "path":"0.2H2/3/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [9, 8],
+        "frames": [72],
+        "block": [256, 256]
+      }
+    },
+    "2DSEQ_MSME":{
+      "path":"0.2H2/4/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [2, 4],
+        "frames": [8],
+        "block": [256, 256]
+      }
+    },
+    "2DSEQ_RARE":{
+      "path":"0.2H2/5/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [2, 3, 3],
+        "frames": [18],
+        "block": [256, 256]
+      }
+    },
+    "2DSEQ_FAIR_RARE":{
+      "path":"0.2H2/6/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 5, 2, 2],
+        "frames": [20],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_RAREVTR":{
+      "path":"0.2H2/7/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [4, 5, 1],
+        "frames": [20],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_RAREst":{
+      "path":"0.2H2/8/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 2],
+        "frames": [2],
+        "block": [256, 256]
+      }
+    },
+    "2DSEQ_MDEFT":{
+      "path":"0.2H2/9/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [256, 256, 10]
+      }
+    },
+    "2DSEQ_FISP_3D":{
+      "path":"0.2H2/10/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [128, 128, 128]
+      }
+    },
+    "2DSEQ_FLOWMAP":{
+      "path":"0.2H2/11/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 2],
+        "frames": [2],
+        "block": [512, 512]
+      }
+    },
+    "2DSEQ_DTI_STANDARD":{
+      "path":"0.2H2/12/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [2, 7],
+        "frames": [14],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_EPI":{
+      "path":"0.2H2/13/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [4],
+        "frames": [4],
+        "block": [64, 64]
+      }
+    },
+    "2DSEQ_FAIR_EPI":{
+      "path":"0.2H2/14/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 5, 2],
+        "frames": [10],
+        "block": [64, 64]
+      }
+    },
+    "2DSEQ_DtiEpi":{
+      "path":"0.2H2/15/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [3, 9],
+        "frames": [27],
+        "block": [64, 64]
+      }
+    },
+    "2DSEQ_T1_EPI":{
+      "path":"0.2H2/16/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 16],
+        "frames": [16],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_T2_EPI":{
+      "path":"0.2H2/17/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [8, 15],
+        "frames": [120],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_T2S_EPI":{
+      "path":"0.2H2/18/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 4],
+        "frames": [4],
+        "block": [64, 64]
+      }
+    },
+    "2DSEQ_UTE":{
+      "path":"0.2H2/21/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [4],
+        "frames": [4],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_UTE3D":{
+      "path":"0.2H2/22/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [128, 128, 128]
+      }
+    },
+    "2DSEQ_ZTE":{
+      "path":"0.2H2/23/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [128, 128, 128]
+      }
+    },
+    "2DSEQ_CSI":{
+      "path":"0.2H2/24/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [],
+        "frames": [1],
+        "block": [2048, 32, 32]
+      }
+    },
+    "2DSEQ_FieldMap":{
+      "path":"0.2H2/25/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [2],
+        "frames": [2],
+        "block": [128, 128, 128]
+      }
+    },
+    "2DSEQ_NSPECT":{
+      "path":"0.2H2/26/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 3],
+        "frames": [3],
+        "block": [2048]
+      }
+    },
+    "2DSEQ_PRESS":{
+      "path":"0.2H2/27/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1],
+        "frames": [1],
+        "block": [2048]
+      }
+    },
+    "2DSEQ_STEAM":{
+      "path":"0.2H2/28/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1],
+        "frames": [1],
+        "block": [2048]
+      }
+    },
+    "2DSEQ_T1_T2":{
+      "path":"0.2H2/31/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 5, 6],
+        "frames": [30],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_DtiEpi2":{
+      "path":"0.2H2/32/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [15, 35],
+        "frames": [525],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_T2_MSE":{
+      "path":"0.2H2/33/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 16],
+        "frames": [16],
+        "block": [128, 128]
+      }
+    },
+    "2DSEQ_IgFLASH":{
+      "path":"0.2H2/35/pdata/1/2dseq",
+      "layouts": {
+        "frame_groups": [1, 1, 10],
+        "frames": [10],
+        "block": [256, 256]
+      }
+    }
+  }
+}

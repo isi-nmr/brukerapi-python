@@ -61,9 +61,6 @@ def schemes_one(d, r):
     elif isinstance(d.scheme, SchemeRawdata):
         assert r['layouts']['raw'] == list(d.scheme.layouts['raw'])
 
-
-    assert r['dim_type'] == d.scheme.dim_type
-
 def read_one(d):
     assert d.data is not None
 

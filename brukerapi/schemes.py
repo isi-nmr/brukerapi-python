@@ -162,7 +162,11 @@ class Scheme():
     def load_sub_params(self):
         sub_params = {}
         for sub_param in self._meta['sub_params']:
-            sub_params[sub_param] = self.value_filter(self._dataset.get_value(sub_param))
+            try:
+                sub_params[sub_param] = self.value_filter(self._dataset.get_value(sub_param))
+            except KeyError:
+                raise KeyError('Parameter {} needed to load the file is was not found in the parameters.'.format(sub_param))
+
 
         return sub_params
 
@@ -249,11 +253,11 @@ class SchemeFid(Scheme):
         # rises SequenceNotMet exception
         self.validate_sequence()
 
-        # get values of parameters
-        self._sub_params = self.load_sub_params()
-
         # validate pv version
         self.validate_pv()
+
+        # get values of parameters
+        self._sub_params = self.load_sub_params()
 
         # rises ConditionNotMet exception
         self.validate_conditions()
@@ -420,17 +424,30 @@ class SchemeFid(Scheme):
             PVM_EncNReceivers = channels
         else:
             PVM_EncNReceivers = self._dataset.get_int('PVM_EncNReceivers')
+
+        # BUG 0
+        # spiral sequences in PV6.0.1 have GO_block_size == Standard_KBlock_Format
+        # spiral sequences in PV5.1 have GO_block_size == Continuous
+        if self._meta['id'] == 'SPIRAL' and self.pv_version == '5.1':
+            GO_block_size = 'Standard_KBlock_Format'
+
+        # BUG 1
+        # the epsi sequence has the PVM_DigNp parameter set up without a regard to NSegments parameter
+        if self._dataset.get_str('PULPROG') == 'EPSI.ppg':
+            segments = self._dataset.NSegments
+        else:
+            segments = 1
+
         ACQ_dim_desc = self._dataset.get_list('ACQ_dim_desc')
 
-        if ACQ_dim_desc[0] == 'Spectroscopic':
+        # if ACQ_dim_desc[0] == 'Spectroscopic':
+        if 'Spectroscopic' in ACQ_dim_desc:
             PVM_EncNReceivers = 1
 
         if GO_block_size == 'Standard_KBlock_Format':
             return ACQ_size[0] * PVM_EncNReceivers
         else:
-            return 2 * np.prod(self._dataset.PVM_EncMatrix[0:2],dtype=int)  * PVM_EncNReceivers // \
-                   self._dataset.NSegments
-
+            return 2 * self._dataset.PVM_DigNp  * PVM_EncNReceivers // segments
 
     @property
     def encoded_dim(self):
