@@ -1,18 +1,28 @@
-from .dataset import Dataset, SUPPORTED
+from .dataset import Dataset
 from .jcampdx import JCAMPDX
 from .exceptions import *
 from pathlib import Path
 import copy
 import operator as op
-import os
 
 
-class Folder():
-    """A representation of a generic folder. It implements several.
+class Folder:
+    """A representation of a generic folder. It implements several functions to simplify the folder manipulation."""
+    def __init__(
+            self,
+            path: str,
+            parent: 'Folder' = None,
+            recursive: bool = True,
+            dataset_index: list = ['fid','2dseq','ser','rawdata']
+    ):
+        """The constructor for Folder class.
 
-    """
-    def __init__(self, path, parent=None, recursive=True, dataset_index=['fid','2dseq','ser','rawdata']):
-
+        :param path: path to a folder
+        :param parent: parent :class:`.Folder` object
+        :param recursive: recursively create sub-folders
+        :param dataset_index: only data sets listed here will be indexed
+        :return:
+        """
         self.path = Path(path)
         self.validate()
 
@@ -21,42 +31,92 @@ class Folder():
         self.children = self.make_tree(recursive=recursive)
 
     def validate(self):
+        """Validate whether the given path exists an leads to a folder.
+        :return:
+        :raises :obj:`.NotADirectoryError`:
+        """
         if not self.path.is_dir() or not self.path.exists():
             raise NotADirectoryError
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.path)
 
-    def __getattr__(self, name):
+    def __getattr__(
+            self,
+            name: str
+    ):
+        """Access individual files in folder. :obj:`.Dataset` and :obj:`.JCAMPDX` instances are not loaded, to access the
+        data and parameters, to load the data, use context manager, or the `load()` function.
+
+        Example:
+
+        .. code-block:: python
+
+            with folder.fid as fid
+                data = fid.data
+                te = fid.EffectiveTE
+
+        :param name: Name of Dataset, JCAMPDX, or Folder
+        :return:
+        """
         for child in self.children:
             if child.path.name == name:
                 return child
         raise KeyError
 
     def __getitem__(self, name):
+        """Access individual files in folder, dict style. :obj:`.Dataset` and :obj:`.JCAMPDX` instances are not loaded, to access the
+        data and parameters, to load the data, use context manager, or the `load()` function.
+
+
+        Example:
+
+        .. code-block:: python
+
+            with folder['fid'] as fid
+                data = fid.data
+                te = fid.EffectiveTE
+
+        :param name: Name of :obj:`.Dataset`, :obj:`.JCAMPDX`, or :obj:`.Folder` object
+        :return:
+        """
         return self.__getattr__(name)
 
     @property
-    def dataset_list(self):
+    def dataset_list(self) -> list:
+        """List of :obj:`.Dataset` instances contained in folder"""
         return [x for x in self.children if isinstance(x, Dataset)]
 
     @property
-    def jcampdx_list(self):
+    def jcampdx_list(self) -> list:
+        """List of :obj:`.JCAMPDX` instances contained in folder"""
         return [x for x in self.children if isinstance(x, JCAMPDX)]
 
     @property
-    def experiment_list(self):
+    def experiment_list(self) -> list:
+        """List of :obj:`.Experiment` instances contained in folder and its sub-folders"""
         return TypeFilter(Experiment).list(self)
 
     @property
-    def processing_list(self):
+    def processing_list(self) -> list:
+        """List of :obj:`.Processing` instances contained in folder and its sub-folders"""
         return TypeFilter(Processing).list(self)
 
     @property
-    def study_list(self):
+    def study_list(self) -> list:
+        """List of :obj:`.Study` instances contained in folder and its sub-folders"""
         return TypeFilter(Study).list(self)
 
-    def make_tree(self, recursive=True):
+    def make_tree(
+            self,
+            recursive: bool = True
+    ) -> list:
+        """Make a directory tree containing brukerapi objects only
+
+        :param self:
+        :param recursive: explore all levels of hierarchy
+        :return:
+        """
         children = []
         for file in self.path.iterdir():
             path = self.path / file
@@ -91,12 +151,21 @@ class Folder():
             try:
                 children.append(JCAMPDX(path, load=False))
                 continue
-            except InvalidJcampdxFile:
+            except (InvalidJcampdxFile, JcampdxVersionError):
                 pass
         return children
 
     @staticmethod
-    def contains(path, required):
+    def contains(
+            path: str,
+            required: list
+    ) -> bool:
+        """Checks whether folder specified by path contains files listed in required.
+
+        :param path: path to a folder
+        :param required: list of required files
+        :return:
+        """
         for file in path.iterdir():
             try:
                 required.remove(file.name)
@@ -109,10 +178,10 @@ class Folder():
             return True
 
     def print(self, level=0, recursive=True):
-        """
-        Function to print structure of the folder recursively
-        :param level:
-        :param recursive:
+        """Print structure of the :obj:`.Folder` instance.
+
+        :param level: level of hierarchy
+        :param recursive: print recursively
         :return:
         """
         if level == 0:
@@ -136,20 +205,43 @@ class Folder():
             type: [Dataset, JCAMPDX, 'Folder', 'Experiment', 'Study', 'Processing'] = None,
             name: str = None,
             in_place: bool = True
-    ):
-        """Filter the folder tree using several types of filters.
+    ) -> 'Folder':
+        """Based on parameters passed to the function, it filters the folder tree using one of the following filters:
 
-        ParameterFilter(parameter, operator, value)
-        TypeFilter(type)
-        NameFilter(name)
+        :class:`.ParameterFilter` if `parameter`, `operator` and `value` are passed
 
-        :param parameter:
-        :param operator:
-        :param value:
-        :param type:
-        :param name:
-        :param in_place:
-        :return:
+        Example:
+
+        .. code-block:: python
+
+            folder.filter(parameter='PULPROG', operator='==', value='<RARE.ppg>')
+
+        :class:`.TypeFilter` if `type` is passed
+
+        Example:
+
+        .. code-block:: python
+
+            folder.filter(type=Experiment)
+
+        :class:`.NameFilter` `name` is passed
+
+        Example:
+
+        .. code-block:: python
+
+            folder.filter(name='fid')
+
+        Tutorial: :doc:`tutorials/how-to-use-filter`
+
+        :param parameter: name of parameter from any of JCAMPDX files. See :class:`.ParameterFilter` for more info.
+        :param operator: operator used for evaluation of the filter. See :class:`.ParameterFilter` for more info.
+        :param value: value used for evaluation of the filter. See :class:`.ParameterFilter` for more info.
+        :param type: brukerapi class to be filtered. See :class:`.TypeFilter` for more info.
+        :param name: name of file to be filtered. See :class:`.NameFilter` for more info.
+        :param in_place: filter the original :class:`.Folder` object by removing filtered out objects, if `True`, create new :class:`.Folder` object if `False`
+        :return: filtered :class:`.Folder`
+
         """
         if parameter and value and operator:
             return ParameterFilter(parameter, operator, value, in_place=in_place).filter(self)
@@ -178,19 +270,51 @@ class Folder():
 
 
 class Study(Folder):
-    def __init__(self, path, parent=None, recursive=True):
-        path = Path(path)
+    """Representation of the Bruker Study folder. The folder contains a subject info and a number of experiment folders.
 
-        if not path.is_dir():
-            raise NotStudyFolder
+    Tutorial :doc:`tutorials/how-to-study`
 
-        if not self.contains(path, ['subject',]):
-            raise NotStudyFolder
+    """
+    def __init__(
+            self,
+            path: str,
+            parent: 'Folder' = None,
+            recursive: bool = True
+    ):
+        """The constructor for Study class.
 
+        :param path: path to a folder
+        :param parent: parent :class:`.Folder` object
+        :param recursive: recursively create sub-folders
+        :return:
+        """
+        self.path = Path(path)
+        self.validate()
         super(Study, self).__init__(path, parent=parent, recursive=recursive)
 
-    def get_dataset(self, exp_id=None, proc_id=None):
+    def validate(self):
+        """Validate whether the given path exists an leads to a :class:`Study` folder.
 
+        :raises: :obj:`.NotStudyFolder`: if the path does not lead to folder, or the folder does not contain a subject file
+        """
+        if not self.path.is_dir():
+            raise NotStudyFolder
+
+        if not self.contains(self.path, ['subject',]):
+            raise NotStudyFolder
+
+    def get_dataset(
+            self,
+            exp_id: str = None,
+            proc_id: str = None
+    ) -> Dataset:
+        """Get a :obj:`.Dataset` from the study folder. Fid data set is returned if `exp_id` is specified, 2dseq data set
+        is returned if `exp_id` and `proc_id` are specified.
+
+        :param exp_id: name of the experiment folder
+        :param proc_id: name of the processing folder
+        :return: fid, or 2dseq :obj:`.Dataset`
+        """
         if exp_id:
             exp = self._get_exp(exp_id)
 
@@ -206,16 +330,37 @@ class Study(Folder):
 
 
 class Experiment(Folder):
-    def __init__(self, path, parent=None, recursive=True, dataset_index = ['fid','ser', 'rawdata']):
-        path = Path(path)
+    """Representation of the Bruker Experiment folder. The folder can contain *fid*, *ser* a *rawdata.SUBTYPE* data sets.
+    It can contain multiple :obj:`.Processing` instances.
+    """
+    def __init__(
+            self,
+            path: str,
+            parent: 'Folder' = None,
+            recursive: bool = True,
+            dataset_index: list = ['fid','ser', 'rawdata']
+    ):
+        """The constructor for Experiment class.
 
-        if not path.is_dir():
-            raise NotExperimentFolder
-
-        if not self.contains(path, ['acqp', ]):
-            raise NotExperimentFolder
-
+        :param path: path to a folder
+        :param parent: parent :class:`.Folder` object
+        :param recursive: recursively create sub-folders
+        :return:
+        """
+        self.path = Path(path)
+        self.validate()
         super(Experiment, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index)
+
+    def validate(self):
+        """Validate whether the given path exists an leads to a :class:`Experiment` folder.
+
+        :raises: :obj:`.NotExperimentFolder`: if the path does not lead to folder, or the folder does not contain an acqp file
+        """
+        if not self.path.is_dir():
+            raise NotExperimentFolder
+
+        if not self.contains(self.path, ['acqp', ]):
+            raise NotExperimentFolder
 
     def _get_proc(self, proc_id):
         for proc in self.processing_list:
@@ -225,15 +370,27 @@ class Experiment(Folder):
 
 class Processing(Folder):
     def __init__(self, path, parent=None, recursive=True, dataset_index=['2dseq','1r','1i']):
-        path = Path(path)
+        """The constructor for Processing class.
 
-        if not path.is_dir():
-            raise NotProcessingFolder
-
-        if not self.contains(path, ['visu_pars',]):
-            raise NotProcessingFolder
-
+        :param path: path to a folder
+        :param parent: parent :class:`.Folder` object
+        :param recursive: recursively create sub-folders
+        :return:
+        """
+        self.path = Path(path)
+        self.validate()
         super(Processing, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index)
+
+    def validate(self):
+        """Validate whether the given path exists an leads to a :class:`Processing` folder.
+
+        :raises: :obj:`.NotProcessingFolder`: if the path does not lead to folder, or the folder does not contain an *visu_pars* file
+        """
+        if not self.path.is_dir():
+            raise NotProcessingFolder
+
+        if not self.contains(self.path, ['visu_pars',]):
+            raise NotProcessingFolder
 
 
 class Filter:

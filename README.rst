@@ -7,6 +7,10 @@ brukerapi-python
 .. image:: https://github.com/isi-nmr/brukerapi-python/workflows/CI/badge.svg
    :target: https://doi.org/10.5281/zenodo.3831320
 
+.. image:: https://readthedocs.org/projects/bruker-api/badge/?version=latest
+    :target: https://bruker-api.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 A Python package providing I/O interface for Bruker data sets.
 
 tl;dr

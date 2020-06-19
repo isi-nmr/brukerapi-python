@@ -16,12 +16,14 @@ Bruker API documentation.
    tutorials/how-to-study
    tutorials/how-to-2dseq
    tutorials/how-to-fid
+   tutorials/how-to-use-filter
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
    :caption: Modules:
 
    dataset
+   folders
 
 
 Indices and tables
