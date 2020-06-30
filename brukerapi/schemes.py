@@ -35,7 +35,7 @@ class Scheme():
         self.load()
 
     @property
-    def sw(self):
+    def sw_hz(self):
         """Sweep width
 
         :return: Sweep width [Hz]
@@ -115,6 +115,10 @@ class Scheme():
                 return None
         else:
             return None
+
+    @property
+    def dwell_s(self):
+        return 1./ self.sw_hz / 2.
 
     def pv_version_acqp(self):
         """Get version of ParaVision software  from acqp file using ACQ_sw_version parameter.

@@ -398,6 +398,25 @@ class GeometryParameter(Parameter):
     def value(self):
         pass
 
+    @property
+    def affine(self):
+        """
+
+        :return: 4x4 3D Affine Transformation Matrix
+        """
+        # TODO support for multiple slice packages
+        match = re.match('\(\(\(.*\)', self.val_str)
+        affine_str = self.val_str[match.start() + 3: match.end() - 1]
+        orient, shift = affine_str.split(', ')
+
+        orient = GenericParameter.parse_value(orient)
+        shift = GenericParameter.parse_value(shift)
+        affine = np.zeros(shape=(4,4))
+        affine[0:3, 0:3] = np.reshape(orient, (3,3))
+        affine[0:3, 3] = shift
+
+        return affine
+
 
 class DataParameter(Parameter):
     def __init__(self, version, key, size_bracket, value):
@@ -505,6 +524,9 @@ class JCAMPDX(object):
         return self
 
     def __getitem__(self, key):
+        return self.params[key]
+
+    def __getattr__(self, key):
         return self.get_value(key)
 
     def load(self):

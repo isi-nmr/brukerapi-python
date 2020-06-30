@@ -90,9 +90,6 @@ class Dataset:
         if load:
             self.load()
 
-
-
-
     def __enter__(self):
         self.load()
         return self
@@ -103,6 +100,9 @@ class Dataset:
     def __str__(self):
         """String representation"""
         return str(self.path)
+
+    def __getitem__(self, item):
+        return self.get_item(item)
 
     def __getattr__(self, item):
         return self.get_value(item)
@@ -390,6 +390,14 @@ class Dataset:
                 pass
         raise KeyError
 
+    def get_item(self, key):
+        for param_file in self.parameters.values():
+            try:
+                return param_file[key]
+            except:
+                pass
+        raise KeyError
+
     def get_str(self, key, strip_sharp=True):
         for param_file in self.parameters.values():
             try:
@@ -571,12 +579,12 @@ class Dataset:
         return self.scheme.pv_version
 
     @property
-    def sw(self):
-        """Sweep width [s]
+    def sw_hz(self):
+        """Sweep width [Hz]
 
         :type: float
         """
-        return self.scheme.sw
+        return self.scheme.sw_hz
 
     @property
     def transmitter_freq(self):
@@ -609,3 +617,7 @@ class Dataset:
         :type: float
         """
         return self.scheme.TE
+
+    @property
+    def dwell_s(self):
+        return self.scheme.dwell_s
