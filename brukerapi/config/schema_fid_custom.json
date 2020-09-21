@@ -1,0 +1,14 @@
+{
+  "sw_hz": [
+    {
+        "cmd": "#SW_h",
+        "conditions": []
+    }
+  ],
+  "dwell_s": [
+    {
+        "cmd": "1./ @sw_hz / 2.",
+        "conditions": []
+    }
+  ]
+}

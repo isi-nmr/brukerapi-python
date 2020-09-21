@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 import json
 
-
 def pytest_addoption(parser):
     parser.addoption("--test_config", action="store", default="")
     parser.addoption("--test_data", action="store", default="")

@@ -1,0 +1,80 @@
+{
+  "numpy_dtype": [
+    {
+        "cmd": "np.dtype('int32').newbyteorder('<')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
+          "#BYTORDA=='little'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('int16').newbyteorder('<')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
+          "#BYTORDA=='little'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('float32').newbyteorder('<')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_32BIT_FLOAT'",
+          "#BYTORDA=='little'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('int32').newbyteorder('>')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
+          "#BYTORDA=='big'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('int16').newbyteorder('>')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
+          "#BYTORDA=='big'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('float32').newbyteorder('>')",
+        "conditions": [
+          "#GO_raw_data_format=='GO_32BIT_FLOAT'",
+          "#BYTORDA=='big'",
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('i4').newbyteorder('<')",
+        "conditions": [
+          "#ACQ_word_size=='_32_BIT'",
+          "#BYTORDA=='little'",
+          ["#ACQ_sw_version",["<PV-360.1.1>"]]
+        ]
+    }
+  ],
+  "job_desc": [
+    {
+      "cmd": "#ACQ_jobs.primed_dict(8)['<{}>'.format(@subtype)]",
+      "conditions": [
+      ]
+    }
+  ],
+  "channels": [
+    {
+      "cmd": "#PVM_EncNReceivers",
+      "conditions": [
+      ]
+    }
+  ],
+  "shape_storage": [
+    {
+      "cmd": "(@job_desc[0],) + (@job_desc[3],)",
+      "conditions": []
+    }
+  ]
+}

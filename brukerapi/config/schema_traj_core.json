@@ -1,0 +1,109 @@
+{
+  "numpy_dtype": [
+    {
+      "cmd": "np.dtype('i4')",
+      "conditions": []
+    }
+  ],
+  "scheme_id": [
+    {
+      "cmd": "'RADIAL'" ,
+      "conditions": [
+        ["#PULPROG[1:-1]",
+          [
+            "UTE.ppg",
+            "UTE3D.ppg",
+            "ZTE.ppg"
+          ]
+        ],
+        ["#ACQ_sw_version",
+          [
+            "<PV 6.0.1>",
+            "<PV 5.1>"
+          ]
+        ]
+      ]
+    },
+    {
+      "cmd": "'SPIRAL'" ,
+      "conditions": [
+        ["#PULPROG[1:-1]",
+          [
+            "SPIRAL.ppg",
+            "DtiSpiral.ppg"
+          ]
+        ],
+        ["#ACQ_sw_version",
+          [
+            "<PV 6.0.1>",
+            "<PV 5.1>"
+          ]
+        ]
+      ]
+    },
+    {
+      "cmd": "'ZTE'" ,
+      "conditions": [
+        ["#PULPROG[1:-1]",
+          [
+            "ZTE.ppg"
+          ]
+        ],
+        ["#ACQ_sw_version",
+          [
+            "<PV 6.0.1>",
+            "<PV 5.1>"
+          ]
+        ]
+      ]
+    }
+  ],
+  "traj_type": [
+    {
+      "cmd": "'radial'",
+      "conditions": [["@scheme_id",["'RADIAL'","'ZTE'"]]]
+    },
+    {
+      "cmd": "'spiral'",
+      "conditions": [["@scheme_id",["SPIRAL"]]]
+    }
+  ],
+  "shape_storage": [
+    {
+      "cmd": "(#ACQ_dim,#ACQ_size[0]//2,#NPro)",
+      "conditions": [["@scheme_id",["RADIAL","ZTE"]]]
+    },
+    {
+      "cmd": "(#ACQ_dim,#ACQ_size[0]//2,#PVM_SpiralNbOfInterleaves)",
+      "conditions": [["@scheme_id",["SPIRAL"]]]
+    }
+  ],
+  "permute": [
+    {
+      "cmd": [
+          0,
+          1,
+          2
+        ],
+      "conditions": [["@scheme_id",["RADIAL","ZTE","SPIRAL"]]]
+    }
+  ],
+  "final": [
+    {
+      "cmd": [
+        "#ACQ_dim",
+        "#ACQ_size[0]//2",
+        "#NPro"
+      ],
+      "conditions": [["@scheme_id",["RADIAL","ZTE"]]]
+    },
+    {
+      "cmd": [
+        "#ACQ_dim",
+        "#ACQ_size[0]//2",
+        "#PVM_SpiralNbOfInterleaves"
+      ],
+      "conditions": [["@scheme_id",["SPIRAL"]]]
+    }
+  ]
+}

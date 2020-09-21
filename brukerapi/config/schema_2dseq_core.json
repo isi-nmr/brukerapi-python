@@ -1,0 +1,149 @@
+{
+  "pv_version": [
+      {
+        "cmd": "#VisuCreatorVersion[1:-1]",
+        "conditions": []
+      }
+  ],
+  "numpy_dtype": [
+    {
+        "cmd": "np.dtype('int32').newbyteorder('<')",
+        "conditions": [
+          ["#VisuCoreWordType",["_32BIT_SGN_INT"]],
+          ["#VisuCoreByteOrder",["littleEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('int16').newbyteorder('<')",
+        "conditions": [
+          ["#VisuCoreWordType",["_16BIT_SGN_INT"]],
+          ["#VisuCoreByteOrder",["littleEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('float32').newbyteorder('<')",
+        "conditions": [
+          ["#VisuCoreWordType",["_32BIT_FLOAT"]],
+          ["#VisuCoreByteOrder",["littleEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('uint8').newbyteorder('<')",
+        "conditions": [
+          ["#VisuCoreWordType",["_8BIT_USGN_INT"]],
+          ["#VisuCoreByteOrder",["littleEndian"]]
+        ]
+    },
+        {
+        "cmd": "np.dtype('int32').newbyteorder('>')",
+        "conditions": [
+          ["#VisuCoreWordType",["_32BIT_SGN_INT"]],
+          ["#VisuCoreByteOrder",["bigEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('int16').newbyteorder('>')",
+        "conditions": [
+          ["#VisuCoreWordType",["_16BIT_SGN_INT"]],
+          ["#VisuCoreByteOrder",["bigEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('float32').newbyteorder('>')",
+        "conditions": [
+          ["#VisuCoreWordType",["_32BIT_FLOAT"]],
+          ["#VisuCoreByteOrder",["bigEndian"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('uint8').newbyteorder('>')",
+        "conditions": [
+          ["#VisuCoreWordType",["_8BIT_USGN_INT"]],
+          ["#VisuCoreByteOrder",["bigEndian"]]
+        ]
+    }
+  ],
+  "shape_frames": [
+      {
+        "cmd": "#VisuCoreFrameCount.tuple",
+        "conditions": []
+      }
+  ],
+  "is_single_slice": [
+      {
+        "cmd": "True",
+        "conditions": [
+          "#VisuCorePosition.shape[0]==1",
+          "#VisuCoreDim<3"
+        ]
+      },
+      {
+        "cmd": "False",
+        "conditions": ["#VisuCorePosition.shape[0]>1"]
+      },
+      {
+        "cmd": "False",
+        "conditions": ["#VisuCoreDim==3"]
+      },
+      {
+        "cmd": "False",
+        "conditions": []
+      }
+],
+  "shape_fg": [
+      {
+        "cmd": "(1,) + tuple(np.array(#VisuFGOrderDesc.nested)[:,0].astype('int'))",
+        "conditions": ["@is_single_slice"]
+      },
+      {
+        "cmd": "tuple(np.array(#VisuFGOrderDesc.nested)[:,0].astype('int'))",
+        "conditions": []
+      },
+      {
+        "cmd": "(1,)",
+        "conditions": []
+      }
+  ],
+  "shape_block": [
+      {
+        "cmd": "#VisuCoreSize.tuple",
+        "conditions": []
+      }
+  ],
+  "encoded_dim": [
+      {
+        "cmd": "len(#VisuCoreSize.tuple)",
+        "conditions": []
+      }
+  ],
+  "shape_storage":[
+    {
+      "cmd": "@shape_block+@shape_frames",
+      "conditions": []
+    }
+  ],
+  "shape_final":[
+    {
+      "cmd": "@shape_block+@shape_fg",
+      "conditions": []
+    }
+  ],
+  "num_slice_packages": [
+      {
+        "cmd": "len(#VisuCoreSlicePacksSlices.nested)",
+        "conditions": []
+      }
+  ],
+  "slope": [
+    {
+      "cmd": "#VisuCoreDataSlope.array",
+      "conditions": []
+    }
+  ],
+  "offset": [
+    {
+      "cmd": "#VisuCoreDataOffs.array",
+      "conditions": []
+    }
+  ]
+}

@@ -94,6 +94,58 @@ class Parameter(object):
         else:
             return False
 
+    @property
+    def tuple(self):
+        value = self.value
+        if isinstance(value, int) or isinstance(value, float):
+            return (value,)
+        else:
+            return tuple(value)
+
+    @property
+    def list(self):
+        pass
+
+    @property
+    def nested(self):
+        """Return value as nested list
+
+        For example the following entry is nested by default:
+        ##$VisuFGOrderDesc=( 2 )
+        (6, <FG_ECHO>, <>, 0, 1) (5, <FG_SLICE>, <>, 1, 2)
+
+        But this one not:
+        ##$VisuFGOrderDesc=( 2 )
+        (5, <FG_SLICE>, <>, 1, 2)
+
+        This proprerty allows treat the parameter as nested list in all cases.
+
+        """
+        value = self.value
+
+        if isinstance(value, list):
+            if isinstance(value[0], list):
+                return value
+            else:
+                return [value]
+
+        if isinstance(value, int) or isinstance(value, float) or isinstance(value, str):
+            return [[value]]
+
+    @property
+    def array(self):
+        return np.atleast_1d(self.value)
+
+    @property
+    def shape(self):
+        value = self.value
+        if isinstance(value, np.ndarray):
+            return value.shape
+        else:
+            raise AttributeError
+
+
+
     @classmethod
     def pack_key(cls, value, usr_defined):
         assert isinstance(value, str)
@@ -166,6 +218,15 @@ class GenericParameter(Parameter):
 
         self.size = size
         self.val_str= val_str
+
+    def primed_dict(self, index):
+        nested_list = self.value
+        primed_dict = {}
+
+        for list in nested_list:
+            primed_dict[list[index]] = list
+
+        return primed_dict
 
     @property
     def size(self):

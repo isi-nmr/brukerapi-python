@@ -1,0 +1,9 @@
+{
+  "TE": [
+      {
+        "cmd": "#VisuAcqEchoTime",
+        "conditions": [
+        ]
+      }
+  ]
+}

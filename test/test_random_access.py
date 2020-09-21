@@ -2,7 +2,9 @@ from brukerapi.dataset import Dataset
 import numpy as np
 
 from pathlib import Path
+import pytest
 
+@pytest.mark.skip(reason="in progress")
 def test_ra(test_ra_data):
 
     d1 = Dataset(Path(test_ra_data[1])/test_ra_data[0]['path'])
@@ -34,20 +36,8 @@ def generate_slices(shape):
 def json_to_slice(s):
     slice_ = []
     for item in s:
-        if isinstance(item,list):
-            if item[0] == 'None':
-                item_0 = None
-            else:
-                item_0 = item[0]
-            if item[1] == 'None':
-                item_1 = None
-            else:
-                item_1 = item[1]
-            if item[2] == 'None':
-                item_2 = None
-            else:
-                item_2 = item[2]
-            slice_.append(slice(item_0,item_1,item_2))
+        if isinstance(item,str):
+            slice_.append(eval(item))
         elif isinstance(item, int):
             slice_.append(item)
     return tuple(slice_)

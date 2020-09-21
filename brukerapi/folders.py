@@ -4,6 +4,9 @@ from .exceptions import *
 from pathlib import Path
 import copy
 import operator as op
+import json
+from random import random
+
 
 
 class Folder:
@@ -86,6 +89,11 @@ class Folder:
     def dataset_list(self) -> list:
         """List of :obj:`.Dataset` instances contained in folder"""
         return [x for x in self.children if isinstance(x, Dataset)]
+
+    @property
+    def dataset_list_rec(self) -> list:
+        """List of :obj:`.Dataset` instances contained in folder"""
+        return TypeFilter(Dataset).list(self)
 
     @property
     def jcampdx_list(self) -> list:
@@ -267,6 +275,29 @@ class Folder:
                     remove.append(child)
         for child in remove:
             node.children.remove(child)
+
+    def to_json(self, path=None):
+        if path:
+            with open(path, 'w') as json_file:
+                json.dump(self.represent_json(), json_file, sort_keys=True, indent=4)
+        else:
+            return json.dumps(self.represent_json(), sort_keys=True, indent=4)
+
+    def represent_json(self):
+
+        out = {}
+
+        for dataset in self.dataset_list_rec:
+            if dataset.type == 'fid':
+                name = 'FID_{}'.format(dataset.path.parents[0])
+                continue
+            elif dataset.type == '2dseq':
+                name = '2DSEQ_{}_{}'.format(dataset.path.parents[2].name, dataset.path.parents[0].name)
+
+            with dataset as d:
+                out[name] = d.represent_json(abs_path=self.path)
+
+        return out
 
 
 class Study(Folder):

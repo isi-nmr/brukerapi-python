@@ -1,5 +1,5 @@
 from brukerapi.dataset import Dataset
-from brukerapi.schemes import *
+from brukerapi.schemas import *
 import numpy as np
 import json
 import os
@@ -7,17 +7,16 @@ from pathlib import Path
 import shutil
 import pytest
 
-
-def test_read(test_io_data):
+def test_properties(test_io_data):
     d = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'], load=False)
     d.load_parameters()
-    d.load_scheme()
-    # Test if schemes are loaded correctly
-    schemes_one(d, test_io_data[0])
-    d.load_data()
-    # Test if schemes are loaded correctly
-    read_one(d)
+    d.load_properties()
 
+    # Test if properties are loaded correctly
+    assert d.to_dict(Path(test_io_data[1])) == test_io_data[0]
+
+def test_read(test_io_data):
+    d = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'])
 
 def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
     d_ref = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'])
@@ -45,22 +44,21 @@ def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
         except AssertionError as e:
             raise e
 
-    schemes_one(d_test, test_io_data[0])
+    # Test if properties are loaded correctly
+    assert d_test.to_dict(path_out)['properties'] == test_io_data[0]['properties']
 
 
-def schemes_one(d, r):
-    if isinstance(d.scheme, SchemeFid):
-        assert r['acq_scheme'] == d.scheme._meta['id']
-        assert r['layouts']['storage'] == list(d.scheme.layouts['storage'])
-        assert r['layouts']['acquisition_position'] == list(d.scheme.layouts['acquisition_position'])
-        assert r['layouts']['encoding_space'] == list(d.scheme.layouts['encoding_space'])
-        assert r['layouts']['k_space'] == list(d.scheme.layouts['k_space'])
-    elif isinstance(d.scheme, Scheme2dseq):
-        assert r['layouts']['frame_groups'] == list(d.scheme.layouts['frame_groups'])
-        assert r['layouts']['frames'] == list(d.scheme.layouts['frames'])
-    elif isinstance(d.scheme, SchemeRawdata):
-        assert r['layouts']['raw'] == list(d.scheme.layouts['raw'])
+def schemas_one(d, r):
+    if isinstance(d.schema, SchemaFid):
+        assert r['acq_schema'] == d.schema._meta['id']
+        assert r['layouts']['storage'] == list(d.schema.layouts['storage'])
+        assert r['layouts']['acquisition_position'] == list(d.schema.layouts['acquisition_position'])
+        assert r['layouts']['encoding_space'] == list(d.schema.layouts['encoding_space'])
+        assert r['layouts']['k_space'] == list(d.schema.layouts['k_space'])
+    elif isinstance(d.schema, Schema2dseq):
+        assert r['layouts']['frame_groups'] == list(d.shape_fg)
+        assert r['layouts']['frames'] == list(d.shape_frames)
+    elif isinstance(d.schema, SchemaRawdata):
+        assert r['layouts']['raw'] == list(d.schema.layouts['raw'])
 
-def read_one(d):
-    assert d.data is not None
 
