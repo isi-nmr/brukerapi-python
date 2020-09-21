@@ -8,6 +8,7 @@ import numpy as np
 import os
 import os.path
 import yaml
+import datetime
 
 # Dict of supported data sets. In order to read type of dataset specified by key value, all files listed in value
 # need to be present in the same directory.

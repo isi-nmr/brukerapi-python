@@ -5,5 +5,12 @@
         "conditions": [
         ]
       }
+  ],
+  "date": [
+      {
+        "cmd": "datetime.datetime.strptime(#VisuStudyDate, '<%X %d %b %Y>')",
+        "conditions": [
+        ]
+      }
   ]
 }
