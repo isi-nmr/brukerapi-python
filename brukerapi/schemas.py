@@ -534,8 +534,8 @@ class Schema2dseq(Schema):
                 data[..., frame] *= float(slope[frame])
                 data[..., frame] += float(offset[frame])
             elif dir == 'BW':
-                data[..., frame] -= float(slope[frame])
-                data[..., frame] /= float(offset[frame])
+                data[..., frame] /= float(slope[frame])
+                data[..., frame] -= float(offset[frame])
 
         return data
 
