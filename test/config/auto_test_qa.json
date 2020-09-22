@@ -3,18 +3,64 @@
         "2DSEQ_9_1": {
             "path": "McGill_Orientation\\bb20130412_APM_DEV_Orient.jl1\\9\\pdata\\1\\2dseq",
             "properties": {
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "shape_frames": [
+                    32
+                ],
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    64,
+                    64,
+                    32
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "encoded_dim": 2,
+                "is_single_slice": false,
                 "shape_storage": [
                     64,
                     64,
                     32
                 ],
-                "encoded_dim": 2,
-                "shape_frames": [
-                    32
-                ],
-                "shape_final": [
-                    64,
-                    64,
+                "pv_version": "5.1",
+                "TE": 15,
+                "shape_fg": [
                     32
                 ],
                 "slope": [
@@ -50,71 +96,13 @@
                     313.269026582596,
                     313.269026582596,
                     313.269026582596
-                ],
-                "pv_version": "5.1",
-                "shape_fg": [
-                    32
-                ],
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "numpy_dtype": "int16",
-                "TE": 15,
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "FID_9": {
             "path": "McGill_Orientation\\bb20130412_APM_DEV_Orient.jl1\\9\\fid",
             "properties": {
-                "shape_storage": [
-                    6788,
-                    32
-                ],
-                "channels": 1,
                 "scheme_id": "EPI",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     64,
                     48,
@@ -122,16 +110,10 @@
                     1,
                     1
                 ],
+                "sw_hz": 300000,
                 "dwell_s": 1.6666666666666667e-06,
-                "block_size": 6788,
-                "encoding_space": [
-                    3072,
-                    1,
-                    1,
-                    32,
-                    1
-                ],
-                "block_count": 32,
+                "numpy_dtype": "int32",
+                "channels": 1,
                 "permute": [
                     0,
                     2,
@@ -140,52 +122,32 @@
                     1
                 ],
                 "acq_lenght": 6144,
-                "sw_hz": 300000,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 6788,
+                "shape_storage": [
+                    6788,
+                    32
+                ],
+                "encoding_space": [
+                    3072,
+                    1,
+                    1,
+                    32,
+                    1
+                ],
+                "block_count": 32
             }
         },
         "2DSEQ_8_1": {
             "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\8\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    128,
-                    128,
-                    9
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    9
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    9
-                ],
-                "slope": [
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538,
-                    0.0661993340141538
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    9
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "TE": [
-                    12,
-                    60
-                ],
                 "offset": [
                     0,
                     0,
@@ -197,26 +159,53 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    9
+                ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    128,
+                    128,
+                    9
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    9
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    128,
+                    128,
+                    9
+                ],
+                "pv_version": "6.0.1",
+                "TE": [
+                    12,
+                    60
+                ],
+                "slope": [
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538,
+                    0.0661993340141538
+                ]
             }
         },
         "FID_8": {
             "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\8\\fid",
             "properties": {
-                "shape_storage": [
-                    1024,
-                    1440
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     128,
                     80,
@@ -224,17 +213,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 65789.4736842105,
                 "dwell_s": 7.600000000000003e-06,
-                "block_size": 1024,
-                "encoding_space": [
-                    128,
-                    4,
-                    1,
-                    18,
-                    80,
-                    1
-                ],
-                "block_count": 1440,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -244,27 +226,73 @@
                     1
                 ],
                 "acq_lenght": 1024,
-                "sw_hz": 65789.4736842105,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1024,
+                "shape_storage": [
+                    1024,
+                    1440
+                ],
+                "encoding_space": [
+                    128,
+                    4,
+                    1,
+                    18,
+                    80,
+                    1
+                ],
+                "block_count": 1440
             }
         },
         "2DSEQ_7_1": {
             "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\7\\pdata\\1\\2dseq",
             "properties": {
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "shape_frames": [
+                    9
+                ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    128,
+                    128,
+                    9
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    9
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     9
                 ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    9
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    9
+                "pv_version": "6.0.1",
+                "TE": [
+                    12,
+                    60
                 ],
                 "slope": [
                     0.0661993340141538,
@@ -276,51 +304,13 @@
                     0.0661993340141538,
                     0.0661993340141538,
                     0.0661993340141538
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    9
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "TE": [
-                    12,
-                    60
-                ],
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "FID_7": {
             "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\7\\fid",
             "properties": {
-                "shape_storage": [
-                    1024,
-                    1440
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     128,
                     80,
@@ -328,17 +318,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 65789.4736842105,
                 "dwell_s": 7.600000000000003e-06,
-                "block_size": 1024,
-                "encoding_space": [
-                    128,
-                    4,
-                    1,
-                    18,
-                    80,
-                    1
-                ],
-                "block_count": 1440,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -348,45 +331,33 @@
                     1
                 ],
                 "acq_lenght": 1024,
-                "sw_hz": 65789.4736842105,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1024,
+                "shape_storage": [
+                    1024,
+                    1440
+                ],
+                "encoding_space": [
+                    128,
+                    4,
+                    1,
+                    18,
+                    80,
+                    1
+                ],
+                "block_count": 1440
             }
         },
         "2DSEQ_5_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\5\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -394,26 +365,46 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "FID_5": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\5\\fid",
             "properties": {
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     160,
                     192,
@@ -421,17 +412,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 34722.2222222222,
                 "dwell_s": 1.4400000000000011e-05,
-                "block_size": 1280,
-                "encoding_space": [
-                    160,
-                    4,
-                    192,
-                    15,
-                    1,
-                    1
-                ],
-                "block_count": 2880,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -441,45 +425,33 @@
                     1
                 ],
                 "acq_lenght": 1280,
-                "sw_hz": 34722.2222222222,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1280,
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "encoding_space": [
+                    160,
+                    4,
+                    192,
+                    15,
+                    1,
+                    1
+                ],
+                "block_count": 2880
             }
         },
         "2DSEQ_4_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\4\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -487,26 +459,46 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "FID_4": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\4\\fid",
             "properties": {
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     160,
                     192,
@@ -514,17 +506,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 34722.2222222222,
                 "dwell_s": 1.4400000000000011e-05,
-                "block_size": 1280,
-                "encoding_space": [
-                    160,
-                    4,
-                    192,
-                    15,
-                    1,
-                    1
-                ],
-                "block_count": 2880,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -534,23 +519,178 @@
                     1
                 ],
                 "acq_lenght": 1280,
-                "sw_hz": 34722.2222222222,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1280,
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "encoding_space": [
+                    160,
+                    4,
+                    192,
+                    15,
+                    1,
+                    1
+                ],
+                "block_count": 2880
             }
         },
         "2DSEQ_3_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    128,
-                    128,
-                    135
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
                 "shape_frames": [
                     135
                 ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int16",
                 "shape_final": [
                     128,
                     128,
@@ -558,6 +698,22 @@
                     9,
                     3
                 ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5,
+                    9,
+                    3
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    128,
+                    128,
+                    135
+                ],
+                "pv_version": "6.0.1",
+                "TE": 34,
                 "slope": [
                     0.0338234398305872,
                     0.0338234398305872,
@@ -694,176 +850,13 @@
                     0.0338234398305872,
                     0.0338234398305872,
                     0.0338234398305872
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5,
-                    9,
-                    3
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "TE": 34,
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "FID_3": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\fid",
             "properties": {
-                "shape_storage": [
-                    45248,
-                    540
-                ],
-                "channels": 4,
                 "scheme_id": "EPI",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     128,
                     80,
@@ -871,16 +864,10 @@
                     27,
                     4
                 ],
+                "sw_hz": 208333.333333333,
                 "dwell_s": 2.4000000000000037e-06,
-                "block_size": 45248,
-                "encoding_space": [
-                    2560,
-                    4,
-                    4,
-                    5,
-                    27
-                ],
-                "block_count": 540,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -889,55 +876,32 @@
                     1
                 ],
                 "acq_lenght": 20480,
-                "sw_hz": 208333.333333333,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 45248,
+                "shape_storage": [
+                    45248,
+                    540
+                ],
+                "encoding_space": [
+                    2560,
+                    4,
+                    4,
+                    5,
+                    27
+                ],
+                "block_count": 540
             }
         },
         "2DSEQ_1_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    15
-                ],
-                "num_slice_packages": 3,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    15
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    15
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    15
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -955,26 +919,56 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    15
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    15
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 3,
+                "shape_fg": [
+                    15
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    15
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "FID_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\fid",
             "properties": {
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     160,
                     192,
@@ -982,17 +976,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 34722.2222222222,
                 "dwell_s": 1.4400000000000011e-05,
-                "block_size": 1280,
-                "encoding_space": [
-                    160,
-                    4,
-                    192,
-                    15,
-                    1,
-                    1
-                ],
-                "block_count": 2880,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -1002,45 +989,33 @@
                     1
                 ],
                 "acq_lenght": 1280,
-                "sw_hz": 34722.2222222222,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1280,
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "encoding_space": [
+                    160,
+                    4,
+                    192,
+                    15,
+                    1,
+                    1
+                ],
+                "block_count": 2880
             }
         },
         "2DSEQ_6_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\6\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -1048,26 +1023,46 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "FID_6": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\6\\fid",
             "properties": {
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     160,
                     192,
@@ -1075,17 +1070,10 @@
                     1,
                     4
                 ],
+                "sw_hz": 34722.2222222222,
                 "dwell_s": 1.4400000000000011e-05,
-                "block_size": 1280,
-                "encoding_space": [
-                    160,
-                    4,
-                    192,
-                    15,
-                    1,
-                    1
-                ],
-                "block_count": 2880,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -1095,29 +1083,109 @@
                     1
                 ],
                 "acq_lenght": 1280,
-                "sw_hz": 34722.2222222222,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1280,
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "encoding_space": [
+                    160,
+                    4,
+                    192,
+                    15,
+                    1,
+                    1
+                ],
+                "block_count": 2880
             }
         },
         "2DSEQ_2_1": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\pdata\\1\\2dseq",
             "properties": {
-                "shape_storage": [
-                    128,
-                    128,
-                    45
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
                 "shape_frames": [
                     45
                 ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int16",
                 "shape_final": [
                     128,
                     128,
                     5,
                     9
                 ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5,
+                    9
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    128,
+                    128,
+                    45
+                ],
+                "pv_version": "6.0.1",
+                "TE": 34,
                 "slope": [
                     0.0337260411325791,
                     0.0337260411325791,
@@ -1164,28 +1232,59 @@
                     0.0337260411325791,
                     0.0337260411325791,
                     0.0337260411325791
+                ]
+            }
+        },
+        "FID_2": {
+            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\fid",
+            "properties": {
+                "scheme_id": "EPI",
+                "k_space": [
+                    128,
+                    80,
+                    5,
+                    9,
+                    4
                 ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
+                "sw_hz": 208333.333333333,
+                "dwell_s": 2.4000000000000037e-06,
+                "numpy_dtype": "int32",
+                "channels": 4,
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "acq_lenght": 20480,
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 45248,
+                "shape_storage": [
+                    45248,
+                    180
+                ],
+                "encoding_space": [
+                    2560,
+                    4,
+                    4,
                     5,
                     9
                 ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "TE": 34,
+                "block_count": 180
+            }
+        },
+        "2DSEQ_a6_1": {
+            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\pdata\\1\\2dseq",
+            "properties": {
                 "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     0,
                     0,
                     0,
@@ -1223,74 +1322,39 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
-            }
-        },
-        "FID_2": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\fid",
-            "properties": {
-                "shape_storage": [
-                    45248,
-                    180
-                ],
-                "channels": 4,
-                "scheme_id": "EPI",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
-                "k_space": [
-                    128,
-                    80,
-                    5,
-                    9,
-                    4
-                ],
-                "dwell_s": 2.4000000000000037e-06,
-                "block_size": 45248,
-                "encoding_space": [
-                    2560,
-                    4,
-                    4,
-                    5,
-                    9
-                ],
-                "block_count": 180,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 20480,
-                "sw_hz": 208333.333333333,
-                "encoded_dim": 2
-            }
-        },
-        "2DSEQ_a6_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\pdata\\1\\2dseq",
-            "properties": {
-                "shape_storage": [
-                    64,
-                    64,
-                    36
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
                 "shape_frames": [
                     36
                 ],
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "numpy_dtype": "int16",
                 "shape_final": [
                     64,
                     64,
                     2,
                     9,
                     2
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    2,
+                    9,
+                    2
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    64,
+                    64,
+                    36
+                ],
+                "pv_version": "6.0.1",
+                "TE": [
+                    12,
+                    24
                 ],
                 "slope": [
                     0.0702178542902474,
@@ -1329,22 +1393,60 @@
                     0.0702178542902474,
                     0.0702178542902474,
                     0.0702178542902474
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
+                ]
+            }
+        },
+        "FID_a6": {
+            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\fid",
+            "properties": {
+                "scheme_id": "CART_2D",
+                "k_space": [
+                    64,
+                    40,
+                    18,
                     2,
-                    9,
+                    4
+                ],
+                "sw_hz": 65789.4736842105,
+                "dwell_s": 7.600000000000003e-06,
+                "numpy_dtype": "int32",
+                "channels": 4,
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "acq_lenght": 512,
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 512,
+                "shape_storage": [
+                    512,
+                    1440
+                ],
+                "encoding_space": [
+                    64,
+                    4,
+                    1,
+                    18,
+                    40,
                     2
                 ],
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "numpy_dtype": "int16",
-                "TE": [
-                    12,
-                    24
-                ],
+                "block_count": 1440
+            }
+        },
+        "2DSEQ_a5_1": {
+            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a5\\pdata\\1\\2dseq",
+            "properties": {
                 "offset": [
                     0,
                     0,
@@ -1383,76 +1485,39 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
-            }
-        },
-        "FID_a6": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\fid",
-            "properties": {
-                "shape_storage": [
-                    512,
-                    1440
-                ],
-                "channels": 4,
-                "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
-                "k_space": [
-                    64,
-                    40,
-                    18,
-                    2,
-                    4
-                ],
-                "dwell_s": 7.600000000000003e-06,
-                "block_size": 512,
-                "encoding_space": [
-                    64,
-                    4,
-                    1,
-                    18,
-                    40,
-                    2
-                ],
-                "block_count": 1440,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 512,
-                "sw_hz": 65789.4736842105,
-                "encoded_dim": 2
-            }
-        },
-        "2DSEQ_a5_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a5\\pdata\\1\\2dseq",
-            "properties": {
-                "shape_storage": [
-                    128,
-                    128,
-                    36
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
                 "shape_frames": [
                     36
                 ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int16",
                 "shape_final": [
                     128,
                     128,
                     2,
                     9,
                     2
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    2,
+                    9,
+                    2
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    128,
+                    128,
+                    36
+                ],
+                "pv_version": "6.0.1",
+                "TE": [
+                    7,
+                    35
                 ],
                 "slope": [
                     0.0127464952303003,
@@ -1491,80 +1556,13 @@
                     0.0127464952303003,
                     0.0127464952303003,
                     0.0127464952303003
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    2,
-                    9,
-                    2
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "TE": [
-                    7,
-                    35
-                ],
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "FID_a5": {
             "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a5\\fid",
             "properties": {
-                "shape_storage": [
-                    1024,
-                    2880
-                ],
-                "channels": 4,
                 "scheme_id": "CART_2D",
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "numpy_dtype": "int32",
                 "k_space": [
                     128,
                     80,
@@ -1572,17 +1570,10 @@
                     2,
                     4
                 ],
+                "sw_hz": 39062.5,
                 "dwell_s": 1.28e-05,
-                "block_size": 1024,
-                "encoding_space": [
-                    128,
-                    4,
-                    4,
-                    18,
-                    20,
-                    2
-                ],
-                "block_count": 2880,
+                "numpy_dtype": "int32",
+                "channels": 4,
                 "permute": [
                     0,
                     2,
@@ -1592,25 +1583,391 @@
                     1
                 ],
                 "acq_lenght": 1024,
-                "sw_hz": 39062.5,
-                "encoded_dim": 2
+                "encoded_dim": 2,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "block_size": 1024,
+                "shape_storage": [
+                    1024,
+                    2880
+                ],
+                "encoding_space": [
+                    128,
+                    4,
+                    4,
+                    18,
+                    20,
+                    2
+                ],
+                "block_count": 2880
             }
         },
         "2DSEQ_3_2": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\pdata\\2\\2dseq",
             "properties": {
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "shape_frames": [
+                    330
+                ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int32",
+                "shape_final": [
+                    128,
+                    128,
+                    22,
+                    5,
+                    3
+                ],
+                "num_slice_packages": 1,
+                "date": "<class 'datetime.datetime'>",
+                "encoded_dim": 2,
+                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     330
                 ],
-                "num_slice_packages": 1,
-                "shape_frames": [
-                    330
-                ],
-                "shape_final": [
-                    128,
-                    128,
+                "pv_version": "6.0.1;6.0.1",
+                "shape_fg": [
                     22,
                     5,
                     3
@@ -1946,369 +2303,149 @@
                     1e-06,
                     1e-06,
                     1e-06
-                ],
-                "pv_version": "6.0.1;6.0.1",
-                "shape_fg": [
-                    22,
-                    5,
-                    3
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int32",
-                "encoded_dim": 2,
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "2DSEQ_2_2": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\pdata\\2\\2dseq",
             "properties": {
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "shape_frames": [
+                    110
+                ],
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "numpy_dtype": "int32",
+                "shape_final": [
+                    128,
+                    128,
+                    22,
+                    5
+                ],
+                "num_slice_packages": 1,
+                "date": "<class 'datetime.datetime'>",
+                "encoded_dim": 2,
+                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     110
                 ],
-                "num_slice_packages": 1,
-                "shape_frames": [
-                    110
-                ],
-                "shape_final": [
-                    128,
-                    128,
+                "pv_version": "6.0.1;6.0.1",
+                "shape_fg": [
                     22,
                     5
                 ],
@@ -2423,168 +2560,12 @@
                     1e-06,
                     1e-06,
                     1e-06
-                ],
-                "pv_version": "6.0.1;6.0.1",
-                "shape_fg": [
-                    22,
-                    5
-                ],
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int32",
-                "encoded_dim": 2,
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "is_single_slice": false
+                ]
             }
         },
         "2DSEQ_1_4": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\4\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -2592,44 +2573,45 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "2DSEQ_1_3": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\3\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -2637,44 +2619,45 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         },
         "2DSEQ_1_2": {
             "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\2\\2dseq",
             "properties": {
-                "shape_storage": [
-                    192,
-                    192,
-                    5
-                ],
-                "num_slice_packages": 1,
-                "encoded_dim": 2,
-                "shape_frames": [
-                    5
-                ],
-                "shape_final": [
-                    192,
-                    192,
-                    5
-                ],
-                "slope": [
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849,
-                    0.0153854527331849
-                ],
-                "pv_version": "6.0.1",
-                "shape_fg": [
-                    5
-                ],
-                "shape_block": [
-                    192,
-                    192
-                ],
-                "numpy_dtype": "int16",
-                "TE": 4,
                 "offset": [
                     0,
                     0,
@@ -2682,7 +2665,40 @@
                     0,
                     0
                 ],
-                "is_single_slice": false
+                "shape_frames": [
+                    5
+                ],
+                "shape_block": [
+                    192,
+                    192
+                ],
+                "numpy_dtype": "int16",
+                "shape_final": [
+                    192,
+                    192,
+                    5
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "num_slice_packages": 1,
+                "shape_fg": [
+                    5
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "shape_storage": [
+                    192,
+                    192,
+                    5
+                ],
+                "pv_version": "6.0.1",
+                "TE": 4,
+                "slope": [
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849,
+                    0.0153854527331849
+                ]
             }
         }
     },
@@ -2693,12 +2709,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    23
+                    25
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(26,30)"
+                    "slice(21,28)"
                 ]
             ]
         },
@@ -2708,14 +2724,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    22,
-                    6,
-                    0
+                    18,
+                    7,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(14,31)",
+                    "slice(22,26)",
                     "0",
                     "0"
                 ]
@@ -2727,12 +2743,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    22
+                    124
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,7)"
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -2742,16 +2758,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    89,
-                    24,
-                    12
+                    119,
+                    7,
+                    5
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(10,17)",
+                    "slice(10,15)",
                     "0",
-                    "slice(0,1)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -2761,12 +2777,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    48
+                    96
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,5)"
+                    "slice(6,7)"
                 ]
             ]
         },
@@ -2776,14 +2792,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    30,
-                    62,
-                    8
+                    118,
+                    17,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,10)",
+                    "slice(11,13)",
                     "0",
                     "slice(0,2)"
                 ]
@@ -2795,12 +2811,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15
+                    36
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,4)"
+                    "slice(2,3)"
                 ]
             ]
         },
@@ -2810,14 +2826,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15,
-                    3,
-                    11
+                    5,
+                    31,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,13)",
+                    "slice(13,14)",
                     "0",
                     "slice(2,3)"
                 ]
@@ -2829,12 +2845,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    117
+                    169
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,4)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -2844,16 +2860,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    70,
-                    68,
-                    1
+                    122,
+                    152,
+                    12
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,12)",
+                    "slice(10,12)",
                     "0",
-                    "slice(2,3)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -2863,15 +2879,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    103,
-                    27,
-                    3
+                    96,
+                    116,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,3)",
-                    "slice(6,7)",
+                    "slice(2,4)",
+                    "slice(6,8)",
                     "slice(1,2)"
                 ]
             ]
@@ -2884,14 +2900,14 @@
                     "slice(None)",
                     20,
                     30,
-                    2
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(3,4)",
-                    "slice(25,26)",
-                    "slice(2,3)"
+                    "slice(17,26)",
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -2901,12 +2917,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    108
+                    188
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(9,14)"
+                    "slice(9,12)"
                 ]
             ]
         },
@@ -2916,14 +2932,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    37,
-                    148,
-                    10
+                    95,
+                    152,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,6)",
+                    "slice(8,10)",
                     "0",
                     "slice(2,3)"
                 ]
@@ -2935,12 +2951,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    154
+                    5
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,4)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -2950,16 +2966,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    30,
-                    141,
-                    12
+                    85,
+                    119,
+                    6
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(12,13)",
+                    "slice(9,12)",
                     "0",
-                    "slice(2,3)"
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -2969,14 +2985,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    97,
-                    83
+                    74,
+                    17
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,4)",
-                    "slice(4,6)"
+                    "slice(1,3)",
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -2986,16 +3002,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15,
-                    77,
+                    10,
+                    74,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,4)",
-                    "slice(6,8)",
-                    "slice(0,3)"
+                    "slice(0,7)",
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -3005,15 +3021,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    2,
                     55,
-                    0
+                    26,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(1,8)",
+                    "slice(4,5)",
                     "slice(0,1)"
                 ]
             ]
@@ -3024,16 +3040,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    33,
-                    11,
-                    9
+                    19,
+                    8,
+                    16
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(9,14)",
+                    "slice(7,9)",
                     "slice(0,1)",
-                    "slice(2,3)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -3043,15 +3059,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    109,
-                    40,
-                    0
+                    100,
+                    53,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(5,8)",
+                    "slice(3,6)",
                     "slice(0,1)"
                 ]
             ]
@@ -3062,16 +3078,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    42,
-                    12,
-                    17
+                    45,
+                    43,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(11,12)",
+                    "slice(10,14)",
                     "slice(0,1)",
-                    "slice(2,3)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -3081,16 +3097,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    6,
-                    10,
-                    20
+                    44,
+                    48,
+                    8
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(8,18)",
-                    "slice(1,2)",
-                    "slice(1,2)"
+                    "slice(19,20)",
+                    "slice(0,3)",
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -3100,14 +3116,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    100,
-                    82
+                    87,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(14,20)",
-                    "slice(0,2)"
+                    "slice(15,19)",
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -3117,12 +3133,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    125
+                    53
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,4)"
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -3132,12 +3148,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    45
+                    60
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,4)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -3147,12 +3163,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15
+                    168
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,4)"
+                    "slice(2,3)"
                 ]
             ]
         }

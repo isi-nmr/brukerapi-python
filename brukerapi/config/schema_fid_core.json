@@ -113,6 +113,13 @@
     {
       "cmd": "#ACQ_size.tuple[0] * @channels",
       "conditions": [
+        ["#PULPROG", ["<SPIRAL.ppg>","<DtiSpiral.ppg>"]],
+        "#ACQ_sw_version=='<PV 5.1>'"
+      ]
+    },
+    {
+      "cmd": "#ACQ_size.tuple[0] * @channels",
+      "conditions": [
         "#GO_block_size=='Standard_KBlock_Format'",
         ["#ACQ_sw_version",
           [
@@ -413,7 +420,15 @@
     {
       "cmd": "#PVM_SpiralNbOfInterleaves*#NI*#NR",
       "conditions": [
-        "@scheme_id=='SPIRAL'"
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 6.0.1>'"
+        ]
+    },
+    {
+      "cmd": "#ACQ_size[1]*#NI*#NR",
+      "conditions": [
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 5.1>'"
       ]
     },
     {
@@ -537,7 +552,21 @@
         "#NR"
       ],
       "conditions": [
-        "@scheme_id=='SPIRAL'"
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 6.0.1>'"
+      ]
+    },
+    {
+      "cmd": [
+        "#ACQ_size[0]//2",
+        "#PVM_EncNReceivers",
+        "#ACQ_size[1]",
+        "#NI",
+        "#NR"
+      ],
+      "conditions": [
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 5.1>'"
       ]
     },
     {
@@ -697,7 +726,21 @@
         "#PVM_EncNReceivers"
       ],
       "conditions": [
-        "@scheme_id=='SPIRAL'"
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 6.0.1>'"
+      ]
+    },
+    {
+      "cmd": [
+        "#ACQ_size[0]//2",
+        "#ACQ_size[1]",
+        "#NI",
+        "#NR",
+        "#PVM_EncNReceivers"
+      ],
+      "conditions": [
+        "@scheme_id=='SPIRAL'",
+        "#ACQ_sw_version=='<PV 5.1>'"
       ]
     },
     {

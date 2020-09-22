@@ -496,6 +496,8 @@ class Dataset:
             return [self.encode_property(var_) for var_ in var]
         elif isinstance(var, tuple):
             return self.encode_property(list(var))
+        elif isinstance(var, datetime.datetime):
+            return str(datetime.datetime)
         else:
             return var
 
