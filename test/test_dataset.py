@@ -8,7 +8,7 @@ import shutil
 import pytest
 
 def test_properties(test_io_data):
-    d = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'], load=False)
+    d = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']), load=False)
     d.load_parameters()
     d.load_properties()
 
@@ -16,10 +16,10 @@ def test_properties(test_io_data):
     assert d.to_dict(Path(test_io_data[1])) == test_io_data[0]
 
 def test_read(test_io_data):
-    d = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'])
+    d = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']))
 
 def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
-    d_ref = Dataset(Path(test_io_data[1]) / test_io_data[0]['path'])
+    d_ref = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']))
 
     if d_ref.subtype is None:
         path_out = tmp_path / d_ref.type
