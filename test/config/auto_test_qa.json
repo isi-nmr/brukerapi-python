@@ -1,8 +1,11 @@
 {
     "test_io": {
         "2DSEQ_9_1": {
-            "path": "McGill_Orientation\\bb20130412_APM_DEV_Orient.jl1\\9\\pdata\\1\\2dseq",
+            "path": "McGill_Orientation/bb20130412_APM_DEV_Orient.jl1/9/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -37,32 +40,25 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    32
-                ],
                 "shape_block": [
                     64,
                     64
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    32
+                ],
                 "shape_final": [
                     64,
                     64,
                     32
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     64,
                     64,
                     32
                 ],
-                "pv_version": "5.1",
-                "TE": 15,
-                "shape_fg": [
-                    32
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     313.269026582596,
                     313.269026582596,
@@ -96,45 +92,18 @@
                     313.269026582596,
                     313.269026582596,
                     313.269026582596
+                ],
+                "TE": 15,
+                "shape_fg": [
+                    32
                 ]
             }
         },
         "FID_9": {
-            "path": "McGill_Orientation\\bb20130412_APM_DEV_Orient.jl1\\9\\fid",
+            "path": "McGill_Orientation/bb20130412_APM_DEV_Orient.jl1/9/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    64,
-                    48,
-                    32,
-                    1,
-                    1
-                ],
-                "sw_hz": 300000,
-                "dwell_s": 1.6666666666666667e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 6144,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 6788,
-                "shape_storage": [
-                    6788,
-                    32
-                ],
+                "sw_hz": 300000,
                 "encoding_space": [
                     3072,
                     1,
@@ -142,12 +111,47 @@
                     32,
                     1
                 ],
-                "block_count": 32
+                "shape_storage": [
+                    6788,
+                    32
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 6788,
+                "k_space": [
+                    64,
+                    48,
+                    32,
+                    1,
+                    1
+                ],
+                "dwell_s": 1.6666666666666667e-06,
+                "acq_lenght": 6144,
+                "block_count": 32,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_8_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\8\\pdata\\1\\2dseq",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/8/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -159,36 +163,25 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    9
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    9
+                ],
                 "shape_final": [
                     128,
                     128,
                     9
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    9
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     9
                 ],
-                "pv_version": "6.0.1",
-                "TE": [
-                    12,
-                    60
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.0661993340141538,
                     0.0661993340141538,
@@ -199,46 +192,21 @@
                     0.0661993340141538,
                     0.0661993340141538,
                     0.0661993340141538
+                ],
+                "TE": [
+                    12,
+                    60
+                ],
+                "shape_fg": [
+                    9
                 ]
             }
         },
         "FID_8": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\8\\fid",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/8/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    80,
-                    18,
-                    1,
-                    4
-                ],
-                "sw_hz": 65789.4736842105,
-                "dwell_s": 7.600000000000003e-06,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1024,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1024,
-                "shape_storage": [
-                    1024,
-                    1440
-                ],
+                "sw_hz": 65789.4736842105,
                 "encoding_space": [
                     128,
                     4,
@@ -247,12 +215,48 @@
                     80,
                     1
                 ],
-                "block_count": 1440
+                "shape_storage": [
+                    1024,
+                    1440
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1024,
+                "k_space": [
+                    128,
+                    80,
+                    18,
+                    1,
+                    4
+                ],
+                "dwell_s": 7.600000000000003e-06,
+                "acq_lenght": 1024,
+                "block_count": 1440,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_7_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\7\\pdata\\1\\2dseq",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/7/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -264,36 +268,25 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    9
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    9
+                ],
                 "shape_final": [
                     128,
                     128,
                     9
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    9
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     9
                 ],
-                "pv_version": "6.0.1",
-                "TE": [
-                    12,
-                    60
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.0661993340141538,
                     0.0661993340141538,
@@ -304,60 +297,71 @@
                     0.0661993340141538,
                     0.0661993340141538,
                     0.0661993340141538
+                ],
+                "TE": [
+                    12,
+                    60
+                ],
+                "shape_fg": [
+                    9
                 ]
             }
         },
         "FID_7": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\7\\fid",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/7/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    80,
-                    18,
-                    1,
-                    4
-                ],
-                "sw_hz": 65789.4736842105,
-                "dwell_s": 7.600000000000003e-06,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
+                "sw_hz": 65789.4736842105,
+                "encoding_space": [
+                    128,
                     4,
-                    3,
-                    5,
+                    1,
+                    18,
+                    80,
                     1
                 ],
-                "acq_lenght": 1024,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1024,
                 "shape_storage": [
                     1024,
                     1440
                 ],
-                "encoding_space": [
-                    128,
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
                     4,
-                    1,
-                    18,
-                    80,
+                    3,
+                    5,
                     1
                 ],
-                "block_count": 1440
+                "block_size": 1024,
+                "k_space": [
+                    128,
+                    80,
+                    18,
+                    1,
+                    4
+                ],
+                "dwell_s": 7.600000000000003e-06,
+                "acq_lenght": 1024,
+                "block_count": 1440,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_5_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\5\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/5/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -365,79 +369,43 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         },
         "FID_5": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\5\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/5/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    160,
-                    192,
-                    15,
-                    1,
-                    4
-                ],
-                "sw_hz": 34722.2222222222,
-                "dwell_s": 1.4400000000000011e-05,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1280,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1280,
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
+                "sw_hz": 34722.2222222222,
                 "encoding_space": [
                     160,
                     4,
@@ -446,12 +414,48 @@
                     1,
                     1
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1280,
+                "k_space": [
+                    160,
+                    192,
+                    15,
+                    1,
+                    4
+                ],
+                "dwell_s": 1.4400000000000011e-05,
+                "acq_lenght": 1280,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_4_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\4\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/4/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -459,79 +463,43 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         },
         "FID_4": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\4\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/4/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    160,
-                    192,
-                    15,
-                    1,
-                    4
-                ],
-                "sw_hz": 34722.2222222222,
-                "dwell_s": 1.4400000000000011e-05,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1280,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1280,
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
+                "sw_hz": 34722.2222222222,
                 "encoding_space": [
                     160,
                     4,
@@ -540,12 +508,48 @@
                     1,
                     1
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1280,
+                "k_space": [
+                    160,
+                    192,
+                    15,
+                    1,
+                    4
+                ],
+                "dwell_s": 1.4400000000000011e-05,
+                "acq_lenght": 1280,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_3_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/3/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -682,15 +686,14 @@
                     0,
                     0,
                     0
-                ],
-                "shape_frames": [
-                    135
                 ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    135
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -699,21 +702,12 @@
                     3
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5,
-                    9,
-                    3
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     135
                 ],
-                "pv_version": "6.0.1",
-                "TE": 34,
+                "encoded_dim": 2,
                 "slope": [
                     0.0338234398305872,
                     0.0338234398305872,
@@ -850,45 +844,20 @@
                     0.0338234398305872,
                     0.0338234398305872,
                     0.0338234398305872
+                ],
+                "TE": 34,
+                "shape_fg": [
+                    5,
+                    9,
+                    3
                 ]
             }
         },
         "FID_3": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/3/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    128,
-                    80,
-                    5,
-                    27,
-                    4
-                ],
-                "sw_hz": 208333.333333333,
-                "dwell_s": 2.4000000000000037e-06,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 20480,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 45248,
-                "shape_storage": [
-                    45248,
-                    540
-                ],
+                "sw_hz": 208333.333333333,
                 "encoding_space": [
                     2560,
                     4,
@@ -896,12 +865,47 @@
                     5,
                     27
                 ],
-                "block_count": 540
+                "shape_storage": [
+                    45248,
+                    540
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 45248,
+                "k_space": [
+                    128,
+                    80,
+                    5,
+                    27,
+                    4
+                ],
+                "dwell_s": 2.4000000000000037e-06,
+                "acq_lenght": 20480,
+                "block_count": 540,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_1_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/1/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 3,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -919,33 +923,25 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    15
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    15
+                ],
                 "shape_final": [
                     192,
                     192,
                     15
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 3,
-                "shape_fg": [
-                    15
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     15
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
@@ -962,46 +958,18 @@
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    15
                 ]
             }
         },
         "FID_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/1/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    160,
-                    192,
-                    15,
-                    1,
-                    4
-                ],
-                "sw_hz": 34722.2222222222,
-                "dwell_s": 1.4400000000000011e-05,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1280,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1280,
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
+                "sw_hz": 34722.2222222222,
                 "encoding_space": [
                     160,
                     4,
@@ -1010,12 +978,48 @@
                     1,
                     1
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1280,
+                "k_space": [
+                    160,
+                    192,
+                    15,
+                    1,
+                    4
+                ],
+                "dwell_s": 1.4400000000000011e-05,
+                "acq_lenght": 1280,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_6_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\6\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/6/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1023,79 +1027,43 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         },
         "FID_6": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\6\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/6/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    160,
-                    192,
-                    15,
-                    1,
-                    4
-                ],
-                "sw_hz": 34722.2222222222,
-                "dwell_s": 1.4400000000000011e-05,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1280,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1280,
-                "shape_storage": [
-                    1280,
-                    2880
-                ],
+                "sw_hz": 34722.2222222222,
                 "encoding_space": [
                     160,
                     4,
@@ -1104,12 +1072,48 @@
                     1,
                     1
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    1280,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1280,
+                "k_space": [
+                    160,
+                    192,
+                    15,
+                    1,
+                    4
+                ],
+                "dwell_s": 1.4400000000000011e-05,
+                "acq_lenght": 1280,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_2_1": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\pdata\\1\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/2/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1156,15 +1160,14 @@
                     0,
                     0,
                     0
-                ],
-                "shape_frames": [
-                    45
                 ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    45
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1172,20 +1175,12 @@
                     9
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5,
-                    9
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     45
                 ],
-                "pv_version": "6.0.1",
-                "TE": 34,
+                "encoded_dim": 2,
                 "slope": [
                     0.0337260411325791,
                     0.0337260411325791,
@@ -1232,45 +1227,19 @@
                     0.0337260411325791,
                     0.0337260411325791,
                     0.0337260411325791
+                ],
+                "TE": 34,
+                "shape_fg": [
+                    5,
+                    9
                 ]
             }
         },
         "FID_2": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\fid",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/2/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    128,
-                    80,
-                    5,
-                    9,
-                    4
-                ],
-                "sw_hz": 208333.333333333,
-                "dwell_s": 2.4000000000000037e-06,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 20480,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 45248,
-                "shape_storage": [
-                    45248,
-                    180
-                ],
+                "sw_hz": 208333.333333333,
                 "encoding_space": [
                     2560,
                     4,
@@ -1278,12 +1247,47 @@
                     5,
                     9
                 ],
-                "block_count": 180
+                "shape_storage": [
+                    45248,
+                    180
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 45248,
+                "k_space": [
+                    128,
+                    80,
+                    5,
+                    9,
+                    4
+                ],
+                "dwell_s": 2.4000000000000037e-06,
+                "acq_lenght": 20480,
+                "block_count": 180,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_a6_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\pdata\\1\\2dseq",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/a6/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1322,14 +1326,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    36
-                ],
                 "shape_block": [
                     64,
                     64
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    36
+                ],
                 "shape_final": [
                     64,
                     64,
@@ -1338,24 +1341,12 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    2,
-                    9,
-                    2
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     64,
                     64,
                     36
                 ],
-                "pv_version": "6.0.1",
-                "TE": [
-                    12,
-                    24
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.0702178542902474,
                     0.0702178542902474,
@@ -1393,46 +1384,23 @@
                     0.0702178542902474,
                     0.0702178542902474,
                     0.0702178542902474
+                ],
+                "TE": [
+                    12,
+                    24
+                ],
+                "shape_fg": [
+                    2,
+                    9,
+                    2
                 ]
             }
         },
         "FID_a6": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a6\\fid",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/a6/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    64,
-                    40,
-                    18,
-                    2,
-                    4
-                ],
-                "sw_hz": 65789.4736842105,
-                "dwell_s": 7.600000000000003e-06,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 512,
-                "shape_storage": [
-                    512,
-                    1440
-                ],
+                "sw_hz": 65789.4736842105,
                 "encoding_space": [
                     64,
                     4,
@@ -1441,12 +1409,48 @@
                     40,
                     2
                 ],
-                "block_count": 1440
+                "shape_storage": [
+                    512,
+                    1440
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 512,
+                "k_space": [
+                    64,
+                    40,
+                    18,
+                    2,
+                    4
+                ],
+                "dwell_s": 7.600000000000003e-06,
+                "acq_lenght": 512,
+                "block_count": 1440,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_a5_1": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a5\\pdata\\1\\2dseq",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/a5/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1485,14 +1489,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    36
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    36
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1501,24 +1504,12 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    2,
-                    9,
-                    2
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     36
                 ],
-                "pv_version": "6.0.1",
-                "TE": [
-                    7,
-                    35
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.0127464952303003,
                     0.0127464952303003,
@@ -1556,46 +1547,23 @@
                     0.0127464952303003,
                     0.0127464952303003,
                     0.0127464952303003
+                ],
+                "TE": [
+                    7,
+                    35
+                ],
+                "shape_fg": [
+                    2,
+                    9,
+                    2
                 ]
             }
         },
         "FID_a5": {
-            "path": "Cyceron_MultiEcho\\20170720_080545_Lego_1_2\\a5\\fid",
+            "path": "Cyceron_MultiEcho/20170720_080545_Lego_1_2/a5/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    80,
-                    18,
-                    2,
-                    4
-                ],
-                "sw_hz": 39062.5,
-                "dwell_s": 1.28e-05,
                 "numpy_dtype": "int32",
-                "channels": 4,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1024,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1024,
-                "shape_storage": [
-                    1024,
-                    2880
-                ],
+                "sw_hz": 39062.5,
                 "encoding_space": [
                     128,
                     4,
@@ -1604,12 +1572,48 @@
                     20,
                     2
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    1024,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1024,
+                "k_space": [
+                    128,
+                    80,
+                    18,
+                    2,
+                    4
+                ],
+                "dwell_s": 1.28e-05,
+                "acq_lenght": 1024,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 4
             }
         },
         "2DSEQ_3_2": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\3\\pdata\\2\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/3/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1;6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1942,14 +1946,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    330
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    330
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1957,21 +1960,13 @@
                     5,
                     3
                 ],
-                "num_slice_packages": 1,
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     330
                 ],
-                "pv_version": "6.0.1;6.0.1",
-                "shape_fg": [
-                    22,
-                    5,
-                    3
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     1e-06,
                     1e-09,
@@ -2303,12 +2298,21 @@
                     1e-06,
                     1e-06,
                     1e-06
+                ],
+                "shape_fg": [
+                    22,
+                    5,
+                    3
                 ]
             }
         },
         "2DSEQ_2_2": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\2\\pdata\\2\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/2/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1;6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -2421,34 +2425,26 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    110
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    110
+                ],
                 "shape_final": [
                     128,
                     128,
                     22,
                     5
                 ],
-                "num_slice_packages": 1,
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     110
                 ],
-                "pv_version": "6.0.1;6.0.1",
-                "shape_fg": [
-                    22,
-                    5
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     1e-06,
                     1e-09,
@@ -2560,12 +2556,20 @@
                     1e-06,
                     1e-06,
                     1e-06
+                ],
+                "shape_fg": [
+                    22,
+                    5
                 ]
             }
         },
         "2DSEQ_1_4": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\4\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/1/pdata/4/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -2573,45 +2577,45 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         },
         "2DSEQ_1_3": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\3\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/1/pdata/3/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -2619,45 +2623,45 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         },
         "2DSEQ_1_2": {
-            "path": "Cyceron_DWI\\20170719_075627_Lego_1_1\\1\\pdata\\2\\2dseq",
+            "path": "Cyceron_DWI/20170719_075627_Lego_1_1/1/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "num_slice_packages": 1,
+                "pv_version": "6.0.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -2665,39 +2669,35 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     192,
                     192
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     192,
                     192,
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "num_slice_packages": 1,
-                "shape_fg": [
-                    5
-                ],
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     192,
                     192,
                     5
                 ],
-                "pv_version": "6.0.1",
-                "TE": 4,
+                "encoded_dim": 2,
                 "slope": [
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849,
                     0.0153854527331849
+                ],
+                "TE": 4,
+                "shape_fg": [
+                    5
                 ]
             }
         }
@@ -2709,12 +2709,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    25
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(21,28)"
+                    "slice(23,27)"
                 ]
             ]
         },
@@ -2724,14 +2724,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    18,
-                    7,
-                    1
+                    4,
+                    19,
+                    29
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(22,26)",
+                    "slice(28,31)",
                     "0",
                     "0"
                 ]
@@ -2743,12 +2743,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    124
+                    85
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,4)"
+                    "slice(6,8)"
                 ]
             ]
         },
@@ -2758,16 +2758,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    119,
-                    7,
-                    5
+                    28,
+                    60,
+                    14
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(10,15)",
+                    "slice(15,17)",
                     "0",
-                    "slice(1,3)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -2777,12 +2777,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    96
+                    28
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(6,7)"
+                    "slice(5,6)"
                 ]
             ]
         },
@@ -2792,14 +2792,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    118,
-                    17,
-                    1
+                    25,
+                    19,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(11,13)",
+                    "slice(14,16)",
                     "0",
                     "slice(0,2)"
                 ]
@@ -2811,12 +2811,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    36
+                    149
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -2826,16 +2826,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    5,
-                    31,
-                    1
+                    22,
+                    142,
+                    12
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(13,14)",
+                    "slice(7,9)",
                     "0",
-                    "slice(2,3)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -2845,12 +2845,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    169
+                    146
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,2)"
+                    "slice(0,3)"
                 ]
             ]
         },
@@ -2860,14 +2860,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    122,
-                    152,
-                    12
+                    22,
+                    34,
+                    5
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(10,12)",
+                    "slice(3,5)",
                     "0",
                     "slice(1,2)"
                 ]
@@ -2879,15 +2879,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    96,
-                    116,
-                    0
+                    84,
+                    101,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(2,4)",
-                    "slice(6,8)",
+                    "slice(2,7)",
                     "slice(1,2)"
                 ]
             ]
@@ -2898,16 +2898,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    20,
-                    30,
-                    3
+                    37,
+                    53,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,4)",
-                    "slice(17,26)",
-                    "slice(1,2)"
+                    "slice(2,3)",
+                    "slice(0,25)",
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -2917,12 +2917,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    188
+                    50
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(9,12)"
+                    "slice(4,13)"
                 ]
             ]
         },
@@ -2932,16 +2932,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    95,
-                    152,
-                    3
+                    121,
+                    37,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(8,10)",
+                    "slice(5,12)",
                     "0",
-                    "slice(2,3)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -2951,12 +2951,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    5
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)"
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -2966,16 +2966,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    85,
-                    119,
-                    6
+                    45,
+                    97,
+                    10
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(9,12)",
+                    "slice(10,11)",
                     "0",
-                    "slice(0,1)"
+                    "slice(2,3)"
                 ]
             ]
         },
@@ -2985,14 +2985,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    74,
-                    17
+                    114,
+                    119
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
-                    "slice(0,2)"
+                    "slice(2,4)",
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -3002,16 +3002,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    10,
-                    74,
-                    0
+                    14,
+                    35,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,4)",
-                    "slice(0,7)",
-                    "slice(0,1)"
+                    "slice(0,1)",
+                    "slice(0,3)",
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -3021,15 +3021,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    55,
-                    26,
-                    1
+                    28,
+                    60,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(4,5)",
+                    "slice(4,8)",
                     "slice(0,1)"
                 ]
             ]
@@ -3040,14 +3040,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    19,
-                    8,
-                    16
+                    2,
+                    36,
+                    7
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(7,9)",
+                    "slice(0,8)",
                     "slice(0,1)",
                     "slice(1,3)"
                 ]
@@ -3059,15 +3059,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    100,
-                    53,
-                    1
+                    117,
+                    36,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(3,6)",
+                    "slice(7,8)",
                     "slice(0,1)"
                 ]
             ]
@@ -3078,16 +3078,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    45,
-                    43,
-                    3
+                    117,
+                    78,
+                    11
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(10,14)",
                     "slice(0,1)",
-                    "slice(1,2)"
+                    "slice(0,3)"
                 ]
             ]
         },
@@ -3097,15 +3097,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    44,
-                    48,
-                    8
+                    56,
+                    21,
+                    16
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(19,20)",
-                    "slice(0,3)",
+                    "slice(17,18)",
+                    "slice(2,4)",
                     "slice(0,2)"
                 ]
             ]
@@ -3116,14 +3116,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    87,
-                    0
+                    52,
+                    102
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(15,19)",
-                    "slice(1,2)"
+                    "slice(18,20)",
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -3133,12 +3133,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    53
+                    152
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,4)"
+                    "slice(0,3)"
                 ]
             ]
         },
@@ -3148,12 +3148,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60
+                    70
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,2)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -3163,12 +3163,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    168
+                    191
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)"
+                    "slice(1,4)"
                 ]
             ]
         }

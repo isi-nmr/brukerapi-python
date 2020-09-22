@@ -78,7 +78,9 @@ class Dataset:
                 raise NotADatasetDir(self.path)
 
         # validate path
-        print(str(self.path))
+        print(self.path)
+        print(str(self.path.name))
+        print(str(self.type))
         # self.validate(load)
 
         # save kwargs
@@ -475,7 +477,7 @@ class Dataset:
         for var in names:
             properties[var] = self.encode_property(self.__getattribute__(var))
 
-        return {"path": str(path), "properties": properties}
+        return {"path": path.as_posix(), "properties": properties}
 
     def encode_property(self, var):
         """
