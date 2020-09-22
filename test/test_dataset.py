@@ -8,7 +8,12 @@ import shutil
 import pytest
 
 def test_properties(test_io_data):
+    path = Path(test_io_data[1]) / Path(test_io_data[0]['path'])
+    print(path.name)
+    print(path.parent)
+
     d = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']), load=False)
+
     d.load_parameters()
     d.load_properties()
 
