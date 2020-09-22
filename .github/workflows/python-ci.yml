@@ -31,7 +31,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install brukerapi
       run: |
-        git clone https://github.com/isi-nmr/brukerapi-python.git
+        git clone -b dev https://github.com/isi-nmr/brukerapi-python.git
         cd brukerapi-python
         python setup.py build
         python setup.py install
