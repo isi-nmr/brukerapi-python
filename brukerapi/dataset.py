@@ -78,7 +78,8 @@ class Dataset:
                 raise NotADatasetDir(self.path)
 
         # validate path
-        self.validate(load)
+        print(str(self.path))
+        # self.validate(load)
 
         # save kwargs
         self._kwargs = kwargs
