@@ -1,20 +1,22 @@
 {
     "test_io": {
         "2DSEQ_9_1": {
-            "path": "9\\pdata\\1\\2dseq",
+            "path": "9/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     256,
                     256,
                     10
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -22,61 +24,27 @@
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     10,
                     1
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 3,
+                "slope": [
+                    140.677147843604
+                ],
                 "TE": 5,
                 "shape_fg": [
                     1
-                ],
-                "slope": [
-                    140.677147843604
                 ]
             }
         },
         "FID_9": {
-            "path": "9\\fid",
+            "path": "9/fid",
             "properties": {
-                "scheme_id": "CART_3D",
-                "k_space": [
-                    256,
-                    256,
-                    10,
-                    1,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 512,
-                "encoded_dim": 3,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 512,
-                "shape_storage": [
-                    512,
-                    2560
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     256,
                     1,
@@ -85,65 +53,18 @@
                     8,
                     1
                 ],
-                "block_count": 2560
-            }
-        },
-        "2DSEQ_8_1": {
-            "path": "8\\pdata\\1\\2dseq",
-            "properties": {
-                "offset": [
-                    0,
-                    0
-                ],
-                "shape_frames": [
-                    2
-                ],
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "numpy_dtype": "int16",
-                "shape_final": [
-                    256,
-                    256,
-                    1,
-                    2
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
-                    256,
-                    256,
-                    2
+                    512,
+                    2560
                 ],
-                "pv_version": "5.1",
-                "TE": 19,
-                "shape_fg": [
-                    1,
-                    2
+                "scheme_id": "CART_3D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2",
+                    "repetition",
+                    "channel"
                 ],
-                "slope": [
-                    396.459816812455,
-                    396.459816812455
-                ]
-            }
-        },
-        "FID_8": {
-            "path": "8\\fid",
-            "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    256,
-                    132,
-                    1,
-                    2,
-                    1
-                ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
                 "permute": [
                     0,
                     2,
@@ -152,20 +73,67 @@
                     5,
                     1
                 ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
                 "block_size": 512,
-                "shape_storage": [
-                    512,
-                    264
+                "k_space": [
+                    256,
+                    256,
+                    10,
+                    1,
+                    1
                 ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 512,
+                "block_count": 2560,
+                "encoded_dim": 3,
+                "channels": 1
+            }
+        },
+        "2DSEQ_8_1": {
+            "path": "8/pdata/1/2dseq",
+            "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
+                "offset": [
+                    0,
+                    0
+                ],
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_frames": [
+                    2
+                ],
+                "shape_final": [
+                    256,
+                    256,
+                    1,
+                    2
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "shape_storage": [
+                    256,
+                    256,
+                    2
+                ],
+                "encoded_dim": 2,
+                "slope": [
+                    396.459816812455,
+                    396.459816812455
+                ],
+                "TE": 19,
+                "shape_fg": [
+                    1,
+                    2
+                ]
+            }
+        },
+        "FID_8": {
+            "path": "8/fid",
+            "properties": {
+                "numpy_dtype": "int32",
+                "sw_hz": 100000,
                 "encoding_space": [
                     256,
                     1,
@@ -174,12 +142,47 @@
                     4,
                     2
                 ],
-                "block_count": 264
+                "shape_storage": [
+                    512,
+                    264
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 512,
+                "k_space": [
+                    256,
+                    132,
+                    1,
+                    2,
+                    1
+                ],
+                "dwell_s": 5e-06,
+                "acq_lenght": 512,
+                "block_count": 264,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_7_1": {
-            "path": "7\\pdata\\1\\2dseq",
+            "path": "7/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -202,14 +205,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    20
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    20
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -218,25 +220,12 @@
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     20
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    14,
-                    42,
-                    70,
-                    98
-                ],
-                "shape_fg": [
-                    4,
-                    5,
-                    1
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     161.012696069596,
                     161.012696069596,
@@ -258,46 +247,25 @@
                     161.012696069596,
                     161.012696069596,
                     161.012696069596
+                ],
+                "TE": [
+                    14,
+                    42,
+                    70,
+                    98
+                ],
+                "shape_fg": [
+                    4,
+                    5,
+                    1
                 ]
             }
         },
         "FID_7": {
-            "path": "7\\fid",
+            "path": "7/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    128,
-                    20,
-                    1,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    2560
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     128,
                     1,
@@ -306,12 +274,47 @@
                     64,
                     1
                 ],
-                "block_count": 2560
+                "shape_storage": [
+                    256,
+                    2560
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    128,
+                    20,
+                    1,
+                    1
+                ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 256,
+                "block_count": 2560,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_6_1": {
-            "path": "6\\pdata\\1\\2dseq",
+            "path": "6/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -334,14 +337,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    20
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    20
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -351,21 +353,12 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     20
                 ],
-                "pv_version": "5.1",
-                "TE": 15,
-                "shape_fg": [
-                    1,
-                    5,
-                    2,
-                    2
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     116.699247196268,
                     116.699247196268,
@@ -387,46 +380,21 @@
                     116.699247196268,
                     116.699247196268,
                     116.699247196268
+                ],
+                "TE": 15,
+                "shape_fg": [
+                    1,
+                    5,
+                    2,
+                    2
                 ]
             }
         },
         "FID_6": {
-            "path": "6\\fid",
+            "path": "6/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    62,
-                    1,
-                    20,
-                    1
-                ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    1240
-                ],
+                "sw_hz": 100000,
                 "encoding_space": [
                     128,
                     1,
@@ -435,12 +403,47 @@
                     2,
                     20
                 ],
-                "block_count": 1240
+                "shape_storage": [
+                    256,
+                    1240
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    62,
+                    1,
+                    20,
+                    1
+                ],
+                "dwell_s": 5e-06,
+                "acq_lenght": 256,
+                "block_count": 1240,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_5_1": {
-            "path": "5\\pdata\\1\\2dseq",
+            "path": "5/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -461,14 +464,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    18
-                ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    18
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -477,23 +479,12 @@
                     3
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     18
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    56,
-                    168
-                ],
-                "shape_fg": [
-                    2,
-                    3,
-                    3
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     76.2645359359099,
                     76.2645359359099,
@@ -513,46 +504,23 @@
                     76.2645359359099,
                     76.2645359359099,
                     76.2645359359099
+                ],
+                "TE": [
+                    56,
+                    168
+                ],
+                "shape_fg": [
+                    2,
+                    3,
+                    3
                 ]
             }
         },
         "FID_5": {
-            "path": "5\\fid",
+            "path": "5/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    256,
-                    256,
-                    6,
-                    3,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 512,
-                "shape_storage": [
-                    512,
-                    4608
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     256,
                     1,
@@ -561,12 +529,47 @@
                     32,
                     3
                 ],
-                "block_count": 4608
+                "shape_storage": [
+                    512,
+                    4608
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 512,
+                "k_space": [
+                    256,
+                    256,
+                    6,
+                    3,
+                    1
+                ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 512,
+                "block_count": 4608,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_4_1": {
-            "path": "4\\pdata\\1\\2dseq",
+            "path": "4/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -577,14 +580,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    8
-                ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    8
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -592,22 +594,12 @@
                     4
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     8
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    15.8175,
-                    36.9075
-                ],
-                "shape_fg": [
-                    2,
-                    4
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     295.909058565224,
                     295.909058565224,
@@ -617,46 +609,22 @@
                     295.909058565224,
                     295.909058565224,
                     295.909058565224
+                ],
+                "TE": [
+                    15.8175,
+                    36.9075
+                ],
+                "shape_fg": [
+                    2,
+                    4
                 ]
             }
         },
         "FID_4": {
-            "path": "4\\fid",
+            "path": "4/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    256,
-                    256,
-                    8,
-                    1,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 512,
-                "shape_storage": [
-                    512,
-                    2048
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     256,
                     1,
@@ -665,12 +633,47 @@
                     256,
                     1
                 ],
-                "block_count": 2048
+                "shape_storage": [
+                    512,
+                    2048
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 512,
+                "k_space": [
+                    256,
+                    256,
+                    8,
+                    1,
+                    1
+                ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 512,
+                "block_count": 2048,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_35_1": {
-            "path": "35\\pdata\\1\\2dseq",
+            "path": "35/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -683,14 +686,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    10
-                ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    10
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -699,20 +701,12 @@
                     10
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     256,
                     256,
                     10
                 ],
-                "pv_version": "5.1",
-                "TE": 2.90666666666667,
-                "shape_fg": [
-                    1,
-                    1,
-                    10
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.000189802173865093,
                     0.000189802173865093,
@@ -724,46 +718,20 @@
                     0.000189802173865093,
                     0.000189802173865093,
                     0.000189802173865093
+                ],
+                "TE": 2.90666666666667,
+                "shape_fg": [
+                    1,
+                    1,
+                    10
                 ]
             }
         },
         "FID_35": {
-            "path": "35\\fid",
+            "path": "35/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    128,
-                    1,
-                    300,
-                    1
-                ],
-                "sw_hz": 75000,
-                "dwell_s": 6.666666666666667e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    38400
-                ],
+                "sw_hz": 75000,
                 "encoding_space": [
                     128,
                     1,
@@ -772,12 +740,47 @@
                     128,
                     300
                 ],
-                "block_count": 38400
+                "shape_storage": [
+                    256,
+                    38400
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    128,
+                    1,
+                    300,
+                    1
+                ],
+                "dwell_s": 6.666666666666667e-06,
+                "acq_lenght": 256,
+                "block_count": 38400,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_33_3": {
-            "path": "33\\pdata\\3\\2dseq",
+            "path": "33/pdata/3/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1;5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -785,14 +788,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -800,30 +802,31 @@
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     5
                 ],
-                "pv_version": "5.1;5.1",
-                "shape_fg": [
-                    1,
-                    5
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.00390625,
                     0.00390625,
                     4.76837158203125e-07,
                     4.76837158203125e-07,
                     0.0009765625
+                ],
+                "shape_fg": [
+                    1,
+                    5
                 ]
             }
         },
         "2DSEQ_33_2": {
-            "path": "33\\pdata\\2\\2dseq",
+            "path": "33/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1;5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -831,14 +834,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    5
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    5
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -846,30 +848,31 @@
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     5
                 ],
-                "pv_version": "5.1;5.1",
-                "shape_fg": [
-                    1,
-                    5
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.00390625,
                     0.00390625,
                     4.76837158203125e-07,
                     4.76837158203125e-07,
                     0.0009765625
+                ],
+                "shape_fg": [
+                    1,
+                    5
                 ]
             }
         },
         "2DSEQ_33_1": {
-            "path": "33\\pdata\\1\\2dseq",
+            "path": "33/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -888,14 +891,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    16
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    16
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -903,14 +905,30 @@
                     16
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     16
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 2,
+                "slope": [
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915,
+                    0.00166073135632915
+                ],
                 "TE": [
                     11,
                     22,
@@ -932,64 +950,14 @@
                 "shape_fg": [
                     1,
                     16
-                ],
-                "slope": [
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915,
-                    0.00166073135632915
                 ]
             }
         },
         "FID_33": {
-            "path": "33\\fid",
+            "path": "33/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    96,
-                    16,
-                    1,
-                    1
-                ],
-                "sw_hz": 59523.8095238095,
-                "dwell_s": 8.400000000000004e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    1536
-                ],
+                "sw_hz": 59523.8095238095,
                 "encoding_space": [
                     128,
                     1,
@@ -998,12 +966,47 @@
                     96,
                     1
                 ],
-                "block_count": 1536
+                "shape_storage": [
+                    256,
+                    1536
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    96,
+                    16,
+                    1,
+                    1
+                ],
+                "dwell_s": 8.400000000000004e-06,
+                "acq_lenght": 256,
+                "block_count": 1536,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_32_2": {
-            "path": "32\\pdata\\2\\2dseq",
+            "path": "32/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1;5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -1336,14 +1339,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    330
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    330
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1351,18 +1353,12 @@
                     15
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     330
                 ],
-                "pv_version": "5.1;5.1",
-                "shape_fg": [
-                    22,
-                    15
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     1e-06,
                     1e-09,
@@ -1694,12 +1690,19 @@
                     1e-06,
                     1e-06,
                     1e-06
+                ],
+                "shape_fg": [
+                    22,
+                    15
                 ]
             }
         },
         "2DSEQ_32_1": {
-            "path": "32\\pdata\\1\\2dseq",
+            "path": "32/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -2227,14 +2230,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    525
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    525
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -2242,19 +2244,12 @@
                     35
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     525
                 ],
-                "pv_version": "5.1",
-                "TE": 23.5,
-                "shape_fg": [
-                    15,
-                    35
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.00396825760804928,
                     0.00396825760804928,
@@ -2781,45 +2776,19 @@
                     0.00396825760804928,
                     0.00396825760804928,
                     0.00396825760804928
+                ],
+                "TE": 23.5,
+                "shape_fg": [
+                    15,
+                    35
                 ]
             }
         },
         "FID_32": {
-            "path": "32\\fid",
+            "path": "32/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    98,
-                    84,
-                    15,
-                    35,
-                    1
-                ],
-                "sw_hz": 250000,
-                "dwell_s": 2e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 4116,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 4974,
-                "shape_storage": [
-                    4974,
-                    2100
-                ],
+                "sw_hz": 250000,
                 "encoding_space": [
                     2058,
                     1,
@@ -2827,12 +2796,46 @@
                     15,
                     35
                 ],
-                "block_count": 2100
+                "shape_storage": [
+                    4974,
+                    2100
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 4974,
+                "k_space": [
+                    98,
+                    84,
+                    15,
+                    35,
+                    1
+                ],
+                "dwell_s": 2e-06,
+                "acq_lenght": 4116,
+                "block_count": 2100,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_31_3": {
-            "path": "31\\pdata\\3\\2dseq",
+            "path": "31/pdata/3/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1;5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -2860,14 +2863,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    25
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    25
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -2876,26 +2878,12 @@
                     5
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     25
                 ],
-                "pv_version": "5.1;5.1",
-                "TE": [
-                    10,
-                    30,
-                    50,
-                    70,
-                    90
-                ],
-                "shape_fg": [
-                    1,
-                    5,
-                    5
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.001953125,
                     0.001953125,
@@ -2922,12 +2910,27 @@
                     1.9073486328125e-06,
                     1.9073486328125e-06,
                     3.0517578125e-05
+                ],
+                "TE": [
+                    10,
+                    30,
+                    50,
+                    70,
+                    90
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    5
                 ]
             }
         },
         "2DSEQ_31_2": {
-            "path": "31\\pdata\\2\\2dseq",
+            "path": "31/pdata/2/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1;5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -2960,14 +2963,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    30
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    30
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -2976,19 +2978,12 @@
                     6
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     30
                 ],
-                "pv_version": "5.1;5.1",
-                "shape_fg": [
-                    1,
-                    5,
-                    6
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     0.001953125,
                     0.001953125,
@@ -3020,12 +3015,20 @@
                     9.5367431640625e-07,
                     9.5367431640625e-07,
                     0.000244140625
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    6
                 ]
             }
         },
         "2DSEQ_31_1": {
-            "path": "31\\pdata\\1\\2dseq",
+            "path": "31/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -3058,14 +3061,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    30
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    30
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -3074,26 +3076,12 @@
                     6
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     30
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    10,
-                    30,
-                    50,
-                    70,
-                    90
-                ],
-                "shape_fg": [
-                    1,
-                    5,
-                    6
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     98.9442691872253,
                     98.9442691872253,
@@ -3125,46 +3113,26 @@
                     98.9442691872253,
                     98.9442691872253,
                     98.9442691872253
+                ],
+                "TE": [
+                    10,
+                    30,
+                    50,
+                    70,
+                    90
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    6
                 ]
             }
         },
         "FID_31": {
-            "path": "31\\fid",
+            "path": "31/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    96,
-                    5,
-                    6,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    2880
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     128,
                     1,
@@ -3173,12 +3141,47 @@
                     48,
                     6
                 ],
-                "block_count": 2880
+                "shape_storage": [
+                    256,
+                    2880
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    96,
+                    5,
+                    6,
+                    1
+                ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 256,
+                "block_count": 2880,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_3_1": {
-            "path": "3\\pdata\\1\\2dseq",
+            "path": "3/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -3253,14 +3256,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    72
-                ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    72
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -3268,29 +3270,12 @@
                     8
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     72
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    4,
-                    10,
-                    16,
-                    22,
-                    28,
-                    34,
-                    40,
-                    46,
-                    52
-                ],
-                "shape_fg": [
-                    9,
-                    8
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     76.6238619262818,
                     76.6238619262818,
@@ -3364,24 +3349,49 @@
                     76.6238619262818,
                     76.6238619262818,
                     76.6238619262818
+                ],
+                "TE": [
+                    4,
+                    10,
+                    16,
+                    22,
+                    28,
+                    34,
+                    40,
+                    46,
+                    52
+                ],
+                "shape_fg": [
+                    9,
+                    8
                 ]
             }
         },
         "FID_3": {
-            "path": "3\\fid",
+            "path": "3/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
+                "numpy_dtype": "int32",
+                "sw_hz": 78125,
+                "encoding_space": [
                     256,
-                    256,
-                    72,
                     1,
+                    1,
+                    72,
+                    256,
                     1
                 ],
-                "sw_hz": 78125,
-                "dwell_s": 6.4e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
+                "shape_storage": [
+                    512,
+                    18432
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "permute": [
                     0,
                     2,
@@ -3390,255 +3400,247 @@
                     5,
                     1
                 ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
                 "block_size": 512,
-                "shape_storage": [
-                    512,
-                    18432
-                ],
-                "encoding_space": [
+                "k_space": [
                     256,
-                    1,
-                    1,
+                    256,
                     72,
-                    256,
+                    1,
                     1
                 ],
-                "block_count": 18432
+                "dwell_s": 6.4e-06,
+                "acq_lenght": 512,
+                "block_count": 18432,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_28_1": {
-            "path": "28\\pdata\\1\\2dseq",
+            "path": "28/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     2048
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     2048,
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 1,
-                "is_single_slice": false,
                 "shape_storage": [
                     2048,
                     1
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 1,
+                "slope": [
+                    0.0188149760445386
+                ],
                 "TE": 0,
                 "shape_fg": [
                     1
-                ],
-                "slope": [
-                    0.0188149760445386
                 ]
             }
         },
         "FID_28": {
-            "path": "28\\fid",
+            "path": "28/fid",
             "properties": {
-                "scheme_id": "SPECTROSCOPY",
-                "k_space": [
-                    2048,
-                    1
-                ],
-                "sw_hz": 6009.61538461538,
-                "dwell_s": 8.320000000000006e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    1
-                ],
-                "acq_lenght": 4096,
-                "encoded_dim": 1,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
-                ],
-                "block_size": 4096,
-                "shape_storage": [
-                    4096,
-                    1
-                ],
+                "sw_hz": 6009.61538461538,
                 "encoding_space": [
                     2048,
                     1
                 ],
-                "block_count": 1
+                "shape_storage": [
+                    4096,
+                    1
+                ],
+                "scheme_id": "SPECTROSCOPY",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
+                "permute": [
+                    0,
+                    1
+                ],
+                "block_size": 4096,
+                "k_space": [
+                    2048,
+                    1
+                ],
+                "dwell_s": 8.320000000000006e-05,
+                "acq_lenght": 4096,
+                "block_count": 1,
+                "encoded_dim": 1,
+                "channels": 1
             }
         },
         "2DSEQ_27_1": {
-            "path": "27\\pdata\\1\\2dseq",
+            "path": "27/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     2048
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     2048,
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 1,
-                "is_single_slice": false,
                 "shape_storage": [
                     2048,
                     1
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 1,
+                "slope": [
+                    0.0783475008622457
+                ],
                 "TE": 0,
                 "shape_fg": [
                     1
-                ],
-                "slope": [
-                    0.0783475008622457
                 ]
             }
         },
         "FID_27": {
-            "path": "27\\fid",
+            "path": "27/fid",
             "properties": {
-                "scheme_id": "SPECTROSCOPY",
-                "k_space": [
-                    2048,
-                    1
-                ],
-                "sw_hz": 4006.41025641026,
-                "dwell_s": 0.0001247999999999999,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    1
-                ],
-                "acq_lenght": 4096,
-                "encoded_dim": 1,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
-                ],
-                "block_size": 4096,
-                "shape_storage": [
-                    4096,
-                    1
-                ],
+                "sw_hz": 4006.41025641026,
                 "encoding_space": [
                     2048,
                     1
                 ],
-                "block_count": 1
+                "shape_storage": [
+                    4096,
+                    1
+                ],
+                "scheme_id": "SPECTROSCOPY",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
+                "permute": [
+                    0,
+                    1
+                ],
+                "block_size": 4096,
+                "k_space": [
+                    2048,
+                    1
+                ],
+                "dwell_s": 0.0001247999999999999,
+                "acq_lenght": 4096,
+                "block_count": 1,
+                "encoded_dim": 1,
+                "channels": 1
             }
         },
         "2DSEQ_26_1": {
-            "path": "26\\pdata\\1\\2dseq",
+            "path": "26/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
                     0
                 ],
-                "shape_frames": [
-                    3
-                ],
                 "shape_block": [
                     1024
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    3
+                ],
                 "shape_final": [
                     1024,
                     3
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 1,
-                "is_single_slice": false,
                 "shape_storage": [
                     1024,
                     3
                 ],
-                "pv_version": "5.1",
-                "TE": 0,
-                "shape_fg": [
-                    3
-                ],
+                "encoded_dim": 1,
                 "slope": [
                     32031.3476742137,
                     32031.3476742137,
                     32031.3476742137
+                ],
+                "TE": 0,
+                "shape_fg": [
+                    3
                 ]
             }
         },
         "FID_26": {
-            "path": "26\\fid",
+            "path": "26/fid",
             "properties": {
-                "scheme_id": "SPECTROSCOPY",
-                "k_space": [
-                    1024,
-                    3
-                ],
-                "sw_hz": 25000,
-                "dwell_s": 2e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    1
-                ],
-                "acq_lenght": 2048,
-                "encoded_dim": 1,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
-                ],
-                "block_size": 2048,
-                "shape_storage": [
-                    2048,
-                    3
-                ],
+                "sw_hz": 25000,
                 "encoding_space": [
                     1024,
                     3
                 ],
-                "block_count": 3
+                "shape_storage": [
+                    2048,
+                    3
+                ],
+                "scheme_id": "SPECTROSCOPY",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
+                "permute": [
+                    0,
+                    1
+                ],
+                "block_size": 2048,
+                "k_space": [
+                    1024,
+                    3
+                ],
+                "dwell_s": 2e-05,
+                "acq_lenght": 2048,
+                "block_count": 3,
+                "encoded_dim": 1,
+                "channels": 1
             }
         },
         "2DSEQ_25_1": {
-            "path": "25\\pdata\\1\\2dseq",
+            "path": "25/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0
-                ],
-                "shape_frames": [
-                    2
                 ],
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    2
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -3646,52 +3648,43 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     128,
                     2
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 3,
+                "slope": [
+                    0.0015559824536877,
+                    0.0015559824536877
+                ],
                 "TE": [
                     1.537,
                     5.537
                 ],
                 "shape_fg": [
                     2
-                ],
-                "slope": [
-                    0.0015559824536877,
-                    0.0015559824536877
                 ]
             }
         },
         "FID_25": {
-            "path": "25\\fid",
+            "path": "25/fid",
             "properties": {
-                "scheme_id": "FIELD_MAP",
-                "k_space": [
-                    128,
-                    128,
-                    128,
-                    2,
-                    1
-                ],
-                "sw_hz": 200000,
-                "dwell_s": 2.5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    3,
-                    4,
+                "sw_hz": 200000,
+                "encoding_space": [
+                    128,
+                    1,
                     2,
-                    1
+                    128,
+                    128
                 ],
-                "acq_lenght": 256,
-                "encoded_dim": 3,
+                "shape_storage": [
+                    256,
+                    32768
+                ],
+                "scheme_id": "FIELD_MAP",
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -3699,36 +3692,45 @@
                     "repetition",
                     "channel"
                 ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    32768
-                ],
-                "encoding_space": [
-                    128,
-                    1,
+                "permute": [
+                    0,
+                    3,
+                    4,
                     2,
-                    128,
-                    128
+                    1
                 ],
-                "block_count": 32768
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    128,
+                    128,
+                    2,
+                    1
+                ],
+                "dwell_s": 2.5e-06,
+                "acq_lenght": 256,
+                "block_count": 32768,
+                "encoded_dim": 3,
+                "channels": 1
             }
         },
         "2DSEQ_24_1": {
-            "path": "24\\pdata\\1\\2dseq",
+            "path": "24/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int32",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     2048,
                     32,
                     32
                 ],
-                "numpy_dtype": "int32",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     2048,
                     32,
@@ -3736,76 +3738,76 @@
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
                     2048,
                     32,
                     32,
                     1
                 ],
-                "pv_version": "5.1",
-                "shape_fg": [
-                    1
-                ],
+                "encoded_dim": 3,
                 "slope": [
                     0.610878945064932
+                ],
+                "shape_fg": [
+                    1
                 ]
             }
         },
         "FID_24": {
-            "path": "24\\fid",
+            "path": "24/fid",
             "properties": {
-                "scheme_id": "CSI",
-                "k_space": [
-                    2048,
-                    19,
-                    19
-                ],
-                "sw_hz": 4006.41025641026,
-                "dwell_s": 0.0001247999999999999,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    1,
-                    2
-                ],
-                "acq_lenght": 4096,
-                "encoded_dim": 3,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2"
-                ],
-                "block_size": 4096,
-                "shape_storage": [
-                    4096,
-                    361
-                ],
+                "sw_hz": 4006.41025641026,
                 "encoding_space": [
                     2048,
                     19,
                     19
                 ],
-                "block_count": 361
+                "shape_storage": [
+                    4096,
+                    361
+                ],
+                "scheme_id": "CSI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2"
+                ],
+                "permute": [
+                    0,
+                    1,
+                    2
+                ],
+                "block_size": 4096,
+                "k_space": [
+                    2048,
+                    19,
+                    19
+                ],
+                "dwell_s": 0.0001247999999999999,
+                "acq_lenght": 4096,
+                "block_count": 361,
+                "encoded_dim": 3,
+                "channels": 1
             }
         },
         "2DSEQ_23_1": {
-            "path": "23\\pdata\\1\\2dseq",
+            "path": "23/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -3813,61 +3815,27 @@
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     128,
                     1
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 3,
+                "slope": [
+                    1.41252549223342
+                ],
                 "TE": 0,
                 "shape_fg": [
                     1
-                ],
-                "slope": [
-                    1.41252549223342
                 ]
             }
         },
         "FID_23": {
-            "path": "23\\fid",
+            "path": "23/fid",
             "properties": {
-                "scheme_id": "RADIAL",
-                "k_space": [
-                    512,
-                    51896,
-                    1,
-                    1,
-                    1
-                ],
-                "sw_hz": 800000,
-                "dwell_s": 6.25e-07,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1024,
-                "encoded_dim": 3,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1024,
-                "shape_storage": [
-                    1024,
-                    51896
-                ],
+                "sw_hz": 800000,
                 "encoding_space": [
                     512,
                     1,
@@ -3876,64 +3844,18 @@
                     25948,
                     1
                 ],
-                "block_count": 51896
-            }
-        },
-        "2DSEQ_22_1": {
-            "path": "22\\pdata\\1\\2dseq",
-            "properties": {
-                "offset": [
-                    0
-                ],
-                "shape_frames": [
-                    1
-                ],
-                "shape_block": [
-                    128,
-                    128,
-                    128
-                ],
-                "numpy_dtype": "int16",
-                "shape_final": [
-                    128,
-                    128,
-                    128,
-                    1
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
-                    128,
-                    128,
-                    128,
-                    1
+                    1024,
+                    51896
                 ],
-                "pv_version": "5.1",
-                "TE": 0.02,
-                "shape_fg": [
-                    1
-                ],
-                "slope": [
-                    1.37425787550869
-                ]
-            }
-        },
-        "FID_22": {
-            "path": "22\\fid",
-            "properties": {
                 "scheme_id": "RADIAL",
-                "k_space": [
-                    64,
-                    51360,
-                    1,
-                    1,
-                    1
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
                 ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
                 "permute": [
                     0,
                     2,
@@ -3942,20 +3864,66 @@
                     5,
                     1
                 ],
-                "acq_lenght": 128,
+                "block_size": 1024,
+                "k_space": [
+                    512,
+                    51896,
+                    1,
+                    1,
+                    1
+                ],
+                "dwell_s": 6.25e-07,
+                "acq_lenght": 1024,
+                "block_count": 51896,
                 "encoded_dim": 3,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "channels": 1
+            }
+        },
+        "2DSEQ_22_1": {
+            "path": "22/pdata/1/2dseq",
+            "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
+                "offset": [
+                    0
                 ],
-                "block_size": 256,
+                "shape_block": [
+                    128,
+                    128,
+                    128
+                ],
+                "shape_frames": [
+                    1
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    128,
+                    1
+                ],
+                "date": "<class 'datetime.datetime'>",
                 "shape_storage": [
-                    256,
-                    51360
+                    128,
+                    128,
+                    128,
+                    1
                 ],
+                "encoded_dim": 3,
+                "slope": [
+                    1.37425787550869
+                ],
+                "TE": 0.02,
+                "shape_fg": [
+                    1
+                ]
+            }
+        },
+        "FID_22": {
+            "path": "22/fid",
+            "properties": {
+                "numpy_dtype": "int32",
+                "sw_hz": 100000,
                 "encoding_space": [
                     64,
                     1,
@@ -3964,67 +3932,109 @@
                     51360,
                     1
                 ],
-                "block_count": 51360
+                "shape_storage": [
+                    256,
+                    51360
+                ],
+                "scheme_id": "RADIAL",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    64,
+                    51360,
+                    1,
+                    1,
+                    1
+                ],
+                "dwell_s": 5e-06,
+                "acq_lenght": 128,
+                "block_count": 51360,
+                "encoded_dim": 3,
+                "channels": 1
             }
         },
         "2DSEQ_21_1": {
-            "path": "21\\pdata\\1\\2dseq",
+            "path": "21/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
                     0,
                     0
                 ],
-                "shape_frames": [
-                    4
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    4
+                ],
                 "shape_final": [
                     128,
                     128,
                     4
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     4
                 ],
-                "pv_version": "5.1",
-                "TE": 0.316319272829721,
-                "shape_fg": [
-                    4
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     2.49152751238897,
                     2.49152751238897,
                     2.49152751238897,
                     2.49152751238897
+                ],
+                "TE": 0.316319272829721,
+                "shape_fg": [
+                    4
                 ]
             }
         },
         "FID_21": {
-            "path": "21\\fid",
+            "path": "21/fid",
             "properties": {
-                "scheme_id": "RADIAL",
-                "k_space": [
+                "numpy_dtype": "int32",
+                "sw_hz": 100000,
+                "encoding_space": [
                     64,
-                    402,
-                    4,
                     1,
+                    1,
+                    4,
+                    402,
                     1
                 ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
+                "shape_storage": [
+                    256,
+                    1608
+                ],
+                "scheme_id": "RADIAL",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "permute": [
                     0,
                     2,
@@ -4033,8 +4043,38 @@
                     5,
                     1
                 ],
+                "block_size": 256,
+                "k_space": [
+                    64,
+                    402,
+                    4,
+                    1,
+                    1
+                ],
+                "dwell_s": 5e-06,
                 "acq_lenght": 128,
+                "block_count": 1608,
                 "encoded_dim": 2,
+                "channels": 1
+            }
+        },
+        "FID_20": {
+            "path": "20/fid",
+            "properties": {
+                "numpy_dtype": "int32",
+                "sw_hz": 454545.454545455,
+                "encoding_space": [
+                    256,
+                    1,
+                    256,
+                    6,
+                    3
+                ],
+                "shape_storage": [
+                    512,
+                    4608
+                ],
+                "scheme_id": "SPIRAL",
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4042,37 +4082,6 @@
                     "repetition",
                     "channel"
                 ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    1608
-                ],
-                "encoding_space": [
-                    64,
-                    1,
-                    1,
-                    4,
-                    402,
-                    1
-                ],
-                "block_count": 1608
-            }
-        },
-        "FID_20": {
-            "path": "20\\fid",
-            "properties": {
-                "scheme_id": "SPIRAL",
-                "k_space": [
-                    256,
-                    256,
-                    6,
-                    3,
-                    1
-                ],
-                "sw_hz": 454545.454545455,
-                "dwell_s": 1.099999999999999e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
                 "permute": [
                     0,
                     2,
@@ -4080,86 +4089,87 @@
                     4,
                     1
                 ],
-                "acq_lenght": 512,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
                 "block_size": 512,
-                "shape_storage": [
-                    512,
-                    4608
-                ],
-                "encoding_space": [
+                "k_space": [
                     256,
-                    1,
                     256,
                     6,
-                    3
+                    3,
+                    1
                 ],
-                "block_count": 4608
+                "dwell_s": 1.099999999999999e-06,
+                "acq_lenght": 512,
+                "block_count": 4608,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_2_1": {
-            "path": "2\\pdata\\1\\2dseq",
+            "path": "2/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
                     0
-                ],
-                "shape_frames": [
-                    3
                 ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    3
+                ],
                 "shape_final": [
                     256,
                     256,
                     3
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     3
                 ],
-                "pv_version": "5.1",
-                "TE": 6,
-                "shape_fg": [
-                    3
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     153.274237284458,
                     153.274237284458,
                     153.274237284458
+                ],
+                "TE": 6,
+                "shape_fg": [
+                    3
                 ]
             }
         },
         "FID_2": {
-            "path": "2\\fid",
+            "path": "2/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
+                "numpy_dtype": "int32",
+                "sw_hz": 50000,
+                "encoding_space": [
                     256,
-                    256,
-                    3,
                     1,
+                    1,
+                    3,
+                    256,
                     1
                 ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
-                "numpy_dtype": "int32",
-                "channels": 1,
+                "shape_storage": [
+                    512,
+                    768
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "permute": [
                     0,
                     2,
@@ -4168,8 +4178,38 @@
                     5,
                     1
                 ],
+                "block_size": 512,
+                "k_space": [
+                    256,
+                    256,
+                    3,
+                    1,
+                    1
+                ],
+                "dwell_s": 1e-05,
                 "acq_lenght": 512,
+                "block_count": 768,
                 "encoded_dim": 2,
+                "channels": 1
+            }
+        },
+        "FID_19": {
+            "path": "19/fid",
+            "properties": {
+                "numpy_dtype": "int32",
+                "sw_hz": 454545.454545455,
+                "encoding_space": [
+                    512,
+                    1,
+                    512,
+                    4,
+                    1
+                ],
+                "shape_storage": [
+                    1024,
+                    2048
+                ],
+                "scheme_id": "SPIRAL",
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4177,37 +4217,6 @@
                     "repetition",
                     "channel"
                 ],
-                "block_size": 512,
-                "shape_storage": [
-                    512,
-                    768
-                ],
-                "encoding_space": [
-                    256,
-                    1,
-                    1,
-                    3,
-                    256,
-                    1
-                ],
-                "block_count": 768
-            }
-        },
-        "FID_19": {
-            "path": "19\\fid",
-            "properties": {
-                "scheme_id": "SPIRAL",
-                "k_space": [
-                    512,
-                    512,
-                    4,
-                    1,
-                    1
-                ],
-                "sw_hz": 454545.454545455,
-                "dwell_s": 1.099999999999999e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
                 "permute": [
                     0,
                     2,
@@ -4215,47 +4224,40 @@
                     4,
                     1
                 ],
-                "acq_lenght": 1024,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
                 "block_size": 1024,
-                "shape_storage": [
-                    1024,
-                    2048
-                ],
-                "encoding_space": [
+                "k_space": [
                     512,
-                    1,
                     512,
                     4,
+                    1,
                     1
                 ],
-                "block_count": 2048
+                "dwell_s": 1.099999999999999e-06,
+                "acq_lenght": 1024,
+                "block_count": 2048,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_18_1": {
-            "path": "18\\pdata\\1\\2dseq",
+            "path": "18/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
                     0,
                     0
                 ],
-                "shape_frames": [
-                    4
-                ],
                 "shape_block": [
                     64,
                     64
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    4
+                ],
                 "shape_final": [
                     64,
                     64,
@@ -4263,14 +4265,18 @@
                     4
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     64,
                     64,
                     4
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 2,
+                "slope": [
+                    61.0842873359424,
+                    61.0842873359424,
+                    61.0842873359424,
+                    61.0842873359424
+                ],
                 "TE": [
                     17.438,
                     39.93,
@@ -4280,51 +4286,14 @@
                 "shape_fg": [
                     1,
                     4
-                ],
-                "slope": [
-                    61.0842873359424,
-                    61.0842873359424,
-                    61.0842873359424,
-                    61.0842873359424
                 ]
             }
         },
         "FID_18": {
-            "path": "18\\fid",
+            "path": "18/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    64,
-                    64,
-                    4,
-                    1,
-                    1
-                ],
-                "sw_hz": 200000,
-                "dwell_s": 2.5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 8192,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 8192,
-                "shape_storage": [
-                    8192,
-                    4
-                ],
+                "sw_hz": 200000,
                 "encoding_space": [
                     4096,
                     1,
@@ -4332,12 +4301,46 @@
                     4,
                     1
                 ],
-                "block_count": 4
+                "shape_storage": [
+                    8192,
+                    4
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 8192,
+                "k_space": [
+                    64,
+                    64,
+                    4,
+                    1,
+                    1
+                ],
+                "dwell_s": 2.5e-06,
+                "acq_lenght": 8192,
+                "block_count": 4,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_17_1": {
-            "path": "17\\pdata\\1\\2dseq",
+            "path": "17/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -4460,14 +4463,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    120
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    120
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -4475,28 +4477,12 @@
                     15
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     120
                 ],
-                "pv_version": "5.1",
-                "TE": [
-                    90.362,
-                    180.724,
-                    271.086,
-                    361.448,
-                    451.81,
-                    542.172,
-                    632.534,
-                    722.896
-                ],
-                "shape_fg": [
-                    8,
-                    15
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     257.301041366432,
                     257.301041366432,
@@ -4618,45 +4604,28 @@
                     257.301041366432,
                     257.301041366432,
                     257.301041366432
+                ],
+                "TE": [
+                    90.362,
+                    180.724,
+                    271.086,
+                    361.448,
+                    451.81,
+                    542.172,
+                    632.534,
+                    722.896
+                ],
+                "shape_fg": [
+                    8,
+                    15
                 ]
             }
         },
         "FID_17": {
-            "path": "17\\fid",
+            "path": "17/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    128,
-                    128,
-                    120,
-                    1,
-                    1
-                ],
-                "sw_hz": 200000,
-                "dwell_s": 2.5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 32768,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 32768,
-                "shape_storage": [
-                    32768,
-                    120
-                ],
+                "sw_hz": 200000,
                 "encoding_space": [
                     16384,
                     1,
@@ -4664,12 +4633,46 @@
                     120,
                     1
                 ],
-                "block_count": 120
+                "shape_storage": [
+                    32768,
+                    120
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 32768,
+                "k_space": [
+                    128,
+                    128,
+                    120,
+                    1,
+                    1
+                ],
+                "dwell_s": 2.5e-06,
+                "acq_lenght": 32768,
+                "block_count": 120,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_16_1": {
-            "path": "16\\pdata\\1\\2dseq",
+            "path": "16/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -4688,14 +4691,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    16
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    16
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -4703,19 +4705,12 @@
                     16
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     128,
                     128,
                     16
                 ],
-                "pv_version": "5.1",
-                "TE": 45.788,
-                "shape_fg": [
-                    1,
-                    16
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     65.0506197119759,
                     65.0506197119759,
@@ -4733,45 +4728,19 @@
                     65.0506197119759,
                     65.0506197119759,
                     65.0506197119759
+                ],
+                "TE": 45.788,
+                "shape_fg": [
+                    1,
+                    16
                 ]
             }
         },
         "FID_16": {
-            "path": "16\\fid",
+            "path": "16/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    128,
-                    128,
-                    16,
-                    1,
-                    1
-                ],
-                "sw_hz": 200000,
-                "dwell_s": 2.5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 16384,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 16384,
-                "shape_storage": [
-                    16384,
-                    32
-                ],
+                "sw_hz": 200000,
                 "encoding_space": [
                     8192,
                     1,
@@ -4779,12 +4748,46 @@
                     16,
                     1
                 ],
-                "block_count": 32
+                "shape_storage": [
+                    16384,
+                    32
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 16384,
+                "k_space": [
+                    128,
+                    128,
+                    16,
+                    1,
+                    1
+                ],
+                "dwell_s": 2.5e-06,
+                "acq_lenght": 16384,
+                "block_count": 32,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_15_1": {
-            "path": "15\\pdata\\1\\2dseq",
+            "path": "15/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -4814,14 +4817,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    27
-                ],
                 "shape_block": [
                     64,
                     64
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    27
+                ],
                 "shape_final": [
                     64,
                     64,
@@ -4829,19 +4831,12 @@
                     9
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     64,
                     64,
                     27
                 ],
-                "pv_version": "5.1",
-                "TE": 49.0008,
-                "shape_fg": [
-                    3,
-                    9
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     278.415440065867,
                     278.415440065867,
@@ -4870,45 +4865,19 @@
                     53.6282571882034,
                     53.6282571882034,
                     53.6282571882034
+                ],
+                "TE": 49.0008,
+                "shape_fg": [
+                    3,
+                    9
                 ]
             }
         },
         "FID_15": {
-            "path": "15\\fid",
+            "path": "15/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    64,
-                    60,
-                    3,
-                    9,
-                    1
-                ],
-                "sw_hz": 119047.619047619,
-                "dwell_s": 4.200000000000002e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 1536,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1536,
-                "shape_storage": [
-                    1536,
-                    135
-                ],
+                "sw_hz": 119047.619047619,
                 "encoding_space": [
                     768,
                     1,
@@ -4916,12 +4885,46 @@
                     3,
                     9
                 ],
-                "block_count": 135
+                "shape_storage": [
+                    1536,
+                    135
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 1536,
+                "k_space": [
+                    64,
+                    60,
+                    3,
+                    9,
+                    1
+                ],
+                "dwell_s": 4.200000000000002e-06,
+                "acq_lenght": 1536,
+                "block_count": 135,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_14_1": {
-            "path": "14\\pdata\\1\\2dseq",
+            "path": "14/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0,
@@ -4934,14 +4937,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    10
-                ],
                 "shape_block": [
                     64,
                     64
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    10
+                ],
                 "shape_final": [
                     64,
                     64,
@@ -4950,20 +4952,12 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     64,
                     64,
                     10
                 ],
-                "pv_version": "5.1",
-                "TE": 24.279,
-                "shape_fg": [
-                    1,
-                    5,
-                    2
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     50.4672977064193,
                     50.6269768753175,
@@ -4975,45 +4969,20 @@
                     51.52440943849,
                     52.0757610313802,
                     52.6828980096941
+                ],
+                "TE": 24.279,
+                "shape_fg": [
+                    1,
+                    5,
+                    2
                 ]
             }
         },
         "FID_14": {
-            "path": "14\\fid",
+            "path": "14/fid",
             "properties": {
-                "scheme_id": "EPI",
-                "k_space": [
-                    64,
-                    64,
-                    1,
-                    10,
-                    1
-                ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 2048,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 2562,
-                "shape_storage": [
-                    2562,
-                    40
-                ],
+                "sw_hz": 100000,
                 "encoding_space": [
                     1024,
                     1,
@@ -5021,76 +4990,11 @@
                     1,
                     10
                 ],
-                "block_count": 40
-            }
-        },
-        "2DSEQ_13_1": {
-            "path": "13\\pdata\\1\\2dseq",
-            "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_frames": [
-                    4
-                ],
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "numpy_dtype": "int16",
-                "shape_final": [
-                    64,
-                    64,
-                    4
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
-                    64,
-                    64,
-                    4
+                    2562,
+                    40
                 ],
-                "pv_version": "5.1",
-                "TE": 24.818,
-                "shape_fg": [
-                    4
-                ],
-                "slope": [
-                    565.46586457527,
-                    565.46586457527,
-                    565.46586457527,
-                    565.46586457527
-                ]
-            }
-        },
-        "FID_13": {
-            "path": "13\\fid",
-            "properties": {
                 "scheme_id": "EPI",
-                "k_space": [
-                    64,
-                    51,
-                    4,
-                    1,
-                    1
-                ],
-                "sw_hz": 100000,
-                "dwell_s": 5e-06,
-                "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    3,
-                    4,
-                    1
-                ],
-                "acq_lenght": 2176,
-                "encoded_dim": 2,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5098,11 +5002,76 @@
                     "repetition",
                     "channel"
                 ],
-                "block_size": 2690,
-                "shape_storage": [
-                    2690,
-                    12
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
                 ],
+                "block_size": 2562,
+                "k_space": [
+                    64,
+                    64,
+                    1,
+                    10,
+                    1
+                ],
+                "dwell_s": 5e-06,
+                "acq_lenght": 2048,
+                "block_count": 40,
+                "encoded_dim": 2,
+                "channels": 1
+            }
+        },
+        "2DSEQ_13_1": {
+            "path": "13/pdata/1/2dseq",
+            "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "shape_frames": [
+                    4
+                ],
+                "shape_final": [
+                    64,
+                    64,
+                    4
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "shape_storage": [
+                    64,
+                    64,
+                    4
+                ],
+                "encoded_dim": 2,
+                "slope": [
+                    565.46586457527,
+                    565.46586457527,
+                    565.46586457527,
+                    565.46586457527
+                ],
+                "TE": 24.818,
+                "shape_fg": [
+                    4
+                ]
+            }
+        },
+        "FID_13": {
+            "path": "13/fid",
+            "properties": {
+                "numpy_dtype": "int32",
+                "sw_hz": 100000,
                 "encoding_space": [
                     1088,
                     1,
@@ -5110,12 +5079,46 @@
                     4,
                     1
                 ],
-                "block_count": 12
+                "shape_storage": [
+                    2690,
+                    12
+                ],
+                "scheme_id": "EPI",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    3,
+                    4,
+                    1
+                ],
+                "block_size": 2690,
+                "k_space": [
+                    64,
+                    51,
+                    4,
+                    1,
+                    1
+                ],
+                "dwell_s": 5e-06,
+                "acq_lenght": 2176,
+                "block_count": 12,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_12_1": {
-            "path": "12\\pdata\\1\\2dseq",
+            "path": "12/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -5132,14 +5135,13 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    14
-                ],
                 "shape_block": [
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    14
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -5147,19 +5149,12 @@
                     7
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     14
                 ],
-                "pv_version": "5.1",
-                "TE": 20,
-                "shape_fg": [
-                    2,
-                    7
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     151.31449775852,
                     151.31449775852,
@@ -5175,46 +5170,19 @@
                     151.31449775852,
                     151.31449775852,
                     151.31449775852
+                ],
+                "TE": 20,
+                "shape_fg": [
+                    2,
+                    7
                 ]
             }
         },
         "FID_12": {
-            "path": "12\\fid",
+            "path": "12/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    128,
-                    14,
-                    1,
-                    1
-                ],
-                "sw_hz": 50000,
-                "dwell_s": 1e-05,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    1792
-                ],
+                "sw_hz": 50000,
                 "encoding_space": [
                     128,
                     1,
@@ -5223,24 +5191,58 @@
                     128,
                     1
                 ],
-                "block_count": 1792
+                "shape_storage": [
+                    256,
+                    1792
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    128,
+                    14,
+                    1,
+                    1
+                ],
+                "dwell_s": 1e-05,
+                "acq_lenght": 256,
+                "block_count": 1792,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_11_1": {
-            "path": "11\\pdata\\1\\2dseq",
+            "path": "11/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": true,
                 "offset": [
                     0,
                     0
-                ],
-                "shape_frames": [
-                    2
                 ],
                 "shape_block": [
                     512,
                     512
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    2
+                ],
                 "shape_final": [
                     512,
                     512,
@@ -5248,62 +5250,28 @@
                     2
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": true,
                 "shape_storage": [
                     512,
                     512,
                     2
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 2,
+                "slope": [
+                    0.000915569254904989,
+                    0.000915569254904989
+                ],
                 "TE": 6,
                 "shape_fg": [
                     1,
                     2
-                ],
-                "slope": [
-                    0.000915569254904989,
-                    0.000915569254904989
                 ]
             }
         },
         "FID_11": {
-            "path": "11\\fid",
+            "path": "11/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    512,
-                    384,
-                    2,
-                    1,
-                    1
-                ],
-                "sw_hz": 75000,
-                "dwell_s": 6.666666666666667e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 1024,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 1024,
-                "shape_storage": [
-                    1024,
-                    768
-                ],
+                "sw_hz": 75000,
                 "encoding_space": [
                     512,
                     1,
@@ -5312,24 +5280,58 @@
                     384,
                     1
                 ],
-                "block_count": 768
+                "shape_storage": [
+                    1024,
+                    768
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 1024,
+                "k_space": [
+                    512,
+                    384,
+                    2,
+                    1,
+                    1
+                ],
+                "dwell_s": 6.666666666666667e-06,
+                "acq_lenght": 1024,
+                "block_count": 768,
+                "encoded_dim": 2,
+                "channels": 1
             }
         },
         "2DSEQ_10_1": {
-            "path": "10\\pdata\\1\\2dseq",
+            "path": "10/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0
-                ],
-                "shape_frames": [
-                    1
                 ],
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    1
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -5337,61 +5339,27 @@
                     1
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 3,
-                "is_single_slice": false,
                 "shape_storage": [
                     128,
                     128,
                     128,
                     1
                 ],
-                "pv_version": "5.1",
+                "encoded_dim": 3,
+                "slope": [
+                    182.269660998766
+                ],
                 "TE": 2,
                 "shape_fg": [
                     1
-                ],
-                "slope": [
-                    182.269660998766
                 ]
             }
         },
         "FID_10": {
-            "path": "10\\fid",
+            "path": "10/fid",
             "properties": {
-                "scheme_id": "CART_3D",
-                "k_space": [
-                    128,
-                    125,
-                    128,
-                    1,
-                    1
-                ],
-                "sw_hz": 150000,
-                "dwell_s": 3.3333333333333333e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 3,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    16000
-                ],
+                "sw_hz": 150000,
                 "encoding_space": [
                     128,
                     1,
@@ -5400,12 +5368,47 @@
                     5,
                     1
                 ],
-                "block_count": 16000
+                "shape_storage": [
+                    256,
+                    16000
+                ],
+                "scheme_id": "CART_3D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    125,
+                    128,
+                    1,
+                    1
+                ],
+                "dwell_s": 3.3333333333333333e-06,
+                "acq_lenght": 256,
+                "block_count": 16000,
+                "encoded_dim": 3,
+                "channels": 1
             }
         },
         "2DSEQ_1_1": {
-            "path": "1\\pdata\\1\\2dseq",
+            "path": "1/pdata/1/2dseq",
             "properties": {
+                "numpy_dtype": "int16",
+                "pv_version": "5.1",
+                "is_single_slice": false,
                 "offset": [
                     0,
                     0,
@@ -5423,32 +5426,25 @@
                     0,
                     0
                 ],
-                "shape_frames": [
-                    15
-                ],
                 "shape_block": [
                     256,
                     256
                 ],
-                "numpy_dtype": "int16",
+                "shape_frames": [
+                    15
+                ],
                 "shape_final": [
                     256,
                     256,
                     15
                 ],
                 "date": "<class 'datetime.datetime'>",
-                "encoded_dim": 2,
-                "is_single_slice": false,
                 "shape_storage": [
                     256,
                     256,
                     15
                 ],
-                "pv_version": "5.1",
-                "TE": 3,
-                "shape_fg": [
-                    15
-                ],
+                "encoded_dim": 2,
                 "slope": [
                     68.0388746198903,
                     68.0388746198903,
@@ -5465,46 +5461,18 @@
                     68.0388746198903,
                     68.0388746198903,
                     68.0388746198903
+                ],
+                "TE": 3,
+                "shape_fg": [
+                    15
                 ]
             }
         },
         "FID_1": {
-            "path": "1\\fid",
+            "path": "1/fid",
             "properties": {
-                "scheme_id": "CART_2D",
-                "k_space": [
-                    128,
-                    128,
-                    15,
-                    1,
-                    1
-                ],
-                "sw_hz": 65789.4736842105,
-                "dwell_s": 7.600000000000003e-06,
                 "numpy_dtype": "int32",
-                "channels": 1,
-                "permute": [
-                    0,
-                    2,
-                    4,
-                    3,
-                    5,
-                    1
-                ],
-                "acq_lenght": 256,
-                "encoded_dim": 2,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
-                ],
-                "block_size": 256,
-                "shape_storage": [
-                    256,
-                    1920
-                ],
+                "sw_hz": 65789.4736842105,
                 "encoding_space": [
                     128,
                     1,
@@ -5513,7 +5481,39 @@
                     128,
                     1
                 ],
-                "block_count": 1920
+                "shape_storage": [
+                    256,
+                    1920
+                ],
+                "scheme_id": "CART_2D",
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
+                "permute": [
+                    0,
+                    2,
+                    4,
+                    3,
+                    5,
+                    1
+                ],
+                "block_size": 256,
+                "k_space": [
+                    128,
+                    128,
+                    15,
+                    1,
+                    1
+                ],
+                "dwell_s": 7.600000000000003e-06,
+                "acq_lenght": 256,
+                "block_count": 1920,
+                "encoded_dim": 2,
+                "channels": 1
             }
         }
     },
@@ -5525,7 +5525,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    126
+                    0
                 ],
                 [
                     "slice(None)",
@@ -5542,8 +5542,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    67,
-                    32
+                    242,
+                    193
                 ],
                 [
                     "slice(None)",
@@ -5560,8 +5560,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    2,
-                    75
+                    139,
+                    232
                 ],
                 [
                     "slice(None)",
@@ -5577,8 +5577,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    1,
-                    33,
+                    5,
+                    109,
                     0
                 ],
                 [
@@ -5596,15 +5596,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    55,
-                    55,
-                    3
+                    71,
+                    98,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
-                    "slice(0,1)",
+                    "slice(1,2)",
+                    "slice(2,4)",
                     "0"
                 ]
             ]
@@ -5615,14 +5615,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    43,
-                    16,
-                    15
+                    4,
+                    18,
+                    11
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(10,16)",
+                    "slice(14,17)",
                     "0",
                     "0"
                 ]
@@ -5634,16 +5634,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60,
+                    62,
+                    49,
                     0,
-                    0,
-                    1
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(3,4)",
+                    "slice(0,1)",
                     "slice(0,1)",
                     "slice(0,1)"
                 ]
@@ -5655,15 +5655,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    103,
-                    16,
+                    33,
+                    20,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(3,10)",
+                    "slice(4,10)",
                     "0"
                 ]
             ]
@@ -5674,16 +5674,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    72,
-                    39,
-                    1
+                    248,
+                    200,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
                     "slice(0,1)",
-                    "slice(1,2)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -5693,15 +5693,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    212,
-                    178,
-                    0
+                    43,
+                    231,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(3,4)",
-                    "slice(0,1)",
+                    "slice(1,2)",
                     "0"
                 ]
             ]
@@ -5712,14 +5712,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    178,
-                    242
+                    214,
+                    205
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(1,2)"
+                    "slice(2,3)"
                 ]
             ]
         },
@@ -5729,14 +5729,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    47,
-                    182,
-                    2
+                    173,
+                    120,
+                    7
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(4,7)",
+                    "slice(3,4)",
                     "0",
                     "0"
                 ]
@@ -5748,8 +5748,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    112,
-                    196,
+                    135,
+                    189,
                     0
                 ],
                 [
@@ -5757,7 +5757,7 @@
                     "slice(None)",
                     "0",
                     "0",
-                    "slice(3,8)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -5767,15 +5767,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    118,
-                    0,
+                    52,
+                    102,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(87,185)",
+                    "slice(295,298)",
                     "0"
                 ]
             ]
@@ -5786,14 +5786,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    17,
-                    79
+                    36,
+                    116
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,4)"
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -5803,14 +5803,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    120,
-                    79
+                    50,
+                    60
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,4)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -5820,14 +5820,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    32,
-                    97
+                    87,
+                    120
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(11,15)"
+                    "slice(6,11)"
                 ]
             ]
         },
@@ -5837,14 +5837,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60,
-                    2,
-                    11
+                    118,
+                    24,
+                    4
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,7)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -5856,14 +5856,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    33,
-                    97
+                    55,
+                    45
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(8,9)",
-                    "slice(1,7)"
+                    "slice(14,17)",
+                    "slice(5,11)"
                 ]
             ]
         },
@@ -5873,14 +5873,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    52,
-                    98
+                    125,
+                    63
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(7,10)",
-                    "slice(23,29)"
+                    "slice(11,12)",
+                    "slice(26,27)"
                 ]
             ]
         },
@@ -5890,15 +5890,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    89,
-                    53,
-                    4
+                    44,
+                    26,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,9)",
-                    "slice(24,28)",
+                    "slice(0,6)",
+                    "slice(21,32)",
                     "0"
                 ]
             ]
@@ -5909,16 +5909,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    8,
-                    83,
+                    33,
+                    110,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,4)",
-                    "slice(3,4)"
+                    "slice(3,4)",
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -5928,16 +5928,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    105,
-                    104,
+                    101,
+                    25,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,3)",
-                    "slice(3,4)"
+                    "slice(3,4)",
+                    "slice(1,5)"
                 ]
             ]
         },
@@ -5947,16 +5947,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    125,
-                    94,
+                    90,
+                    95,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,4)",
-                    "slice(2,3)"
+                    "slice(1,2)",
+                    "slice(1,4)"
                 ]
             ]
         },
@@ -5966,15 +5966,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    94,
-                    14,
-                    3
+                    5,
+                    3,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
-                    "slice(4,5)",
+                    "slice(3,4)",
+                    "slice(1,2)",
                     "0"
                 ]
             ]
@@ -5985,14 +5985,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    7,
-                    172
+                    70,
+                    90
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,6)",
-                    "slice(1,3)"
+                    "slice(7,8)",
+                    "slice(0,7)"
                 ]
             ]
         },
@@ -6002,14 +6002,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    171,
-                    145,
-                    35
+                    170,
+                    65,
+                    64
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(24,64)",
+                    "slice(21,57)",
                     "0",
                     "0"
                 ]
@@ -6020,7 +6020,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1882
+                    1672
                 ],
                 [
                     "slice(None)",
@@ -6033,7 +6033,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    35
+                    1530
                 ],
                 [
                     "slice(None)",
@@ -6046,7 +6046,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    709
+                    1343
                 ],
                 [
                     "slice(None)",
@@ -6059,7 +6059,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    844
+                    2002
                 ],
                 [
                     "slice(None)",
@@ -6072,11 +6072,11 @@
             "slices": [
                 [
                     "slice(None)",
-                    754
+                    572
                 ],
                 [
                     "slice(None)",
-                    "slice(1,2)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -6085,7 +6085,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    470
+                    802
                 ],
                 [
                     "slice(None)",
@@ -6100,7 +6100,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    33
+                    86
                 ],
                 [
                     "slice(None)",
@@ -6117,8 +6117,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    36,
-                    46
+                    114,
+                    2
                 ],
                 [
                     "slice(None)",
@@ -6136,7 +6136,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    1815
+                    272
                 ],
                 [
                     "slice(None)",
@@ -6168,7 +6168,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    126
+                    127
                 ],
                 [
                     "slice(None)",
@@ -6185,8 +6185,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    282,
-                    22570
+                    342,
+                    41790
                 ],
                 [
                     "slice(None)",
@@ -6204,7 +6204,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    94
+                    123
                 ],
                 [
                     "slice(None)",
@@ -6221,8 +6221,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    62,
-                    13855
+                    12,
+                    37583
                 ],
                 [
                     "slice(None)",
@@ -6239,7 +6239,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    107
+                    95
                 ],
                 [
                     "slice(None)",
@@ -6254,14 +6254,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    5,
-                    185,
+                    61,
+                    89,
                     1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(0,1)",
                     "0",
                     "0"
                 ]
@@ -6273,14 +6273,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    210,
-                    60,
-                    2
+                    144,
+                    233,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,5)",
+                    "slice(1,3)",
                     "slice(1,2)",
                     "0"
                 ]
@@ -6292,12 +6292,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    86
+                    28
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -6307,14 +6307,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    169,
-                    184,
-                    0
+                    158,
+                    36,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)",
+                    "slice(0,1)",
                     "0",
                     "0"
                 ]
@@ -6326,14 +6326,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    5,
-                    229,
-                    2
+                    153,
+                    132,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
+                    "slice(2,3)",
                     "0",
                     "0"
                 ]
@@ -6345,8 +6345,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    3,
-                    2
+                    21,
+                    25
                 ],
                 [
                     "slice(None)",
@@ -6362,14 +6362,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    38,
-                    56,
-                    0
+                    16,
+                    25,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -6381,14 +6381,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    101,
-                    97
+                    77,
+                    23
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(6,7)",
-                    "slice(6,9)"
+                    "slice(5,7)",
+                    "slice(8,13)"
                 ]
             ]
         },
@@ -6398,14 +6398,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    74,
-                    0,
-                    65
+                    45,
+                    36,
+                    62
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(95,105)",
+                    "slice(79,113)",
                     "0",
                     "0"
                 ]
@@ -6417,14 +6417,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    0,
-                    44
+                    84,
+                    31
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,9)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -6434,14 +6434,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    92,
-                    90,
-                    9
+                    29,
+                    124,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)",
+                    "slice(13,14)",
                     "0",
                     "0"
                 ]
@@ -6453,14 +6453,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    14,
-                    25
+                    41,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(1,2)",
-                    "slice(2,6)"
+                    "slice(5,8)"
                 ]
             ]
         },
@@ -6470,15 +6470,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    37,
-                    24,
+                    59,
+                    14,
                     1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(4,5)",
+                    "slice(3,7)",
                     "0"
                 ]
             ]
@@ -6489,15 +6489,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    46,
                     47,
+                    32,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(0,1)",
+                    "slice(3,4)",
                     "slice(0,1)"
                 ]
             ]
@@ -6508,15 +6508,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    6,
-                    24,
+                    10,
+                    35,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,7)",
+                    "slice(4,8)",
                     "0"
                 ]
             ]
@@ -6527,7 +6527,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15
+                    5
                 ],
                 [
                     "slice(None)",
@@ -6542,14 +6542,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    63,
-                    26,
-                    0
+                    40,
+                    39,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -6561,14 +6561,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    91,
-                    54
+                    37,
+                    41
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(2,6)"
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -6578,14 +6578,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    25,
-                    49,
-                    12
+                    46,
+                    127,
+                    11
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,7)",
+                    "slice(0,13)",
                     "0",
                     "0"
                 ]
@@ -6597,8 +6597,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    444,
-                    363
+                    148,
+                    482
                 ],
                 [
                     "slice(None)",
@@ -6614,8 +6614,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    416,
-                    39,
+                    276,
+                    29,
                     1
                 ],
                 [
@@ -6634,7 +6634,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    73
+                    109
                 ],
                 [
                     "slice(None)",
@@ -6651,8 +6651,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    55,
-                    108
+                    124,
+                    76
                 ],
                 [
                     "slice(None)",
@@ -6669,12 +6669,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    225
+                    249
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,14)"
+                    "slice(8,10)"
                 ]
             ]
         },
@@ -6684,14 +6684,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    61,
-                    1,
-                    9
+                    55,
+                    114,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,14)",
+                    "slice(2,12)",
                     "0",
                     "0"
                 ]

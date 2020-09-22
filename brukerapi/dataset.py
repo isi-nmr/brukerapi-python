@@ -474,7 +474,7 @@ class Dataset:
         for var in names:
             properties[var] = self.encode_property(self.__getattribute__(var))
 
-        return {"path": str(path), "properties": properties}
+        return {"path": path.as_posix(), "properties": properties}
 
     def encode_property(self, var):
         """
