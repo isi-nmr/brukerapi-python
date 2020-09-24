@@ -17,7 +17,19 @@ def test_properties(test_io_data):
     assert d.to_dict(Path(test_io_data[1])) == test_io_data[0]
 
 def test_read(test_io_data):
-    d = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']))
+    path = Path(test_io_data[1]) / Path(test_io_data[0]['path'])
+    d = Dataset(path)
+
+    """
+    The bruker2nifti_qa data set does not posses the reference data
+    """
+    try:
+        data_ref = np.load('{}.npz'.format(str(path)))['data']
+    except:
+        data_ref = None
+
+    if data_ref:
+        assert np.array_equal(d.data, data_ref)
 
 def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
     d_ref = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']))
