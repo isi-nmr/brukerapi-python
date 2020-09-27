@@ -45,6 +45,7 @@ def gen_test_io(dataset, abs_path, name):
     print('Generating IO tests for: {} data set'.format(name))
 
     with dataset as d:
+        np.savez(dataset.path,data=d.data)
         return d.to_dict(abs_path=abs_path)
 
 def gen_test_ra(dataset, abs_path, name):
