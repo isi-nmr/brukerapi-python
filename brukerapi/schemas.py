@@ -163,7 +163,7 @@ class SchemaFid(Schema):
 
         # Create local copies of variables
         try:
-            PVM_EncSteps1 = self._dataset.get_parameter('PVM_EncSteps1').value
+            PVM_EncSteps1 = self._dataset['PVM_EncSteps1'].value
         except KeyError:
             return data
 

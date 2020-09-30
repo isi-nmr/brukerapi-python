@@ -31,13 +31,13 @@ brukerapi.jcampdx module
 brukerapi.schemes module
 ------------------------
 
-.. automodule:: brukerapi.schemes
+.. automodule:: brukerapi.schemas
    :members:
    :undoc-members:
    :show-inheritance:
 
 brukerapi.folders module
-----------------------
+------------------------
 
 .. automodule:: brukerapi.folders
    :members:
