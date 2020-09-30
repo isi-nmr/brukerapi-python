@@ -496,9 +496,9 @@ class Schema2dseq(Schema):
             raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
 
     def scale(self):
-        self._dataset.data = np.reshape(self._dataset.data, self.shape_block + self.shape_frames, order='F')
-        self._dataset.data = self._scale_frames(self._dataset.data,'FW', self.layouts)
-        self._dataset.data = np.reshape(self._dataset.data, self.shape_block + self.shape_fg, order='F')
+        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order='F')
+        self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, 'FW')
+        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order='F')
 
     def deserialize(self, data, layouts):
 

@@ -81,7 +81,7 @@ class Dataset:
             kwargs['load'] = True
         self._kwargs = kwargs
 
-        if not self.path.exists() and not kwargs['load']:
+        if not self.path.exists() and kwargs['load']:
             raise FileNotFoundError(self.path)
 
         # directory constructor
@@ -321,7 +321,7 @@ class Dataset:
                     self.__setattr__(property[0], value)
                     break
                 # if some of the parameters needed for evaluation is missing
-                except KeyError:
+                except (KeyError, ValueError):
                     pass
 
             except (PropertyConditionNotMet, AttributeError):

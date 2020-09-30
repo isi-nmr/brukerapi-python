@@ -132,7 +132,12 @@
       {
         "cmd": "len(#VisuCoreSlicePacksSlices.nested)",
         "conditions": []
+      },
+      {
+        "cmd": "1",
+        "conditions": []
       }
+
   ],
   "slope": [
     {

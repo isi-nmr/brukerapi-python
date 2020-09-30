@@ -28,7 +28,7 @@ class Splitter(object):
         """
         return dataset.data[index_to_slice(range, dataset.shape, fg_abs_index)].copy()
 
-    def split_VisuCoreDataMin(self, visu_pars, scheme, select, fg_rel_index):
+    def split_VisuCoreDataMin(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -36,13 +36,13 @@ class Splitter(object):
         :param fg_index:
         :return:
         """
-        VisuCoreDataMin = visu_pars.get_parameter('VisuCoreDataMin')
-        value = np.reshape(VisuCoreDataMin.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
+        VisuCoreDataMin = visu_pars['VisuCoreDataMin']
+        value = np.reshape(VisuCoreDataMin.value, dataset.shape_final[dataset.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataMin.size = (np.prod(value.shape),)
         VisuCoreDataMin.value = value.flatten(order='F')
 
-    def split_VisuCoreDataMax(self, visu_pars, scheme, select, fg_rel_index):
+    def split_VisuCoreDataMax(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -50,13 +50,13 @@ class Splitter(object):
         :param fg_index:
         :return:
         """
-        VisuCoreDataMax = visu_pars.get_parameter('VisuCoreDataMax')
-        value = np.reshape(VisuCoreDataMax.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
+        VisuCoreDataMax = visu_pars['VisuCoreDataMax']
+        value = np.reshape(VisuCoreDataMax.value, dataset.shape_final[dataset.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataMax.size = (np.prod(value.shape),)
         VisuCoreDataMax.value = value.flatten(order='F')
 
-    def split_VisuCoreDataOffs(self, visu_pars, scheme, select, fg_rel_index):
+    def split_VisuCoreDataOffs(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -64,13 +64,13 @@ class Splitter(object):
         :param fg_index:
         :return:
         """
-        VisuCoreDataOffs = visu_pars.get_parameter('VisuCoreDataOffs')
-        value = np.reshape(VisuCoreDataOffs.value, scheme.layouts['final'][scheme.encoded_dim:],order='F')
+        VisuCoreDataOffs = visu_pars['VisuCoreDataOffs']
+        value = np.reshape(VisuCoreDataOffs.value, dataset.shape_final[dataset.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataOffs.size = (np.prod(value.shape),)
         VisuCoreDataOffs.value = value.flatten(order='F')
 
-    def split_VisuCoreDataSlope(self, visu_pars, scheme, select, fg_rel_index):
+    def split_VisuCoreDataSlope(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -78,20 +78,20 @@ class Splitter(object):
         :param fg_index:
         :return:
         """
-        VisuCoreDataSlope = visu_pars.get_parameter('VisuCoreDataSlope')
-        value = np.reshape(VisuCoreDataSlope.value, scheme.layouts['final'][scheme.encoded_dim:],order='F')
+        VisuCoreDataSlope = visu_pars['VisuCoreDataSlope']
+        value = np.reshape(VisuCoreDataSlope.value, dataset.shape_final[dataset.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
         VisuCoreDataSlope.size = (np.prod(value.shape),)
         VisuCoreDataSlope.value = value.flatten(order='F')
 
-    def split_VisuCoreTransposition(self, visu_pars, scheme, index, fg_index):
+    def split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_index):
         try:
-            VisuCoreTransposition = visu_pars.get_parameter('VisuCoreTransposition')
+            VisuCoreTransposition = visu_pars['VisuCoreTransposition']
         except KeyError:
             return VisuCoreTransposition
 
-        value = np.reshape(VisuCoreTransposition.value, scheme.layouts['final'][scheme.encoded_dim:], order='F')
-        value = value[index_to_slice(index, value.shape, fg_index - scheme.encoded_dim)]
+        value = np.reshape(VisuCoreTransposition.value, dataset.shape_final[dataset.encoded_dim:], order='F')
+        value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
         VisuCoreTransposition.size = (np.prod(value.shape),)
         VisuCoreTransposition.value = value.flatten(order='F')
 
@@ -179,10 +179,10 @@ class FrameGroupSplitter(Splitter):
         self.split_VisuCoreFrameCount(visu_pars, fg_size)
         self.split_VisuFGOrderDescDim(visu_pars)
         self.split_VisuFGOrderDesc(visu_pars, self.fg)
-        self.split_VisuCoreDataSlope(visu_pars, dataset.scheme, select, fg_rel_index)
-        self.split_VisuCoreDataOffs(visu_pars, dataset.scheme, select, fg_rel_index)
-        self.split_VisuCoreDataMin(visu_pars, dataset.scheme, select, fg_rel_index)
-        self.split_VisuCoreDataMax(visu_pars, dataset.scheme, select, fg_rel_index)
+        self.split_VisuCoreDataSlope(dataset, visu_pars, select, fg_rel_index)
+        self.split_VisuCoreDataOffs(dataset, visu_pars, select, fg_rel_index)
+        self.split_VisuCoreDataMin(dataset, visu_pars, select, fg_rel_index)
+        self.split_VisuCoreDataMax(dataset, visu_pars, select, fg_rel_index)
 
         if self.fg == 'FG_ECHO':
             self.split_params_FG_ECHO(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
@@ -201,28 +201,28 @@ class FrameGroupSplitter(Splitter):
 
 
     def split_VisuCoreFrameCount(self, visu_pars, fg_size):
-        VisuCoreFrameCount = visu_pars.get_parameter('VisuCoreFrameCount')
+        VisuCoreFrameCount = visu_pars['VisuCoreFrameCount']
         value = int(VisuCoreFrameCount.value / fg_size)
         VisuCoreFrameCount.value = value
 
     def split_VisuFGOrderDescDim(self, visu_pars):
-        VisuFGOrderDescDim = visu_pars.get_parameter('VisuFGOrderDescDim')
+        VisuFGOrderDescDim = visu_pars['VisuFGOrderDescDim']
         value = VisuFGOrderDescDim.value - 1
         VisuFGOrderDescDim.value = value
 
     def split_VisuCoreDataUnits(self, visu_pars, fg_scheme, index, fg_index):
-        VisuCoreDataUnits = visu_pars.get_parameter('VisuCoreDataUnits')
+        VisuCoreDataUnits = visu_pars['VisuCoreDataUnits']
         value = VisuCoreDataUnits.value
         VisuCoreDataUnits.value = value[index]
         VisuCoreDataUnits.size = (65,)
 
     def split_VisuFGOrderDesc(self, visu_pars, fg):
-        VisuFGOrderDesc = visu_pars.get_parameter('VisuFGOrderDesc')
+        VisuFGOrderDesc = visu_pars['VisuFGOrderDesc']
 
         size = VisuFGOrderDesc.size[0] - 1
         VisuFGOrderDesc.size = size
 
-        value = visu_pars.get_nested_list('VisuFGOrderDesc')
+        value = VisuFGOrderDesc.nested
         for fg_ in value:
             if fg_[1] == '<{}>'.format(fg):
                 value.remove(fg_)
@@ -230,7 +230,7 @@ class FrameGroupSplitter(Splitter):
 
     def split_VisuFGElemComment(self, visu_pars, fg_scheme, index, fg_index):
 
-        VisuFGElemComment = visu_pars.get_parameter('VisuFGElemComment')
+        VisuFGElemComment = visu_pars['VisuFGElemComment']
 
         value = VisuFGElemComment.value
 
@@ -240,7 +240,7 @@ class FrameGroupSplitter(Splitter):
 
 
     def split_VisuAcqEchoTime(self, visu_pars, select):
-        VisuAcqEchoTime = visu_pars.get_parameter('VisuAcqEchoTime')
+        VisuAcqEchoTime = visu_pars['VisuAcqEchoTime']
         value = VisuAcqEchoTime.value
         VisuAcqEchoTime.size=(1,)
         VisuAcqEchoTime.value = float(value[select])
@@ -262,7 +262,7 @@ class SlicePackageSplitter(Splitter):
         """
 
         try:
-            VisuCoreSlicePacksSlices = dataset.get_list('VisuCoreSlicePacksSlices')
+            VisuCoreSlicePacksSlices = dataset['VisuCoreSlicePacksSlices'].value
         except KeyError:
             print('Parameter VisuCoreSlicePacksSlices not found')
 
@@ -273,10 +273,10 @@ class SlicePackageSplitter(Splitter):
         frame_range = range(0,0)
 
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index('FG_SLICE')
+        fg_rel_index = dataset['VisuFGOrderDesc'].sub_list(1).index('<FG_SLICE>')
 
         # index of FG_SLICE among frame group dimensions of the dataset
-        fg_rel_index = fg_abs_index - dataset.scheme.encoded_dim
+        fg_abs_index = fg_rel_index + dataset.encoded_dim
 
         # slice package split loop
         for sp_index in range(len(VisuCoreSlicePacksSlices)):
@@ -295,8 +295,8 @@ class SlicePackageSplitter(Splitter):
             # SPLIT parameteres
             dataset_.parameters = self.split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
 
-            # construct scheme from the new set of parameters
-            dataset_.load_scheme()
+            # construct properties from the new set of parameters
+            dataset_.load_properties()
 
             #SPLIT data
             dataset_.data = self.split_data(dataset, frame_range, fg_abs_index)
@@ -316,12 +316,12 @@ class SlicePackageSplitter(Splitter):
         # modify individual parameters so that the resulting data set is consistent
         self.split_VisuCorePosition(visu_pars_, frame_range, frame_count)
         self.split_VisuCoreOrientation(visu_pars_, frame_range, frame_count)
-        self.split_VisuCoreDataMin(visu_pars_, dataset.scheme, frame_range, fg_rel_index)
-        self.split_VisuCoreDataMax(visu_pars_, dataset.scheme, frame_range, fg_rel_index)
-        self.split_VisuCoreDataOffs(visu_pars_, dataset.scheme, frame_range, fg_rel_index)
-        self.split_VisuCoreDataSlope(visu_pars_, dataset.scheme, frame_range, fg_rel_index)
-        self.split_VisuCoreTransposition(visu_pars_, dataset.scheme, frame_range, fg_rel_index)
-        self.split_VisuCoreFrameCount(visu_pars_, dataset.scheme, frame_count, fg_abs_index)
+        self.split_VisuCoreDataMin(dataset, visu_pars_, frame_range, fg_rel_index)
+        self.split_VisuCoreDataMax(dataset, visu_pars_, frame_range, fg_rel_index)
+        self.split_VisuCoreDataOffs(dataset, visu_pars_, frame_range, fg_rel_index)
+        self.split_VisuCoreDataSlope(dataset, visu_pars_, frame_range, fg_rel_index)
+        self.split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
+        self.split_VisuCoreFrameCount(dataset, visu_pars_, frame_count, fg_abs_index)
         self.split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
         self.split_VisuCoreSlicePacksDef(visu_pars_)
         self.split_VisuCoreSlicePacksSlices(visu_pars_, sp_index)
@@ -329,28 +329,28 @@ class SlicePackageSplitter(Splitter):
 
         return {"visu_pars":visu_pars_}
 
-    def split_VisuCoreFrameCount(self, visu_pars, scheme, frame_count, fg_ind_abs):
-        VisuCoreFrameCount = visu_pars.get_parameter('VisuCoreFrameCount')
+    def split_VisuCoreFrameCount(self, dataset, visu_pars, frame_count, fg_ind_abs):
+        VisuCoreFrameCount = visu_pars['VisuCoreFrameCount']
 
-        layout = np.array(scheme.layouts['final'])
-        layout[0:scheme.encoded_dim] = 1
+        layout = np.array(dataset.shape_final)
+        layout[0:dataset.encoded_dim] = 1
         layout[fg_ind_abs] = 1
         frames = int(frame_count * np.prod(layout))
 
         VisuCoreFrameCount.value = frames
 
     def split_VisuCoreOrientation(self, visu_pars, frame_range, frame_count):
-        VisuCoreOrientation = visu_pars.get_parameter('VisuCoreOrientation')
+        VisuCoreOrientation = visu_pars['VisuCoreOrientation']
         VisuCoreOrientation.value = VisuCoreOrientation.value[frame_range, :].flatten(order='C')
         VisuCoreOrientation.size = (frame_count, 9)
 
     def split_VisuCorePosition(self, visu_pars, frame_range, frame_count):
-        VisuCorePosition = visu_pars.get_parameter('VisuCorePosition')
+        VisuCorePosition = visu_pars['VisuCorePosition']
         VisuCorePosition.value = VisuCorePosition.value[frame_range, :].flatten(order='C')
         VisuCorePosition.size = (frame_count, 3)
 
     def split_VisuFGOrderDesc(self, visu_pars, fg_rel_ind, frame_count):
-        VisuFGOrderDesc = visu_pars.get_parameter('VisuFGOrderDesc')
+        VisuFGOrderDesc = visu_pars['VisuFGOrderDesc']
         value = VisuFGOrderDesc.value
 
         if isinstance(value[fg_rel_ind], list):
@@ -361,17 +361,17 @@ class SlicePackageSplitter(Splitter):
         VisuFGOrderDesc.value = value
 
     def split_VisuCoreSlicePacksDef(self,visu_pars):
-        VisuCoreSlicePacksDef = visu_pars.get_parameter('VisuCoreSlicePacksDef')
+        VisuCoreSlicePacksDef = visu_pars['VisuCoreSlicePacksDef']
         value = VisuCoreSlicePacksDef.value
         value[1] = 1
         VisuCoreSlicePacksDef.value = value
 
     def split_VisuCoreSlicePacksSlices(self, visu_pars_, sp_index):
-        VisuCoreSlicePacksSlices = visu_pars_.get_parameter('VisuCoreSlicePacksSlices')
+        VisuCoreSlicePacksSlices = visu_pars_['VisuCoreSlicePacksSlices']
         VisuCoreSlicePacksSlices.value = [VisuCoreSlicePacksSlices.value[sp_index]]
 
     def split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
-        VisuCoreSlicePacksSliceDist = visu_pars_.get_parameter('VisuCoreSlicePacksSliceDist')
+        VisuCoreSlicePacksSliceDist = visu_pars_['VisuCoreSlicePacksSliceDist']
         value = int(VisuCoreSlicePacksSliceDist.value[sp_index])
         VisuCoreSlicePacksSliceDist.value = value
         VisuCoreSlicePacksSliceDist.size = 1

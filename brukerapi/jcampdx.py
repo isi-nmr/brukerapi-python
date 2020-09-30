@@ -3,6 +3,7 @@ from .exceptions import *
 from pathlib import Path
 import re
 import ast
+from collections import OrderedDict
 
 SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
 GRAMMAR = {
@@ -104,7 +105,13 @@ class Parameter(object):
 
     @property
     def list(self):
-        pass
+        value = self.value
+        if isinstance(value, list):
+            return value
+        elif isinstance(value, float) or isinstance(value, int) or isinstance(value, str):
+            return [value]
+        else:
+            return list(value)
 
     @property
     def nested(self):
@@ -121,16 +128,12 @@ class Parameter(object):
         This proprerty allows treat the parameter as nested list in all cases.
 
         """
-        value = self.value
+        value = self.list
+        if isinstance(value[0], list):
+            return value
+        else:
+            return [value]
 
-        if isinstance(value, list):
-            if isinstance(value[0], list):
-                return value
-            else:
-                return [value]
-
-        if isinstance(value, int) or isinstance(value, float) or isinstance(value, str):
-            return [[value]]
 
     @property
     def array(self):
@@ -220,13 +223,24 @@ class GenericParameter(Parameter):
         self.val_str= val_str
 
     def primed_dict(self, index):
-        nested_list = self.value
-        primed_dict = {}
+        nested_list = self.nested
+        primed_dict = OrderedDict()
 
         for list in nested_list:
             primed_dict[list[index]] = list
 
         return primed_dict
+
+    def sub_list(self, index):
+        nested_list = self.nested
+        sub_list = []
+        for list in nested_list:
+            sub_list.append(list[index])
+
+        return sub_list
+
+
+
 
     @property
     def size(self):
@@ -586,9 +600,6 @@ class JCAMPDX(object):
 
     def __getitem__(self, key):
         return self.params[key]
-
-    def __getattr__(self, key):
-        return self.get_value(key)
 
     def load(self):
         self.load_parameters()
