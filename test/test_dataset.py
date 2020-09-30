@@ -28,7 +28,7 @@ def test_read(test_io_data):
     except:
         data_ref = None
 
-    if data_ref:
+    if data_ref is not None:
         assert np.array_equal(d.data, data_ref)
 
 def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):

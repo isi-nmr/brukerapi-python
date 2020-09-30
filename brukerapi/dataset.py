@@ -27,15 +27,8 @@ class Dataset:
     Data set is created using one binary file {fid, 2dseq, rawdata, ser, 1r, 1i} and several JCAMP-DX
     files (method, acqp, visu_pars,...). The JCAMP-DX files necessary for a creation of a data set are denoted as
     **essential**. Each of the binary data files (fid, 2dseq,...) has slightly different data layout, i.e. the . The
-    data in
-    the binary files is stored
-    Since the
-    individual types of b some
-    features We distinguish By he name of the
-    binary
-    file  we
-    determine the
-    **type** of data set.
+    data in the binary files is stored Since the individual types of b some features We distinguish By he name of the
+    binary file  we determine the **type** of data set.
 
     **Main components of a data set:**
 
@@ -122,13 +115,13 @@ class Dataset:
         return str(self.path)
 
     def __getitem__(self, item):
-        for parameter_file in self._parameters:
+        for parameter_file in self._parameters.values():
             try:
-                return parameter_file['item']
-            except AttributeError:
+                return parameter_file[item]
+            except KeyError:
                 pass
 
-        raise AttributeError(item)
+        raise KeyError(item)
 
     def __call__(self, **kwargs):
         self._kwargs.update(kwargs)
@@ -242,7 +235,7 @@ class Dataset:
                 except FileNotFoundError:
                     raise FileNotFoundError(file_type)
 
-        if not self._parameters:
+        if not hasattr(self, '_parameters'):
             self._parameters = {file_type:jcampdx}
         else:
             self._parameters[file_type] = jcampdx
@@ -323,9 +316,14 @@ class Dataset:
         for desc in property[1]:
             try:
                 self._eval_conditions(desc['conditions'])
-                value = self.make_element(desc['cmd'])
-                self.__setattr__(property[0], value)
-                break
+                try:
+                    value = self._make_element(desc['cmd'])
+                    self.__setattr__(property[0], value)
+                    break
+                # if some of the parameters needed for evaluation is missing
+                except KeyError:
+                    pass
+
             except (PropertyConditionNotMet, AttributeError):
                 pass
 

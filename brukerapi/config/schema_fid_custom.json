@@ -1,4 +1,18 @@
 {
+  "date": [
+    {
+        "cmd": "datetime.datetime.strptime(#AdjScanStateTime[0][1:-1],'%Y-%m-%dT%X,%f%z')",
+        "conditions": [
+          "#ACQ_sw_version=='<PV 6.0.1>'"
+        ]
+    },
+    {
+        "cmd": "datetime.datetime.strptime(#AdjScanStateTime[1:-1],'%X %d %b %Y')",
+        "conditions": [
+          "#ACQ_sw_version=='<PV 5.1>'"
+        ]
+    }
+  ],
   "sw_hz": [
     {
         "cmd": "#SW_h",
