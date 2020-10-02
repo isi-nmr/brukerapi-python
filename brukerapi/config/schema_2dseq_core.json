@@ -150,5 +150,23 @@
       "cmd": "#VisuCoreDataOffs.array",
       "conditions": []
     }
+  ],
+  "dim_type": [
+    {
+      "cmd": "#VisuCoreDimDesc.list + ['spatial',] + #VisuFGOrderDesc.sub_list(1)",
+      "conditions": ["@is_single_slice==True"]
+    },
+    {
+      "cmd": "#VisuCoreDimDesc.list + ['spatial',]",
+      "conditions": ["@is_single_slice==True"]
+    },
+    {
+      "cmd": "#VisuCoreDimDesc.list + #VisuFGOrderDesc.sub_list(1)",
+      "conditions": ["@is_single_slice==False"]
+    },
+    {
+      "cmd": "#VisuCoreDimDesc.list",
+      "conditions": ["@is_single_slice==False"]
+    }
   ]
 }
