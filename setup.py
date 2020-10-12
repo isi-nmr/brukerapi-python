@@ -9,6 +9,12 @@ setup(name='brukerapi',
       download_url='https://github.com/isi-nmr/brukerapi-python/archive/v0.1.0.tar.gz',
       packages=['brukerapi',],
       install_requires=['numpy','pyyaml'],
+      entry_points={
+            "console_scripts": [
+                  "brukersplit=brukerapi.cli:split",
+                  "brukerreport=brukerapi.cli:report",
+            ],
+      },
       include_package_data=True,
       license='MIT',
       zip_safe=False
