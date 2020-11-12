@@ -150,7 +150,6 @@ class FrameGroupSplitter(Splitter):
         """
         datasets = []
 
-
         for select_ in select:
             # construct a new Dataset, without loading data, the data will be supplied later
             name = '{}_{}_{}/2dseq'.format(dataset.path.parents[0].name, self.fg, select_)
@@ -196,14 +195,12 @@ class FrameGroupSplitter(Splitter):
 
         return {'visu_pars': visu_pars}
 
-
     def _split_params_FG_ISA(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
-        self._split_VisuCoreDataUnits(visu_pars, dataset.scheme, select, fg_rel_index)
-        self._split_VisuFGElemComment(visu_pars, dataset.scheme, select, fg_rel_index)
+        self._split_VisuCoreDataUnits(visu_pars, dataset, select, fg_rel_index)
+        self._split_VisuFGElemComment(visu_pars, dataset, select, fg_rel_index)
 
     def _split_params_FG_ECHO(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
         self._split_VisuAcqEchoTime(visu_pars, select)
-
 
     def _split_VisuCoreFrameCount(self, visu_pars, fg_size):
         VisuCoreFrameCount = visu_pars['VisuCoreFrameCount']
@@ -213,7 +210,11 @@ class FrameGroupSplitter(Splitter):
     def _split_VisuFGOrderDescDim(self, visu_pars):
         VisuFGOrderDescDim = visu_pars['VisuFGOrderDescDim']
         value = VisuFGOrderDescDim.value - 1
-        VisuFGOrderDescDim.value = value
+
+        if value > 1:
+            VisuFGOrderDescDim.value = value
+        else:
+            del visu_pars['VisuFGOrderDescDim']
 
     def _split_VisuCoreDataUnits(self, visu_pars, fg_scheme, index, fg_index):
         VisuCoreDataUnits = visu_pars['VisuCoreDataUnits']
@@ -231,7 +232,10 @@ class FrameGroupSplitter(Splitter):
         for fg_ in value:
             if fg_[1] == '<{}>'.format(fg):
                 value.remove(fg_)
-        VisuFGOrderDesc.value = value
+        if value:
+            VisuFGOrderDesc.value = value
+        else:
+            del visu_pars['VisuFGOrderDesc']
 
     def _split_VisuFGElemComment(self, visu_pars, fg_scheme, index, fg_index):
 

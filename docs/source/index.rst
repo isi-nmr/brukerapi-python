@@ -9,7 +9,7 @@ Welcome to brukerapi's documentation!
 Bruker API documentation.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Tutorials:
 
    tutorials/installation
@@ -17,6 +17,7 @@ Bruker API documentation.
    tutorials/how-to-2dseq
    tutorials/how-to-fid
    tutorials/how-to-use-filter
+   cli
 
 .. toctree::
    :maxdepth: 4

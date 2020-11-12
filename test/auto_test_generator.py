@@ -46,7 +46,7 @@ def gen_test_io(dataset, abs_path, name):
 
     with dataset as d:
         np.savez(dataset.path,data=d.data)
-        return d.to_dict(abs_path=abs_path)
+        return {"path": d.path.relative_to(abs_path).as_posix(), "properties": d.to_dict()}
 
 def gen_test_ra(dataset, abs_path, name):
 

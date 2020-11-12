@@ -233,7 +233,10 @@ class Dataset:
                 try:
                     jcampdx = JCAMPDX(self.path.parent / Path('pdata/1') / file_type)
                 except FileNotFoundError:
-                    raise FileNotFoundError(file_type)
+                    try:
+                        jcampdx = JCAMPDX(self.path.parents[1] / file_type)
+                    except:
+                        raise FileNotFoundError(file_type)
 
         if not hasattr(self, '_parameters'):
             self._parameters = {file_type:jcampdx}
@@ -246,13 +249,19 @@ class Dataset:
 
         :return:
         """
-        if self._kwargs.get('parameter_scope') is None:
-            parameter_scope = SUPPORTED[self.type]
-        else:
-            parameter_scope = self._kwargs.get('parameter_scope')
-
-        for file_type in parameter_scope:
-            self.add_parameter_file(file_type)
+        parameter_files = deepcopy(SUPPORTED[self.type])
+        if self._kwargs.get('add_parameters'):
+            parameter_files += list(self._kwargs.get('add_parameters'))
+        for file_type in parameter_files:
+            try:
+                self.add_parameter_file(file_type)
+            except FileNotFoundError as e:
+                # if jcampdx file is required but not found raise ERror
+                if file_type in SUPPORTED[self.type]:
+                    raise e
+                # if jcampdx file is not found, but not required, pass
+                else:
+                    pass
 
     def _write_parameters(self, parent):
         for type_, jcampdx in self._parameters.items():
@@ -505,71 +514,78 @@ class Dataset:
         self._write_parameters(parent)
         self._write_data(path)
 
-    def report(self, path, abs_path=None, names=None):
+    def report(self, path=None, props=None, verbose=None):
         """
         Save properties to JSON, or YAML file.
 
+        if path is None then save report in-place as path / self.id + '.json'
+        if path is a path path to a folder then save report to path / self.id + '.json'
+        if path is a json, or yml file save report to path
+
         :param path: *str* path to a resulting report file
-        :param abs_path: *str* path ta a data root
         :param names: *list* names of properties to be exported
         """
-        path = Path(path)
-        if path.suffix == '.json':
-            self.to_json(path, abs_path=abs_path, names=names)
-        elif path.suffix == '.yml':
-            self.to_yaml(path, abs_path=abs_path, names=names)
 
-    def to_json(self, path=None, abs_path=None, names=None):
+        if path is None:
+            path = self.path.parent / self.id + '.json'
+        elif path.is_dir():
+            path = Path(path) / self.id + '.json'
+
+        if verbose:
+            print("bruker report: {} -> {}".format(str(self.path), str(path)))
+
+        if path.suffix == '.json':
+            self.to_json(path, props=props)
+        elif path.suffix == '.yml':
+            self.to_yaml(path, props=props)
+
+    def to_json(self, path=None, props=None):
         """
         Save properties to JSON file.
 
         :param path: *str* path to a resulting report file
-        :param abs_path: *str* path ta a data root
         :param names: *list* names of properties to be exported
         """
         if path:
             with open(path, 'w') as json_file:
-                    json.dump(self.to_dict(abs_path=abs_path, names=names), json_file, indent=4)
+                    json.dump(self.to_dict(props=props), json_file, indent=4)
         else:
-            return json.dumps(self.to_dict(abs_path=abs_path, names=names), indent=4)
+            return json.dumps(self.to_dict(props=props), indent=4)
 
-    def to_yaml(self, path=None, abs_path=None, names=None):
+    def to_yaml(self, path=None, props=None):
         """
         Save properties to YAML file.
 
         :param path: *str* path to a resulting report file
-        :param abs_path: *str* path ta a data root
         :param names: *list* names of properties to be exported
         """
         if path:
             with open(path, 'w') as yaml_file:
-                    yaml.dump(self.to_dict(abs_path=abs_path, names=names), yaml_file, default_flow_style=False)
+                    yaml.dump(self.to_dict(props=props), yaml_file, default_flow_style=False)
         else:
-            return yaml.dump(self.to_dict(abs_path=abs_path, names=names), default_flow_style=False)
+            return yaml.dump(self.to_dict(props=props), default_flow_style=False)
 
-    def to_dict(self, abs_path=None, names=None):
+    def to_dict(self, props=None):
         """
         Export properties as dict.
 
         :param path: *str* path to a resulting report file
-        :param abs_path: *str* path ta a data root
         :param names: *list* names of properties to be exported
         """
-        path = self.path.relative_to(abs_path)
 
-        if not names:
-            names = list(vars(self).keys())
+        if not props:
+            props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
         reserved = ['_parameters', 'path', '_data', '_traj', '_kwargs', '_schema','random_access']
-        names = list(set(names) - set(reserved))
+        props = list(set(props) - set(reserved))
 
         properties = {}
 
-        for var in names:
+        for var in props:
             properties[var] = self._encode_property(self.__getattribute__(var))
 
-        return {"path": path.as_posix(), "properties": properties}
+        return properties
 
     def _encode_property(self, var):
         """
@@ -595,6 +611,13 @@ class Dataset:
             return str(datetime.datetime)
         else:
             return var
+
+    def query(self, query):
+        try:
+            if not eval(self._sub_parameters(query)):
+                raise FilterEvalFalse
+        except (KeyError, AttributeError) as e:
+            raise FilterEvalFalse
 
     """
     PROPERTIES

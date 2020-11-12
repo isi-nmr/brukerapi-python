@@ -11,8 +11,7 @@ setup(name='brukerapi',
       install_requires=['numpy','pyyaml'],
       entry_points={
             "console_scripts": [
-                  "brukersplit=brukerapi.cli:split",
-                  "brukerreport=brukerapi.cli:report",
+                  "bruker=brukerapi.cli:main"
             ],
       },
       include_package_data=True,

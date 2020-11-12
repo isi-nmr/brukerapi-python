@@ -1,4 +1,53 @@
 {
+  "subj_id": [
+    {
+      "cmd": "#SUBJECT_id[1:-1]",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "study_id": [
+    {
+      "cmd": "str(#SUBJECT_study_nr)",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "exp_id": [
+    {
+      "cmd": "@path.parent.name",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "id": [
+    {
+      "cmd": "'FID_{}_{}_{}'.format(@exp_id, @subj_id, @study_id)",
+      "conditions": [
+      ]
+    }
+  ],
   "date": [
     {
         "cmd": "datetime.datetime.strptime(#AdjScanStateTime[0][1:-1],'%Y-%m-%dT%X,%f%z')",
