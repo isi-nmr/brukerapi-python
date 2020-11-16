@@ -89,5 +89,6 @@ def gen_test_ra(dataset, abs_path, name):
 
 
 if __name__ == '__main__':
-    test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/auto_test_pv51.json')
-    test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/auto_test_pv601.json')
+    # test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/auto_test_pv51.json')
+    # test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/auto_test_pv601.json')
+    test_generator(Path(os.environ['PATH_DATA']) / 'bruker2nifti_qa/raw', Path(__file__).parent / 'config/auto_test_qa.json')
