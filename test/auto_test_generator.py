@@ -2,6 +2,7 @@ from brukerapi.folders import Folder
 import json
 import numpy as np
 import pkg_resources
+from collections import OrderedDict
 
 API_VERSION = pkg_resources.get_distribution("brukerapi").version
 SUITES=['test_io', 'test_ra']
@@ -31,6 +32,11 @@ def test_generator(path_folder, path_config, suites=None):
 
         if 'test_ra' in suites:
             tests['test_ra'][name] = gen_test_ra(dataset, folder.path, name)
+
+    # test suites are sorted so that they are stored consistently in the config files, if a new property is added it shows
+    # nicely in the diff view
+    for suite in suites:
+        tests[suite] = dict(sorted(tests[suite].items()))
 
     with open(path_config, 'w') as json_file:
         json.dump(tests, json_file, indent=4)
