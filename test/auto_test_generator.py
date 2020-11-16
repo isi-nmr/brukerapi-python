@@ -2,7 +2,8 @@ from brukerapi.folders import Folder
 import json
 import numpy as np
 import pkg_resources
-from collections import OrderedDict
+import os
+from pathlib import Path
 
 API_VERSION = pkg_resources.get_distribution("brukerapi").version
 SUITES=['test_io', 'test_ra']
@@ -86,6 +87,7 @@ def gen_test_ra(dataset, abs_path, name):
 
     return test
 
+
 if __name__ == '__main__':
-    test_generator('{PATH_DATA}/0.2H2/', 'config/auto_test_pv51.json')
-    test_generator('{PATH_DATA}/20200612_094625_lego_phantom_3_1_2/', 'config/auto_test_pv601.json')
+    test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/auto_test_pv51.json')
+    test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/auto_test_pv601.json')

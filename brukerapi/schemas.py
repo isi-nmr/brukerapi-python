@@ -542,6 +542,9 @@ class Schema2dseq(Schema):
                 data[..., frame] /= float(slope[frame])
                 data[..., frame] -= float(offset[frame])
 
+        if dir == 'BW':
+            data = np.round(data)
+
         return data
 
     def _frames_to_framegroups(self, data, layouts, mask=None):

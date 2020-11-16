@@ -5805,7 +5805,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    44
+                    87
                 ],
                 [
                     "slice(None)",
@@ -5821,8 +5821,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    383,
-                    148
+                    389,
+                    298
                 ],
                 [
                     "slice(None)",
@@ -5838,14 +5838,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    87,
-                    17
+                    124,
+                    74
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(5,6)"
+                    "slice(0,5)"
                 ]
             ]
         },
@@ -5855,7 +5855,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    12
+                    21
                 ],
                 [
                     "slice(None)",
@@ -5870,15 +5870,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60,
-                    1,
+                    16,
+                    51,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,2)",
+                    "slice(2,3)",
                     "slice(0,1)"
                 ]
             ]
@@ -5889,14 +5889,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60,
-                    46
+                    31,
+                    31
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(4,5)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -5906,14 +5906,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    91,
-                    44
+                    101,
+                    40
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(5,7)"
+                    "slice(6,12)"
                 ]
             ]
         },
@@ -5923,14 +5923,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    78,
-                    55
+                    121,
+                    44
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
-                    "slice(4,12)"
+                    "slice(1,6)",
+                    "slice(13,14)"
                 ]
             ]
         },
@@ -5940,14 +5940,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    19,
-                    56
+                    15,
+                    39
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,3)"
+                    "slice(0,3)"
                 ]
             ]
         },
@@ -5957,12 +5957,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    171
+                    30
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,6)"
+                    "slice(0,4)"
                 ]
             ]
         },
@@ -5972,7 +5972,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    65
+                    81
                 ],
                 [
                     "slice(None)",
@@ -6005,7 +6005,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    27
+                    98
                 ],
                 [
                     "slice(None)",
@@ -6022,7 +6022,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    202
+                    1822
                 ],
                 [
                     "slice(None)",
@@ -6039,7 +6039,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    23
+                    37
                 ],
                 [
                     "slice(None)",
@@ -6054,7 +6054,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    405
+                    126
                 ],
                 [
                     "slice(None)",
@@ -6067,7 +6067,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    740
+                    412
                 ],
                 [
                     "slice(None)",
@@ -6080,7 +6080,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1801
+                    63
                 ],
                 [
                     "slice(None)",
@@ -6094,12 +6094,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    125
+                    38
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)"
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -6109,16 +6109,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    75,
-                    74,
+                    48,
+                    92,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(0,2)",
-                    "slice(2,5)"
+                    "slice(0,1)",
+                    "slice(1,5)"
                 ]
             ]
         },
@@ -6128,16 +6128,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    114,
-                    42,
+                    29,
+                    122,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,3)",
-                    "slice(2,4)"
+                    "slice(1,4)",
+                    "slice(3,5)"
                 ]
             ]
         },
@@ -6147,16 +6147,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    84,
-                    55,
+                    123,
+                    64,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(0,1)",
-                    "slice(3,4)"
+                    "slice(3,4)",
+                    "slice(2,4)"
                 ]
             ]
         },
@@ -6166,14 +6166,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    122,
-                    99
+                    94,
+                    104
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(10,12)",
-                    "slice(4,6)"
+                    "slice(8,11)",
+                    "slice(11,22)"
                 ]
             ]
         },
@@ -6183,14 +6183,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    27,
-                    20
+                    97,
+                    53
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(13,14)",
-                    "slice(5,9)"
+                    "slice(5,8)",
+                    "slice(13,14)"
                 ]
             ]
         },
@@ -6200,14 +6200,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    48,
-                    95
+                    9,
+                    7
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,7)"
+                    "slice(4,13)"
                 ]
             ]
         },
@@ -6217,25 +6217,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    120,
-                    55
-                ],
-                [
-                    "slice(None)",
-                    "slice(None)",
-                    "0",
-                    "slice(0,3)"
-                ]
-            ]
-        },
-        "2DSEQ_33_3": {
-            "path": "33/pdata/3/2dseq",
-            "slices": [
-                [
-                    "slice(None)",
-                    "slice(None)",
-                    48,
-                    13
+                    3,
+                    105
                 ],
                 [
                     "slice(None)",
@@ -6245,14 +6228,31 @@
                 ]
             ]
         },
+        "2DSEQ_33_3": {
+            "path": "33/pdata/3/2dseq",
+            "slices": [
+                [
+                    "slice(None)",
+                    "slice(None)",
+                    34,
+                    36
+                ],
+                [
+                    "slice(None)",
+                    "slice(None)",
+                    "0",
+                    "slice(0,1)"
+                ]
+            ]
+        },
         "2DSEQ_35_1": {
             "path": "35/pdata/1/2dseq",
             "slices": [
                 [
                     "slice(None)",
                     "slice(None)",
-                    237,
-                    237,
+                    219,
+                    99,
                     0
                 ],
                 [
@@ -6260,7 +6260,7 @@
                     "slice(None)",
                     "0",
                     "0",
-                    "slice(5,6)"
+                    "slice(8,9)"
                 ]
             ]
         },
@@ -6270,14 +6270,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    236,
-                    94
+                    78,
+                    99
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,5)",
-                    "slice(6,7)"
+                    "slice(7,8)",
+                    "slice(3,7)"
                 ]
             ]
         },
@@ -6287,14 +6287,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    0,
-                    108
+                    198,
+                    134
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(0,1)"
+                    "slice(1,3)"
                 ]
             ]
         },
@@ -6304,15 +6304,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    220,
-                    231,
+                    163,
+                    28,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(0,2)",
+                    "slice(1,2)",
                     "slice(1,2)"
                 ]
             ]
@@ -6323,8 +6323,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    120,
-                    60,
+                    88,
+                    21,
                     0,
                     0
                 ],
@@ -6332,7 +6332,7 @@
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,4)",
+                    "slice(0,4)",
                     "slice(0,1)",
                     "slice(0,1)"
                 ]
@@ -6344,15 +6344,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    122,
-                    25,
-                    0
+                    45,
+                    17,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(2,3)",
-                    "slice(1,2)",
+                    "slice(1,3)",
                     "0"
                 ]
             ]
@@ -6363,8 +6363,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    81,
-                    29
+                    205,
+                    136
                 ],
                 [
                     "slice(None)",
@@ -6381,7 +6381,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    233
+                    17
                 ],
                 [
                     "slice(None)",
@@ -6397,14 +6397,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    100,
-                    117,
-                    2
+                    38,
+                    92,
+                    8
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(6,13)",
+                    "slice(9,10)",
                     "0",
                     "0"
                 ]
@@ -6417,8 +6417,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    50,
-                    0
+                    43,
+                    46
                 ],
                 [
                     "slice(None)",
@@ -6435,8 +6435,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    165,
-                    6,
+                    469,
+                    346,
                     1
                 ],
                 [
@@ -6454,14 +6454,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    33,
-                    93,
-                    6
+                    94,
+                    91,
+                    4
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,7)",
+                    "slice(2,5)",
                     "0",
                     "0"
                 ]
@@ -6473,14 +6473,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    60,
-                    47,
-                    3
+                    61,
+                    17,
+                    1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(0,2)",
                     "0",
                     "0"
                 ]
@@ -6492,15 +6492,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    3,
-                    30,
+                    29,
+                    14,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,3)",
+                    "slice(0,5)",
                     "0"
                 ]
             ]
@@ -6511,15 +6511,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15,
-                    18,
-                    2
+                    17,
+                    28,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,1)",
-                    "slice(4,6)",
+                    "slice(1,2)",
+                    "slice(3,5)",
                     "0"
                 ]
             ]
@@ -6530,14 +6530,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    43,
-                    45,
-                    2
+                    66,
+                    34,
+                    9
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,7)",
+                    "slice(13,14)",
                     "0",
                     "0"
                 ]
@@ -6549,14 +6549,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    4,
-                    57,
-                    0
+                    65,
+                    23,
+                    84
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,21)",
+                    "slice(99,101)",
                     "0",
                     "0"
                 ]
@@ -6568,14 +6568,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    48,
-                    50,
+                    4,
+                    27,
                     1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -6587,14 +6587,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    128,
-                    50,
-                    0
+                    505,
+                    390,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,2)",
+                    "slice(0,3)",
                     "0",
                     "0"
                 ]
@@ -6606,9 +6606,9 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    176,
-                    57,
-                    0
+                    189,
+                    45,
+                    2
                 ],
                 [
                     "slice(None)",
@@ -6625,14 +6625,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    72,
-                    224,
+                    10,
+                    66,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,5)",
+                    "slice(0,4)",
                     "slice(1,2)",
                     "0"
                 ]
@@ -6644,14 +6644,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    15,
-                    338,
-                    3
+                    49,
+                    383,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
+                    "slice(0,2)",
                     "0",
                     "0"
                 ]
@@ -6664,8 +6664,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    12,
-                    39862
+                    56,
+                    47674
                 ],
                 [
                     "slice(None)",
@@ -6683,8 +6683,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    289,
-                    21319
+                    293,
+                    49101
                 ],
                 [
                     "slice(None)",
@@ -6717,8 +6717,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    22,
-                    31
+                    120,
+                    5
                 ],
                 [
                     "slice(None)",
@@ -6734,11 +6734,11 @@
             "slices": [
                 [
                     "slice(None)",
-                    885
+                    819
                 ],
                 [
                     "slice(None)",
-                    "slice(0,2)"
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -6747,7 +6747,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1188
+                    1431
                 ],
                 [
                     "slice(None)",
@@ -6760,7 +6760,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    618
+                    1995
                 ],
                 [
                     "slice(None)",
@@ -6774,14 +6774,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    155,
-                    90,
-                    37
+                    36,
+                    187,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(41,71)",
+                    "slice(35,61)",
                     "0",
                     "0"
                 ]
@@ -6793,15 +6793,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    112,
-                    22,
-                    4
+                    1,
+                    64,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(3,4)",
-                    "slice(3,4)",
+                    "slice(0,5)",
                     "0"
                 ]
             ]
@@ -6812,15 +6812,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    85,
-                    47,
-                    0
+                    6,
+                    31,
+                    9
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(7,11)",
-                    "slice(0,21)",
+                    "slice(11,13)",
+                    "slice(3,30)",
                     "0"
                 ]
             ]
@@ -6831,14 +6831,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    123,
-                    48,
-                    5
+                    58,
+                    87,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,13)",
+                    "slice(11,12)",
                     "0",
                     "0"
                 ]
@@ -6850,15 +6850,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    9,
-                    115,
+                    29,
+                    84,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(242,247)",
+                    "slice(199,260)",
                     "0"
                 ]
             ]
@@ -6869,14 +6869,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    133,
-                    160,
-                    7
+                    118,
+                    141,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)",
+                    "slice(6,7)",
                     "0",
                     "0"
                 ]
@@ -6888,15 +6888,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    61,
-                    138,
-                    1
+                    233,
+                    156,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,4)",
-                    "slice(0,2)",
+                    "slice(1,4)",
+                    "slice(1,2)",
                     "0"
                 ]
             ]
@@ -6907,15 +6907,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    91,
-                    50,
+                    125,
+                    29,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(11,15)",
+                    "slice(18,19)",
                     "0"
                 ]
             ]
@@ -6926,14 +6926,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    0,
-                    118,
-                    18
+                    35,
+                    64,
+                    15
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,19)",
+                    "slice(15,17)",
                     "0",
                     "0"
                 ]
@@ -6945,8 +6945,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    8,
-                    1,
+                    200,
+                    35,
                     0
                 ],
                 [
@@ -6965,8 +6965,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    237,
-                    52
+                    62,
+                    68
                 ],
                 [
                     "slice(None)",
