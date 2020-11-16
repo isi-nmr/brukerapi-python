@@ -523,6 +523,11 @@ class Schema2dseq(Schema):
         :param dir:
         :return:
         """
+
+        # dataset is created with scale state set to False
+        if self._dataset._kwargs.get('scale') is False:
+            return data
+
         # get a float copy of the data array
         data = data.astype(np.float)
 
@@ -536,6 +541,9 @@ class Schema2dseq(Schema):
             elif dir == 'BW':
                 data[..., frame] /= float(slope[frame])
                 data[..., frame] -= float(offset[frame])
+
+        if dir == 'BW':
+            data = np.round(data)
 
         return data
 

@@ -15,9 +15,9 @@ class Splitter(object):
             if path_out:
                 dataset.write('{}/{}/{}'.format(Path(path_out), dataset.path.parents[0].name, dataset.path.name))
             else:
-                dataset.write()
+                dataset.write(dataset.path)
 
-    def split_data(self, dataset, range, fg_abs_index):
+    def _split_data(self, dataset, range, fg_abs_index):
         """
         Get slice of the data array correspondent to given slice package
 
@@ -28,7 +28,7 @@ class Splitter(object):
         """
         return dataset.data[index_to_slice(range, dataset.shape, fg_abs_index)].copy()
 
-    def split_VisuCoreDataMin(self, dataset, visu_pars, select, fg_rel_index):
+    def _split_VisuCoreDataMin(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -42,7 +42,7 @@ class Splitter(object):
         VisuCoreDataMin.size = (np.prod(value.shape),)
         VisuCoreDataMin.value = value.flatten(order='F')
 
-    def split_VisuCoreDataMax(self, dataset, visu_pars, select, fg_rel_index):
+    def _split_VisuCoreDataMax(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -56,7 +56,7 @@ class Splitter(object):
         VisuCoreDataMax.size = (np.prod(value.shape),)
         VisuCoreDataMax.value = value.flatten(order='F')
 
-    def split_VisuCoreDataOffs(self, dataset, visu_pars, select, fg_rel_index):
+    def _split_VisuCoreDataOffs(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -70,7 +70,7 @@ class Splitter(object):
         VisuCoreDataOffs.size = (np.prod(value.shape),)
         VisuCoreDataOffs.value = value.flatten(order='F')
 
-    def split_VisuCoreDataSlope(self, dataset, visu_pars, select, fg_rel_index):
+    def _split_VisuCoreDataSlope(self, dataset, visu_pars, select, fg_rel_index):
         """
 
         :param scheme:
@@ -84,7 +84,7 @@ class Splitter(object):
         VisuCoreDataSlope.size = (np.prod(value.shape),)
         VisuCoreDataSlope.value = value.flatten(order='F')
 
-    def split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_index):
+    def _split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_index):
         try:
             VisuCoreTransposition = visu_pars['VisuCoreTransposition']
         except KeyError:
@@ -104,6 +104,7 @@ class FrameGroupSplitter(Splitter):
         super(FrameGroupSplitter, self).__init__()
         self.fg = fg
 
+
     def split(self, dataset, select=None, write=False, path_out=None, **kwargs):
         """Split Bruker object along a dimension of specific frame group.
         Only the frame groups listed in SPLIT_FG_IMPLEMENTED can be used to split the object.
@@ -118,17 +119,18 @@ class FrameGroupSplitter(Splitter):
         List of objects incurred during splitting.
 
         """
-        if not self.fg in dataset.scheme.dim_type:
+
+        if "<{}>".format(self.fg) not in dataset.dim_type:
             raise ValueError(f'Dataset does not contain {self.fg} frame group')
 
         """
         CHECK if FG and index are valid
         """
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index(self.fg)
+        fg_abs_index = dataset.dim_type.index("<{}>".format(self.fg))
 
         # index of FG_SLICE among frame group dimensions of the dataset
-        fg_rel_index = fg_abs_index - dataset.scheme.encoded_dim
+        fg_rel_index = fg_abs_index - dataset.encoded_dim
 
         # number of samples in self.fg dimension
         fg_size = dataset.shape[fg_abs_index]
@@ -148,7 +150,6 @@ class FrameGroupSplitter(Splitter):
         """
         datasets = []
 
-
         for select_ in select:
             # construct a new Dataset, without loading data, the data will be supplied later
             name = '{}_{}_{}/2dseq'.format(dataset.path.parents[0].name, self.fg, select_)
@@ -156,13 +157,16 @@ class FrameGroupSplitter(Splitter):
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
 
-            dataset_.parameters = self.split_params(dataset, select_, fg_abs_index, fg_rel_index, fg_size)
+            dataset_.parameters = self._split_params(dataset, select_, fg_abs_index, fg_rel_index, fg_size)
 
-            # construct scheme from the new set of parameters
-            dataset_.load_scheme()
+            # construct properties from the new set of parameters
+            dataset_.load_properties()
+
+            # construct schema
+            dataset_.load_schema()
 
             # SPLIT data
-            dataset_.data = self.split_data(dataset, select_, fg_abs_index)
+            dataset_.data = self._split_data(dataset, select_, fg_abs_index)
 
             # append to result
             datasets.append(dataset_)
@@ -172,51 +176,53 @@ class FrameGroupSplitter(Splitter):
 
         return datasets
 
-    def split_params(self, dataset, select, fg_abs_index, fg_rel_index, fg_size):
+    def _split_params(self, dataset, select, fg_abs_index, fg_rel_index, fg_size):
 
         visu_pars = copy.deepcopy(dataset.parameters['visu_pars'])
 
-        self.split_VisuCoreFrameCount(visu_pars, fg_size)
-        self.split_VisuFGOrderDescDim(visu_pars)
-        self.split_VisuFGOrderDesc(visu_pars, self.fg)
-        self.split_VisuCoreDataSlope(dataset, visu_pars, select, fg_rel_index)
-        self.split_VisuCoreDataOffs(dataset, visu_pars, select, fg_rel_index)
-        self.split_VisuCoreDataMin(dataset, visu_pars, select, fg_rel_index)
-        self.split_VisuCoreDataMax(dataset, visu_pars, select, fg_rel_index)
+        self._split_VisuCoreFrameCount(visu_pars, fg_size)
+        self._split_VisuFGOrderDescDim(visu_pars)
+        self._split_VisuFGOrderDesc(visu_pars, self.fg)
+        self._split_VisuCoreDataSlope(dataset, visu_pars, select, fg_rel_index)
+        self._split_VisuCoreDataOffs(dataset, visu_pars, select, fg_rel_index)
+        self._split_VisuCoreDataMin(dataset, visu_pars, select, fg_rel_index)
+        self._split_VisuCoreDataMax(dataset, visu_pars, select, fg_rel_index)
 
         if self.fg == 'FG_ECHO':
-            self.split_params_FG_ECHO(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
+            self._split_params_FG_ECHO(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
         if self.fg == 'FG_ISA':
-            self.split_params_FG_ISA(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
+            self._split_params_FG_ISA(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
 
         return {'visu_pars': visu_pars}
 
+    def _split_params_FG_ISA(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
+        self._split_VisuCoreDataUnits(visu_pars, dataset, select, fg_rel_index)
+        self._split_VisuFGElemComment(visu_pars, dataset, select, fg_rel_index)
 
-    def split_params_FG_ISA(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
-        self.split_VisuCoreDataUnits(visu_pars, dataset.scheme, select, fg_rel_index)
-        self.split_VisuFGElemComment(visu_pars, dataset.scheme, select, fg_rel_index)
+    def _split_params_FG_ECHO(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
+        self._split_VisuAcqEchoTime(visu_pars, select)
 
-    def split_params_FG_ECHO(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
-        self.split_VisuAcqEchoTime(visu_pars, select)
-
-
-    def split_VisuCoreFrameCount(self, visu_pars, fg_size):
+    def _split_VisuCoreFrameCount(self, visu_pars, fg_size):
         VisuCoreFrameCount = visu_pars['VisuCoreFrameCount']
         value = int(VisuCoreFrameCount.value / fg_size)
         VisuCoreFrameCount.value = value
 
-    def split_VisuFGOrderDescDim(self, visu_pars):
+    def _split_VisuFGOrderDescDim(self, visu_pars):
         VisuFGOrderDescDim = visu_pars['VisuFGOrderDescDim']
         value = VisuFGOrderDescDim.value - 1
-        VisuFGOrderDescDim.value = value
 
-    def split_VisuCoreDataUnits(self, visu_pars, fg_scheme, index, fg_index):
+        if value > 1:
+            VisuFGOrderDescDim.value = value
+        else:
+            del visu_pars['VisuFGOrderDescDim']
+
+    def _split_VisuCoreDataUnits(self, visu_pars, fg_scheme, index, fg_index):
         VisuCoreDataUnits = visu_pars['VisuCoreDataUnits']
         value = VisuCoreDataUnits.value
         VisuCoreDataUnits.value = value[index]
         VisuCoreDataUnits.size = (65,)
 
-    def split_VisuFGOrderDesc(self, visu_pars, fg):
+    def _split_VisuFGOrderDesc(self, visu_pars, fg):
         VisuFGOrderDesc = visu_pars['VisuFGOrderDesc']
 
         size = VisuFGOrderDesc.size[0] - 1
@@ -226,9 +232,12 @@ class FrameGroupSplitter(Splitter):
         for fg_ in value:
             if fg_[1] == '<{}>'.format(fg):
                 value.remove(fg_)
-        VisuFGOrderDesc.value = value
+        if value:
+            VisuFGOrderDesc.value = value
+        else:
+            del visu_pars['VisuFGOrderDesc']
 
-    def split_VisuFGElemComment(self, visu_pars, fg_scheme, index, fg_index):
+    def _split_VisuFGElemComment(self, visu_pars, fg_scheme, index, fg_index):
 
         VisuFGElemComment = visu_pars['VisuFGElemComment']
 
@@ -238,12 +247,12 @@ class FrameGroupSplitter(Splitter):
         VisuFGElemComment.value = value
         VisuFGElemComment.size = (65,)
 
-
-    def split_VisuAcqEchoTime(self, visu_pars, select):
+    def _split_VisuAcqEchoTime(self, visu_pars, select):
         VisuAcqEchoTime = visu_pars['VisuAcqEchoTime']
         value = VisuAcqEchoTime.value
         VisuAcqEchoTime.size=(1,)
         VisuAcqEchoTime.value = float(value[select])
+
 
 class SlicePackageSplitter(Splitter):
     """
@@ -293,13 +302,16 @@ class SlicePackageSplitter(Splitter):
             dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
 
             # SPLIT parameteres
-            dataset_.parameters = self.split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
+            dataset_.parameters = self._split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
 
             # construct properties from the new set of parameters
             dataset_.load_properties()
 
+            # construct schema
+            dataset_.load_schema()
+
             #SPLIT data
-            dataset_.data = self.split_data(dataset, frame_range, fg_abs_index)
+            dataset_.data = self._split_data(dataset, frame_range, fg_abs_index)
 
             # append to result
             datasets.append(dataset_)
@@ -309,27 +321,27 @@ class SlicePackageSplitter(Splitter):
 
         return datasets
 
-    def split_parameters(self, dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count):
+    def _split_parameters(self, dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count):
         # create a copy of visu_pars of the original data set
         visu_pars_ = copy.deepcopy(dataset.parameters['visu_pars'])
 
         # modify individual parameters so that the resulting data set is consistent
-        self.split_VisuCorePosition(visu_pars_, frame_range, frame_count)
-        self.split_VisuCoreOrientation(visu_pars_, frame_range, frame_count)
-        self.split_VisuCoreDataMin(dataset, visu_pars_, frame_range, fg_rel_index)
-        self.split_VisuCoreDataMax(dataset, visu_pars_, frame_range, fg_rel_index)
-        self.split_VisuCoreDataOffs(dataset, visu_pars_, frame_range, fg_rel_index)
-        self.split_VisuCoreDataSlope(dataset, visu_pars_, frame_range, fg_rel_index)
-        self.split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
-        self.split_VisuCoreFrameCount(dataset, visu_pars_, frame_count, fg_abs_index)
-        self.split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
-        self.split_VisuCoreSlicePacksDef(visu_pars_)
-        self.split_VisuCoreSlicePacksSlices(visu_pars_, sp_index)
-        self.split_VisuCoreSlicePacksSliceDist(visu_pars_, sp_index)
+        self._split_VisuCorePosition(visu_pars_, frame_range, frame_count)
+        self._split_VisuCoreOrientation(visu_pars_, frame_range, frame_count)
+        self._split_VisuCoreDataMin(dataset, visu_pars_, frame_range, fg_rel_index)
+        self._split_VisuCoreDataMax(dataset, visu_pars_, frame_range, fg_rel_index)
+        self._split_VisuCoreDataOffs(dataset, visu_pars_, frame_range, fg_rel_index)
+        self._split_VisuCoreDataSlope(dataset, visu_pars_, frame_range, fg_rel_index)
+        self._split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
+        self._split_VisuCoreFrameCount(dataset, visu_pars_, frame_count, fg_abs_index)
+        self._split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
+        self._split_VisuCoreSlicePacksDef(visu_pars_)
+        self._split_VisuCoreSlicePacksSlices(visu_pars_, sp_index)
+        self._split_VisuCoreSlicePacksSliceDist(visu_pars_, sp_index)
 
         return {"visu_pars":visu_pars_}
 
-    def split_VisuCoreFrameCount(self, dataset, visu_pars, frame_count, fg_ind_abs):
+    def _split_VisuCoreFrameCount(self, dataset, visu_pars, frame_count, fg_ind_abs):
         VisuCoreFrameCount = visu_pars['VisuCoreFrameCount']
 
         layout = np.array(dataset.shape_final)
@@ -339,17 +351,17 @@ class SlicePackageSplitter(Splitter):
 
         VisuCoreFrameCount.value = frames
 
-    def split_VisuCoreOrientation(self, visu_pars, frame_range, frame_count):
+    def _split_VisuCoreOrientation(self, visu_pars, frame_range, frame_count):
         VisuCoreOrientation = visu_pars['VisuCoreOrientation']
         VisuCoreOrientation.value = VisuCoreOrientation.value[frame_range, :].flatten(order='C')
         VisuCoreOrientation.size = (frame_count, 9)
 
-    def split_VisuCorePosition(self, visu_pars, frame_range, frame_count):
+    def _split_VisuCorePosition(self, visu_pars, frame_range, frame_count):
         VisuCorePosition = visu_pars['VisuCorePosition']
         VisuCorePosition.value = VisuCorePosition.value[frame_range, :].flatten(order='C')
         VisuCorePosition.size = (frame_count, 3)
 
-    def split_VisuFGOrderDesc(self, visu_pars, fg_rel_ind, frame_count):
+    def _split_VisuFGOrderDesc(self, visu_pars, fg_rel_ind, frame_count):
         VisuFGOrderDesc = visu_pars['VisuFGOrderDesc']
         value = VisuFGOrderDesc.value
 
@@ -360,17 +372,17 @@ class SlicePackageSplitter(Splitter):
 
         VisuFGOrderDesc.value = value
 
-    def split_VisuCoreSlicePacksDef(self,visu_pars):
+    def _split_VisuCoreSlicePacksDef(self,visu_pars):
         VisuCoreSlicePacksDef = visu_pars['VisuCoreSlicePacksDef']
         value = VisuCoreSlicePacksDef.value
         value[1] = 1
         VisuCoreSlicePacksDef.value = value
 
-    def split_VisuCoreSlicePacksSlices(self, visu_pars_, sp_index):
+    def _split_VisuCoreSlicePacksSlices(self, visu_pars_, sp_index):
         VisuCoreSlicePacksSlices = visu_pars_['VisuCoreSlicePacksSlices']
         VisuCoreSlicePacksSlices.value = [VisuCoreSlicePacksSlices.value[sp_index]]
 
-    def split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
+    def _split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
         VisuCoreSlicePacksSliceDist = visu_pars_['VisuCoreSlicePacksSliceDist']
         value = int(VisuCoreSlicePacksSliceDist.value[sp_index])
         VisuCoreSlicePacksSliceDist.value = value

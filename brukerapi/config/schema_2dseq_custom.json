@@ -1,7 +1,69 @@
 {
+  "subj_id": [
+      {
+        "cmd": "#VisuSubjectId[1:-1]",
+        "conditions": [
+        ]
+      },
+      {
+        "cmd": "''",
+        "conditions": [
+        ]
+      }
+  ],
+  "study_id": [
+      {
+        "cmd": "str(#VisuStudyNumber)",
+        "conditions": [
+        ]
+      },
+      {
+        "cmd": "''",
+        "conditions": [
+        ]
+      }
+  ],
+  "exp_id": [
+      {
+        "cmd": "str(#VisuExperimentNumber)",
+        "conditions": [
+        ]
+      },
+      {
+        "cmd": "''",
+        "conditions": [
+        ]
+      }
+  ],
+  "proc_id": [
+      {
+        "cmd": "str(#VisuProcessingNumber)",
+        "conditions": [
+        ]
+      },
+      {
+        "cmd": "''",
+        "conditions": [
+        ]
+      }
+  ],
+  "id": [
+      {
+        "cmd": "'2DSEQ_{}_{}_{}_{}'.format(@exp_id, @proc_id, @subj_id, @study_id)",
+        "conditions": [
+        ]
+      }
+  ],
   "TE": [
       {
         "cmd": "#VisuAcqEchoTime",
+        "conditions": [
+        ]
+      }
+  ],
+  "TR": [
+      {
+        "cmd": "#VisuAcqRepetitionTime",
         "conditions": [
         ]
       }

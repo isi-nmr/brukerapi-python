@@ -205,59 +205,6 @@ class Folder:
             else:
                 print('{} {} [{}]'.format('  '+prefix,child.path.name, child.__class__.__name__))
 
-    def filter(
-            self,
-            parameter: str = None,
-            operator: str = None,
-            value: [str, float, int, list, tuple] = None,
-            type: [Dataset, JCAMPDX, 'Folder', 'Experiment', 'Study', 'Processing'] = None,
-            name: str = None,
-            in_place: bool = True
-    ) -> 'Folder':
-        """Based on parameters passed to the function, it filters the folder tree using one of the following filters:
-
-        :class:`.ParameterFilter` if `parameter`, `operator` and `value` are passed
-
-        Example:
-
-        .. code-block:: python
-
-            folder.filter(parameter='PULPROG', operator='==', value='<RARE.ppg>')
-
-        :class:`.TypeFilter` if `type` is passed
-
-        Example:
-
-        .. code-block:: python
-
-            folder.filter(type=Experiment)
-
-        :class:`.NameFilter` `name` is passed
-
-        Example:
-
-        .. code-block:: python
-
-            folder.filter(name='fid')
-
-        Tutorial: :doc:`tutorials/how-to-use-filter`
-
-        :param parameter: name of parameter from any of JCAMPDX files. See :class:`.ParameterFilter` for more info.
-        :param operator: operator used for evaluation of the filter. See :class:`.ParameterFilter` for more info.
-        :param value: value used for evaluation of the filter. See :class:`.ParameterFilter` for more info.
-        :param type: brukerapi class to be filtered. See :class:`.TypeFilter` for more info.
-        :param name: name of file to be filtered. See :class:`.NameFilter` for more info.
-        :param in_place: filter the original :class:`.Folder` object by removing filtered out objects, if `True`, create new :class:`.Folder` object if `False`
-        :return: filtered :class:`.Folder`
-
-        """
-        if parameter and value and operator:
-            return ParameterFilter(parameter, operator, value, in_place=in_place).filter(self)
-        if type:
-            return TypeFilter(type, in_place=in_place).filter(self)
-        if name:
-            return NameFilter(name, in_place=in_place).filter(self)
-
     def clean(self, node: 'Folder' = None) -> 'Folder':
         """Remove empty folders from the tree
 
@@ -279,25 +226,29 @@ class Folder:
     def to_json(self, path=None):
         if path:
             with open(path, 'w') as json_file:
-                json.dump(self.represent_json(), json_file, sort_keys=True, indent=4)
+                json.dump(self.to_json(), json_file, sort_keys=True, indent=4)
         else:
-            return json.dumps(self.represent_json(), sort_keys=True, indent=4)
+            return json.dumps(self.to_json(), sort_keys=True, indent=4)
 
-    def represent_json(self):
+    def report(self, path_out=None, format_=None, write=True, props=None, verbose=None):
 
         out = {}
 
+        if format_ is None:
+            format_ = 'json'
+
         for dataset in self.dataset_list_rec:
-            if dataset.type == 'fid':
-                name = 'FID_{}'.format(dataset.path.parents[0])
-                continue
-            elif dataset.type == '2dseq':
-                name = '2DSEQ_{}_{}'.format(dataset.path.parents[2].name, dataset.path.parents[0].name)
+            with dataset(add_parameters=['subject']) as d:
+                if write:
+                    if path_out:
+                        d.report(path=path_out/'{}.{}'.format(d.id, format_), props=props, verbose=verbose)
+                    else:
+                        d.report(path=d.path.parent/'{}.{}'.format(d.id, format_), props=props, verbose=verbose)
+                else:
+                    out[d.id]=d.to_json(props=props)
 
-            with dataset as d:
-                out[name] = d.represent_json(abs_path=self.path)
-
-        return out
+        if not write:
+            return out
 
 
 class Study(Folder):
@@ -425,9 +376,10 @@ class Processing(Folder):
 
 
 class Filter:
-    def __init__(self, in_place=True, recursive=True):
+    def __init__(self, query, in_place=True, recursive=True):
         self.in_place = in_place
         self.recursive = recursive
+        self.query = query
 
     def filter(self, folder):
 
@@ -492,58 +444,11 @@ class Filter:
         node.children = children_out
         return node
 
-
-ops = {
-    "==": op.eq,
-        "<": op.lt,
-        ">": op.gt,
-        "<=": op.le,
-        ">=": op.ge,
-    }
-
-
-class ParameterFilter(Filter):
-    def __init__(self, parameter, operator, value, in_place=True):
-        super(ParameterFilter, self).__init__(in_place=in_place)
-        self.parameter = parameter
-        self.value = value
-
-        try:
-            self.op = ops[operator]
-        except KeyError as e:
-            raise ValueError('Invalid operator {}'.format(operator))
-
     def filter_eval(self, node):
-        """
-        Filters out:
-            - anything other than Datasets and JCAMPDX files.
-        :param node:
-        :return:
-        """
-        if not isinstance(node, Dataset) and not isinstance(node, JCAMPDX):
-            raise FilterEvalFalse
-
-        # TODO context manager, or specific parameter querry
-        with node as n:
-            try:
-                value = n.get_value(self.parameter)
-            except KeyError:
-                raise FilterEvalFalse
-
-        if not self.op(value,self.value) :
-            raise FilterEvalFalse
-
-
-class DatasetTypeFilter(Filter):
-    def __init__(self, value, in_place=True):
-        super(DatasetTypeFilter, self).__init__(in_place)
-        self.value = value
-
-    def filter_eval(self, node):
-        if not isinstance(node, Dataset):
-            raise FilterEvalFalse
-
-        if node.type != self.value:
+        if isinstance(node, Dataset):
+            with node(add_properties=['subject']) as n:
+                n.query(self.query)
+        else:
             raise FilterEvalFalse
 
 
@@ -554,14 +459,4 @@ class TypeFilter(Filter):
 
     def filter_eval(self, node):
         if not isinstance(node, self.type):
-            raise FilterEvalFalse
-
-
-class NameFilter(Filter):
-    def __init__(self, value, in_place=True, recursive=False):
-        super(TypeFilter, self).__init__(in_place, recursive)
-        self.name = value
-
-    def filter_eval(self, node):
-        if node.path.name != node:
             raise FilterEvalFalse
