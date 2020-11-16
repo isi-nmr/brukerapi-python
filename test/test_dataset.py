@@ -14,7 +14,7 @@ def test_properties(test_io_data):
     d.load_properties()
 
     # Test if properties are loaded correctly
-    assert d.to_dict(Path(test_io_data[1])) == test_io_data[0]
+    assert d.to_dict() == test_io_data[0]['properties']
 
 def test_read(test_io_data):
     path = Path(test_io_data[1]) / Path(test_io_data[0]['path'])
@@ -58,7 +58,7 @@ def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
             raise e
 
     # Test if properties are loaded correctly
-    assert d_test.to_dict(path_out)['properties'] == test_io_data[0]['properties']
+    assert d_test.to_dict() == test_io_data[0]['properties']
 
 
 def schemas_one(d, r):
