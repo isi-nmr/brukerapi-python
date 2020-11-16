@@ -523,6 +523,11 @@ class Schema2dseq(Schema):
         :param dir:
         :return:
         """
+
+        # dataset is created with scale state set to False
+        if self._dataset._kwargs.get('scale') is False:
+            return data
+
         # get a float copy of the data array
         data = data.astype(np.float)
 
