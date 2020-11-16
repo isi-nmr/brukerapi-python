@@ -39,7 +39,7 @@ def test_generator(path_folder, path_config, suites=None):
         tests[suite] = dict(sorted(tests[suite].items()))
 
     with open(path_config, 'w') as json_file:
-        json.dump(tests, json_file, indent=4)
+        json.dump(tests, json_file, indent=4, sort_keys=True)
 
 
 def gen_test_io(dataset, abs_path, name):
@@ -85,3 +85,7 @@ def gen_test_ra(dataset, abs_path, name):
     test['slices'] = slices
 
     return test
+
+if __name__ == '__main__':
+    test_generator('{PATH_DATA}/0.2H2/', 'config/auto_test_pv51.json')
+    test_generator('{PATH_DATA}/20200612_094625_lego_phantom_3_1_2/', 'config/auto_test_pv601.json')

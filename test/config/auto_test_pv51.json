@@ -3,108 +3,115 @@
         "2DSEQ_10_1": {
             "path": "10/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    128,
-                    1
-                ],
-                "shape_frames": [
-                    1
-                ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 3,
-                "shape_storage": [
-                    128,
-                    128,
-                    128,
-                    1
-                ],
-                "numpy_dtype": "int16",
+                "TE": 2,
                 "TR": 4,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial"
                 ],
+                "encoded_dim": 3,
                 "is_single_slice": false,
-                "TE": 2,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    182.269660998766
+                "numpy_dtype": "int16",
+                "offset": [
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    1
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    128,
+                    1
+                ],
+                "shape_frames": [
+                    1
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    128,
+                    1
+                ],
+                "slope": [
+                    182.269660998766
+                ]
             }
         },
         "2DSEQ_11_1": {
             "path": "11/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    512,
-                    512,
-                    1,
-                    2
-                ],
-                "shape_frames": [
-                    2
-                ],
-                "shape_fg": [
-                    1,
-                    2
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    512,
-                    512,
-                    2
-                ],
-                "numpy_dtype": "int16",
+                "TE": 6,
                 "TR": 20,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial",
                     "<FG_FLOW>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "TE": 6,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    0.000915569254904989,
-                    0.000915569254904989
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     512,
                     512
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    1,
+                    2
+                ],
+                "shape_final": [
+                    512,
+                    512,
+                    1,
+                    2
+                ],
+                "shape_frames": [
+                    2
+                ],
+                "shape_storage": [
+                    512,
+                    512,
+                    2
+                ],
+                "slope": [
+                    0.000915569254904989,
+                    0.000915569254904989
+                ]
             }
         },
         "2DSEQ_12_1": {
             "path": "12/pdata/1/2dseq",
             "properties": {
+                "TE": 20,
+                "TR": 1500,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_SLICE>",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -121,6 +128,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    2,
+                    7
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -130,29 +146,11 @@
                 "shape_frames": [
                     14
                 ],
-                "shape_fg": [
-                    2,
-                    7
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     14
                 ],
-                "numpy_dtype": "int16",
-                "TR": 1500,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_SLICE>",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": false,
-                "TE": 20,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     151.31449775852,
                     151.31449775852,
@@ -168,108 +166,65 @@
                     151.31449775852,
                     151.31449775852,
                     151.31449775852
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_13_1": {
             "path": "13/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    64,
-                    64,
-                    4
-                ],
-                "shape_frames": [
-                    4
-                ],
-                "shape_fg": [
-                    4
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    64,
-                    64,
-                    4
-                ],
-                "numpy_dtype": "int16",
+                "TE": 24.818,
                 "TR": 1000,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "<FG_SLICE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": false,
-                "TE": 24.818,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    565.46586457527,
-                    565.46586457527,
-                    565.46586457527,
-                    565.46586457527
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
-            }
-        },
-        "2DSEQ_14_1": {
-            "path": "14/pdata/1/2dseq",
-            "properties": {
+                "numpy_dtype": "int16",
                 "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     0,
                     0,
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "shape_fg": [
+                    4
+                ],
                 "shape_final": [
                     64,
                     64,
-                    1,
-                    5,
-                    2
+                    4
                 ],
                 "shape_frames": [
-                    10
+                    4
                 ],
-                "shape_fg": [
-                    1,
-                    5,
-                    2
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     64,
                     64,
-                    10
+                    4
                 ],
-                "numpy_dtype": "int16",
+                "slope": [
+                    565.46586457527,
+                    565.46586457527,
+                    565.46586457527,
+                    565.46586457527
+                ]
+            }
+        },
+        "2DSEQ_14_1": {
+            "path": "14/pdata/1/2dseq",
+            "properties": {
+                "TE": 24.279,
                 "TR": 4000,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
@@ -277,10 +232,47 @@
                     "<FG_MOVIE>",
                     "<FG_IRMODE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "TE": 24.279,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    2
+                ],
+                "shape_final": [
+                    64,
+                    64,
+                    1,
+                    5,
+                    2
+                ],
+                "shape_frames": [
+                    10
+                ],
+                "shape_storage": [
+                    64,
+                    64,
+                    10
+                ],
                 "slope": [
                     50.4672977064193,
                     50.6269768753175,
@@ -292,19 +284,25 @@
                     51.52440943849,
                     52.0757610313802,
                     52.6828980096941
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_15_1": {
             "path": "15/pdata/1/2dseq",
             "properties": {
+                "TE": 49.0008,
+                "TR": 1500.001,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_SLICE>",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -334,6 +332,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "shape_fg": [
+                    3,
+                    9
+                ],
                 "shape_final": [
                     64,
                     64,
@@ -343,29 +350,11 @@
                 "shape_frames": [
                     27
                 ],
-                "shape_fg": [
-                    3,
-                    9
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     64,
                     64,
                     27
                 ],
-                "numpy_dtype": "int16",
-                "TR": 1500.001,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_SLICE>",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": false,
-                "TE": 49.0008,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     278.415440065867,
                     278.415440065867,
@@ -394,19 +383,25 @@
                     53.6282571882034,
                     53.6282571882034,
                     53.6282571882034
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_16_1": {
             "path": "16/pdata/1/2dseq",
             "properties": {
+                "TE": 45.788,
+                "TR": 10000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -425,6 +420,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    16
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -434,29 +438,11 @@
                 "shape_frames": [
                     16
                 ],
-                "shape_fg": [
-                    1,
-                    16
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     16
                 ],
-                "numpy_dtype": "int16",
-                "TR": 10000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": true,
-                "TE": 45.788,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     65.0506197119759,
                     65.0506197119759,
@@ -474,19 +460,34 @@
                     65.0506197119759,
                     65.0506197119759,
                     65.0506197119759
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_17_1": {
             "path": "17/pdata/1/2dseq",
             "properties": {
+                "TE": [
+                    90.362,
+                    180.724,
+                    271.086,
+                    361.448,
+                    451.81,
+                    542.172,
+                    632.534,
+                    722.896
+                ],
+                "TR": 11553.716,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>",
+                    "<FG_SLICE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -609,6 +610,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    8,
+                    15
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -618,38 +628,11 @@
                 "shape_frames": [
                     120
                 ],
-                "shape_fg": [
-                    8,
-                    15
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     120
                 ],
-                "numpy_dtype": "int16",
-                "TR": 11553.716,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>",
-                    "<FG_SLICE>"
-                ],
-                "is_single_slice": false,
-                "TE": [
-                    90.362,
-                    180.724,
-                    271.086,
-                    361.448,
-                    451.81,
-                    542.172,
-                    632.534,
-                    722.896
-                ],
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     257.301041366432,
                     257.301041366432,
@@ -771,80 +754,82 @@
                     257.301041366432,
                     257.301041366432,
                     257.301041366432
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_18_1": {
             "path": "18/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    64,
-                    64,
-                    1,
-                    4
-                ],
-                "shape_frames": [
-                    4
-                ],
-                "shape_fg": [
-                    1,
-                    4
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    64,
-                    64,
-                    4
-                ],
-                "numpy_dtype": "int16",
-                "TR": 1500,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>"
-                ],
-                "is_single_slice": true,
                 "TE": [
                     17.438,
                     39.93,
                     62.422,
                     84.914
                 ],
-                "pv_version": "5.1",
+                "TR": 1500,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
                 "num_slice_packages": 1,
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    64,
+                    64
+                ],
+                "shape_fg": [
+                    1,
+                    4
+                ],
+                "shape_final": [
+                    64,
+                    64,
+                    1,
+                    4
+                ],
+                "shape_frames": [
+                    4
+                ],
+                "shape_storage": [
+                    64,
+                    64,
+                    4
+                ],
                 "slope": [
                     61.0842873359424,
                     61.0842873359424,
                     61.0842873359424,
                     61.0842873359424
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    64,
-                    64
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_1_1": {
             "path": "1/pdata/1/2dseq",
             "properties": {
+                "TE": 3,
+                "TR": 200,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_SLICE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -862,6 +847,14 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_fg": [
+                    15
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -870,27 +863,11 @@
                 "shape_frames": [
                     15
                 ],
-                "shape_fg": [
-                    15
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     256,
                     256,
                     15
                 ],
-                "numpy_dtype": "int16",
-                "TR": 200,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_SLICE>"
-                ],
-                "is_single_slice": false,
-                "TE": 3,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     68.0388746198903,
                     68.0388746198903,
@@ -907,74 +884,85 @@
                     68.0388746198903,
                     68.0388746198903,
                     68.0388746198903
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_21_1": {
             "path": "21/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    4
-                ],
-                "shape_frames": [
-                    4
-                ],
-                "shape_fg": [
-                    4
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    128,
-                    128,
-                    4
-                ],
-                "numpy_dtype": "int16",
+                "TE": 0.316319272829721,
                 "TR": 30,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "<FG_SLICE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": false,
-                "TE": 0.316319272829721,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    4
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    4
+                ],
+                "shape_frames": [
+                    4
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    4
+                ],
                 "slope": [
                     2.49152751238897,
                     2.49152751238897,
                     2.49152751238897,
                     2.49152751238897
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_22_1": {
             "path": "22/pdata/1/2dseq",
             "properties": {
+                "TE": 0.02,
+                "TR": 8,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial"
+                ],
+                "encoded_dim": 3,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1
                 ],
                 "shape_final": [
                     128,
@@ -985,203 +973,188 @@
                 "shape_frames": [
                     1
                 ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 3,
                 "shape_storage": [
                     128,
                     128,
                     128,
                     1
                 ],
-                "numpy_dtype": "int16",
-                "TR": 8,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial"
-                ],
-                "is_single_slice": false,
-                "TE": 0.02,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     1.37425787550869
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_23_1": {
             "path": "23/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    128,
-                    1
-                ],
-                "shape_frames": [
-                    1
-                ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 3,
-                "shape_storage": [
-                    128,
-                    128,
-                    128,
-                    1
-                ],
-                "numpy_dtype": "int16",
+                "TE": 0,
                 "TR": 4,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial"
                 ],
+                "encoded_dim": 3,
                 "is_single_slice": false,
-                "TE": 0,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    1.41252549223342
+                "numpy_dtype": "int16",
+                "offset": [
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    1
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    128,
+                    1
+                ],
+                "shape_frames": [
+                    1
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    128,
+                    1
+                ],
+                "slope": [
+                    1.41252549223342
+                ]
             }
         },
         "2DSEQ_24_1": {
             "path": "24/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0
-                ],
-                "shape_final": [
-                    2048,
-                    32,
-                    32,
-                    1
-                ],
-                "shape_frames": [
-                    1
-                ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 3,
-                "shape_storage": [
-                    2048,
-                    32,
-                    32,
-                    1
-                ],
-                "numpy_dtype": "int32",
                 "TR": 1200,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spectroscopic",
                     "spatial",
                     "spatial"
                 ],
+                "encoded_dim": 3,
                 "is_single_slice": false,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    0.610878945064932
+                "numpy_dtype": "int32",
+                "offset": [
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     2048,
                     32,
                     32
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    1
+                ],
+                "shape_final": [
+                    2048,
+                    32,
+                    32,
+                    1
+                ],
+                "shape_frames": [
+                    1
+                ],
+                "shape_storage": [
+                    2048,
+                    32,
+                    32,
+                    1
+                ],
+                "slope": [
+                    0.610878945064932
+                ]
             }
         },
         "2DSEQ_25_1": {
             "path": "25/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0
+                "TE": [
+                    1.537,
+                    5.537
                 ],
-                "shape_final": [
-                    128,
-                    128,
-                    128,
-                    2
-                ],
-                "shape_frames": [
-                    2
-                ],
-                "shape_fg": [
-                    2
-                ],
-                "encoded_dim": 3,
-                "shape_storage": [
-                    128,
-                    128,
-                    128,
-                    2
-                ],
-                "numpy_dtype": "int32",
                 "TR": 20,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial",
                     "<FG_ECHO>"
                 ],
+                "encoded_dim": 3,
                 "is_single_slice": false,
-                "TE": [
-                    1.537,
-                    5.537
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
+                "offset": [
+                    0,
+                    0
                 ],
                 "pv_version": "5.1",
-                "num_slice_packages": 1,
-                "slope": [
-                    0.0015559824536877,
-                    0.0015559824536877
-                ],
-                "subj_id": "0",
                 "shape_block": [
                     128,
                     128,
                     128
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    2
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    128,
+                    2
+                ],
+                "shape_frames": [
+                    2
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    128,
+                    2
+                ],
+                "slope": [
+                    0.0015559824536877,
+                    0.0015559824536877
+                ]
             }
         },
         "2DSEQ_26_1": {
             "path": "26/pdata/1/2dseq",
             "properties": {
+                "TE": 0,
+                "TR": 800,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spectroscopic",
+                    "<FG_CYCLE>"
+                ],
+                "encoded_dim": 1,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
                     0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    1024
+                ],
+                "shape_fg": [
+                    3
                 ],
                 "shape_final": [
                     1024,
@@ -1190,43 +1163,38 @@
                 "shape_frames": [
                     3
                 ],
-                "shape_fg": [
-                    3
-                ],
-                "encoded_dim": 1,
                 "shape_storage": [
                     1024,
                     3
                 ],
-                "numpy_dtype": "int16",
-                "TR": 800,
-                "proc_id": "",
-                "dim_type": [
-                    "spectroscopic",
-                    "<FG_CYCLE>"
-                ],
-                "is_single_slice": false,
-                "TE": 0,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     32031.3476742137,
                     32031.3476742137,
                     32031.3476742137
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    1024
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_27_1": {
             "path": "27/pdata/1/2dseq",
             "properties": {
+                "TE": 0,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spectroscopic"
+                ],
+                "encoded_dim": 1,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    2048
+                ],
+                "shape_fg": [
+                    1
                 ],
                 "shape_final": [
                     2048,
@@ -1235,39 +1203,36 @@
                 "shape_frames": [
                     1
                 ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 1,
                 "shape_storage": [
                     2048,
                     1
                 ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
-                "dim_type": [
-                    "spectroscopic"
-                ],
-                "is_single_slice": false,
-                "TE": 0,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.0783475008622457
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    2048
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_28_1": {
             "path": "28/pdata/1/2dseq",
             "properties": {
+                "TE": 0,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spectroscopic"
+                ],
+                "encoded_dim": 1,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    2048
+                ],
+                "shape_fg": [
+                    1
                 ],
                 "shape_final": [
                     2048,
@@ -1276,142 +1241,73 @@
                 "shape_frames": [
                     1
                 ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 1,
                 "shape_storage": [
                     2048,
                     1
                 ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
-                "dim_type": [
-                    "spectroscopic"
-                ],
-                "is_single_slice": false,
-                "TE": 0,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.0188149760445386
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    2048
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_2_1": {
             "path": "2/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    256,
-                    256,
-                    3
-                ],
-                "shape_frames": [
-                    3
-                ],
-                "shape_fg": [
-                    3
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    256,
-                    256,
-                    3
-                ],
-                "numpy_dtype": "int16",
+                "TE": 6,
                 "TR": 100,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "<FG_SLICE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": false,
-                "TE": 6,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    153.274237284458,
-                    153.274237284458,
-                    153.274237284458
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0,
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     256,
                     256
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    3
+                ],
+                "shape_final": [
+                    256,
+                    256,
+                    3
+                ],
+                "shape_frames": [
+                    3
+                ],
+                "shape_storage": [
+                    256,
+                    256,
+                    3
+                ],
+                "slope": [
+                    153.274237284458,
+                    153.274237284458,
+                    153.274237284458
+                ]
             }
         },
         "2DSEQ_31_1": {
             "path": "31/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
+                "TE": [
+                    10,
+                    30,
+                    50,
+                    70,
+                    90
                 ],
-                "shape_final": [
-                    128,
-                    128,
-                    1,
-                    5,
-                    6
-                ],
-                "shape_frames": [
-                    30
-                ],
-                "shape_fg": [
-                    1,
-                    5,
-                    6
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    128,
-                    128,
-                    30
-                ],
-                "numpy_dtype": "int16",
                 "TR": [
                     5500,
                     3000,
@@ -1420,7 +1316,7 @@
                     400,
                     200
                 ],
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
@@ -1428,16 +1324,67 @@
                     "<FG_ECHO>",
                     "<FG_MOVIE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "TE": [
-                    10,
-                    30,
-                    50,
-                    70,
-                    90
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ],
                 "pv_version": "5.1",
-                "num_slice_packages": 1,
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    6
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    1,
+                    5,
+                    6
+                ],
+                "shape_frames": [
+                    30
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    30
+                ],
                 "slope": [
                     98.9442691872253,
                     98.9442691872253,
@@ -1469,19 +1416,32 @@
                     98.9442691872253,
                     98.9442691872253,
                     98.9442691872253
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_31_2": {
             "path": "31/pdata/2/2dseq",
             "properties": {
+                "TR": [
+                    5500,
+                    3000,
+                    1500,
+                    800,
+                    400,
+                    200
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_ISA>",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0,
                     0,
@@ -1514,6 +1474,16 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1;5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    6
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1524,37 +1494,11 @@
                 "shape_frames": [
                     30
                 ],
-                "shape_fg": [
-                    1,
-                    5,
-                    6
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     30
                 ],
-                "numpy_dtype": "int32",
-                "TR": [
-                    5500,
-                    3000,
-                    1500,
-                    800,
-                    400,
-                    200
-                ],
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_ISA>",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": true,
-                "pv_version": "5.1;5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.001953125,
                     0.001953125,
@@ -1586,19 +1530,31 @@
                     9.5367431640625e-07,
                     9.5367431640625e-07,
                     0.000244140625
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_31_3": {
             "path": "31/pdata/3/2dseq",
             "properties": {
+                "TE": [
+                    10,
+                    30,
+                    50,
+                    70,
+                    90
+                ],
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_ISA>",
+                    "<FG_ECHO>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0,
                     0,
@@ -1626,6 +1582,16 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1;5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    5
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -1636,36 +1602,11 @@
                 "shape_frames": [
                     25
                 ],
-                "shape_fg": [
-                    1,
-                    5,
-                    5
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     25
                 ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_ISA>",
-                    "<FG_ECHO>"
-                ],
-                "is_single_slice": true,
-                "TE": [
-                    10,
-                    30,
-                    50,
-                    70,
-                    90
-                ],
-                "pv_version": "5.1;5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.001953125,
                     0.001953125,
@@ -1692,19 +1633,25 @@
                     1.9073486328125e-06,
                     1.9073486328125e-06,
                     3.0517578125e-05
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_32_1": {
             "path": "32/pdata/1/2dseq",
             "properties": {
+                "TE": 23.5,
+                "TR": 3800,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_SLICE>",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0,
                     0,
@@ -2232,6 +2179,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    15,
+                    35
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -2241,29 +2197,11 @@
                 "shape_frames": [
                     525
                 ],
-                "shape_fg": [
-                    15,
-                    35
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     525
                 ],
-                "numpy_dtype": "int32",
-                "TR": 3800,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_SLICE>",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": false,
-                "TE": 23.5,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.00396825760804928,
                     0.00396825760804928,
@@ -2790,19 +2728,23 @@
                     0.00396825760804928,
                     0.00396825760804928,
                     0.00396825760804928
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_32_2": {
             "path": "32/pdata/2/2dseq",
             "properties": {
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_DTI>",
+                    "<FG_SLICE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0,
                     0,
@@ -3135,6 +3077,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1;5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    22,
+                    15
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -3144,27 +3095,11 @@
                 "shape_frames": [
                     330
                 ],
-                "shape_fg": [
-                    22,
-                    15
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     330
                 ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_DTI>",
-                    "<FG_SLICE>"
-                ],
-                "is_single_slice": false,
-                "pv_version": "5.1;5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     1e-06,
                     1e-09,
@@ -3496,66 +3431,12 @@
                     1e-06,
                     1e-06,
                     1e-06
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_33_1": {
             "path": "33/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    1,
-                    16
-                ],
-                "shape_frames": [
-                    16
-                ],
-                "shape_fg": [
-                    1,
-                    16
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    128,
-                    128,
-                    16
-                ],
-                "numpy_dtype": "int32",
-                "TR": 2500,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>"
-                ],
-                "is_single_slice": true,
                 "TE": [
                     11,
                     22,
@@ -3574,8 +3455,59 @@
                     165,
                     176
                 ],
-                "pv_version": "5.1",
+                "TR": 2500,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
                 "num_slice_packages": 1,
+                "numpy_dtype": "int32",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    16
+                ],
+                "shape_final": [
+                    128,
+                    128,
+                    1,
+                    16
+                ],
+                "shape_frames": [
+                    16
+                ],
+                "shape_storage": [
+                    128,
+                    128,
+                    16
+                ],
                 "slope": [
                     0.00166073135632915,
                     0.00166073135632915,
@@ -3593,25 +3525,38 @@
                     0.00166073135632915,
                     0.00166073135632915,
                     0.00166073135632915
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_33_2": {
             "path": "33/pdata/2/2dseq",
             "properties": {
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_ISA>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int32",
                 "offset": [
                     0,
                     0,
                     0,
                     0,
                     0
+                ],
+                "pv_version": "5.1;5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    5
                 ],
                 "shape_final": [
                     128,
@@ -3622,138 +3567,79 @@
                 "shape_frames": [
                     5
                 ],
-                "shape_fg": [
-                    1,
-                    5
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     5
                 ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_ISA>"
-                ],
-                "is_single_slice": true,
-                "pv_version": "5.1;5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     0.00390625,
                     0.00390625,
                     4.76837158203125e-07,
                     4.76837158203125e-07,
                     0.0009765625
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_33_3": {
             "path": "33/pdata/3/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    128,
-                    128,
-                    1,
-                    5
-                ],
-                "shape_frames": [
-                    5
-                ],
-                "shape_fg": [
-                    1,
-                    5
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    128,
-                    128,
-                    5
-                ],
-                "numpy_dtype": "int32",
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial",
                     "<FG_ISA>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "pv_version": "5.1;5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    0.00390625,
-                    0.00390625,
-                    4.76837158203125e-07,
-                    4.76837158203125e-07,
-                    0.0009765625
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
-            }
-        },
-        "2DSEQ_35_1": {
-            "path": "35/pdata/1/2dseq",
-            "properties": {
+                "numpy_dtype": "int32",
                 "offset": [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     0,
                     0,
                     0,
                     0,
                     0
                 ],
-                "shape_final": [
-                    256,
-                    256,
-                    1,
-                    1,
-                    10
-                ],
-                "shape_frames": [
-                    10
+                "pv_version": "5.1;5.1",
+                "shape_block": [
+                    128,
+                    128
                 ],
                 "shape_fg": [
                     1,
+                    5
+                ],
+                "shape_final": [
+                    128,
+                    128,
                     1,
-                    10
+                    5
                 ],
-                "encoded_dim": 2,
+                "shape_frames": [
+                    5
+                ],
                 "shape_storage": [
-                    256,
-                    256,
-                    10
+                    128,
+                    128,
+                    5
                 ],
-                "numpy_dtype": "int32",
+                "slope": [
+                    0.00390625,
+                    0.00390625,
+                    4.76837158203125e-07,
+                    4.76837158203125e-07,
+                    0.0009765625
+                ]
+            }
+        },
+        "2DSEQ_35_1": {
+            "path": "35/pdata/1/2dseq",
+            "properties": {
+                "TE": 2.90666666666667,
                 "TR": 8,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
@@ -3761,10 +3647,47 @@
                     "<FG_ECHO>",
                     "<FG_CARDIAC_MOVIE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "TE": 2.90666666666667,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
+                "numpy_dtype": "int32",
+                "offset": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_fg": [
+                    1,
+                    1,
+                    10
+                ],
+                "shape_final": [
+                    256,
+                    256,
+                    1,
+                    1,
+                    10
+                ],
+                "shape_frames": [
+                    10
+                ],
+                "shape_storage": [
+                    256,
+                    256,
+                    10
+                ],
                 "slope": [
                     0.000189802173865093,
                     0.000189802173865093,
@@ -3776,19 +3699,35 @@
                     0.000189802173865093,
                     0.000189802173865093,
                     0.000189802173865093
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_3_1": {
             "path": "3/pdata/1/2dseq",
             "properties": {
+                "TE": [
+                    4,
+                    10,
+                    16,
+                    22,
+                    28,
+                    34,
+                    40,
+                    46,
+                    52
+                ],
+                "TR": 1500,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>",
+                    "<FG_SLICE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -3863,6 +3802,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_fg": [
+                    9,
+                    8
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -3872,39 +3820,11 @@
                 "shape_frames": [
                     72
                 ],
-                "shape_fg": [
-                    9,
-                    8
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     256,
                     256,
                     72
                 ],
-                "numpy_dtype": "int16",
-                "TR": 1500,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>",
-                    "<FG_SLICE>"
-                ],
-                "is_single_slice": false,
-                "TE": [
-                    4,
-                    10,
-                    16,
-                    22,
-                    28,
-                    34,
-                    40,
-                    46,
-                    52
-                ],
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     76.6238619262818,
                     76.6238619262818,
@@ -3978,19 +3898,28 @@
                     76.6238619262818,
                     76.6238619262818,
                     76.6238619262818
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_4_1": {
             "path": "4/pdata/1/2dseq",
             "properties": {
+                "TE": [
+                    15.8175,
+                    36.9075
+                ],
+                "TR": 1000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>",
+                    "<FG_SLICE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -4001,6 +3930,15 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_fg": [
+                    2,
+                    4
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -4010,32 +3948,11 @@
                 "shape_frames": [
                     8
                 ],
-                "shape_fg": [
-                    2,
-                    4
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     256,
                     256,
                     8
                 ],
-                "numpy_dtype": "int16",
-                "TR": 1000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>",
-                    "<FG_SLICE>"
-                ],
-                "is_single_slice": false,
-                "TE": [
-                    15.8175,
-                    36.9075
-                ],
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     295.909058565224,
                     295.909058565224,
@@ -4045,19 +3962,29 @@
                     295.909058565224,
                     295.909058565224,
                     295.909058565224
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_5_1": {
             "path": "5/pdata/1/2dseq",
             "properties": {
+                "TE": [
+                    56,
+                    168
+                ],
+                "TR": 5000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>",
+                    "<FG_SLICE>",
+                    "<FG_CYCLE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -4078,6 +4005,16 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256
+                ],
+                "shape_fg": [
+                    2,
+                    3,
+                    3
+                ],
                 "shape_final": [
                     256,
                     256,
@@ -4088,34 +4025,11 @@
                 "shape_frames": [
                     18
                 ],
-                "shape_fg": [
-                    2,
-                    3,
-                    3
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     256,
                     256,
                     18
                 ],
-                "numpy_dtype": "int16",
-                "TR": 5000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>",
-                    "<FG_SLICE>",
-                    "<FG_CYCLE>"
-                ],
-                "is_single_slice": false,
-                "TE": [
-                    56,
-                    168
-                ],
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     76.2645359359099,
                     76.2645359359099,
@@ -4135,19 +4049,27 @@
                     76.2645359359099,
                     76.2645359359099,
                     76.2645359359099
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_6_1": {
             "path": "6/pdata/1/2dseq",
             "properties": {
+                "TE": 15,
+                "TR": 3000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial",
+                    "<FG_MOVIE>",
+                    "<FG_IRMODE>",
+                    "<FG_CYCLE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": true,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -4170,6 +4092,17 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    1,
+                    5,
+                    2,
+                    2
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -4181,33 +4114,11 @@
                 "shape_frames": [
                     20
                 ],
-                "shape_fg": [
-                    1,
-                    5,
-                    2,
-                    2
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     20
                 ],
-                "numpy_dtype": "int16",
-                "TR": 3000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial",
-                    "<FG_MOVIE>",
-                    "<FG_IRMODE>",
-                    "<FG_CYCLE>"
-                ],
-                "is_single_slice": true,
-                "TE": 15,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     116.699247196268,
                     116.699247196268,
@@ -4229,19 +4140,31 @@
                     116.699247196268,
                     116.699247196268,
                     116.699247196268
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_7_1": {
             "path": "7/pdata/1/2dseq",
             "properties": {
+                "TE": [
+                    14,
+                    42,
+                    70,
+                    98
+                ],
+                "TR": 1000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "<FG_ECHO>",
+                    "<FG_SLICE>",
+                    "<FG_MOVIE>"
+                ],
+                "encoded_dim": 2,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0,
                     0,
@@ -4264,6 +4187,16 @@
                     0,
                     0
                 ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    128,
+                    128
+                ],
+                "shape_fg": [
+                    4,
+                    5,
+                    1
+                ],
                 "shape_final": [
                     128,
                     128,
@@ -4274,36 +4207,11 @@
                 "shape_frames": [
                     20
                 ],
-                "shape_fg": [
-                    4,
-                    5,
-                    1
-                ],
-                "encoded_dim": 2,
                 "shape_storage": [
                     128,
                     128,
                     20
                 ],
-                "numpy_dtype": "int16",
-                "TR": 1000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "<FG_ECHO>",
-                    "<FG_SLICE>",
-                    "<FG_MOVIE>"
-                ],
-                "is_single_slice": false,
-                "TE": [
-                    14,
-                    42,
-                    70,
-                    98
-                ],
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     161.012696069596,
                     161.012696069596,
@@ -4325,73 +4233,84 @@
                     161.012696069596,
                     161.012696069596,
                     161.012696069596
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    128,
-                    128
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "2DSEQ_8_1": {
             "path": "8/pdata/1/2dseq",
             "properties": {
-                "offset": [
-                    0,
-                    0
-                ],
-                "shape_final": [
-                    256,
-                    256,
-                    1,
-                    2
-                ],
-                "shape_frames": [
-                    2
-                ],
-                "shape_fg": [
-                    1,
-                    2
-                ],
-                "encoded_dim": 2,
-                "shape_storage": [
-                    256,
-                    256,
-                    2
-                ],
-                "numpy_dtype": "int16",
+                "TE": 19,
                 "TR": 3000,
-                "proc_id": "",
+                "date": "<class 'datetime.datetime'>",
                 "dim_type": [
                     "spatial",
                     "spatial",
                     "spatial",
                     "<FG_CYCLE>"
                 ],
+                "encoded_dim": 2,
                 "is_single_slice": true,
-                "TE": 19,
-                "pv_version": "5.1",
                 "num_slice_packages": 1,
-                "slope": [
-                    396.459816812455,
-                    396.459816812455
+                "numpy_dtype": "int16",
+                "offset": [
+                    0,
+                    0
                 ],
-                "subj_id": "0",
+                "pv_version": "5.1",
                 "shape_block": [
                     256,
                     256
                 ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                "shape_fg": [
+                    1,
+                    2
+                ],
+                "shape_final": [
+                    256,
+                    256,
+                    1,
+                    2
+                ],
+                "shape_frames": [
+                    2
+                ],
+                "shape_storage": [
+                    256,
+                    256,
+                    2
+                ],
+                "slope": [
+                    396.459816812455,
+                    396.459816812455
+                ]
             }
         },
         "2DSEQ_9_1": {
             "path": "9/pdata/1/2dseq",
             "properties": {
+                "TE": 5,
+                "TR": 4000,
+                "date": "<class 'datetime.datetime'>",
+                "dim_type": [
+                    "spatial",
+                    "spatial",
+                    "spatial"
+                ],
+                "encoded_dim": 3,
+                "is_single_slice": false,
+                "num_slice_packages": 1,
+                "numpy_dtype": "int16",
                 "offset": [
                     0
+                ],
+                "pv_version": "5.1",
+                "shape_block": [
+                    256,
+                    256,
+                    10
+                ],
+                "shape_fg": [
+                    1
                 ],
                 "shape_final": [
                     256,
@@ -4402,61 +4321,33 @@
                 "shape_frames": [
                     1
                 ],
-                "shape_fg": [
-                    1
-                ],
-                "encoded_dim": 3,
                 "shape_storage": [
                     256,
                     256,
                     10,
                     1
                 ],
-                "numpy_dtype": "int16",
-                "TR": 4000,
-                "proc_id": "",
-                "dim_type": [
-                    "spatial",
-                    "spatial",
-                    "spatial"
-                ],
-                "is_single_slice": false,
-                "TE": 5,
-                "pv_version": "5.1",
-                "num_slice_packages": 1,
                 "slope": [
                     140.677147843604
-                ],
-                "subj_id": "0",
-                "shape_block": [
-                    256,
-                    256,
-                    10
-                ],
-                "date": "<class 'datetime.datetime'>",
-                "study_id": "2"
+                ]
             }
         },
         "FID_1": {
             "path": "1/fid",
             "properties": {
                 "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    128,
-                    15,
-                    1,
-                    1
-                ],
+                "block_count": 1920,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 7.600000000000003e-06,
                 "encoded_dim": 2,
-                "block_count": 1920,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    1920
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -4465,7 +4356,14 @@
                     128,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    15,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4475,38 +4373,29 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 65789.4736842105,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    256,
+                    1920
                 ],
-                "study_id": ""
+                "sw_hz": 65789.4736842105
             }
         },
         "FID_10": {
             "path": "10/fid",
             "properties": {
                 "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    125,
-                    128,
-                    1,
-                    1
-                ],
+                "block_count": 16000,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 3.3333333333333333e-06,
                 "encoded_dim": 3,
-                "block_count": 16000,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    16000
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -4515,7 +4404,14 @@
                     5,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    125,
+                    128,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4525,38 +4421,29 @@
                     1
                 ],
                 "scheme_id": "CART_3D",
-                "subj_id": "",
-                "sw_hz": 150000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    256,
+                    16000
                 ],
-                "study_id": ""
+                "sw_hz": 150000
             }
         },
         "FID_11": {
             "path": "11/fid",
             "properties": {
                 "acq_lenght": 1024,
-                "k_space": [
-                    512,
-                    384,
-                    2,
-                    1,
-                    1
-                ],
+                "block_count": 768,
                 "block_size": 1024,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 6.666666666666667e-06,
                 "encoded_dim": 2,
-                "block_count": 768,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    1024,
-                    768
-                ],
                 "encoding_space": [
                     512,
                     1,
@@ -4565,7 +4452,14 @@
                     384,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    512,
+                    384,
+                    2,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4575,38 +4469,29 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 75000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    1024,
+                    768
                 ],
-                "study_id": ""
+                "sw_hz": 75000
             }
         },
         "FID_12": {
             "path": "12/fid",
             "properties": {
                 "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    128,
-                    14,
-                    1,
-                    1
-                ],
+                "block_count": 1792,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 1792,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    1792
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -4615,7 +4500,14 @@
                     128,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    14,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4625,8 +4517,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    256,
+                    1792
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_13": {
+            "path": "13/fid",
+            "properties": {
+                "acq_lenght": 2176,
+                "block_count": 12,
+                "block_size": 2690,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4634,29 +4538,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_13": {
-            "path": "13/fid",
-            "properties": {
-                "acq_lenght": 2176,
-                "k_space": [
-                    64,
-                    51,
-                    4,
-                    1,
-                    1
-                ],
-                "block_size": 2690,
                 "dwell_s": 5e-06,
                 "encoded_dim": 2,
-                "block_count": 12,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    2690,
-                    12
-                ],
                 "encoding_space": [
                     1088,
                     1,
@@ -4664,7 +4547,14 @@
                     4,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    51,
+                    4,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4673,8 +4563,20 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 100000,
+                "shape_storage": [
+                    2690,
+                    12
+                ],
+                "sw_hz": 100000
+            }
+        },
+        "FID_14": {
+            "path": "14/fid",
+            "properties": {
+                "acq_lenght": 2048,
+                "block_count": 40,
+                "block_size": 2562,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4682,29 +4584,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_14": {
-            "path": "14/fid",
-            "properties": {
-                "acq_lenght": 2048,
-                "k_space": [
-                    64,
-                    64,
-                    1,
-                    10,
-                    1
-                ],
-                "block_size": 2562,
                 "dwell_s": 5e-06,
                 "encoded_dim": 2,
-                "block_count": 40,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    2562,
-                    40
-                ],
                 "encoding_space": [
                     1024,
                     1,
@@ -4712,7 +4593,14 @@
                     1,
                     10
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    64,
+                    1,
+                    10,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4721,8 +4609,20 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 100000,
+                "shape_storage": [
+                    2562,
+                    40
+                ],
+                "sw_hz": 100000
+            }
+        },
+        "FID_15": {
+            "path": "15/fid",
+            "properties": {
+                "acq_lenght": 1536,
+                "block_count": 135,
+                "block_size": 1536,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4730,29 +4630,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_15": {
-            "path": "15/fid",
-            "properties": {
-                "acq_lenght": 1536,
-                "k_space": [
-                    64,
-                    60,
-                    3,
-                    9,
-                    1
-                ],
-                "block_size": 1536,
                 "dwell_s": 4.200000000000002e-06,
                 "encoded_dim": 2,
-                "block_count": 135,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    1536,
-                    135
-                ],
                 "encoding_space": [
                     768,
                     1,
@@ -4760,7 +4639,14 @@
                     3,
                     9
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    60,
+                    3,
+                    9,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4769,38 +4655,29 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 119047.619047619,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    1536,
+                    135
                 ],
-                "study_id": ""
+                "sw_hz": 119047.619047619
             }
         },
         "FID_16": {
             "path": "16/fid",
             "properties": {
                 "acq_lenght": 16384,
-                "k_space": [
-                    128,
-                    128,
-                    16,
-                    1,
-                    1
-                ],
+                "block_count": 32,
                 "block_size": 16384,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 2.5e-06,
                 "encoded_dim": 2,
-                "block_count": 32,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    16384,
-                    32
-                ],
                 "encoding_space": [
                     8192,
                     1,
@@ -4808,7 +4685,14 @@
                     16,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    16,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4817,38 +4701,29 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 200000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    16384,
+                    32
                 ],
-                "study_id": ""
+                "sw_hz": 200000
             }
         },
         "FID_17": {
             "path": "17/fid",
             "properties": {
                 "acq_lenght": 32768,
-                "k_space": [
-                    128,
-                    128,
-                    120,
-                    1,
-                    1
-                ],
+                "block_count": 120,
                 "block_size": 32768,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 2.5e-06,
                 "encoded_dim": 2,
-                "block_count": 120,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    32768,
-                    120
-                ],
                 "encoding_space": [
                     16384,
                     1,
@@ -4856,7 +4731,14 @@
                     120,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    120,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4865,8 +4747,20 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 200000,
+                "shape_storage": [
+                    32768,
+                    120
+                ],
+                "sw_hz": 200000
+            }
+        },
+        "FID_18": {
+            "path": "18/fid",
+            "properties": {
+                "acq_lenght": 8192,
+                "block_count": 4,
+                "block_size": 8192,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4874,29 +4768,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_18": {
-            "path": "18/fid",
-            "properties": {
-                "acq_lenght": 8192,
-                "k_space": [
-                    64,
-                    64,
-                    4,
-                    1,
-                    1
-                ],
-                "block_size": 8192,
                 "dwell_s": 2.5e-06,
                 "encoded_dim": 2,
-                "block_count": 4,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    8192,
-                    4
-                ],
                 "encoding_space": [
                     4096,
                     1,
@@ -4904,7 +4777,14 @@
                     4,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    64,
+                    4,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4913,8 +4793,20 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 200000,
+                "shape_storage": [
+                    8192,
+                    4
+                ],
+                "sw_hz": 200000
+            }
+        },
+        "FID_19": {
+            "path": "19/fid",
+            "properties": {
+                "acq_lenght": 1024,
+                "block_count": 2048,
+                "block_size": 1024,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4922,29 +4814,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_19": {
-            "path": "19/fid",
-            "properties": {
-                "acq_lenght": 1024,
-                "k_space": [
-                    512,
-                    512,
-                    4,
-                    1,
-                    1
-                ],
-                "block_size": 1024,
                 "dwell_s": 1.099999999999999e-06,
                 "encoded_dim": 2,
-                "block_count": 2048,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    1024,
-                    2048
-                ],
                 "encoding_space": [
                     512,
                     1,
@@ -4952,7 +4823,14 @@
                     4,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    512,
+                    512,
+                    4,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -4961,8 +4839,20 @@
                     1
                 ],
                 "scheme_id": "SPIRAL",
-                "subj_id": "",
-                "sw_hz": 454545.454545455,
+                "shape_storage": [
+                    1024,
+                    2048
+                ],
+                "sw_hz": 454545.454545455
+            }
+        },
+        "FID_2": {
+            "path": "2/fid",
+            "properties": {
+                "acq_lenght": 512,
+                "block_count": 768,
+                "block_size": 512,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -4970,29 +4860,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_2": {
-            "path": "2/fid",
-            "properties": {
-                "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    3,
-                    1,
-                    1
-                ],
-                "block_size": 512,
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 768,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    768
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5001,7 +4870,14 @@
                     256,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    3,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5011,8 +4887,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    512,
+                    768
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_20": {
+            "path": "20/fid",
+            "properties": {
+                "acq_lenght": 512,
+                "block_count": 4608,
+                "block_size": 512,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5020,29 +4908,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_20": {
-            "path": "20/fid",
-            "properties": {
-                "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    6,
-                    3,
-                    1
-                ],
-                "block_size": 512,
                 "dwell_s": 1.099999999999999e-06,
                 "encoded_dim": 2,
-                "block_count": 4608,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    4608
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5050,7 +4917,14 @@
                     6,
                     3
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    6,
+                    3,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5059,38 +4933,29 @@
                     1
                 ],
                 "scheme_id": "SPIRAL",
-                "subj_id": "",
-                "sw_hz": 454545.454545455,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    512,
+                    4608
                 ],
-                "study_id": ""
+                "sw_hz": 454545.454545455
             }
         },
         "FID_21": {
             "path": "21/fid",
             "properties": {
                 "acq_lenght": 128,
-                "k_space": [
-                    64,
-                    402,
-                    4,
-                    1,
-                    1
-                ],
+                "block_count": 1608,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 5e-06,
                 "encoded_dim": 2,
-                "block_count": 1608,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    1608
-                ],
                 "encoding_space": [
                     64,
                     1,
@@ -5099,7 +4964,14 @@
                     402,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    402,
+                    4,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5109,38 +4981,29 @@
                     1
                 ],
                 "scheme_id": "RADIAL",
-                "subj_id": "",
-                "sw_hz": 100000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    256,
+                    1608
                 ],
-                "study_id": ""
+                "sw_hz": 100000
             }
         },
         "FID_22": {
             "path": "22/fid",
             "properties": {
                 "acq_lenght": 128,
-                "k_space": [
-                    64,
-                    51360,
-                    1,
-                    1,
-                    1
-                ],
+                "block_count": 51360,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 5e-06,
                 "encoded_dim": 3,
-                "block_count": 51360,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    51360
-                ],
                 "encoding_space": [
                     64,
                     1,
@@ -5149,7 +5012,14 @@
                     51360,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    64,
+                    51360,
+                    1,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5159,8 +5029,20 @@
                     1
                 ],
                 "scheme_id": "RADIAL",
-                "subj_id": "",
-                "sw_hz": 100000,
+                "shape_storage": [
+                    256,
+                    51360
+                ],
+                "sw_hz": 100000
+            }
+        },
+        "FID_23": {
+            "path": "23/fid",
+            "properties": {
+                "acq_lenght": 1024,
+                "block_count": 51896,
+                "block_size": 1024,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5168,29 +5050,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_23": {
-            "path": "23/fid",
-            "properties": {
-                "acq_lenght": 1024,
-                "k_space": [
-                    512,
-                    51896,
-                    1,
-                    1,
-                    1
-                ],
-                "block_size": 1024,
                 "dwell_s": 6.25e-07,
                 "encoded_dim": 3,
-                "block_count": 51896,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    1024,
-                    51896
-                ],
                 "encoding_space": [
                     512,
                     1,
@@ -5199,7 +5060,14 @@
                     25948,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    512,
+                    51896,
+                    1,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5209,78 +5077,67 @@
                     1
                 ],
                 "scheme_id": "RADIAL",
-                "subj_id": "",
-                "sw_hz": 800000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    1024,
+                    51896
                 ],
-                "study_id": ""
+                "sw_hz": 800000
             }
         },
         "FID_24": {
             "path": "24/fid",
             "properties": {
                 "acq_lenght": 4096,
-                "k_space": [
-                    2048,
-                    19,
-                    19
-                ],
+                "block_count": 361,
                 "block_size": 4096,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2"
+                ],
                 "dwell_s": 0.0001247999999999999,
                 "encoded_dim": 3,
-                "block_count": 361,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    4096,
-                    361
-                ],
                 "encoding_space": [
                     2048,
                     19,
                     19
                 ],
-                "channels": 1,
+                "k_space": [
+                    2048,
+                    19,
+                    19
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     1,
                     2
                 ],
                 "scheme_id": "CSI",
-                "subj_id": "",
-                "sw_hz": 4006.41025641026,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2"
+                "shape_storage": [
+                    4096,
+                    361
                 ],
-                "study_id": ""
+                "sw_hz": 4006.41025641026
             }
         },
         "FID_25": {
             "path": "25/fid",
             "properties": {
                 "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    128,
-                    128,
-                    2,
-                    1
-                ],
+                "block_count": 32768,
                 "block_size": 256,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 2.5e-06,
                 "encoded_dim": 3,
-                "block_count": 32768,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    32768
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5288,7 +5145,14 @@
                     128,
                     128
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    128,
+                    2,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     3,
@@ -5297,146 +5161,131 @@
                     1
                 ],
                 "scheme_id": "FIELD_MAP",
-                "subj_id": "",
-                "sw_hz": 200000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    256,
+                    32768
                 ],
-                "study_id": ""
+                "sw_hz": 200000
             }
         },
         "FID_26": {
             "path": "26/fid",
             "properties": {
                 "acq_lenght": 2048,
-                "k_space": [
-                    1024,
-                    3
-                ],
+                "block_count": 3,
                 "block_size": 2048,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
                 "dwell_s": 2e-05,
                 "encoded_dim": 1,
-                "block_count": 3,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    2048,
-                    3
-                ],
                 "encoding_space": [
                     1024,
                     3
                 ],
-                "channels": 1,
+                "k_space": [
+                    1024,
+                    3
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     1
                 ],
                 "scheme_id": "SPECTROSCOPY",
-                "subj_id": "",
-                "sw_hz": 25000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
+                "shape_storage": [
+                    2048,
+                    3
                 ],
-                "study_id": ""
+                "sw_hz": 25000
             }
         },
         "FID_27": {
             "path": "27/fid",
             "properties": {
                 "acq_lenght": 4096,
-                "k_space": [
-                    2048,
-                    1
-                ],
+                "block_count": 1,
                 "block_size": 4096,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
                 "dwell_s": 0.0001247999999999999,
                 "encoded_dim": 1,
-                "block_count": 1,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    4096,
-                    1
-                ],
                 "encoding_space": [
                     2048,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    2048,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     1
                 ],
                 "scheme_id": "SPECTROSCOPY",
-                "subj_id": "",
-                "sw_hz": 4006.41025641026,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
+                "shape_storage": [
+                    4096,
+                    1
                 ],
-                "study_id": ""
+                "sw_hz": 4006.41025641026
             }
         },
         "FID_28": {
             "path": "28/fid",
             "properties": {
                 "acq_lenght": 4096,
-                "k_space": [
-                    2048,
-                    1
-                ],
+                "block_count": 1,
                 "block_size": 4096,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "repetition"
+                ],
                 "dwell_s": 8.320000000000006e-05,
                 "encoded_dim": 1,
-                "block_count": 1,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    4096,
-                    1
-                ],
                 "encoding_space": [
                     2048,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    2048,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     1
                 ],
                 "scheme_id": "SPECTROSCOPY",
-                "subj_id": "",
-                "sw_hz": 6009.61538461538,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "repetition"
+                "shape_storage": [
+                    4096,
+                    1
                 ],
-                "study_id": ""
+                "sw_hz": 6009.61538461538
             }
         },
         "FID_3": {
             "path": "3/fid",
             "properties": {
                 "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    72,
-                    1,
-                    1
-                ],
+                "block_count": 18432,
                 "block_size": 512,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "slice",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 6.4e-06,
                 "encoded_dim": 2,
-                "block_count": 18432,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    18432
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5445,7 +5294,14 @@
                     256,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    72,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5455,8 +5311,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 78125,
+                "shape_storage": [
+                    512,
+                    18432
+                ],
+                "sw_hz": 78125
+            }
+        },
+        "FID_31": {
+            "path": "31/fid",
+            "properties": {
+                "acq_lenght": 256,
+                "block_count": 2880,
+                "block_size": 256,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5464,29 +5332,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_31": {
-            "path": "31/fid",
-            "properties": {
-                "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    96,
-                    5,
-                    6,
-                    1
-                ],
-                "block_size": 256,
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 2880,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    2880
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5495,7 +5342,14 @@
                     48,
                     6
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    96,
+                    5,
+                    6,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5505,8 +5359,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    256,
+                    2880
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_32": {
+            "path": "32/fid",
+            "properties": {
+                "acq_lenght": 4116,
+                "block_count": 2100,
+                "block_size": 4974,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5514,29 +5380,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_32": {
-            "path": "32/fid",
-            "properties": {
-                "acq_lenght": 4116,
-                "k_space": [
-                    98,
-                    84,
-                    15,
-                    35,
-                    1
-                ],
-                "block_size": 4974,
                 "dwell_s": 2e-06,
                 "encoded_dim": 2,
-                "block_count": 2100,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    4974,
-                    2100
-                ],
                 "encoding_space": [
                     2058,
                     1,
@@ -5544,7 +5389,14 @@
                     15,
                     35
                 ],
-                "channels": 1,
+                "k_space": [
+                    98,
+                    84,
+                    15,
+                    35,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5553,8 +5405,20 @@
                     1
                 ],
                 "scheme_id": "EPI",
-                "subj_id": "",
-                "sw_hz": 250000,
+                "shape_storage": [
+                    4974,
+                    2100
+                ],
+                "sw_hz": 250000
+            }
+        },
+        "FID_33": {
+            "path": "33/fid",
+            "properties": {
+                "acq_lenght": 256,
+                "block_count": 1536,
+                "block_size": 256,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5562,29 +5426,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_33": {
-            "path": "33/fid",
-            "properties": {
-                "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    96,
-                    16,
-                    1,
-                    1
-                ],
-                "block_size": 256,
                 "dwell_s": 8.400000000000004e-06,
                 "encoded_dim": 2,
-                "block_count": 1536,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    1536
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5593,7 +5436,14 @@
                     96,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    96,
+                    16,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5603,8 +5453,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 59523.8095238095,
+                "shape_storage": [
+                    256,
+                    1536
+                ],
+                "sw_hz": 59523.8095238095
+            }
+        },
+        "FID_35": {
+            "path": "35/fid",
+            "properties": {
+                "acq_lenght": 256,
+                "block_count": 38400,
+                "block_size": 256,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5612,29 +5474,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_35": {
-            "path": "35/fid",
-            "properties": {
-                "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    128,
-                    1,
-                    300,
-                    1
-                ],
-                "block_size": 256,
                 "dwell_s": 6.666666666666667e-06,
                 "encoded_dim": 2,
-                "block_count": 38400,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    38400
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5643,7 +5484,14 @@
                     128,
                     300
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    1,
+                    300,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5653,8 +5501,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 75000,
+                "shape_storage": [
+                    256,
+                    38400
+                ],
+                "sw_hz": 75000
+            }
+        },
+        "FID_4": {
+            "path": "4/fid",
+            "properties": {
+                "acq_lenght": 512,
+                "block_count": 2048,
+                "block_size": 512,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5662,29 +5522,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_4": {
-            "path": "4/fid",
-            "properties": {
-                "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    8,
-                    1,
-                    1
-                ],
-                "block_size": 512,
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 2048,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    2048
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5693,7 +5532,14 @@
                     256,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    8,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5703,8 +5549,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    512,
+                    2048
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_5": {
+            "path": "5/fid",
+            "properties": {
+                "acq_lenght": 512,
+                "block_count": 4608,
+                "block_size": 512,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5712,29 +5570,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_5": {
-            "path": "5/fid",
-            "properties": {
-                "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    6,
-                    3,
-                    1
-                ],
-                "block_size": 512,
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 4608,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    4608
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5743,7 +5580,14 @@
                     32,
                     3
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    6,
+                    3,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5753,8 +5597,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    512,
+                    4608
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_6": {
+            "path": "6/fid",
+            "properties": {
+                "acq_lenght": 256,
+                "block_count": 1240,
+                "block_size": 256,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5762,29 +5618,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_6": {
-            "path": "6/fid",
-            "properties": {
-                "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    62,
-                    1,
-                    20,
-                    1
-                ],
-                "block_size": 256,
                 "dwell_s": 5e-06,
                 "encoded_dim": 2,
-                "block_count": 1240,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    1240
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5793,7 +5628,14 @@
                     2,
                     20
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    62,
+                    1,
+                    20,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5803,8 +5645,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 100000,
+                "shape_storage": [
+                    256,
+                    1240
+                ],
+                "sw_hz": 100000
+            }
+        },
+        "FID_7": {
+            "path": "7/fid",
+            "properties": {
+                "acq_lenght": 256,
+                "block_count": 2560,
+                "block_size": 256,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5812,29 +5666,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_7": {
-            "path": "7/fid",
-            "properties": {
-                "acq_lenght": 256,
-                "k_space": [
-                    128,
-                    128,
-                    20,
-                    1,
-                    1
-                ],
-                "block_size": 256,
                 "dwell_s": 1e-05,
                 "encoded_dim": 2,
-                "block_count": 2560,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    256,
-                    2560
-                ],
                 "encoding_space": [
                     128,
                     1,
@@ -5843,7 +5676,14 @@
                     64,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    128,
+                    128,
+                    20,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5853,8 +5693,20 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 50000,
+                "shape_storage": [
+                    256,
+                    2560
+                ],
+                "sw_hz": 50000
+            }
+        },
+        "FID_8": {
+            "path": "8/fid",
+            "properties": {
+                "acq_lenght": 512,
+                "block_count": 264,
+                "block_size": 512,
+                "channels": 1,
                 "dim_type": [
                     "k_space_encode_step_0",
                     "k_space_encode_step_1",
@@ -5862,29 +5714,8 @@
                     "repetition",
                     "channel"
                 ],
-                "study_id": ""
-            }
-        },
-        "FID_8": {
-            "path": "8/fid",
-            "properties": {
-                "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    132,
-                    1,
-                    2,
-                    1
-                ],
-                "block_size": 512,
                 "dwell_s": 5e-06,
                 "encoded_dim": 2,
-                "block_count": 264,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    264
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5893,7 +5724,14 @@
                     4,
                     2
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    132,
+                    1,
+                    2,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5903,38 +5741,29 @@
                     1
                 ],
                 "scheme_id": "CART_2D",
-                "subj_id": "",
-                "sw_hz": 100000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "slice",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    512,
+                    264
                 ],
-                "study_id": ""
+                "sw_hz": 100000
             }
         },
         "FID_9": {
             "path": "9/fid",
             "properties": {
                 "acq_lenght": 512,
-                "k_space": [
-                    256,
-                    256,
-                    10,
-                    1,
-                    1
-                ],
+                "block_count": 2560,
                 "block_size": 512,
+                "channels": 1,
+                "dim_type": [
+                    "k_space_encode_step_0",
+                    "k_space_encode_step_1",
+                    "k_space_encode_step_2",
+                    "repetition",
+                    "channel"
+                ],
                 "dwell_s": 1e-05,
                 "encoded_dim": 3,
-                "block_count": 2560,
-                "numpy_dtype": "int32",
-                "shape_storage": [
-                    512,
-                    2560
-                ],
                 "encoding_space": [
                     256,
                     1,
@@ -5943,7 +5772,14 @@
                     8,
                     1
                 ],
-                "channels": 1,
+                "k_space": [
+                    256,
+                    256,
+                    10,
+                    1,
+                    1
+                ],
+                "numpy_dtype": "int32",
                 "permute": [
                     0,
                     2,
@@ -5953,16 +5789,11 @@
                     1
                 ],
                 "scheme_id": "CART_3D",
-                "subj_id": "",
-                "sw_hz": 50000,
-                "dim_type": [
-                    "k_space_encode_step_0",
-                    "k_space_encode_step_1",
-                    "k_space_encode_step_2",
-                    "repetition",
-                    "channel"
+                "shape_storage": [
+                    512,
+                    2560
                 ],
-                "study_id": ""
+                "sw_hz": 50000
             }
         }
     },
@@ -5974,7 +5805,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    6
+                    44
                 ],
                 [
                     "slice(None)",
@@ -5990,8 +5821,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    182,
-                    334
+                    383,
+                    148
                 ],
                 [
                     "slice(None)",
@@ -6007,14 +5838,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    71,
-                    83
+                    87,
+                    17
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(0,5)"
+                    "slice(5,6)"
                 ]
             ]
         },
@@ -6024,7 +5855,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    40
+                    12
                 ],
                 [
                     "slice(None)",
@@ -6039,8 +5870,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    25,
-                    62,
+                    60,
+                    1,
                     0
                 ],
                 [
@@ -6058,14 +5889,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    0,
-                    44
+                    60,
+                    46
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)",
-                    "slice(0,7)"
+                    "slice(0,1)",
+                    "slice(4,5)"
                 ]
             ]
         },
@@ -6075,14 +5906,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    44,
-                    102
+                    91,
+                    44
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(7,9)"
+                    "slice(5,7)"
                 ]
             ]
         },
@@ -6092,14 +5923,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    21,
-                    100
+                    78,
+                    55
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,4)",
-                    "slice(6,14)"
+                    "slice(2,3)",
+                    "slice(4,12)"
                 ]
             ]
         },
@@ -6109,14 +5940,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    23,
+                    19,
                     56
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(0,3)"
+                    "slice(2,3)"
                 ]
             ]
         },
@@ -6126,12 +5957,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    159
+                    171
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(7,8)"
+                    "slice(2,6)"
                 ]
             ]
         },
@@ -6141,12 +5972,12 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    71
+                    65
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,3)"
+                    "slice(2,3)"
                 ]
             ]
         },
@@ -6157,7 +5988,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    61
+                    55
                 ],
                 [
                     "slice(None)",
@@ -6174,7 +6005,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    64
+                    27
                 ],
                 [
                     "slice(None)",
@@ -6191,7 +6022,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    507
+                    202
                 ],
                 [
                     "slice(None)",
@@ -6208,7 +6039,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    95
+                    23
                 ],
                 [
                     "slice(None)",
@@ -6223,11 +6054,11 @@
             "slices": [
                 [
                     "slice(None)",
-                    485
+                    405
                 ],
                 [
                     "slice(None)",
-                    "slice(0,2)"
+                    "slice(1,2)"
                 ]
             ]
         },
@@ -6236,7 +6067,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1361
+                    740
                 ],
                 [
                     "slice(None)",
@@ -6249,7 +6080,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1079
+                    1801
                 ],
                 [
                     "slice(None)",
@@ -6263,7 +6094,7 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    231
+                    125
                 ],
                 [
                     "slice(None)",
@@ -6278,16 +6109,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    39,
-                    109,
+                    75,
+                    74,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(3,4)",
-                    "slice(3,5)"
+                    "slice(0,2)",
+                    "slice(2,5)"
                 ]
             ]
         },
@@ -6297,16 +6128,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    13,
-                    86,
+                    114,
+                    42,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,3)",
-                    "slice(0,2)"
+                    "slice(2,3)",
+                    "slice(2,4)"
                 ]
             ]
         },
@@ -6316,16 +6147,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    16,
-                    115,
+                    84,
+                    55,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,2)",
-                    "slice(0,3)"
+                    "slice(0,1)",
+                    "slice(3,4)"
                 ]
             ]
         },
@@ -6335,14 +6166,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    65,
-                    50
+                    122,
+                    99
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(4,12)",
-                    "slice(5,25)"
+                    "slice(10,12)",
+                    "slice(4,6)"
                 ]
             ]
         },
@@ -6352,14 +6183,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    61,
-                    57
+                    27,
+                    20
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(9,11)",
-                    "slice(6,7)"
+                    "slice(13,14)",
+                    "slice(5,9)"
                 ]
             ]
         },
@@ -6369,14 +6200,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    105,
-                    123
+                    48,
+                    95
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(8,13)"
+                    "slice(2,7)"
                 ]
             ]
         },
@@ -6386,14 +6217,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    22,
-                    111
+                    120,
+                    55
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,3)"
+                    "slice(0,3)"
                 ]
             ]
         },
@@ -6403,14 +6234,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    22,
-                    75
+                    48,
+                    13
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(3,4)"
+                    "slice(2,4)"
                 ]
             ]
         },
@@ -6420,8 +6251,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    18,
-                    167,
+                    237,
+                    237,
                     0
                 ],
                 [
@@ -6429,7 +6260,7 @@
                     "slice(None)",
                     "0",
                     "0",
-                    "slice(6,9)"
+                    "slice(5,6)"
                 ]
             ]
         },
@@ -6439,14 +6270,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    84,
-                    8
+                    236,
+                    94
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,8)",
-                    "slice(4,7)"
+                    "slice(3,5)",
+                    "slice(6,7)"
                 ]
             ]
         },
@@ -6456,14 +6287,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    92,
-                    179
+                    0,
+                    108
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(0,2)"
+                    "slice(0,1)"
                 ]
             ]
         },
@@ -6473,15 +6304,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    171,
-                    65,
-                    1
+                    220,
+                    231,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "slice(0,1)",
-                    "slice(1,2)",
+                    "slice(0,2)",
                     "slice(1,2)"
                 ]
             ]
@@ -6492,16 +6323,16 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    40,
-                    69,
+                    120,
+                    60,
                     0,
-                    1
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(2,4)",
+                    "slice(1,4)",
                     "slice(0,1)",
                     "slice(0,1)"
                 ]
@@ -6513,15 +6344,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
+                    122,
                     25,
-                    0,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,3)",
-                    "slice(0,1)",
+                    "slice(2,3)",
+                    "slice(1,2)",
                     "0"
                 ]
             ]
@@ -6532,8 +6363,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    144,
-                    138
+                    81,
+                    29
                 ],
                 [
                     "slice(None)",
@@ -6550,7 +6381,7 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    57
+                    233
                 ],
                 [
                     "slice(None)",
@@ -6566,14 +6397,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    88,
-                    44,
+                    100,
+                    117,
                     2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,11)",
+                    "slice(6,13)",
                     "0",
                     "0"
                 ]
@@ -6586,8 +6417,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    39,
-                    44
+                    50,
+                    0
                 ],
                 [
                     "slice(None)",
@@ -6604,9 +6435,9 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    129,
-                    105,
-                    0
+                    165,
+                    6,
+                    1
                 ],
                 [
                     "slice(None)",
@@ -6623,14 +6454,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    110,
-                    118,
+                    33,
+                    93,
                     6
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(12,13)",
+                    "slice(0,7)",
                     "0",
                     "0"
                 ]
@@ -6642,14 +6473,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    51,
-                    27,
-                    1
+                    60,
+                    47,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(1,2)",
+                    "slice(2,3)",
                     "0",
                     "0"
                 ]
@@ -6661,15 +6492,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    49,
-                    48,
+                    3,
+                    30,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(1,9)",
+                    "slice(1,3)",
                     "0"
                 ]
             ]
@@ -6680,15 +6511,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    11,
-                    37,
-                    0
+                    15,
+                    18,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,2)",
-                    "slice(2,5)",
+                    "slice(0,1)",
+                    "slice(4,6)",
                     "0"
                 ]
             ]
@@ -6699,14 +6530,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    108,
-                    118,
-                    13
+                    43,
+                    45,
+                    2
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(8,13)",
+                    "slice(2,7)",
                     "0",
                     "0"
                 ]
@@ -6718,14 +6549,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    48,
-                    89,
-                    45
+                    4,
+                    57,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(60,77)",
+                    "slice(2,21)",
                     "0",
                     "0"
                 ]
@@ -6737,8 +6568,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    51,
-                    1,
+                    48,
+                    50,
                     1
                 ],
                 [
@@ -6756,14 +6587,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    8,
-                    311,
-                    3
+                    128,
+                    50,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(0,2)",
                     "0",
                     "0"
                 ]
@@ -6775,14 +6606,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    42,
-                    68,
-                    1
+                    176,
+                    57,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,2)",
+                    "slice(1,2)",
                     "0",
                     "0"
                 ]
@@ -6794,14 +6625,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    206,
-                    60,
-                    2
+                    72,
+                    224,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,4)",
+                    "slice(2,5)",
                     "slice(1,2)",
                     "0"
                 ]
@@ -6813,14 +6644,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    19,
-                    135,
-                    2
+                    15,
+                    338,
+                    3
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -6833,8 +6664,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    5,
-                    47871
+                    12,
+                    39862
                 ],
                 [
                     "slice(None)",
@@ -6852,8 +6683,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    274,
-                    51557
+                    289,
+                    21319
                 ],
                 [
                     "slice(None)",
@@ -6886,8 +6717,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    122,
-                    24
+                    22,
+                    31
                 ],
                 [
                     "slice(None)",
@@ -6903,11 +6734,11 @@
             "slices": [
                 [
                     "slice(None)",
-                    488
+                    885
                 ],
                 [
                     "slice(None)",
-                    "slice(1,2)"
+                    "slice(0,2)"
                 ]
             ]
         },
@@ -6916,7 +6747,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    970
+                    1188
                 ],
                 [
                     "slice(None)",
@@ -6929,7 +6760,7 @@
             "slices": [
                 [
                     "slice(None)",
-                    1864
+                    618
                 ],
                 [
                     "slice(None)",
@@ -6943,14 +6774,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    96,
-                    188,
-                    62
+                    155,
+                    90,
+                    37
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(50,69)",
+                    "slice(41,71)",
                     "0",
                     "0"
                 ]
@@ -6962,15 +6793,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    7,
-                    87,
-                    2
+                    112,
+                    22,
+                    4
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(2,3)",
-                    "slice(4,5)",
+                    "slice(3,4)",
+                    "slice(3,4)",
                     "0"
                 ]
             ]
@@ -6981,15 +6812,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    64,
-                    41,
-                    13
+                    85,
+                    47,
+                    0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(7,9)",
-                    "slice(1,30)",
+                    "slice(7,11)",
+                    "slice(0,21)",
                     "0"
                 ]
             ]
@@ -7000,14 +6831,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    67,
-                    89,
-                    1
+                    123,
+                    48,
+                    5
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,6)",
+                    "slice(2,13)",
                     "0",
                     "0"
                 ]
@@ -7019,15 +6850,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    69,
-                    50,
+                    9,
+                    115,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(211,251)",
+                    "slice(242,247)",
                     "0"
                 ]
             ]
@@ -7038,14 +6869,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    122,
-                    10,
-                    5
+                    133,
+                    160,
+                    7
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(0,5)",
+                    "slice(1,3)",
                     "0",
                     "0"
                 ]
@@ -7057,15 +6888,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    25,
-                    32,
+                    61,
+                    138,
                     1
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(3,5)",
-                    "slice(1,2)",
+                    "slice(2,4)",
+                    "slice(0,2)",
                     "0"
                 ]
             ]
@@ -7076,15 +6907,15 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    86,
-                    12,
+                    91,
+                    50,
                     0
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
                     "0",
-                    "slice(4,17)",
+                    "slice(11,15)",
                     "0"
                 ]
             ]
@@ -7095,14 +6926,14 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    111,
-                    105,
-                    19
+                    0,
+                    118,
+                    18
                 ],
                 [
                     "slice(None)",
                     "slice(None)",
-                    "slice(5,6)",
+                    "slice(3,19)",
                     "0",
                     "0"
                 ]
@@ -7114,8 +6945,8 @@
                 [
                     "slice(None)",
                     "slice(None)",
-                    213,
-                    5,
+                    8,
+                    1,
                     0
                 ],
                 [
@@ -7134,8 +6965,8 @@
                     "slice(None)",
                     "slice(None)",
                     "slice(None)",
-                    43,
-                    201
+                    237,
+                    52
                 ],
                 [
                     "slice(None)",
