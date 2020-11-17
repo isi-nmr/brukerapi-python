@@ -1,0 +1,38 @@
+{
+    "metadata":
+    {
+        "upload_type": "dataset",
+        "access_right": "open",
+        "version": "1.1.1",
+        "license": {
+            "id": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+    
+        },
+        "title": "The BrukerAPI test data set (Bruker ParaVision v5.1)",
+        "keywords": [
+            "MRI", 
+            "Preclinical MRI", 
+            "B"
+        ],
+        "creators": [
+            {
+              "affiliation": "Institute of Scientific Instruments of the Czech Academy of Sciences", 
+              "name": "Tom\u00e1\u0161 P\u0161orn"
+            }
+        ],
+        "description": "description description",
+        "related_identifiers": [
+            {
+              "scheme": "url", 
+              "identifier": "", 
+              "relation": "isSupplementTo"
+            }, 
+            {
+              "scheme": "doi", 
+              "identifier": "10.5281/zenodo.3831319", 
+              "relation": "isVersionOf"
+            }
+          ]
+    }
+}
