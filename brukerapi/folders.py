@@ -15,7 +15,12 @@ class Folder:
             path: str,
             parent: 'Folder' = None,
             recursive: bool = True,
-            dataset_index: list = ['fid','2dseq','ser','rawdata']
+            dataset_index: list = ['fid','2dseq','ser','rawdata'],
+            dataset_state: dict = {
+                "parameter_files" : [],
+                "property_files" : [],
+                "load": False
+            }
     ):
         """The constructor for Folder class.
 
@@ -30,6 +35,7 @@ class Folder:
 
         self.parent = parent
         self._dataset_index = dataset_index
+        self._dataset_state = dataset_state
         self.children = self.make_tree(recursive=recursive)
 
     def validate(self):
@@ -197,7 +203,7 @@ class Folder:
                 continue
             try:
                 if path.name in self._dataset_index:
-                    children.append(Dataset(path, load=False))
+                    children.append(Dataset(path, **self._dataset_state))
                     continue
             except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
                 pass
