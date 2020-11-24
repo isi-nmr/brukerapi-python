@@ -8,7 +8,6 @@ import json
 from random import random
 
 
-
 class Folder:
     """A representation of a generic folder. It implements several functions to simplify the folder manipulation."""
     def __init__(
@@ -84,6 +83,52 @@ class Folder:
         :return:
         """
         return self.__getattr__(name)
+
+    def query(self, query):
+        """Query each dataset in the folder recursively.
+
+        :param query:
+        :return:
+        """
+
+        self.query_pass(query, node=self)
+
+        self.clean(node=self)
+
+    def query_pass(self, query: str, node: 'Folder' = None):
+        children_out = []
+        for child in node.children:
+            if isinstance(child, Folder):
+                children_out.append(self.query_pass(query, node=child))
+            elif isinstance(child, Dataset):
+                try:
+                    child.load_parameters()
+                    child.load_properties()
+                    child.query(query)
+                    child.unload()
+                    children_out.append(child)
+                except FilterEvalFalse:
+                    pass
+        node.children = children_out
+        return node
+
+    def clean(self, node: 'Folder' = None) -> 'Folder':
+        """Remove empty folders from the tree
+
+        :param node:
+        :return: tree without empty folders
+        """
+        if node is None:
+            node = self
+
+        remove = []
+        for child in node.children:
+            if isinstance(child, Folder):
+                self.clean(child)
+                if not child.children:
+                    remove.append(child)
+        for child in remove:
+            node.children.remove(child)
 
     @property
     def dataset_list(self) -> list:
