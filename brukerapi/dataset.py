@@ -35,6 +35,7 @@ DEFAULT_STATES = {
         "load_parameters": True,
         "load_properties": True,
         "load_data": True,
+        "scale": True,
         "mmap": False
     },
     'traj': {
@@ -148,7 +149,7 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not self.path.exists() and state['load']:
+        if not self.path.exists() and state.get('load') is not False:
             raise FileNotFoundError(self.path)
 
         # directory constructor
@@ -172,6 +173,7 @@ class Dataset:
 
         # load data if the load kwarg is true
         self.load()
+
 
     def __enter__(self):
         self.load()

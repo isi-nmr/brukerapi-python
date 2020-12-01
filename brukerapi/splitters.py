@@ -7,6 +7,7 @@ from pathlib import Path
 
 SUPPORTED_FG = ['FG_ISA','FG_IRMODE','FG_ECHO']
 
+
 class Splitter(object):
 
     def write(self, datasets, path_out=None):
