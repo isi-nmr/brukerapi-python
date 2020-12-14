@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import ast
 from collections import OrderedDict
+import json
 
 SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
 GRAMMAR = {
@@ -77,6 +78,31 @@ class Parameter(object):
 
     def __repr__(self):
         return self.key_str
+
+    def to_dict(self):
+
+        result = {'value': self._encode_parameter(self.value)}
+
+        if self.size:
+            result['size'] = self.size
+
+        return result
+
+    def _encode_parameter(self, var):
+        if isinstance(var, np.integer) or isinstance(var, np.int32):
+            return int(var)
+        elif isinstance(var, np.floating):
+            return float(var)
+        elif isinstance(var, np.ndarray):
+            return var.tolist()
+        elif isinstance(var, np.dtype):
+            return var.name
+        elif isinstance(var, list):
+            return [self._encode_parameter(var_) for var_ in var]
+        elif isinstance(var, tuple):
+            return self._encode_parameter(list(var))
+        else:
+            return var
 
 
     @property
@@ -612,6 +638,27 @@ class JCAMPDX(object):
 
     def unload(self):
         self.params = {}
+
+    def to_dict(self):
+        parameters =  {}
+
+        for param in self.params.items():
+            parameters[param[0]] = param[1].to_dict()
+
+        return parameters
+
+    def to_json(self, path=None, props=None):
+        """
+        Save properties to JSON file.
+
+        :param path: *str* path to a resulting report file
+        :param names: *list* names of properties to be exported
+        """
+        if path:
+            with open(path, 'w') as json_file:
+                    json.dump(self.to_dict(props=props), json_file, indent=4)
+        else:
+            return json.dumps(self.to_dict(props=props), indent=4)
 
     @property
     def version(self):
