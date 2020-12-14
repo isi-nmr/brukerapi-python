@@ -83,6 +83,8 @@ RELATIVE_PATHS = {
         "subject": "../subject",
         "reco": "./pdata/1/reco",
         "visu_pars": "./pdata/1/visu_pars",
+        "AdjStatePerScan": "./AdjStatePerScan",
+        "AdjStatePerStudy": "../AdjStatePerStudy"
     },
     "2dseq": {
         "method": "../../method",
@@ -90,6 +92,8 @@ RELATIVE_PATHS = {
         "subject": "../../../subject",
         "reco": "./reco",
         "visu_pars": "./visu_pars",
+        "AdjStatePerScan": "../../AdjStatePerScan",
+        "AdjStatePerStudy": "../../../AdjStatePerStudy",
     }
 }
 
@@ -176,11 +180,13 @@ class Dataset:
 
 
     def __enter__(self):
+        self._state['load'] = True
         self.load()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.unload()
+        self._state['load'] = False
 
     def __str__(self):
         """

@@ -6,6 +6,13 @@ import copy
 import operator as op
 import json
 from random import random
+from copy import deepcopy
+
+DEFAULT_DATASET_STATE = {
+                "parameter_files" : [],
+                "property_files" : [],
+                "load": False
+}
 
 
 class Folder:
@@ -16,11 +23,7 @@ class Folder:
             parent: 'Folder' = None,
             recursive: bool = True,
             dataset_index: list = ['fid','2dseq','ser','rawdata'],
-            dataset_state: dict = {
-                "parameter_files" : [],
-                "property_files" : [],
-                "load": False
-            }
+            dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Folder class.
 
@@ -31,11 +34,12 @@ class Folder:
         :return:
         """
         self.path = Path(path)
+
         self.validate()
 
         self.parent = parent
         self._dataset_index = dataset_index
-        self._dataset_state = dataset_state
+        self._set_dataset_state(dataset_state)
         self.children = self.make_tree(recursive=recursive)
 
     def validate(self):
@@ -45,6 +49,18 @@ class Folder:
         """
         if not self.path.is_dir() or not self.path.exists():
             raise NotADirectoryError
+
+    def _set_dataset_state(self, passed):
+        result = deepcopy(DEFAULT_DATASET_STATE)
+
+        if 'parameter_files' in passed.keys():
+            passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
+
+        if 'property_files' in passed.keys():
+            passed['property_files'] = result['property_files'] + passed['property_files']
+
+        result.update(passed)
+        self._dataset_state = result
 
     def __str__(self) -> str:
         return str(self.path)
@@ -136,33 +152,27 @@ class Folder:
         for child in remove:
             node.children.remove(child)
 
-    @property
-    def dataset_list(self) -> list:
+    def get_dataset_list(self) -> list:
         """List of :obj:`.Dataset` instances contained in folder"""
         return [x for x in self.children if isinstance(x, Dataset)]
 
-    @property
-    def dataset_list_rec(self) -> list:
+    def get_dataset_list_rec(self) -> list:
         """List of :obj:`.Dataset` instances contained in folder"""
         return TypeFilter(Dataset).list(self)
 
-    @property
-    def jcampdx_list(self) -> list:
+    def get_jcampdx_list(self) -> list:
         """List of :obj:`.JCAMPDX` instances contained in folder"""
         return [x for x in self.children if isinstance(x, JCAMPDX)]
 
-    @property
-    def experiment_list(self) -> list:
+    def get_experiment_list(self) -> list:
         """List of :obj:`.Experiment` instances contained in folder and its sub-folders"""
         return TypeFilter(Experiment).list(self)
 
-    @property
-    def processing_list(self) -> list:
+    def get_processing_list(self) -> list:
         """List of :obj:`.Processing` instances contained in folder and its sub-folders"""
         return TypeFilter(Processing).list(self)
 
-    @property
-    def study_list(self) -> list:
+    def get_study_list(self) -> list:
         """List of :obj:`.Study` instances contained in folder and its sub-folders"""
         return TypeFilter(Study).list(self)
 
@@ -183,23 +193,27 @@ class Folder:
             if path.is_dir() and recursive:
                 # try create Study
                 try:
-                    children.append(Study(path, parent=self, recursive=recursive))
+                    children.append(Study(path, parent=self, recursive=recursive, dataset_index=self._dataset_index,
+                                          dataset_state=self._dataset_state))
                     continue
                 except NotStudyFolder:
                     pass
                 # try create Experiment
                 try:
-                    children.append(Experiment(path, parent=self, recursive=recursive))
+                    children.append(Experiment(path, parent=self, recursive=recursive, dataset_index=self._dataset_index,
+                                               dataset_state=self._dataset_state))
                     continue
                 except NotExperimentFolder:
                     pass
                 #try create Processing
                 try:
-                    children.append(Processing(path, parent=self, recursive=recursive))
+                    children.append(Processing(path, parent=self, recursive=recursive, dataset_index=self._dataset_index,
+                                               dataset_state=self._dataset_state))
                     continue
                 except NotProcessingFolder:
                     pass
-                children.append(Folder(path, parent=self, recursive=recursive, dataset_index=self._dataset_index))
+                children.append(Folder(path, parent=self, recursive=recursive, dataset_index=self._dataset_index,
+                                       dataset_state=self._dataset_state))
                 continue
             try:
                 if path.name in self._dataset_index:
@@ -312,7 +326,9 @@ class Study(Folder):
             self,
             path: str,
             parent: 'Folder' = None,
-            recursive: bool = True
+            recursive: bool = True,
+            dataset_index: list = ['fid', '2dseq', 'ser', 'rawdata'],
+            dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Study class.
 
@@ -323,7 +339,8 @@ class Study(Folder):
         """
         self.path = Path(path)
         self.validate()
-        super(Study, self).__init__(path, parent=parent, recursive=recursive)
+        super(Study, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+                                    dataset_state=dataset_state)
 
     def validate(self):
         """Validate whether the given path exists an leads to a :class:`Study` folder.
@@ -371,7 +388,8 @@ class Experiment(Folder):
             path: str,
             parent: 'Folder' = None,
             recursive: bool = True,
-            dataset_index: list = ['fid','ser', 'rawdata']
+            dataset_index: list = ['fid','ser', 'rawdata'],
+            dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Experiment class.
 
@@ -382,7 +400,8 @@ class Experiment(Folder):
         """
         self.path = Path(path)
         self.validate()
-        super(Experiment, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index)
+        super(Experiment, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+                                    dataset_state=dataset_state)
 
     def validate(self):
         """Validate whether the given path exists an leads to a :class:`Experiment` folder.
@@ -402,7 +421,8 @@ class Experiment(Folder):
 
 
 class Processing(Folder):
-    def __init__(self, path, parent=None, recursive=True, dataset_index=['2dseq','1r','1i']):
+    def __init__(self, path, parent=None, recursive=True, dataset_index=['2dseq','1r','1i'],
+            dataset_state: dict = DEFAULT_DATASET_STATE):
         """The constructor for Processing class.
 
         :param path: path to a folder
@@ -412,7 +432,8 @@ class Processing(Folder):
         """
         self.path = Path(path)
         self.validate()
-        super(Processing, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index)
+        super(Processing, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+                                    dataset_state=dataset_state)
 
     def validate(self):
         """Validate whether the given path exists an leads to a :class:`Processing` folder.
