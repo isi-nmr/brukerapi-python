@@ -204,7 +204,7 @@ class Dataset:
         raise KeyError(item)
 
     def __call__(self, **kwargs):
-        self._kwargs.update(kwargs)
+        self._set_state(kwargs)
         return self
 
     def _set_state(self, passed):
@@ -639,7 +639,8 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ['_parameters', 'path', '_data', '_traj', '_kwargs', '_schema', 'random_access', 'id', 'study_id', 'exp_id', 'proc_id', 'subj_id']
+        reserved = ['_parameters', 'path', '_data', '_traj', '_state', '_schema', 'random_access', 'id', 'study_id',
+                    'exp_id', 'proc_id', 'subj_id', '_properties']
         props = list(set(props) - set(reserved))
 
         properties = {}
@@ -670,7 +671,7 @@ class Dataset:
         elif isinstance(var, tuple):
             return self._encode_property(list(var))
         elif isinstance(var, datetime.datetime):
-            return str(datetime.datetime)
+            return str(var)
         else:
             return var
 

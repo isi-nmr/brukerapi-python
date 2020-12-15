@@ -7,34 +7,35 @@ from pathlib import Path
 import shutil
 import pytest
 
-def test_properties(test_io_data):
-    d = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']), load=False)
+data = 0
 
-    d.load_parameters()
-    d.load_properties()
+def test_parameters(test_parameters):
 
-    # Test if properties are loaded correctly
-    assert d.to_dict() == test_io_data[0]['properties']
+    dataset = Dataset(test_parameters[0], load=False)
+    dataset.load_parameters()
 
-def test_read(test_io_data):
-    path = Path(test_io_data[1]) / Path(test_io_data[0]['path'])
-    d = Dataset(path)
+    for jcampdx in dataset._parameters.values():
+        with Path(str(jcampdx.path)+'.json').open() as file:
+            reference = json.load(file)
 
-    """
-    The bruker2nifti_qa data set does not posses the reference data
-    """
-    try:
-        data_ref = np.load('{}.npz'.format(str(path)))['data']
-    except:
-        data_ref = None
+        assert jcampdx.to_dict() == reference
 
-    if data_ref is not None:
-        assert np.array_equal(d.data, data_ref)
+def test_properties(test_properties):
+    dataset = Dataset(test_properties[0], load=False, parameter_files=['subject'])
+    dataset.load_parameters()
+    dataset.load_properties()
 
-def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
-    d_ref = Dataset(Path(test_io_data[1]) / Path(test_io_data[0]['path']))
+    assert dataset.to_dict() == test_properties[1]
 
-    if d_ref.subtype is None:
+def test_data_load(test_data):
+    dataset = Dataset(test_data[0])
+    with np.load(str(dataset.path)+'.npz') as data:
+        assert np.array_equal(dataset.data, data['data'])
+
+def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):
+    d_ref = Dataset(test_data[0])
+
+    if d_ref.subtype is "":
         path_out = tmp_path / d_ref.type
     else:
         path_out = tmp_path / (d_ref.type + '.' + d_ref.subtype)
@@ -58,20 +59,5 @@ def test_write(test_io_data, tmp_path, WRITE_TOLERANCE):
             raise e
 
     # Test if properties are loaded correctly
-    assert d_test.to_dict() == test_io_data[0]['properties']
-
-
-def schemas_one(d, r):
-    if isinstance(d.schema, SchemaFid):
-        assert r['acq_schema'] == d.schema._meta['id']
-        assert r['layouts']['storage'] == list(d.schema.layouts['storage'])
-        assert r['layouts']['acquisition_position'] == list(d.schema.layouts['acquisition_position'])
-        assert r['layouts']['encoding_space'] == list(d.schema.layouts['encoding_space'])
-        assert r['layouts']['k_space'] == list(d.schema.layouts['k_space'])
-    elif isinstance(d.schema, Schema2dseq):
-        assert r['layouts']['frame_groups'] == list(d.shape_fg)
-        assert r['layouts']['frames'] == list(d.shape_frames)
-    elif isinstance(d.schema, SchemaRawdata):
-        assert r['layouts']['raw'] == list(d.schema.layouts['raw'])
-
+    assert d_test.to_dict() == test_data[1]
 

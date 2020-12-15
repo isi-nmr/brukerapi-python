@@ -1,70 +1,55 @@
 import pytest
 from pathlib import Path
 import json
+from brukerapi.folders import Folder
 
 def pytest_addoption(parser):
-    parser.addoption("--test_config", action="store", default="")
     parser.addoption("--test_data", action="store", default="")
-
-
-@pytest.fixture()
-def test_io_data(request):
-    return request.param
-
-
-@pytest.fixture()
-def test_jcampdx_data(request):
-    return request.param
-
-
-@pytest.fixture()
-def test_ra_data(request):
-        return request.param
-
-
-@pytest.fixture()
-def test_split_data(request):
-        return request.param
+    parser.addoption("--test_suites", action="store", default="")
 
 
 def pytest_generate_tests(metafunc):
-    config_path = Path(__file__).parent / metafunc.config.option.test_config
-    if "test_io_data" in metafunc.fixturenames:
-        try:
-            ids, testdata = get_test_data(config_path, 'test_io', metafunc)
-            metafunc.parametrize('test_io_data', testdata, indirect=True, ids=ids)
-        except:
-            metafunc.parametrize('test_io_data', [], indirect=True, ids=[])
-    elif "test_jcampdx_data" in metafunc.fixturenames:
-        try:
-            ids, testdata = get_test_data(config_path, 'test_jcampdx', metafunc)
-            metafunc.parametrize('test_jcampdx_data', testdata, indirect=True, ids=ids)
-        except:
-            metafunc.parametrize('test_jcampdx_data', [], indirect=True, ids=[])
-    elif "test_ra_data" in metafunc.fixturenames:
-        try:
-            ids, testdata = get_test_data(config_path, 'test_ra', metafunc)
-            metafunc.parametrize('test_ra_data', testdata, indirect=True, ids=ids)
-        except:
-            metafunc.parametrize('test_ra_data', [], indirect=True, ids=[])
-    elif "test_split_data" in metafunc.fixturenames:
-        try:
-            ids, testdata = get_test_data(config_path, 'test_split', metafunc)
-            metafunc.parametrize('test_split_data', testdata, indirect=True, ids=ids)
-        except:
-            metafunc.parametrize('test_split_data', [], indirect=True, ids=[])
+    ids, suites, data = get_test_data(metafunc)
+    if 'test_parameters' in metafunc.fixturenames and 'test_parameters' in suites:
+        metafunc.parametrize('test_parameters', data, indirect=True, ids=ids)
+    elif 'test_properties' in metafunc.fixturenames and 'test_properties' in suites:
+        metafunc.parametrize('test_properties', data, indirect=True, ids=ids)
+    elif 'test_data' in metafunc.fixturenames and 'test_data' in suites:
+        metafunc.parametrize('test_data', data, indirect=True, ids=ids)
 
+def get_test_data(metafunc):
+    print('in')
+    suites = metafunc.config.option.test_suites.split(" ")
+    study_id = Path(metafunc.config.option.test_data).name
+    ids = []
+    data = []
 
-def get_test_data(config_path, test_suite, metafunc):
-    with config_path.open() as file:
-        data = json.load(file)[test_suite]
+    with (Path('config') / (study_id + '_properties.json')).open() as file:
+        ref_state = json.load(file)
 
-    values = [(value,metafunc.config.option.test_data) for value in data.values() ]
+    for dataset in Folder(metafunc.config.option.test_data).get_dataset_list_rec():
+        ids.append(str(dataset.path))
+        with dataset(parameter_files=['subject']) as d:
+            data.append((dataset.path, ref_state[d.id]))
 
-    return list(data.keys()), values
-
-
+    return ids, suites, data
 
 @pytest.fixture(autouse=True)
 def WRITE_TOLERANCE():
     return 1.e6
+
+@pytest.fixture()
+def test_dataset(request):
+    return request.param
+
+@pytest.fixture()
+def test_parameters(request):
+    return request.param
+
+@pytest.fixture()
+def test_properties(request):
+    return request.param
+
+@pytest.fixture()
+def test_data(request):
+    return request.param

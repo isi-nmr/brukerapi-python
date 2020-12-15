@@ -84,7 +84,7 @@ class Parameter(object):
         result = {'value': self._encode_parameter(self.value)}
 
         if self.size:
-            result['size'] = self.size
+            result['size'] = self._encode_parameter(self.size)
 
         return result
 
@@ -506,7 +506,7 @@ class GeometryParameter(Parameter):
         :return: 4x4 3D Affine Transformation Matrix
         """
         # TODO support for multiple slice packages
-        match = re.match('\(\(\(.*\)', self.val_str)
+        match = re.match('\(\(\([^\)]*\)', self.val_str)
         affine_str = self.val_str[match.start() + 3: match.end() - 1]
         orient, shift = affine_str.split(', ')
 
@@ -517,6 +517,12 @@ class GeometryParameter(Parameter):
         affine[0:3, 3] = shift
 
         return affine
+
+    def to_dict(self):
+
+        result = {'affine': self._encode_parameter(self.affine)}
+
+        return result
 
 
 class DataParameter(Parameter):
@@ -647,7 +653,7 @@ class JCAMPDX(object):
 
         return parameters
 
-    def to_json(self, path=None, props=None):
+    def to_json(self, path=None):
         """
         Save properties to JSON file.
 
@@ -656,9 +662,9 @@ class JCAMPDX(object):
         """
         if path:
             with open(path, 'w') as json_file:
-                    json.dump(self.to_dict(props=props), json_file, indent=4)
+                    json.dump(self.to_dict(), json_file, indent=4)
         else:
-            return json.dumps(self.to_dict(props=props), indent=4)
+            return json.dumps(self.to_dict(), indent=4)
 
     @property
     def version(self):
