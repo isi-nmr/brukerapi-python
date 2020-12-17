@@ -639,7 +639,7 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ['_parameters', 'path', '_data', '_traj', '_state', '_schema', 'random_access', 'id', 'study_id',
+        reserved = ['_parameters', 'path', '_data', '_traj', '_state', '_schema', 'random_access', 'study_id',
                     'exp_id', 'proc_id', 'subj_id', '_properties']
         props = list(set(props) - set(reserved))
 
@@ -676,11 +676,15 @@ class Dataset:
             return var
 
     def query(self, query):
-        try:
-            if not eval(self._sub_parameters(query)):
+        if isinstance(query, str):
+            query = [query]
+
+        for q in query:
+            try:
+                if not eval(self._sub_parameters(q)):
+                    raise FilterEvalFalse
+            except (KeyError, AttributeError) as e:
                 raise FilterEvalFalse
-        except (KeyError, AttributeError) as e:
-            raise FilterEvalFalse
 
     """
     PROPERTIES
