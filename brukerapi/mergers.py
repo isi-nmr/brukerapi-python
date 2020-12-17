@@ -58,7 +58,7 @@ class FrameGroupMerger:
         slc_re[fg_abs_index] = 0
         slc_im[fg_abs_index] = 1
 
-        dataset.data = dataset.data[slc_re] + 1j * dataset.data[slc_im]
+        dataset.data = dataset.data[tuple(slc_re)] + 1j * dataset.data[tuple(slc_im)]
 
     @classmethod
     def _merge_parameters(cls, dataset, fg, fg_abs_index, fg_rel_index, fg_size):
