@@ -39,7 +39,7 @@ class FrameGroupMerger:
         cls._merge_parameters(dataset, fg, fg_abs_index, fg_rel_index, fg_size)
 
         # reload properties based on new values of parameters
-        dataset.load_properties()
+        dataset.reload_properties()
 
         return dataset
 

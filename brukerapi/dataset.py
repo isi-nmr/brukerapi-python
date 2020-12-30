@@ -168,6 +168,7 @@ class Dataset:
 
         self.type = self.path.stem
         self.subtype = self.path.suffix
+        self._properties = []
 
         # validate path
         self._validate(state)
@@ -358,9 +359,13 @@ class Dataset:
 
     def unload_properties(self):
         for property in self._properties:
-            self._properties.remove(property)
             delattr(self,property)
+        self._properties = []
         self._state['load_properties'] = False
+
+    def reload_properties(self):
+        self.unload_properties()
+        self.load_properties()
 
     def add_property_file(self, path):
         with open(path) as f:
