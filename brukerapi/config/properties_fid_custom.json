@@ -50,13 +50,13 @@
   ],
   "date": [
     {
-        "cmd": "datetime.datetime.strptime(#AdjScanStateTime[0][1:-1],'%Y-%m-%dT%X,%f%z')",
+        "cmd": "datetime.datetime.strptime(#ACQ_time,'<%Y-%m-%dT%X,%f%z>')",
         "conditions": [
           "#ACQ_sw_version=='<PV 6.0.1>'"
         ]
     },
     {
-        "cmd": "datetime.datetime.strptime(#AdjScanStateTime[1:-1],'%X %d %b %Y')",
+        "cmd": "datetime.datetime.strptime(#ACQ_time,'<%H:%M:%S %d %b %Y>')",
         "conditions": [
           "#ACQ_sw_version=='<PV 5.1>'"
         ]
