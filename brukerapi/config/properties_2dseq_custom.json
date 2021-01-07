@@ -1,7 +1,7 @@
 {
   "subj_id": [
       {
-        "cmd": "#VisuSubjectId[1:-1]",
+        "cmd": "#VisuSubjectName[1:-1]",
         "conditions": [
         ]
       },
@@ -25,7 +25,7 @@
   ],
   "exp_id": [
       {
-        "cmd": "str(#VisuExperimentNumber)",
+        "cmd": "@path.parents[2].name",
         "conditions": [
         ]
       },
@@ -37,7 +37,7 @@
   ],
   "proc_id": [
       {
-        "cmd": "str(#VisuProcessingNumber)",
+        "cmd": "@path.parents[0].name",
         "conditions": [
         ]
       },
@@ -54,11 +54,86 @@
         ]
       }
   ],
+  "extent": [
+    {
+      "cmd": "np.array([#PVM_VoxArrSize[0,0] * #VisuAcqSize[1], #PVM_VoxArrSize[0,1] * #VisuAcqSize[2], #VisuCoreFrameThickness])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<5.1>']",
+        "#VisuCoreDimDesc.list[0]=='spectroscopic'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    },
+    {
+      "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], #PVM_VoxArrSize[0,2]])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<6.0.1>']",
+        "#VisuCoreDimDesc.list[0]=='spectroscopic'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], (np.shape(#VisuCorePosition)[0] + 1 ) * abs(#VisuCorePosition[1,2] - #VisuCorePosition[0,2])])",
+      "conditions": [
+        "#VisuCorePosition.size[0]>1",
+        "#VisuCoreDim==2"
+      ]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], #VisuCoreFrameThickness])",
+      "conditions": [
+        "#VisuCorePosition.size[0]==1",
+        "#VisuCoreDim==2"
+      ]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], #VisuCoreExtent[2]])",
+      "conditions": [
+        "#VisuCoreDimDesc.list[0]=='spatial'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    }
+  ],
   "resolution": [
     {
-      "cmd": "np.array([#VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreExtent[2] / #VisuCoreSize[2], #VisuCoreFrameThickness])",
+      "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], #VisuCoreFrameThickness])",
       "conditions": [
+        "#VisuCreatorVersion in ['<5.1>']",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    },
+    {
+      "cmd": "np.array([#PVM_VoxArrSize[0,0] / #VisuCoreSize[1], #PVM_VoxArrSize[0,1] / #VisuCoreSize[2], #PVM_VoxArrSize[0,2]])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<6.0.1>']",
+        "#VisuCoreDimDesc.list[0]=='spectroscopic'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness + #VisuCoreSlicePacksSliceDist])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<6.0.1>']",
+        "#VisuCoreDim==2"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], abs(#VisuCorePosition[0,2] - #VisuCorePosition[1,2])])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<5.1>']",
+        "#VisuCorePosition.size[0]>1",
+        "#VisuCoreDim==2"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness])",
+      "conditions": [
+        "#VisuCreatorVersion in ['<5.1>']",
+        "#VisuCorePosition.size[0]==1",
+        "#VisuCoreDim==2"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreExtent[2] / #VisuCoreSize[2]])",
+      "conditions": [
+        "#VisuCoreDimDesc.list[0]=='spatial'",
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]
     }
@@ -131,7 +206,14 @@
   ],
   "position": [
     {
-      "cmd": "np.array([1,1,1])",
+      "cmd": "#PVM_VoxArrPosition[0,:].astype(np.float64)",
+      "conditions": [
+        "#VisuCoreDimDesc.list[0]=='spectroscopic'",
+        "#VisuCoreDimDesc.list[1]=='spatial'",
+        "#VisuCoreDimDesc.list[2]=='spatial'"]
+    },
+    {
+      "cmd": "np.array([#VisuCorePosition[0,0] + @extent[0], #VisuCorePosition[0,1] + @extent[1], #VisuCorePosition[0,2]])",
       "conditions": []
     }
   ],
@@ -185,6 +267,11 @@
     {
       "cmd": "1./ (#VisuAcqPixelBandwidth * #VisuCoreSize.list[0])  / 2.",
       "conditions": []
+    },
+    {
+      "cmd": "None",
+      "conditions": [],
+      "comment": "default value"
     }
   ]
 }
