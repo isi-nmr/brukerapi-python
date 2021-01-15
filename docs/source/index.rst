@@ -26,6 +26,12 @@ Bruker API documentation.
    dataset
    folders
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Test data:
+
+   test_data
+
 
 Indices and tables
 -------------------

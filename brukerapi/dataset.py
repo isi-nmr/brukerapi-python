@@ -278,7 +278,7 @@ class Dataset:
     def unload_parameters(self):
         self._parameters = None
 
-    def add_parameter_file(self, path):
+    def add_parameter_file(self, file):
         """
         Load additional jcamp-dx file and add it to Dataset parameter space. It is later available via getters,
         or using the dot notation.
@@ -296,6 +296,8 @@ class Dataset:
             dataset['PVM_DwDir'].value
 
         """
+        path = self.path.parent / RELATIVE_PATHS[self.type][file]
+
         if not hasattr(self, '_parameters') or self._parameters is None:
             self._parameters = {path.name: JCAMPDX(path)}
         else:
@@ -310,7 +312,7 @@ class Dataset:
         parameter_files = self._state['parameter_files']
         for file in parameter_files:
             try:
-                self.add_parameter_file(self.path.parent / RELATIVE_PATHS[self.type][file])
+                self.add_parameter_file(file)
             except FileNotFoundError as e:
                 # if jcampdx file is required but not found raise Error
                 if file in DEFAULT_STATES[self.type]['parameter_files']:
