@@ -159,7 +159,9 @@
             "<RAREst.ppg>",
             "<FLOWMAP.ppg>",
             "<MDEFT.ppg>",
-            "<igFLASH.ppg>"
+            "<igFLASH.ppg>",
+            "<B1Map.ppg>",
+            "<DESS.ppg>"
           ]
         ],
         "#ACQ_dim==2",
@@ -339,7 +341,7 @@
       "cmd": "#PVM_SpiralNbOfInterleaves*#NI*#NR",
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 6.0.1>'"
+        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
         ]
     },
     {
@@ -465,7 +467,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 6.0.1>'"
+        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
       ]
     },
     {
@@ -639,7 +641,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 6.0.1>'"
+        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
       ]
     },
     {
