@@ -111,7 +111,7 @@
         "#VisuCoreDimDesc.list[2]=='spatial'"]
     },
     {
-      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness + #VisuCoreSlicePacksSliceDist])",
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness + #VisuCoreSlicePacksSliceDist.list[0]])",
       "conditions": [
         "#VisuCreatorVersion in ['<6.0.1>']",
         "#VisuCoreDim==2"]

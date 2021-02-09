@@ -9,6 +9,7 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
+
     ids, suites, data = get_test_data(metafunc)
     if 'test_parameters' in metafunc.fixturenames and 'test_parameters' in suites:
         metafunc.parametrize('test_parameters', data, indirect=True, ids=ids)
@@ -24,8 +25,12 @@ def get_test_data(metafunc):
     ids = []
     data = []
 
-    with (Path('config') / (study_id + '_properties.json')).open() as file:
-        ref_state = json.load(file)
+    # if properties test configuration exists
+    if (Path('config') / ('properties_' + study_id + '.json')).exists():
+        with (Path('config') / ('properties_' + study_id + '.json')).open() as file:
+            ref_state = json.load(file)
+    else:
+        ref_state = {}
 
     for dataset in Folder(metafunc.config.option.test_data).get_dataset_list_rec():
         ids.append(str(dataset.path))
@@ -37,10 +42,6 @@ def get_test_data(metafunc):
 @pytest.fixture(autouse=True)
 def WRITE_TOLERANCE():
     return 1.e6
-
-@pytest.fixture()
-def test_dataset(request):
-    return request.param
 
 @pytest.fixture()
 def test_parameters(request):

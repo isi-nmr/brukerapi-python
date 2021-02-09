@@ -499,29 +499,29 @@ class GeometryParameter(Parameter):
     def value(self):
         pass
 
-    @property
-    def affine(self):
-        """
-
-        :return: 4x4 3D Affine Transformation Matrix
-        """
-        # TODO support for multiple slice packages
-        match = re.match('\(\(\([^\)]*\)', self.val_str)
-        affine_str = self.val_str[match.start() + 3: match.end() - 1]
-        orient, shift = affine_str.split(', ')
-
-        orient = GenericParameter.parse_value(orient)
-        shift = GenericParameter.parse_value(shift)
-        affine = np.zeros(shape=(4,4))
-        affine[0:3, 0:3] = np.reshape(orient, (3,3))
-        affine[0:3, 3] = shift
-
-        return affine
+    # @property
+    # def affine(self):
+    #     """
+    #
+    #     :return: 4x4 3D Affine Transformation Matrix
+    #     """
+    #     # TODO support for multiple slice packages
+    #     match = re.match('\(\(\([^\)]*\)', self.val_str)
+    #     affine_str = self.val_str[match.start() + 3: match.end() - 1]
+    #     orient, shift = affine_str.split(', ')
+    #
+    #     orient = GenericParameter.parse_value(orient)
+    #     shift = GenericParameter.parse_value(shift)
+    #     affine = np.zeros(shape=(4,4))
+    #     affine[0:3, 0:3] = np.reshape(orient, (3,3))
+    #     affine[0:3, 3] = shift
+    #
+    #     return affine
 
     def to_dict(self):
 
-        result = {'affine': self._encode_parameter(self.affine)}
-
+        # result = {'affine': self._encode_parameter(self.affine)}
+        result = {}
         return result
 
 

@@ -38,7 +38,7 @@ def test_generator(path_folder, path_config, suites=None):
     if 'test_properties' in suites:
         properties = dict(sorted(properties.items()))
 
-        with open(path_config / (path_folder.name + '_properties.json'), 'w') as json_file:
+        with open(path_config / ('properties_' + folder.path.name + '.json'), 'w') as json_file:
             json.dump(properties, json_file, indent=4, sort_keys=True)
 
 def generate_parameters_test(dataset):
@@ -81,5 +81,7 @@ if __name__ == '__main__':
     # test_generator(Path(os.environ['PATH_DATA']) / '20201208_105201_lego_rod_1_7', Path(__file__).parent / 'config/',
     #                suites=['test_properties'])
     # test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/')
-    test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/')
+    # test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/')
+    test_generator(Path(os.environ['PATH_DATA']) / '20210128_122257_LEGO_PHANTOM_API_TEST_1_1',
+                   Path(__file__).parent / 'config/')
     # test_generator(Path(os.environ['PATH_DATA']) / 'bruker2nifti_qa/raw', Path(__file__).parent / 'config/auto_test_qa.json')

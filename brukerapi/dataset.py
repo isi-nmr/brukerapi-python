@@ -679,6 +679,8 @@ class Dataset:
             return self._encode_property(list(var))
         elif isinstance(var, datetime.datetime):
             return str(var)
+        elif isinstance(var, np.str):
+            return str(var)
         else:
             return var
 

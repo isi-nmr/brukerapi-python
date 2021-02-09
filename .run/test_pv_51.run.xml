@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="test_pv_51" type="tests" factoryName="py.test">
+    <module name="brukerapi-python" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PATH_DATA" value="$USER_HOME$/data_clean" />
+    </envs>
+    <option name="SDK_HOME" value="/usr/bin/python3.8" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="_new_keywords" value="&quot;&quot;" />
+    <option name="_new_parameters" value="&quot;&quot;" />
+    <option name="_new_additionalArguments" value="&quot;--test_data\u003d${PATH_DATA}/0.2H2 --test_suites\u003d\&quot;test_parameters test_properties test_data\&quot;&quot;" />
+    <option name="_new_target" value="&quot;test.test_dataset&quot;" />
+    <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    <method v="2" />
+  </configuration>
+</component>
