@@ -80,8 +80,8 @@ if __name__ == '__main__':
     #                suites=['test_properties'])
     # test_generator(Path(os.environ['PATH_DATA']) / '20201208_105201_lego_rod_1_7', Path(__file__).parent / 'config/',
     #                suites=['test_properties'])
-    # test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/')
+    test_generator(Path(os.environ['PATH_DATA']) / '0.2H2', Path(__file__).parent / 'config/')
     # test_generator(Path(os.environ['PATH_DATA']) / '20200612_094625_lego_phantom_3_1_2', Path(__file__).parent / 'config/')
-    test_generator(Path(os.environ['PATH_DATA']) / '20210128_122257_LEGO_PHANTOM_API_TEST_1_1',
-                   Path(__file__).parent / 'config/')
+    # test_generator(Path(os.environ['PATH_DATA']) / '20210128_122257_LEGO_PHANTOM_API_TEST_1_1',
+    #                Path(__file__).parent / 'config/', suites=['test_parameters', 'test_data'])
     # test_generator(Path(os.environ['PATH_DATA']) / 'bruker2nifti_qa/raw', Path(__file__).parent / 'config/auto_test_qa.json')

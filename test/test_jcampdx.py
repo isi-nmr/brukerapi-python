@@ -1,7 +1,9 @@
 from brukerapi.jcampdx import JCAMPDX
 import numpy as np
 from pathlib import Path
+import pytest
 
+@pytest.mark.skip(reason="in progress")
 def test_jcampdx(test_jcampdx_data):
 
     j = JCAMPDX(Path(test_jcampdx_data[1]) / test_jcampdx_data[0]['path'])

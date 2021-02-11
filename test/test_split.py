@@ -3,7 +3,7 @@ from brukerapi.splitters import *
 import pytest
 from pathlib import Path
 
-
+@pytest.mark.skip(reason="in progress")
 def test_split(test_split_data, tmp_path):
     dataset = Dataset(Path(test_split_data[1]) / test_split_data[0]['path'])
 

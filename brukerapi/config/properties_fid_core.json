@@ -501,13 +501,13 @@
     {
       "cmd": [0,2,4,3,5,1],
       "conditions": [
-        "@scheme_id in ['CART_2D']"
+        "@scheme_id in ['CART_2D', 'RADIAL']"
       ]
     },
     {
       "cmd": [0,2,3,4,5,1],
       "conditions": [
-        "@scheme_id in ['CART_3D', 'RADIAL', 'ZTE']"
+        "@scheme_id in ['CART_3D', 'ZTE']"
       ]
     },
     {

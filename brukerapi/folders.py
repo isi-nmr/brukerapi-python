@@ -188,7 +188,7 @@ class Folder:
         """
         children = []
         for file in self.path.iterdir():
-            path = self.path / file
+            path = file
 
             if path.is_dir() and recursive:
                 # try create Study
