@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -23,12 +23,14 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest
         pip install zenodo_get
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Install brukerapi
       run: |
         git clone -b dev https://github.com/isi-nmr/brukerapi-python.git
@@ -36,22 +38,26 @@ jobs:
         python setup.py build
         python setup.py install
 
-    - name: Test using the bruker2nifti_qa data set
-      run: |
-        cd brukerapi-python/test
-        git clone https://gitlab.com/naveau/bruker2nifti_qa.git
-        python -m pytest --test_data bruker2nifti_qa/raw --test_config config/auto_test_qa.json -v
+#TODO at this point the CI only checks the ability to install the API, the tests will be revisited in the next version
+#    - name: Download test data from Zenodo
+#      run: |
+#        cd brukerapi-python/test
+#        zenodo_get 10.5281/zenodo.4522220
+#
+#    - name: Test using the PV5.1 data set
+#      run: |
+#        cd brukerapi-python/test
+#        unzip 0.2H2.zip
+#        python -m pytest . --test_data "0.2H2" --test_suites="test_parameters test_properties test_data" -v
+#
+#    - name: Test using the PV6.0.1 data set
+#      run: |
+#        cd brukerapi-python/test
+#        unzip 20200612_094625_lego_phantom_3_1_2.zip
+#        python -m pytest --test_data "20200612_094625_lego_phantom_3_1_2"  --test_suites="test_parameters test_properties test_data" -v
 
-    - name: Test using the PV5.1 test data set
-      run: |
-        cd brukerapi-python/test
-        zenodo_get 10.5281/zenodo.3899268
-        unzip 0.2H2.zip
-        python -m pytest . --test_data "0.2H2" --test_config "config/auto_test_pv51.json" -v
-
-    - name: Test using the PV6.0.1 test data set
-      run: |
-        cd brukerapi-python/test
-        zenodo_get 10.5281/zenodo.3894651
-        unzip 20200612_094625_lego_phantom_3_1_2.zip
-        python -m pytest --test_data "20200612_094625_lego_phantom_3_1_2" --test_config "config/auto_test_pv601.json" -v
+#    - name: Test using the PV7.0.0 data set
+#      run: |
+#        cd brukerapi-python/test
+#        unzip 20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip
+#        python -m pytest --test_data "20210128_122257_LEGO_PHANTOM_API_TEST_1_1" --test_suites="test_parameters test_data" -v

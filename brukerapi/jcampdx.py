@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import ast
 from collections import OrderedDict
+import json
 
 SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
 GRAMMAR = {
@@ -77,6 +78,31 @@ class Parameter(object):
 
     def __repr__(self):
         return self.key_str
+
+    def to_dict(self):
+
+        result = {'value': self._encode_parameter(self.value)}
+
+        if self.size:
+            result['size'] = self._encode_parameter(self.size)
+
+        return result
+
+    def _encode_parameter(self, var):
+        if isinstance(var, np.integer) or isinstance(var, np.int32):
+            return int(var)
+        elif isinstance(var, np.floating):
+            return float(var)
+        elif isinstance(var, np.ndarray):
+            return var.tolist()
+        elif isinstance(var, np.dtype):
+            return var.name
+        elif isinstance(var, list):
+            return [self._encode_parameter(var_) for var_ in var]
+        elif isinstance(var, tuple):
+            return self._encode_parameter(list(var))
+        else:
+            return var
 
 
     @property
@@ -473,24 +499,30 @@ class GeometryParameter(Parameter):
     def value(self):
         pass
 
-    @property
-    def affine(self):
-        """
+    # @property
+    # def affine(self):
+    #     """
+    #
+    #     :return: 4x4 3D Affine Transformation Matrix
+    #     """
+    #     # TODO support for multiple slice packages
+    #     match = re.match('\(\(\([^\)]*\)', self.val_str)
+    #     affine_str = self.val_str[match.start() + 3: match.end() - 1]
+    #     orient, shift = affine_str.split(', ')
+    #
+    #     orient = GenericParameter.parse_value(orient)
+    #     shift = GenericParameter.parse_value(shift)
+    #     affine = np.zeros(shape=(4,4))
+    #     affine[0:3, 0:3] = np.reshape(orient, (3,3))
+    #     affine[0:3, 3] = shift
+    #
+    #     return affine
 
-        :return: 4x4 3D Affine Transformation Matrix
-        """
-        # TODO support for multiple slice packages
-        match = re.match('\(\(\(.*\)', self.val_str)
-        affine_str = self.val_str[match.start() + 3: match.end() - 1]
-        orient, shift = affine_str.split(', ')
+    def to_dict(self):
 
-        orient = GenericParameter.parse_value(orient)
-        shift = GenericParameter.parse_value(shift)
-        affine = np.zeros(shape=(4,4))
-        affine[0:3, 0:3] = np.reshape(orient, (3,3))
-        affine[0:3, 3] = shift
-
-        return affine
+        # result = {'affine': self._encode_parameter(self.affine)}
+        result = {}
+        return result
 
 
 class DataParameter(Parameter):
@@ -612,6 +644,27 @@ class JCAMPDX(object):
 
     def unload(self):
         self.params = {}
+
+    def to_dict(self):
+        parameters =  {}
+
+        for param in self.params.items():
+            parameters[param[0]] = param[1].to_dict()
+
+        return parameters
+
+    def to_json(self, path=None):
+        """
+        Save properties to JSON file.
+
+        :param path: *str* path to a resulting report file
+        :param names: *list* names of properties to be exported
+        """
+        if path:
+            with open(path, 'w') as json_file:
+                    json.dump(self.to_dict(), json_file, indent=4)
+        else:
+            return json.dumps(self.to_dict(), indent=4)
 
     @property
     def version(self):

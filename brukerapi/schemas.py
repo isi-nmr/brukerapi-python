@@ -502,12 +502,8 @@ class Schema2dseq(Schema):
 
     def deserialize(self, data, layouts):
 
-        if self._dataset._kwargs.get('scale') is None:
-            scale = True
-        else:
-            scale = self._dataset._kwargs.get('scale')
         # scale
-        if scale:
+        if self._dataset._state['scale']:
             data = self._scale_frames(data, layouts, 'FW')
 
         # frames -> frame_groups
@@ -525,7 +521,7 @@ class Schema2dseq(Schema):
         """
 
         # dataset is created with scale state set to False
-        if self._dataset._kwargs.get('scale') is False:
+        if self._dataset._state['scale'] is False:
             return data
 
         # get a float copy of the data array
@@ -644,3 +640,5 @@ class Schema2dseq(Schema):
             slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra[self.encoded_dim:]
             slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim:]
             yield slice_ra, slice_full
+
+

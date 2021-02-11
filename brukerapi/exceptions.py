@@ -334,3 +334,21 @@ class PropertyConditionNotMet(Exception):
             return '{}'.format(self.message)
         else:
             return 'Not a Bruker processing folder.'
+
+
+class FidSchemaUndefined(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        common = 'Schema was not identified for this dataset. This issue might occur in case of a pulse sequence. ' \
+                   'Please, contact authors to include the new sequence into the API configuration.'
+        if self.message:
+            return common + '\n The name of ' \
+                   'pulse sequence used to measure this dataset is {}'.format(self.message)
+        else:
+            return common
+

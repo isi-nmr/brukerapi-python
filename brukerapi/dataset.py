@@ -9,16 +9,92 @@ import os
 import os.path
 import yaml
 import datetime
+import logging
 
-# Dict of supported data set types with a list of JCAMP-DX files essential for the creation of given data set type.
-SUPPORTED = {
-    'fid': ['acqp', 'method'],
-    'traj': ['acqp','method'],
-    '2dseq': ['visu_pars'],
-    'ser': ['acqp', 'method'],
-    'rawdata': ['acqp','method'],
-    '1r': [],
-    '1i': []
+# Dict of default dataset states
+DEFAULT_STATES = {
+    'fid': {
+        "parameter_files" : ['acqp', 'method'],
+        "property_files": [
+            Path(__file__).parents[0] / 'config/properties_fid_core.json',
+            Path(__file__).parents[0] / 'config/properties_fid_custom.json'
+        ],
+        "load": True,
+        "load_parameters": True,
+        "load_properties": True,
+        "load_data": True,
+        "mmap": False
+    },
+    '2dseq': {
+        "parameter_files": ['visu_pars'],
+        "property_files": [
+            Path(__file__).parents[0] / 'config/properties_2dseq_core.json',
+            Path(__file__).parents[0] / 'config/properties_2dseq_custom.json'
+        ],
+        "load": True,
+        "load_parameters": True,
+        "load_properties": True,
+        "load_data": True,
+        "scale": True,
+        "mmap": False
+    },
+    'traj': {
+        "parameter_files": ['acqp', 'method'],
+        "property_files": [
+            Path(__file__).parents[0] / 'config/properties_traj_core.json',
+            Path(__file__).parents[0] / 'config/properties_traj_custom.json'
+        ],
+        "load": True,
+        "load_parameters": True,
+        "load_properties": True,
+        "load_data": True,
+        "mmap": False
+    },
+    'ser': {
+        "parameter_files": ['acqp', 'method'],
+        "property_files": [
+            Path(__file__).parents[0] / 'config/properties_ser_core.json',
+            Path(__file__).parents[0] / 'config/properties_ser_custom.json'
+        ],
+        "load": True,
+        "load_parameters": True,
+        "load_properties": True,
+        "load_data": True,
+        "mmap": False
+    },
+    'rawdata': {
+        "parameter_files": ['acqp', 'method'],
+        "property_files": [
+            Path(__file__).parents[0] / 'config/properties_rawdata_core.json',
+            Path(__file__).parents[0] / 'config/properties_rawdata_custom.json'
+        ],
+        "load": True,
+        "load_parameters": True,
+        "load_properties": True,
+        "load_data": True,
+        "mmap": False
+    }
+}
+
+RELATIVE_PATHS = {
+    "fid": {
+        "method": "./method",
+        "acqp": "./acqp",
+        "subject": "../subject",
+        "reco": "./pdata/1/reco",
+        "visu_pars": "./pdata/1/visu_pars",
+        "AdjStatePerScan": "./AdjStatePerScan",
+        "AdjStatePerStudy": "../AdjStatePerStudy"
+    },
+    "2dseq": {
+        "method": "../../method",
+        "acqp": "../../acqp",
+        "subject": "../../../subject",
+        "reco": "./reco",
+        "visu_pars": "./visu_pars",
+        "AdjStatePerScan": "../../AdjStatePerScan",
+        "AdjStatePerStudy": "../../../AdjStatePerStudy",
+    }
 }
 
 
@@ -64,7 +140,7 @@ class Dataset:
 
     """
 
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, **state):
         """Constructor of Dataset
 
         Dataset can be constructed either by passing a path to one of the SUPPORTED binary files, or to a directory
@@ -77,11 +153,7 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not 'load' in kwargs:
-            kwargs['load'] = True
-        self._kwargs = kwargs
-
-        if not self.path.exists() and kwargs['load']:
+        if not self.path.exists() and state.get('load') is not False:
             raise FileNotFoundError(self.path)
 
         # directory constructor
@@ -94,19 +166,28 @@ class Dataset:
             else:
                 raise NotADatasetDir(self.path)
 
+        self.type = self.path.stem
+        self.subtype = self.path.suffix
+        self._properties = []
+
         # validate path
-        self._validate()
+        self._validate(state)
+
+        # set
+        self._set_state(state)
 
         # load data if the load kwarg is true
-        if self._kwargs['load']:
-            self.load()
+        self.load()
+
 
     def __enter__(self):
+        self._state['load'] = True
         self.load()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.unload()
+        self._state['load'] = False
 
     def __str__(self):
         """
@@ -124,10 +205,22 @@ class Dataset:
         raise KeyError(item)
 
     def __call__(self, **kwargs):
-        self._kwargs.update(kwargs)
+        self._set_state(kwargs)
         return self
 
-    def _validate(self):
+    def _set_state(self, passed):
+        result = deepcopy(DEFAULT_STATES[self.type])
+
+        if 'parameter_files' in passed.keys():
+            passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
+
+        if 'property_files' in passed.keys():
+            passed['property_files'] = result['property_files'] + passed['property_files']
+
+        result.update(passed)
+        self._state = result
+
+    def _validate(self, state):
         """Validate Dataset
 
         Check whether the dataset type is supported and complete. Dataset is allowed to be incomplete when load is
@@ -138,41 +231,23 @@ class Dataset:
         """
 
         # Check whether dataset file is supported
-        if self.type not in SUPPORTED:
+        if self.type not in DEFAULT_STATES.keys():
             raise UnsuportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
-        if self._kwargs['load']:
-            if not (set(SUPPORTED[self.type]) <= set(os.listdir(str(self.path.parent)))):
+        if state.get('load') is None or state.get('load') is True:
+            if not (set(DEFAULT_STATES[self.type]['parameter_files']) <= set(os.listdir(str(self.path.parent)))):
                 raise IncompleteDataset
-
-    @property
-    def type(self):
-        """Type of dataset (fid, 2dseq,...)
-
-        :return: **str** type of dataset
-        """
-        if 'rawdata' in self.path.name:
-            return 'rawdata'
-        else:
-            return self.path.name
-
-    @property
-    def subtype(self):
-        """Subtype of rawdata (job0, job1, Navigator)
-
-        :return: **str** subtype
-        """
-        if 'rawdata' in self.path.name:
-            return self.path.name.split('.')[-1]
-        else:
-            return None
 
     def load(self):
         """
         Load parameters, properties, schema and data. In case, there is a traj file related to a fid file,
         traj is loaded as well.
         """
+
+        if not self._state['load']:
+            return
+
         self.load_parameters()
         self.load_properties()
         self.load_schema()
@@ -203,7 +278,7 @@ class Dataset:
     def unload_parameters(self):
         self._parameters = None
 
-    def add_parameter_file(self, file_type):
+    def add_parameter_file(self, file):
         """
         Load additional jcamp-dx file and add it to Dataset parameter space. It is later available via getters,
         or using the dot notation.
@@ -221,27 +296,12 @@ class Dataset:
             dataset['PVM_DwDir'].value
 
         """
-        try:
-            jcampdx = JCAMPDX(self.path.parent / file_type)
-        except FileNotFoundError:
-            if self.type in ['2dseq','1r','1i']:
-                try:
-                    jcampdx = JCAMPDX(self.path.parents[2] / file_type)
-                except FileNotFoundError:
-                    raise FileNotFoundError(file_type)
-            if self.type in ['fid','ser','rawdata','traj']:
-                try:
-                    jcampdx = JCAMPDX(self.path.parent / Path('pdata/1') / file_type)
-                except FileNotFoundError:
-                    try:
-                        jcampdx = JCAMPDX(self.path.parents[1] / file_type)
-                    except:
-                        raise FileNotFoundError(file_type)
+        path = self.path.parent / RELATIVE_PATHS[self.type][file]
 
         if not hasattr(self, '_parameters') or self._parameters is None:
-            self._parameters = {file_type:jcampdx}
+            self._parameters = {path.name: JCAMPDX(path)}
         else:
-            self._parameters[file_type] = jcampdx
+            self._parameters[path.name] = JCAMPDX(path)
 
     def _read_parameters(self):
         """
@@ -249,15 +309,13 @@ class Dataset:
 
         :return:
         """
-        parameter_files = deepcopy(SUPPORTED[self.type])
-        if self._kwargs.get('add_parameters'):
-            parameter_files += list(self._kwargs.get('add_parameters'))
-        for file_type in parameter_files:
+        parameter_files = self._state['parameter_files']
+        for file in parameter_files:
             try:
-                self.add_parameter_file(file_type)
+                self.add_parameter_file(file)
             except FileNotFoundError as e:
-                # if jcampdx file is required but not found raise ERror
-                if file_type in SUPPORTED[self.type]:
+                # if jcampdx file is required but not found raise Error
+                if file in DEFAULT_STATES[self.type]['parameter_files']:
                     raise e
                 # if jcampdx file is not found, but not required, pass
                 else:
@@ -296,15 +354,20 @@ class Dataset:
             dataset.date
 
         """
-        self.add_property_file('{}/schema_{}_core.json'.format(str(config_paths['core']),self.type))
-        if self._kwargs.get('schema_custom_config'):
-            self.add_property_file('{}/{}_custom.json'.format(self._kwargs.get('custom_config'), self.type))
-        else:
-            self.add_property_file(
-                '{}/schema_{}_custom.json'.format(str(config_paths['core']), self.type))
+        for file in self._state['property_files']:
+            self.add_property_file(file)
+
+        self._state['load_properties'] = True
 
     def unload_properties(self):
-        pass
+        for property in self._properties:
+            delattr(self,property)
+        self._properties = []
+        self._state['load_properties'] = False
+
+    def reload_properties(self):
+        self.unload_properties()
+        self.load_properties()
 
     def add_property_file(self, path):
         with open(path) as f:
@@ -328,12 +391,18 @@ class Dataset:
                 try:
                     value = self._make_element(desc['cmd'])
                     self.__setattr__(property[0], value)
+
+                    if not hasattr(self, '_properties'):
+                        self._properties = [property[0],]
+                    else:
+                        self._properties.append(property[0])
+
                     break
                 # if some of the parameters needed for evaluation is missing
-                except (KeyError, ValueError):
+                except (KeyError, ValueError, IndexError):
                     pass
 
-            except (PropertyConditionNotMet, AttributeError):
+            except (PropertyConditionNotMet, AttributeError, IndexError):
                 pass
 
     def _make_element(self, cmd):
@@ -427,7 +496,7 @@ class Dataset:
 
         **called in the class constructor.**
         """
-        if self._kwargs.get('random_access'):
+        if self._state['mmap']:
             self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
@@ -577,7 +646,8 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ['_parameters', 'path', '_data', '_traj', '_kwargs', '_schema', 'random_access', 'id', 'study_id', 'exp_id', 'proc_id', 'subj_id']
+        reserved = ['_parameters', 'path', '_data', '_traj', '_state', '_schema', 'random_access', 'study_id',
+                    'exp_id', 'proc_id', 'subj_id', '_properties']
         props = list(set(props) - set(reserved))
 
         properties = {}
@@ -608,16 +678,22 @@ class Dataset:
         elif isinstance(var, tuple):
             return self._encode_property(list(var))
         elif isinstance(var, datetime.datetime):
-            return str(datetime.datetime)
+            return str(var)
+        elif isinstance(var, np.str):
+            return str(var)
         else:
             return var
 
     def query(self, query):
-        try:
-            if not eval(self._sub_parameters(query)):
+        if isinstance(query, str):
+            query = [query]
+
+        for q in query:
+            try:
+                if not eval(self._sub_parameters(q)):
+                    raise FilterEvalFalse
+            except (KeyError, AttributeError) as e:
                 raise FilterEvalFalse
-        except (KeyError, AttributeError) as e:
-            raise FilterEvalFalse
 
     """
     PROPERTIES

@@ -1,8 +1,8 @@
-include brukerapi/config/schema_2dseq_core.json
-include brukerapi/config/schema_2dseq_custom.json
-include brukerapi/config/schema_fid_core.json
-include brukerapi/config/schema_fid_custom.json
-include brukerapi/config/schema_rawdata_core.json
-include brukerapi/config/schema_rawdata_custom.json
-include brukerapi/config/schema_traj_core.json
-include brukerapi/config/schema_traj_custom.json
+include brukerapi/config/properties_2dseq_core.json
+include brukerapi/config/properties_2dseq_custom.json
+include brukerapi/config/properties_fid_core.json
+include brukerapi/config/properties_fid_custom.json
+include brukerapi/config/properties_rawdata_core.json
+include brukerapi/config/properties_rawdata_custom.json
+include brukerapi/config/properties_traj_core.json
+include brukerapi/config/properties_traj_custom.json

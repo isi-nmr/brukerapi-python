@@ -7,6 +7,7 @@ from pathlib import Path
 
 SUPPORTED_FG = ['FG_ISA','FG_IRMODE','FG_ECHO']
 
+
 class Splitter(object):
 
     def write(self, datasets, path_out=None):
@@ -298,6 +299,7 @@ class SlicePackageSplitter(Splitter):
             # name of the data set created by the split
             name = '{}_sp_{}/2dseq'.format(dataset.path.parents[0].name, sp_index)
 
+
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
 
@@ -306,6 +308,9 @@ class SlicePackageSplitter(Splitter):
 
             # construct properties from the new set of parameters
             dataset_.load_properties()
+
+            # change id
+            dataset_.id = '{}_sp_{}'.format(dataset_.id, sp_index)
 
             # construct schema
             dataset_.load_schema()
