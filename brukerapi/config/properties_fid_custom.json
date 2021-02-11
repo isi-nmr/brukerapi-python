@@ -73,5 +73,19 @@
         "cmd": "1./ @sw_hz / 2.",
         "conditions": []
     }
+  ],
+  "TR": [
+    {
+        "cmd": "#PVM_RepetitionTime",
+        "conditions": [],
+        "unit": "ms"
+    }
+  ],
+  "TE": [
+    {
+        "cmd": "#PVM_EchoTime",
+        "conditions": [],
+        "unit": "ms"
+    }
   ]
 }
