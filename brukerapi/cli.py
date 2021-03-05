@@ -99,7 +99,15 @@ def main():
     parser_filter.set_defaults(func=filter)
 
     args = parser.parse_args()
-    args.func(args)
+
+    # if no sub-command is passed
+    try:
+        func = args.func
+    except AttributeError:
+        parser.error("no sub-command passed")
+    func(args)
+
+
 
 
 def split(args):
