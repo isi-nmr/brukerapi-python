@@ -13,12 +13,64 @@ config_paths = {
     'custom': Path(__file__).parents[0]  / "config"
 }
 
+# properties required for loading of the data array for each dataset type
+REQUIRED_PROPERTIES = {
+    "fid" : [
+        "numpy_dtype",
+        "channels",
+        "block_size",
+        "acq_lenght",
+        "scheme_id",
+        "block_count",
+        "encoding_space",
+        "permute",
+        "k_space",
+        "encoded_dim",
+        "shape_storage",
+        "dim_type"
+    ],
+    "2dseq" : [
+        "pv_version",
+        "channels",
+        "block_size",
+        "acq_lenght",
+        "scheme_id",
+        "block_count",
+        "encoding_space",
+        "permute",
+        "k_space",
+        "encoded_dim",
+        "shape_storage",
+        "dim_type"
+    ],
+    "rawdata" : [
+        "numpy_dtype",
+        "job_desc",
+        "channels",
+        "shape_storage"
+    ],
+    "traj" : [
+        "numpy_dtype",
+        "scheme_id",
+        "traj_type",
+        "shape_storage",
+        "permute",
+        "final"
+    ]
+
+}
+
 
 class Schema():
     """Base class for all schemes
 
     """
     def __init__(self, dataset):
+
+        # chceck if dataset contains all required properties
+        for property in REQUIRED_PROPERTIES[dataset.type]:
+            if not hasattr(dataset, property):
+                raise MissingProperty(property)
         self._dataset = dataset
 
     def permutation_inverse(self, permutation):
