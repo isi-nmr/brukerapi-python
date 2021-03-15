@@ -352,3 +352,19 @@ class FidSchemaUndefined(Exception):
         else:
             return common
 
+
+class MissingProperty(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return "Dataset is missing the {} property. We can offer some help, please contact us via " \
+                   "https://github.com/isi-nmr/brukerapi-python".format(self.message)
+        else:
+            return "Dataset is missing one of the required properties. We can offer some help, please contact us via " \
+                 "https://github.com/isi-nmr/brukerapi-python"
+

@@ -3,6 +3,11 @@ Change Log
 
 Log of changes of the Python Bruker API project.
 
+0.1.4 (2020-03-15)
+-------------------
+- Schema checks whether dataset has all properties required for loading of the data array, if not it throws the MissingProperty exception
+- Fixed bug in CLI, now it is possible to run it without any sub-command
+
 0.1.3 (2020-02-11)
 -------------------
 - Support for ParaVision 7.0
