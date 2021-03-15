@@ -241,7 +241,8 @@
             "ISIS.ppg",
             "CPMG.ppg",
             "RfProfile.ppg",
-            "fmap_fq.ppg"
+            "fmap_fq.ppg",
+            "ste_laser_dIR_WSTM.ppg"
           ]
         ],
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"

@@ -15,7 +15,7 @@ config_paths = {
 
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
-    "fid" : [
+    "fid": [
         "numpy_dtype",
         "channels",
         "block_size",
@@ -29,27 +29,28 @@ REQUIRED_PROPERTIES = {
         "shape_storage",
         "dim_type"
     ],
-    "2dseq" : [
+    "2dseq": [
         "pv_version",
-        "channels",
-        "block_size",
-        "acq_lenght",
-        "scheme_id",
-        "block_count",
-        "encoding_space",
-        "permute",
-        "k_space",
+        "numpy_dtype",
+        "shape_frames",
+        "is_single_slice",
+        "shape_fg",
+        "shape_block",
         "encoded_dim",
         "shape_storage",
+        "shape_final",
+        "num_slice_packages",
+        "slope",
+        "offset",
         "dim_type"
     ],
-    "rawdata" : [
+    "rawdata": [
         "numpy_dtype",
         "job_desc",
         "channels",
         "shape_storage"
     ],
-    "traj" : [
+    "traj": [
         "numpy_dtype",
         "scheme_id",
         "traj_type",
@@ -57,7 +58,6 @@ REQUIRED_PROPERTIES = {
         "permute",
         "final"
     ]
-
 }
 
 
@@ -67,7 +67,7 @@ class Schema():
     """
     def __init__(self, dataset):
 
-        # chceck if dataset contains all required properties
+        # chceck if dataset contains all the required properties
         for property in REQUIRED_PROPERTIES[dataset.type]:
             if not hasattr(dataset, property):
                 raise MissingProperty(property)
