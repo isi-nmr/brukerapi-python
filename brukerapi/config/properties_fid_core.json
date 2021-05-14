@@ -118,6 +118,7 @@
         "#GO_block_size!='Standard_KBlock_Format'",
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
         "#PULPROG[1:-1] in ['EPSI.ppg', 'mac_EPSI.ppg']"
+        
       ]
     },
     {
