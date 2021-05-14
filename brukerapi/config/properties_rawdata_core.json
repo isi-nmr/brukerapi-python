@@ -59,8 +59,23 @@
   ],
   "job_desc": [
     {
-      "cmd": "#ACQ_jobs.primed_dict(8)['<{}>'.format(@subtype)]",
+      "cmd": "#ACQ_jobs.primed_dict(7)['<{}>'.format(@subtype)]",
       "conditions": [
+        "#ACQ_sw_version in ['<PV-360.1.1>']"
+      ]
+    },
+    {
+      "cmd": "#ACQ_jobs.nested[0]",
+      "conditions": [
+        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
+        "@subtype == 'job0'"
+      ]
+    },
+    {
+      "cmd": "#ACQ_jobs.nested[1]",
+      "conditions": [
+        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
+        "@subtype == 'job1'"
       ]
     }
   ],

@@ -94,6 +94,24 @@ RELATIVE_PATHS = {
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
         "AdjStatePerStudy": "../../../AdjStatePerStudy",
+    },
+    "traj": {
+        "method": "./method",
+        "acqp": "./acqp",
+        "subject": "../subject",
+        "reco": "./pdata/1/reco",
+        "visu_pars": "./pdata/1/visu_pars",
+        "AdjStatePerScan": "./AdjStatePerScan",
+        "AdjStatePerStudy": "../AdjStatePerStudy"
+    },
+    "rawdata": {
+        "method": "./method",
+        "acqp": "./acqp",
+        "subject": "../subject",
+        "reco": "./pdata/1/reco",
+        "visu_pars": "./pdata/1/visu_pars",
+        "AdjStatePerScan": "./AdjStatePerScan",
+        "AdjStatePerStudy": "../AdjStatePerStudy"
     }
 }
 
@@ -168,6 +186,7 @@ class Dataset:
 
         self.type = self.path.stem
         self.subtype = self.path.suffix
+        if self.subtype: self.subtype = self.subtype[1:] # remove the dot from the suffix
         self._properties = []
 
         # validate path
