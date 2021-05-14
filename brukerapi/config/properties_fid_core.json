@@ -117,7 +117,7 @@
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG[1:-1] in ['EPSI.ppg', 'mac_EPSI.ppg']"
       ]
     },
     {
@@ -125,7 +125,7 @@
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
-        "#PULPROG[1:-1]!='EPSI.ppg'"
+        "!#PULPROG[1:-1] in ['EPSI.ppg', 'mac_EPSI.ppg']"
       ]
     },
     {
@@ -218,7 +218,6 @@
             "EPI.ppg",
             "DtiEpi.ppg",
             "navigatorEPI_OM.ppg",
-            "EPSI.ppg",
             "FAIR_EPI.ppg",
             "CASL_EPI.ppg",
             "T1_EPI.ppg",
@@ -277,6 +276,18 @@
         ["#PULPROG[1:-1]",
           [
             "ZTE.ppg"
+          ]
+        ],
+        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+      ]
+    },
+    {
+      "cmd": "'EPSI'" ,
+      "conditions": [
+        ["#PULPROG[1:-1]",
+          [
+            "EPSI.ppg",
+            "mac_EPSI.ppg"
           ]
         ],
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
@@ -356,6 +367,12 @@
       "cmd": "#NPro*#NI*#NR",
       "conditions": [
         "@scheme_id=='ZTE'"
+      ]
+    },
+    {
+      "cmd": "#PVM_EncMatrix[1]*#NI*#NR",
+      "conditions": [
+        "@scheme_id=='EPSI'"
       ]
     }
   ],
@@ -496,6 +513,20 @@
       "conditions": [
         "@scheme_id=='ZTE'"
       ]
+    },
+    {
+      "cmd": [
+        "#SpecSize",
+        "#PVM_EncNReceivers",
+        "#PVM_EncMatrix[0]",
+        "#PVM_EncMatrix[1] // #NSegments",
+        "#NSegments",
+        "#NI",
+        "#NR"
+      ],
+      "conditions": [
+        "@scheme_id=='EPSI'"
+      ]
     }
   ],
   "permute": [
@@ -533,6 +564,12 @@
       "cmd": [0,1,2],
       "conditions": [
         "@scheme_id in ['CSI']"
+      ]
+    },
+    {
+      "cmd": [0, 2, 3, 4, 5, 6, 1],
+      "conditions": [
+        "@scheme_id == 'EPSI'"
       ]
     }
   ],
@@ -669,6 +706,19 @@
       "conditions": [
         "@scheme_id=='ZTE'"
       ]
+    },
+    {
+      "cmd": [
+        "#SpecSize",
+        "#PVM_EncMatrix[0]",
+        "#PVM_EncMatrix[1]",
+        "#NI",
+        "#NR",
+        "#PVM_EncNReceivers"
+      ],
+      "conditions": [
+        "@scheme_id=='EPSI'"
+      ]
     }
   ],
   "encoded_dim": [
@@ -726,6 +776,19 @@
       ],
       "conditions": [
         "@scheme_id=='CSI'"
+      ]
+    },
+        {
+      "cmd": [
+        "'k_space_encode_step_0'",
+        "'k_space_encode_step_1'",
+        "'k_space_encode_step_2'",
+        "'slice'",
+        "'repetition'",
+        "'channel'"
+      ],
+      "conditions": [
+        "@scheme_id=='EPSI'"
       ]
     }
   ]
