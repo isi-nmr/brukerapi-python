@@ -302,7 +302,7 @@ class Folder:
         if format_ is None:
             format_ = 'json'
 
-        for dataset in self.dataset_list_rec:
+        for dataset in self.get_dataset_list_rec():
             with dataset(add_parameters=['subject']) as d:
                 if write:
                     if path_out:
