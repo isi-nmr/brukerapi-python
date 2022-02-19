@@ -159,7 +159,7 @@ def filter(args):
     Filter(args.query, recursive=True, in_place=True).filter(folder)
 
     # print to std out
-    for dataset in folder.dataset_list_rec:
+    for dataset in folder.get_dataset_list_rec():
         print(str(dataset.path), file=sys.stdout)
 
 
