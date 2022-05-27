@@ -61,6 +61,12 @@
     {
       "cmd": "1",
       "conditions": [
+        "#ACQ_dim_desc=='Spectroscopic'"
+      ]
+    },
+    {
+      "cmd": "1",
+      "conditions": [
         "#ACQ_dim_desc[0]=='Spectroscopic'"
       ]
     },
