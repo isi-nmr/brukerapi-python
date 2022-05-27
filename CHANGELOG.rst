@@ -3,7 +3,11 @@ Change Log
 
 Log of changes of the Python Bruker API project.
 
-0.1.5 (2021-02-19)
+0.1.6 (2022-05-27)
+-------------------
+- Fixed reading of PV7 1D spectroscopy data
+
+0.1.5 (2022-02-19)
 -------------------
 - Fixed bug in report CLI sub-command
 
