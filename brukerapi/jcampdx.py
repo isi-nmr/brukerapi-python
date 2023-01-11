@@ -289,7 +289,7 @@ class GenericParameter(Parameter):
             size_str = size_str.split(",")
             size = tuple(np.array(size_str, dtype='int32'))
         else:
-            size = (np.int(size_str),)
+            size = (int(size_str),)
 
         return size
 
