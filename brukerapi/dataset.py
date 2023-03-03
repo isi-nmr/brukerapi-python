@@ -162,7 +162,7 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not self.path.exists() and state.get('load') is not LOAD_STAGES['empty']:
+        if not self.path.exists() and state.get('load') is LOAD_STAGES['all']:
             raise FileNotFoundError(self.path)
 
         # directory constructor
