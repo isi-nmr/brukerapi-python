@@ -9,7 +9,13 @@ import os
 import os.path
 import yaml
 import datetime
-import logging
+
+LOAD_STAGES = {
+    "empty": 0,
+    "parameters": 1,
+    "properties": 2,
+    "all": 3,
+}
 
 # Dict of default dataset states
 DEFAULT_STATES = {
@@ -19,10 +25,7 @@ DEFAULT_STATES = {
             Path(__file__).parents[0] / 'config/properties_fid_core.json',
             Path(__file__).parents[0] / 'config/properties_fid_custom.json'
         ],
-        "load": True,
-        "load_parameters": True,
-        "load_properties": True,
-        "load_data": True,
+        "load": LOAD_STAGES['all'],
         "mmap": False
     },
     '2dseq': {
@@ -31,10 +34,7 @@ DEFAULT_STATES = {
             Path(__file__).parents[0] / 'config/properties_2dseq_core.json',
             Path(__file__).parents[0] / 'config/properties_2dseq_custom.json'
         ],
-        "load": True,
-        "load_parameters": True,
-        "load_properties": True,
-        "load_data": True,
+        "load": LOAD_STAGES['all'],
         "scale": True,
         "mmap": False
     },
@@ -44,10 +44,7 @@ DEFAULT_STATES = {
             Path(__file__).parents[0] / 'config/properties_traj_core.json',
             Path(__file__).parents[0] / 'config/properties_traj_custom.json'
         ],
-        "load": True,
-        "load_parameters": True,
-        "load_properties": True,
-        "load_data": True,
+        "load": LOAD_STAGES['all'],
         "mmap": False
     },
     'ser': {
@@ -56,10 +53,7 @@ DEFAULT_STATES = {
             Path(__file__).parents[0] / 'config/properties_ser_core.json',
             Path(__file__).parents[0] / 'config/properties_ser_custom.json'
         ],
-        "load": True,
-        "load_parameters": True,
-        "load_properties": True,
-        "load_data": True,
+        "load": LOAD_STAGES['all'],
         "mmap": False
     },
     'rawdata': {
@@ -68,10 +62,7 @@ DEFAULT_STATES = {
             Path(__file__).parents[0] / 'config/properties_rawdata_core.json',
             Path(__file__).parents[0] / 'config/properties_rawdata_custom.json'
         ],
-        "load": True,
-        "load_parameters": True,
-        "load_properties": True,
-        "load_data": True,
+        "load": LOAD_STAGES['all'],
         "mmap": False
     }
 }
@@ -171,7 +162,7 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not self.path.exists() and state.get('load') is not False:
+        if not self.path.exists() and state.get('load') is not LOAD_STAGES['empty']:
             raise FileNotFoundError(self.path)
 
         # directory constructor
@@ -189,24 +180,24 @@ class Dataset:
         if self.subtype: self.subtype = self.subtype[1:] # remove the dot from the suffix
         self._properties = []
 
-        # validate path
-        self._validate(state)
-
         # set
         self._set_state(state)
+
+        # validate path
+        self._validate()
 
         # load data if the load kwarg is true
         self.load()
 
 
     def __enter__(self):
-        self._state['load'] = True
+        self._state['load'] = LOAD_STAGES['all']
         self.load()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.unload()
-        self._state['load'] = False
+        self._state['load'] = LOAD_STAGES['empty']
 
     def __str__(self):
         """
@@ -239,7 +230,7 @@ class Dataset:
         result.update(passed)
         self._state = result
 
-    def _validate(self, state):
+    def _validate(self):
         """Validate Dataset
 
         Check whether the dataset type is supported and complete. Dataset is allowed to be incomplete when load is
@@ -254,7 +245,7 @@ class Dataset:
             raise UnsuportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
-        if state.get('load') is None or state.get('load') is True:
+        if self._state.get('load') >= LOAD_STAGES['parameters']:
             if not (set(DEFAULT_STATES[self.type]['parameter_files']) <= set(os.listdir(str(self.path.parent)))):
                 raise IncompleteDataset
 
@@ -264,11 +255,16 @@ class Dataset:
         traj is loaded as well.
         """
 
-        if not self._state['load']:
-            return
+        if self._state['load'] is LOAD_STAGES['empty']: return
 
         self.load_parameters()
+
+        if self._state['load'] is LOAD_STAGES['parameters']: return
+
         self.load_properties()
+
+        if self._state['load'] is LOAD_STAGES['properties']: return
+
         self.load_schema()
         self.load_data()
         # self.load_traj()
