@@ -577,7 +577,7 @@ class Schema2dseq(Schema):
             return data
 
         # get a float copy of the data array
-        data = data.astype(np.float)
+        data = data.astype(float)
 
         slope = self._dataset.slope if not 'mask' in layouts.keys() else self._dataset.slope[layouts['mask'].flatten(order='F')]
         offset = self._dataset.offset if not 'mask' in layouts.keys() else self._dataset.offset[layouts['mask'].flatten(order='F')]

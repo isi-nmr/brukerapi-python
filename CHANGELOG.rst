@@ -3,6 +3,19 @@ Change Log
 
 Log of changes of the Python Bruker API project.
 
+0.1.7 (2022-06-03)
+-------------------
+- Fixed bug in fid configuration
+
+0.1.6 (2022-05-27)
+-------------------
+- Fixed reading of PV7 1D spectroscopy data
+
+0.1.5 (2022-02-19)
+-------------------
+- Fixed bug in report CLI sub-command
+
+
 0.1.4 (2020-03-15)
 -------------------
 - Schema checks whether dataset has all properties required for loading of the data array, if not it throws the MissingProperty exception

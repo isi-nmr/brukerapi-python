@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='brukerapi',
-      version='0.1.4.0',
+      version='0.1.9',
       description='Bruker API',
       author='Tomas Psorn',
       author_email='tomaspsorn@isibrno.cz',
