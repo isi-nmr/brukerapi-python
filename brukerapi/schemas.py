@@ -43,7 +43,7 @@ REQUIRED_PROPERTIES = {
         "slope",
         "offset",
         "dim_type",
-        "reco_type" # new addition so you can also load complex reco
+        "reco_type"
     ],
     "rawdata": [
         "numpy_dtype",
@@ -565,6 +565,15 @@ class Schema2dseq(Schema):
                 data = data[...,::2] + 1j * data[...,1::2]
             elif self._dataset.reco_type[0] == 'IMAGINARY_IMAGE' and self._dataset.reco_type[1] == 'REAL_IMAGE':
                 data = data[...,1::2] + 1j * data[...,::2]
+            # real reco:
+            elif self._dataset.reco_type[0] == 'REAL_IMAGE':
+                pass
+            # imaginary reco:
+            elif self._dataset.reco_type[0] == 'IMAGINARY_IMAGE':
+                pass
+            # imaginary reco:
+            elif self._dataset.reco_type[0] == 'PHASE_IMAGE':
+                pass
             # standard (magntitude) reco:
             elif self._dataset.reco_type == ['MAGNITUDE_IMAGE']:
                 pass
@@ -574,7 +583,6 @@ class Schema2dseq(Schema):
 
     def _scale_frames(self, data, layouts, dir):
         """
-        Does not work for complex data!
         :param data:
         :param layouts:
         :param dir:
