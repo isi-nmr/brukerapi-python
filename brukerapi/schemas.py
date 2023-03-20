@@ -42,7 +42,8 @@ REQUIRED_PROPERTIES = {
         "num_slice_packages",
         "slope",
         "offset",
-        "dim_type"
+        "dim_type",
+        "reco_type" # new addition so you can also load complex reco
     ],
     "rawdata": [
         "numpy_dtype",
@@ -553,25 +554,32 @@ class Schema2dseq(Schema):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order='F')
 
     def deserialize(self, data, layouts):
-
         # scale
         if self._dataset._state['scale']:
             data = self._scale_frames(data, layouts, 'FW')
-
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
-
+        if hasattr(self._dataset, 'reco_type'): 
+            # complex reco:
+            if self._dataset.reco_type[0] == 'REAL_IMAGE' and self._dataset.reco_type[1] == 'IMAGINARY_IMAGE':
+                data = data[...,::2] + 1j * data[...,1::2]
+            elif self._dataset.reco_type[0] == 'IMAGINARY_IMAGE' and self._dataset.reco_type[1] == 'REAL_IMAGE':
+                data = data[...,1::2] + 1j * data[...,::2]
+            # standard (magntitude) reco:
+            elif self._dataset.reco_type == ['MAGNITUDE_IMAGE']:
+                pass
+            else:
+                pass
         return data
 
     def _scale_frames(self, data, layouts, dir):
         """
-
+        Does not work for complex data!
         :param data:
         :param layouts:
         :param dir:
         :return:
         """
-
         # dataset is created with scale state set to False
         if self._dataset._state['scale'] is False:
             return data
@@ -592,6 +600,7 @@ class Schema2dseq(Schema):
 
         if dir == 'BW':
             data = np.round(data)
+
 
         return data
 
