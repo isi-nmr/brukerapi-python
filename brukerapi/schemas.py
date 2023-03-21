@@ -558,13 +558,14 @@ class Schema2dseq(Schema):
         if self._dataset._state['scale']:
             data = self._scale_frames(data, layouts, 'FW')
         # frames -> frame_groups
+        print("deserialize --> data.shape=" + str(data.shape))
         data = self._frames_to_framegroups(data, layouts)
         if hasattr(self._dataset, 'reco_type'): 
             # complex reco:
             if self._dataset.reco_type[0] == 'REAL_IMAGE' and self._dataset.reco_type[1] == 'IMAGINARY_IMAGE':
-                data = data[...,::2] + 1j * data[...,1::2]
+                data = np.squeeze(data[...,::2] + 1j * data[...,1::2])
             elif self._dataset.reco_type[0] == 'IMAGINARY_IMAGE' and self._dataset.reco_type[1] == 'REAL_IMAGE':
-                data = data[...,1::2] + 1j * data[...,::2]
+                data = np.squeeze(data[...,1::2] + 1j * data[...,::2])
             # real reco:
             elif self._dataset.reco_type[0] == 'REAL_IMAGE':
                 pass
@@ -579,6 +580,7 @@ class Schema2dseq(Schema):
                 pass
             else:
                 pass
+        print("deserialize --> data.shape=" + str(data.shape))
         return data
 
     def _scale_frames(self, data, layouts, dir):
