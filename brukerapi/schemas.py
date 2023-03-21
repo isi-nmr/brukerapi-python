@@ -558,7 +558,6 @@ class Schema2dseq(Schema):
         if self._dataset._state['scale']:
             data = self._scale_frames(data, layouts, 'FW')
         # frames -> frame_groups
-        print("deserialize --> data.shape=" + str(data.shape))
         data = self._frames_to_framegroups(data, layouts)
         if hasattr(self._dataset, 'reco_type'): 
             # complex reco:
@@ -580,7 +579,6 @@ class Schema2dseq(Schema):
                 pass
             else:
                 pass
-        print("deserialize --> data.shape=" + str(data.shape))
         return data
 
     def _scale_frames(self, data, layouts, dir):
