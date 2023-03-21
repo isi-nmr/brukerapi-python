@@ -515,7 +515,6 @@ class Dataset:
             self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
-            print("self._data.shape = " + str(self._data.shape))
 
     def unload_data(self):
         """
@@ -525,8 +524,6 @@ class Dataset:
 
     def _read_data(self):
         data = self._read_binary_file(self.path, self.numpy_dtype, self.shape_storage)
-        print("self.shape_storage = " + str(self.shape_storage))
-        print("data.shape = " + str(data.shape))
         return self._schema.deserialize(data, self._schema.layouts)
 
     def _read_binary_file(self, path, dtype, shape):
