@@ -1,3 +1,4 @@
+import os
 import pytest
 from pathlib import Path
 import json
@@ -33,10 +34,9 @@ def get_test_data(metafunc):
     else:
         ref_state = {}
 
-    for dataset in Folder(Path(metafunc.config.option.test_data)).get_dataset_list_rec():
+    for dataset in Folder(Path(os.path.expandvars(metafunc.config.option.test_data))).get_dataset_list_rec():
         ids.append(str(dataset.path))
-        with dataset(parameter_files=['subject']) as d:
-            data.append((dataset.path, ref_state[d.id])) if ref_state else data.append((dataset.path, {}))
+        data.append((dataset.path, ref_state[dataset.id])) if ref_state else data.append((dataset.path, {}))
 
     return ids, suites, data
 

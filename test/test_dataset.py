@@ -39,7 +39,7 @@ def test_data_load(test_data):
 def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):
     d_ref = Dataset(test_data[0])
 
-    if d_ref.subtype is "":
+    if d_ref.subtype == "":
         path_out = tmp_path / d_ref.type
     else:
         path_out = tmp_path / (d_ref.type + '.' + d_ref.subtype)
