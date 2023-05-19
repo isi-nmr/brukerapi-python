@@ -33,7 +33,7 @@ jobs:
 
     - name: Install brukerapi
       run: |
-        git clone -b dev https://github.com/isi-nmr/brukerapi-python.git
+        git clone https://github.com/isi-nmr/brukerapi-python.git
         cd brukerapi-python
         python setup.py build
         python setup.py install
