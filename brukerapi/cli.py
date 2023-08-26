@@ -62,7 +62,7 @@ def main():
         dest="path_out",
         type=str,
         required=False,
-        help="Folder to save splitted data sets",
+        help="Folder to save split data sets",
     )
     parser_split.add_argument(
         "-s",
