@@ -491,11 +491,14 @@ class SchemaRawdata(Schema):
     def deserialize(self, data, layouts):
         return data[0::2,...] + 1j * data[1::2,...]
 
-    def seralize(self, data, layouts):
+    def serialize(self, data, layouts):
         data_ = np.zeros(layouts['shape_storage'], dtype=self.numpy_dtype, order='F')
         data_[0,...] = data.real
         data_[1, ...] = data.imag
         return data_
+
+# Compatibility alias for previous misspelling:
+SchemaRawdata.seralize = SchemaRawdata.serialize
 
 
 class SchemaSer(Schema):
