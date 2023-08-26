@@ -872,7 +872,7 @@ class JCAMPDX(object):
 
     @classmethod
     def split_key_value_pair(cls, line):
-        # ASSUMPTION the first occurence of = in jcampdx line divides key and value pair
+        # ASSUMPTION the first occurrence of = in jcampdx line divides key and value pair
         # example:
         match = re.search(GRAMMAR['EQUAL_SIGN'], line)
         key = line[0:match.start()]

@@ -62,7 +62,7 @@ def main():
         dest="path_out",
         type=str,
         required=False,
-        help="Folder to save splitted data sets",
+        help="Folder to save split data sets",
     )
     parser_split.add_argument(
         "-s",
@@ -81,7 +81,7 @@ def main():
     parser_split.set_defaults(func=split)
 
     # filter sub-command
-    parser_filter = subparsers.add_parser('filter', help='get files based on querry')
+    parser_filter = subparsers.add_parser('filter', help='get files based on query')
     parser_filter.add_argument(
         "-i",
         "--input",
