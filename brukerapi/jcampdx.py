@@ -8,12 +8,12 @@ import json
 
 SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
 GRAMMAR = {
-        'COMMENT_LINE' : '\\$\\$[^\n]*\n',
+        'COMMENT_LINE' : r'\$\$[^\n]*\n',
         'PARAMETER': '##',
         'USER_DEFINED' : r'\$',
-        'TRAILING_EOL' : '\n$',
+        'TRAILING_EOL' : r'\n$',
         'DATA_LABEL' : r'\(XY..XY\)',
-        'DATA_DELIMETERS':', |\n',
+        'DATA_DELIMETERS': r', |\n',
         'SIZE_BRACKET': r'^\([^\(\)<>]*\)(?!$)',
         'LIST_DELIMETER': ', ',
         'EQUAL_SIGN': '=',
@@ -203,7 +203,7 @@ class GenericParameter(Parameter):
     @property
     def value(self, **kwargs):
 
-        val_str = re.sub('\n', '', self.val_str)
+        val_str = re.sub(r'\n', '', self.val_str)
 
         # unwrap wrapped list
         if re.match(r'@[0-9]*\*',val_str) is not None:
@@ -318,7 +318,7 @@ class GenericParameter(Parameter):
     @classmethod
     def parse_value(cls, val_str, size_bracket=None):
         # remove \n
-        val_str = re.sub('\n','', val_str)
+        val_str = re.sub(r'\n','', val_str)
 
         # sharp string
         if val_str.startswith('<') and val_str.endswith('>'):
@@ -903,7 +903,7 @@ class JCAMPDX(object):
 
     @classmethod
     def wrap_lines(cls, line):
-        line_wraps = re.split('\n', line)
+        line_wraps = re.split(r'\n', line)
         tail = line_wraps[-1]
 
         tail_bits = re.split(r'\s', tail)
