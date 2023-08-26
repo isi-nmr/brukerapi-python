@@ -81,7 +81,7 @@ def main():
     parser_split.set_defaults(func=split)
 
     # filter sub-command
-    parser_filter = subparsers.add_parser('filter', help='get files based on querry')
+    parser_filter = subparsers.add_parser('filter', help='get files based on query')
     parser_filter.add_argument(
         "-i",
         "--input",
