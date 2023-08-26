@@ -303,7 +303,7 @@ class SlicePackageSplitter(Splitter):
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
 
-            # SPLIT parameteres
+            # SPLIT parameters
             dataset_.parameters = self._split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
 
             # construct properties from the new set of parameters
