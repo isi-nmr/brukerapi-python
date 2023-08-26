@@ -266,7 +266,7 @@ class SlicePackageSplitter(Splitter):
         This functionality might be used for instance when converting data to a different data format.
 
         :param dataset: 2dseq dataset with multiple slice packages
-        :param write: if True, split data sets will we writen to drive
+        :param write: if True, split data sets will be written to drive
         :param path_out: a path to store data sets (optional)
         :return: list of split data sets
         """
