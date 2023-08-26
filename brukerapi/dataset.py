@@ -461,7 +461,7 @@ class Dataset:
 
     def _sub_parameters(self, recipe):
         # entries with property e.g. VisuFGOrderDesc.nested to self._dataset['VisuFGOrderDesc'].nested
-        for match in re.finditer('#[a-zA-Z0-9_]+\.[a-zA-Z]+', recipe):
+        for match in re.finditer(r'#[a-zA-Z0-9_]+\.[a-zA-Z]+', recipe):
             m = re.match('#[a-zA-Z0-9_]+', match.group())
             recipe = recipe.replace(m.group(),"self['{}']".format(m.group()[1:]))
         # entries without property e.g. VisuFGOrderDesc to self._dataset['VisuFGOrderDesc'].value

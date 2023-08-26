@@ -8,18 +8,18 @@ import json
 
 SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
 GRAMMAR = {
-        'COMMENT_LINE' : '\$\$[^\n]*\n',
+        'COMMENT_LINE' : '\\$\\$[^\n]*\n',
         'PARAMETER': '##',
-        'USER_DEFINED' : '\$',
+        'USER_DEFINED' : r'\$',
         'TRAILING_EOL' : '\n$',
-        'DATA_LABEL' : '\(XY..XY\)',
+        'DATA_LABEL' : r'\(XY..XY\)',
         'DATA_DELIMETERS':', |\n',
-        'SIZE_BRACKET': '^\([^\(\)<>]*\)(?!$)',
+        'SIZE_BRACKET': r'^\([^\(\)<>]*\)(?!$)',
         'LIST_DELIMETER': ', ',
         'EQUAL_SIGN': '=',
-        'SINGLE_NUMBER':'-?[\d.]+(?:e[+-]?\d+)?',
-        'PARALLEL_BRACKET': '\) ',
-        'GEO_OBJ': '\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)',
+        'SINGLE_NUMBER': r'-?[\d.]+(?:e[+-]?\d+)?',
+        'PARALLEL_BRACKET': r'\) ',
+        'GEO_OBJ': r'\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)',
         'HEADER':'TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER',
         'VERSION_TITLE':'JCAMPDX|JCAMP-DX'
     }
@@ -107,7 +107,7 @@ class Parameter(object):
 
     @property
     def key(self):
-        return re.sub('##', '', re.sub('\$', '', self.key_str)).rstrip()
+        return re.sub('##', '', re.sub(r'\$', '', self.key_str)).rstrip()
 
     @key.setter
     def key(self, key):
@@ -206,7 +206,7 @@ class GenericParameter(Parameter):
         val_str = re.sub('\n', '', self.val_str)
 
         # unwrap wrapped list
-        if re.match('@[0-9]*\*',val_str) is not None:
+        if re.match(r'@[0-9]*\*',val_str) is not None:
             val_str = self._unwrap_list(val_str)
 
         val_str_list = GenericParameter.split_parallel_lists(val_str)
@@ -455,12 +455,12 @@ class GenericParameter(Parameter):
 
     def _unwrap_list(self, val_str):
 
-        while re.search('@[0-9]*\*\(\d*\.?\d*\)', val_str):
-            match = re.search('@[0-9]*\*\(\d*\.?\d*\)', val_str)
+        while re.search(r'@[0-9]*\*\(\d*\.?\d*\)', val_str):
+            match = re.search(r'@[0-9]*\*\(\d*\.?\d*\)', val_str)
             left = val_str[0:match.start()]
             right = val_str[match.end():]
             sub = val_str[match.start():match.end()]
-            size, value = re.split('\*', sub)
+            size, value = re.split(r'\*', sub)
             size = int(size[1:])
             middle = ''
             for i in range(size):
@@ -506,7 +506,7 @@ class GeometryParameter(Parameter):
     #     :return: 4x4 3D Affine Transformation Matrix
     #     """
     #     # TODO support for multiple slice packages
-    #     match = re.match('\(\(\([^\)]*\)', self.val_str)
+    #     match = re.match(r'\(\(\([^\)]*\)', self.val_str)
     #     affine_str = self.val_str[match.start() + 3: match.end() - 1]
     #     orient, shift = affine_str.split(', ')
     #
@@ -799,7 +799,7 @@ class JCAMPDX(object):
             except:
                 raise InvalidJcampdxFile(path)
 
-        match = re.search('##{}[^\#\$]+|##\${}[^\#\$]+'.format(key,key), content)
+        match = re.search(r'##{}[^\#\$]+|##\${}[^\#\$]+'.format(key,key), content)
 
         if match == None:
             raise ParameterNotFound(key, path)
@@ -906,7 +906,7 @@ class JCAMPDX(object):
         line_wraps = re.split('\n', line)
         tail = line_wraps[-1]
 
-        tail_bits = re.split('\s', tail)
+        tail_bits = re.split(r'\s', tail)
 
         lines = 1
         tail = ''
