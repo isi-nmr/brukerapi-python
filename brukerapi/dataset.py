@@ -225,7 +225,12 @@ class Dataset:
             passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
 
         if 'property_files' in passed.keys():
-            passed['property_files'] = result['property_files'] + passed['property_files']
+            passed['property_files'] = passed['property_files']
+        else:
+            passed['property_files'] = result['property_files']
+
+        if 'property_files_append' in passed.keys():
+            passed['property_files'] = passed['property_files'] + passed['property_files_append']
 
         result.update(passed)
         self._state = result
