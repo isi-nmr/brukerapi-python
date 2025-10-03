@@ -7,7 +7,7 @@ setup(name='brukerapi',
       author_email='tomaspsorn@isibrno.cz',
       url='https://github.com/isi-nmr/brukerapi-python',
       download_url='https://github.com/isi-nmr/brukerapi-python/releases/latest',
-      packages=['brukerapi',],
+      packages=['brukerapi', 'brukerapi.config'],
       install_requires=['numpy','pyyaml'],
       entry_points={
             "console_scripts": [
