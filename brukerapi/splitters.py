@@ -136,7 +136,7 @@ class FrameGroupSplitter(Splitter):
         # number of samples in self.fg dimension
         fg_size = dataset.shape[fg_abs_index]
 
-        # If no index is specified, all elements of given dimension will be splited
+        # If no index is specified, all elements of given dimension will be split
         if select is None:
             select = list(range(0, fg_size))
 
@@ -266,9 +266,9 @@ class SlicePackageSplitter(Splitter):
         This functionality might be used for instance when converting data to a different data format.
 
         :param dataset: 2dseq dataset with multiple slice packages
-        :param write: if True, splitted data sets will we writen to drive
+        :param write: if True, split data sets will be written to drive
         :param path_out: a path to store data sets (optional)
-        :return: list of splitted data sets
+        :return: list of split data sets
         """
 
         try:
@@ -276,7 +276,7 @@ class SlicePackageSplitter(Splitter):
         except KeyError:
             print('Parameter VisuCoreSlicePacksSlices not found')
 
-        # list of splitted data sets
+        # list of split data sets
         datasets = []
 
         # range of frames of given slice package
@@ -303,7 +303,7 @@ class SlicePackageSplitter(Splitter):
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
 
-            # SPLIT parameteres
+            # SPLIT parameters
             dataset_.parameters = self._split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
 
             # construct properties from the new set of parameters
