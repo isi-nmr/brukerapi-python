@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master, dev, fix_tests_clean ]
+    branches: [ master, dev ]
   pull_request:
     branches: [ master ]
 
