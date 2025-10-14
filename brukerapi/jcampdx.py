@@ -455,8 +455,8 @@ class GenericParameter(Parameter):
 
     def _unwrap_list(self, val_str):
 
-        while re.search(r'@[0-9]*\*\(\d*\.?\d*\)', val_str):
-            match = re.search(r'@[0-9]*\*\(\d*\.?\d*\)', val_str)
+        while re.search(r'@[0-9]*\*\(-?\d*\.?\d*\)', val_str):
+            match = re.search(r'@[0-9]*\*\(-?\d*\.?\d*\)', val_str)
             left = val_str[0:match.start()]
             right = val_str[match.end():]
             sub = val_str[match.start():match.end()]
