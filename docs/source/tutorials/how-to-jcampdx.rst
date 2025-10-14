@@ -8,7 +8,7 @@ Simply by importing the JCAMPDX class we can read e.g. the method file.
 
    from brukerapi.jcampdx import JCAMPDX
 
-   parameters = JCAMPDX('method')
+   parameters = JCAMPDX('path_to_scan/method')
    
    TR = data.params["PVM_RepetitionTime"].value # This way
    TR = data.get_value("PVM_RepetitionTime") # Or this way
