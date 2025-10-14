@@ -630,9 +630,11 @@ class Schema2dseq(Schema):
     """
     def ra(self, slice_):
         """
-        Random access to the data matrix
-        :param slice_:
-        :return:
+        Random access to the data matrix.
+
+        :param tuple slice_: Slice object(s) to select data in each dimension.
+        :return: Selected subset of the data.
+        :rtype: np.ndarray
         """
 
         layouts, layouts_ra = self._get_ra_layouts(slice_)
