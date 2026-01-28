@@ -29,6 +29,20 @@ REQUIRED_PROPERTIES = {
         "shape_storage",
         "dim_type"
     ],
+    "fid_proc": [
+        "numpy_dtype",
+        "channels",
+        "block_size",
+        "acq_lenght",
+        "scheme_id",
+        "block_count",
+        "encoding_space",
+        "permute",
+        "k_space",
+        "encoded_dim",
+        "shape_storage",
+        "dim_type"
+    ],
     "2dseq": [
         "pv_version",
         "numpy_dtype",
