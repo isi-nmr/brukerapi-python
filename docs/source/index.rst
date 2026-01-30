@@ -16,6 +16,7 @@ Bruker API documentation.
    tutorials/how-to-study
    tutorials/how-to-2dseq
    tutorials/how-to-fid
+   tutorials/how-to-jcampdx
    tutorials/how-to-use-filter
    cli
 
@@ -25,6 +26,8 @@ Bruker API documentation.
 
    dataset
    folders
+   jcampdx
+   schemas
 
 .. toctree::
    :maxdepth: 2
@@ -32,6 +35,11 @@ Bruker API documentation.
 
    test_data
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Compatibility:
+
+   compatibility
 
 Indices and tables
 -------------------

@@ -51,6 +51,18 @@ Load an entire **study**:
     dataset.data                       # access data array
     dataset.VisuCoreSize               # get a value of a single parameter
 
+Load a parametric file:
+
+.. code-block:: python
+
+   from brukerapi.jcampdx import JCAMPDX
+
+   parameters = JCAMPDX('path_to_scan/method')
+   
+   TR = data.params["PVM_RepetitionTime"].value # This way
+   TR = data.get_value("PVM_RepetitionTime") # Or this way
+
+
 
 
 
