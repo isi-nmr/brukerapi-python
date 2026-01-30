@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brukerapi"
+version = "0.1.9"
+description = "Bruker API"
+authors = [
+    { name="Tomas Psorn", email="tomaspsorn@isibrno.cz" }
+]
+license = { text="MIT" }
+readme = "README.rst"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy<2; python_version<'3.9'",
+    "numpy>=1.26.0; python_version>='3.9'",
+    "pyyaml"
+]
+urls = { "Homepage" = "https://github.com/isi-nmr/brukerapi-python","Download" = "https://github.com/isi-nmr/brukerapi-python/releases/latest"}
+
+[project.scripts]
+bruker = "brukerapi.cli:main"
+
+[tool.setuptools]
+packages = ["brukerapi", "brukerapi.config"]
+include-package-data = true
+zip-safe = false
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "zenodo_get"
+]
