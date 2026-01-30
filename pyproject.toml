@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "brukerapi"
 version = "0.1.10"
 description = "Bruker API"
-authors = [{ name = "Tomas Psorn", email = "tomaspsorn@isibrno.cz" }]
+authors = [{ name = "Tomas Psorn", email = "tomaspsorn@isibrno.cz" },{ name = "Jiri Vitous", email = "vitous@isibrno.cz" }]
 license = { text = "MIT" }
 readme = "README.rst"
 requires-python = ">=3.8"
