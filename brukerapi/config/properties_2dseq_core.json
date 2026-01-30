@@ -151,6 +151,12 @@
       "conditions": []
     }
   ],
+  "reco_type": [
+    {
+    "cmd": "#VisuCoreFrameType",
+    "conditions": []
+    }
+  ],
   "dim_type": [
     {
       "cmd": "#VisuCoreDimDesc.list + ['spatial',] + #VisuFGOrderDesc.sub_list(1)",
