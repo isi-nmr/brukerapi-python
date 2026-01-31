@@ -441,17 +441,17 @@ class GenericParameter(Parameter):
         return lst
 
     def _unwrap_list(self, val_str):
-        while (match := _SINGLE_NUMBER_RE.search(val_str)) is not None:
-            left = val_str[: match.start()]
+        while re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str):
+            match = re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str)
+            left = val_str[0 : match.start()]
             right = val_str[match.end() :]
             sub = val_str[match.start() : match.end()]
-
-            size_str, value = sub.split("*", 1)
-            size = int(size_str[1:])
-
-            middle = " ".join(value[1:-1] for _ in range(size))
-
-            val_str = f"{left}{middle}{right}"
+            size, value = re.split(r"\*", sub)
+            size = int(size[1:])
+            middle = ""
+            for _ in range(size):
+                middle += f"{value[1:-1]} "
+            val_str = left + middle[0:-1] + right
 
         return val_str
 
