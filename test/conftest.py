@@ -102,7 +102,7 @@ def _find_2dseq_datasets(dataset_name: str):
     datasets = []
     for subfolder in dataset_root.iterdir():
         if subfolder.is_dir():
-            folder_obj = Folder(subfolder)
+            folder_obj = Folder(subfolder, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
             for ds in folder_obj.get_dataset_list_rec():
                 # Only include if a 2dseq file exists
                 if ds.type == "2dseq":
@@ -169,7 +169,7 @@ def pytest_generate_tests(metafunc):
             dataset_root = TEST_DATA_ROOT / dataset_name
             for subfolder in dataset_root.iterdir():
                 if subfolder.is_dir():
-                    folder_obj = Folder(subfolder)
+                    folder_obj = Folder(subfolder, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
                     for dataset in folder_obj.get_dataset_list_rec():
                         data_ids.append(f"{dataset_name}/{dataset.id}")
                         data_items.append((dataset.path, ref_state.get(dataset.id, {})))
@@ -185,7 +185,7 @@ def pytest_generate_tests(metafunc):
             dataset_root = TEST_DATA_ROOT / dataset_name
             for subfolder in dataset_root.iterdir():
                 if subfolder.is_dir():
-                    folder_obj = Folder(subfolder)
+                    folder_obj = Folder(subfolder, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
                     for dataset in _find_2dseq_datasets(dataset_name):
                         ra_ids.append(f"{dataset_name}/{dataset.id}")
                         ra_items.append((dataset.path, ref_state.get(dataset.id, {})))
