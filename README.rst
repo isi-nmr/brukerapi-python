@@ -11,9 +11,7 @@ brukerapi-python
     :target: https://bruker-api.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://codecov.io/gh/isi-nmr/brukerapi-python/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/isi-nmr/brukerapi-python
-   :alt: Test coverage
+
 A Python package providing I/O interface for Bruker data sets.
 
 tl;dr
@@ -212,6 +210,54 @@ Compatible pulse sequences for **fid** data sets:
 * ISIS.ppg
 * CPMG.ppg
 * RfProfile.ppg
+
+ParaVision v7.0.0
+"""""""""""""""""
+Compatible data set types:
+
+* **fid**
+* **2dseq**
+* **rawdata.job0**
+* **rawdata.Navigator**
+
+Compatible pulse sequences for **fid** data sets:
+
+* FLASH.ppg,
+* FLASHAngio.ppg
+* IgFLASH.ppg
+* MGE.ppg
+* MSME.ppg
+* RARE.ppg
+* FAIR_RARE.ppg
+* RAREVTR.ppg
+* RAREst.ppg
+* MDEFT.ppg
+* FISP.ppg
+* FLOWMAP.ppg
+* DtiStandard.ppg
+* EPI.ppg
+* FAIR_EPI.ppg
+* CASL_EPI.ppg
+* DtiEpi.ppg
+* T1_EPI.ppg
+* T2_EPI.ppg
+* T2S_EPI.ppg
+* SPIRAL.ppg
+* DtiSpiral.ppg
+* UTE.ppg
+* UTE3D.ppg
+* ZTE.ppg
+* CSI.ppg
+* FieldMap.ppg
+* SINGLEPULSE.ppg
+* NSPECT.ppg
+* EPSI.ppg
+* PRESS.ppg
+* STEAM.ppg
+* ISIS.ppg
+* CPMG.ppg
+* RfProfile.ppg
+
 
 ParaVision v360
 """""""""""""""
