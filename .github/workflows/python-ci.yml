@@ -71,9 +71,8 @@ jobs:
     - name: Cache Zenodo data
       uses: actions/cache@v3
       with:
-        path: brukerapi-python/test/zenodo_zips
+        path: test/zenodo_zips
         key: zenodo-4522220
 
     - name: Run all dataset tests
-      working-directory: brukerapi-python/test
-      run: python -m pytest . --test_suites="test_data" -v
+      run: python -m pytest test -v

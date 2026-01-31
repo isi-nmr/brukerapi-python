@@ -1,10 +1,12 @@
-import os
-import pytest
-from pathlib import Path
 import json
-from brukerapi.folders import Folder
 import subprocess
 import zipfile
+from pathlib import Path
+import sys
+import pytest
+import os
+from brukerapi.folders import Folder
+
 
 # -------------------------------
 # Pytest options
@@ -20,7 +22,7 @@ def pytest_addoption(parser):
 ZENODO_DOI = "10.5281/zenodo.4522220"
 
 ZENODO_FILES = {
-    "PV5.1": "0.2H2.zip",
+    "PV51": "0.2H2.zip",
     "PV601": "20200612_094625_lego_phantom_3_1_2.zip",
     "PV700": "20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip",
 }
@@ -29,6 +31,11 @@ TEST_DIR = Path(__file__).parent
 ZENODO_ZIP_DIR = TEST_DIR / "zenodo_zips"
 TEST_DATA_ROOT = TEST_DIR / "test_data"
 
+
+
+def pytest_sessionstart(session):
+    for dataset in ZENODO_FILES:
+        _ensure_test_data(dataset)
 
 
 # -------------------------------
@@ -40,12 +47,33 @@ def _resolve_requested_datasets(opt: str | None):
     return [opt]
 
 def _download_zenodo():
-    ZENODO_ZIP_DIR.mkdir(exist_ok=True)
-    subprocess.run(
-        ["python", "-m", "zenodo_get", ZENODO_DOI, "-o", str(ZENODO_ZIP_DIR)],
-        check=True
+    ZENODO_ZIP_DIR.mkdir(parents=True, exist_ok=True)
+
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "zenodo_get",
+            ZENODO_DOI,
+            "-o",
+            str(ZENODO_ZIP_DIR),
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,  # merge stderr into stdout
+        text=True,
+        bufsize=1,                 # line-buffered
     )
-    
+
+    for line in process.stdout:
+        print(line, end="")        # stream live
+
+    returncode = process.wait()
+    if returncode != 0:
+        pytest.exit(
+            f"Zenodo download failed with exit code {returncode}",
+            returncode=1,
+        )
+
 def _find_jcampdx_files(dataset_name: str):
     """
     Returns a list of tuples (dataset_folder, JCAMPDX_file_path)
@@ -60,7 +88,7 @@ def _find_jcampdx_files(dataset_name: str):
         if subfolder.is_dir():
             for f in subfolder.rglob("method"):  # find all method files recursively
                 files.append((subfolder, f))
-    return files    
+    return files
 
 def _find_2dseq_datasets(dataset_name: str):
     dataset_root = TEST_DATA_ROOT / dataset_name
@@ -88,30 +116,23 @@ def _ensure_test_data(dataset_name: str):
         )
 
     zip_path = ZENODO_ZIP_DIR / ZENODO_FILES[dataset_name]
-    if not zip_path.exists():
+
+    # Download if missing OR corrupted
+    if zip_path.exists():
+        try:
+            with zipfile.ZipFile(zip_path, "r") as zf:
+                bad_file = zf.testzip()
+            if bad_file is not None:
+                zip_path.unlink()   # corrupted → delete
+                raise zipfile.BadZipFile
+        except zipfile.BadZipFile:
+            _download_zenodo()
+    else:
         _download_zenodo()
 
-    dataset_dir.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+        zip_ref.extractall(dataset_dir)
 
-    # Extract and flatten top-level folder
-    with zipfile.ZipFile(zip_path) as zf:
-        top_level_dirs = set()
-        for member in zf.namelist():
-            parts = member.split("/")
-            if parts[0]:
-                top_level_dirs.add(parts[0])
-
-        if len(top_level_dirs) == 1:
-            top_folder = list(top_level_dirs)[0]
-            for member in zf.namelist():
-                flattened_member = "/".join(member.split("/")[1:])
-                if flattened_member:
-                    target_path = dataset_dir / flattened_member
-                    target_path.parent.mkdir(parents=True, exist_ok=True)
-                    with zf.open(member) as src, open(target_path, "wb") as dst:
-                        dst.write(src.read())
-        else:
-            zf.extractall(dataset_dir)
 # -------------------------------
 # Parametrization: one test per dataset
 # -------------------------------
@@ -130,7 +151,7 @@ def pytest_generate_tests(metafunc):
         jcamp_ids = []
         jcamp_data = []
         for dataset_name in requested:
-            _ensure_test_data(dataset_name)
+
             for folder, file_path in _find_jcampdx_files(dataset_name):
                 jcamp_ids.append(f"{dataset_name}/{folder.name}/{file_path.name}")
                 jcamp_data.append(
@@ -145,7 +166,7 @@ def pytest_generate_tests(metafunc):
         data_ids = []
         data_items = []
         for dataset_name in requested:
-            _ensure_test_data(dataset_name)
+
             dataset_root = TEST_DATA_ROOT / dataset_name
             for subfolder in dataset_root.iterdir():
                 if subfolder.is_dir():
@@ -162,7 +183,7 @@ def pytest_generate_tests(metafunc):
         ra_ids = []
         ra_items = []
         for dataset_name in requested:
-            _ensure_test_data(dataset_name)
+
             dataset_root = TEST_DATA_ROOT / dataset_name
             for subfolder in dataset_root.iterdir():
                 if subfolder.is_dir():
@@ -179,7 +200,6 @@ def pytest_generate_tests(metafunc):
         split_ids = []
         split_items = []
         for dataset_name in requested:
-            _ensure_test_data(dataset_name)
             for ds in _find_2dseq_datasets(dataset_name):
                 split_ids.append(f"{dataset_name}/{ds.id}")
                 split_items.append((ds.path, ref_state.get(ds.id, {})))
@@ -192,29 +212,29 @@ def pytest_generate_tests(metafunc):
 def WRITE_TOLERANCE():
     return 1.e6
 
-@pytest.fixture()
+@pytest.fixture
 def test_parameters(request):
     return request.param
 
-@pytest.fixture()
+@pytest.fixture
 def test_properties(request):
     try:
         return request.param
     except AttributeError:
         return None
 
-@pytest.fixture()
+@pytest.fixture
 def test_data(request):
     return request.param
 
-@pytest.fixture()
+@pytest.fixture
 def test_jcampdx_data(request):
     return request.param
 
-@pytest.fixture()
+@pytest.fixture
 def test_split_data(request):
     return request.param
 
-@pytest.fixture()
+@pytest.fixture
 def test_ra_data(request):
     return request.param
