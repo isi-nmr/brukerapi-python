@@ -55,6 +55,7 @@ class Folder:
         self._dataset_index = dataset_index
         self._set_dataset_state(dataset_state)
         self.children = self.make_tree(recursive=recursive)
+        self.make_children_map()  # build lookup map after children exist
 
     def validate(self):
         """Validate whether the given path exists an leads to a folder.
@@ -79,6 +80,10 @@ class Folder:
     def __str__(self) -> str:
         return str(self.path)
 
+    def make_children_map(self):
+        """Build a dictionary for fast name lookups."""
+        self._children_map = {child.path.name: child for child in self.children}
+
     def __getattr__(self, name: str):
         """Access individual files in folder. :obj:`.Dataset` and :obj:`.JCAMPDX` instances are not loaded, to access the
         data and parameters, to load the data, use context manager, or the `load()` function.
@@ -94,10 +99,17 @@ class Folder:
         :param name: Name of Dataset, JCAMPDX, or Folder
         :return:
         """
-        for child in self.children:
-            if child.path.name == name:
-                return child
-        raise KeyError
+        if hasattr(self, "_children_map"):
+            try:
+                return self._children_map[name]
+            except KeyError:
+                pass
+        else:
+            self.make_children_map()
+            if name in self._children_map:
+                return self._children_map[name]
+
+        raise KeyError(f"Child '{name}' not found in {self.path}")
 
     def __getitem__(self, name):
         """Access individual files in folder, dict style. :obj:`.Dataset` and :obj:`.JCAMPDX` instances are not loaded, to access the
@@ -187,71 +199,45 @@ class Folder:
         """List of :obj:`.Study` instances contained in folder and its sub-folders"""
         return TypeFilter(Study).list(self)
 
-    def make_tree(
-        self,
-        recursive: bool | None = None,  # noqa: FBT001
-    ) -> list:
-        """Make a directory tree containing brukerapi objects only
-
-        :param self:
-        :param recursive: explore all levels of hierarchy
-        :return:
-        """
-
-        if recursive is None:
-            recursive = True
-
+    def make_tree(self, *, recursive: bool = True) -> list:
+        """Build a folder tree with optimized traversal."""
         children = []
-        for file in self.path.iterdir():
-            path = file
+        entries = list(self.path.iterdir())
 
+        for path in entries:
             if path.is_dir() and recursive:
-                # try create Study
-                try:
+                if Study.contains(path, ["subject"]):
                     children.append(Study(path, parent=self, recursive=recursive, dataset_index=self._dataset_index, dataset_state=self._dataset_state))
                     continue
-                except NotStudyFolder:
-                    pass
-                # try create Experiment
-                try:
+                if Experiment.contains(path, ["acqp"]):
                     children.append(Experiment(path, parent=self, recursive=recursive, dataset_index=self._dataset_index, dataset_state=self._dataset_state))
                     continue
-                except NotExperimentFolder:
-                    pass
-                # try create Processing
-                try:
+                if Processing.contains(path, ["visu_pars"]):
                     children.append(Processing(path, parent=self, recursive=recursive, dataset_index=self._dataset_index, dataset_state=self._dataset_state))
                     continue
-                except NotProcessingFolder:
-                    pass
                 children.append(Folder(path, parent=self, recursive=recursive, dataset_index=self._dataset_index, dataset_state=self._dataset_state))
                 continue
-            try:
-                if path.name in self._dataset_index:
+
+            if path.name in self._dataset_index:
+                try:
                     children.append(Dataset(path, **self._dataset_state))
+                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
                     continue
-            except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
-                pass
+
             try:
                 children.append(JCAMPDX(path, load=False))
-                continue
             except (InvalidJcampdxFile, JcampdxVersionError):
-                pass
+                continue
+
         return children
 
     @staticmethod
-    def contains(path: str, required: list) -> bool:
-        """Checks whether folder specified by path contains files listed in required.
-
-        :param path: path to a folder
-        :param required: list of required files
-        :return:
-        """
-        for file in path.iterdir():
-            with contextlib.suppress(ValueError):
-                required.remove(file.name)
-
-        return not required
+    def contains(path: str | Path, required: list) -> bool:
+        """Checks whether folder specified by path contains all required files."""
+        path = Path(path)
+        required_set = set(required)
+        existing_files = {f.name for f in path.iterdir()}
+        return required_set.issubset(existing_files)
 
     def print(self, level=0, recursive=None):
         """Print structure of the :obj:`.Folder` instance.

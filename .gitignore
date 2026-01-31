@@ -145,3 +145,6 @@ test/test_data/**
 examples/tmp/
 examples/demo.py
 __*
+
+#Profiler
+*.prof
