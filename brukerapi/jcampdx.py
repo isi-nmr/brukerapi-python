@@ -19,13 +19,30 @@ GRAMMAR = {
     "SIZE_BRACKET": r"^\([^\(\)<>]*\)(?!$)",
     "LIST_DELIMETER": ", ",
     "EQUAL_SIGN": "=",
-    "SINGLE_NUMBER": r"-?[\d.]+(?:e[+-]?\d+)?",
+    "SINGLE_NUMBER": r"-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?",
     "PARALLEL_BRACKET": r"\) ",
     "GEO_OBJ": r"\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)",
     "HEADER": "TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER",
     "VERSION_TITLE": "JCAMPDX|JCAMP-DX",
 }
+
 MAX_LINE_LEN = 78
+
+# Precompile all regexes
+_COMPILED_GRAMMAR = {k: re.compile(v) if k not in ["LIST_DELIMETER", "EQUAL_SIGN"] else v for k, v in GRAMMAR.items()}
+
+# Example usage:
+_COMMENT_RE = _COMPILED_GRAMMAR["COMMENT_LINE"]
+_USER_DEFINED_RE = _COMPILED_GRAMMAR["USER_DEFINED"]
+_TRAILING_EOL_RE = _COMPILED_GRAMMAR["TRAILING_EOL"]
+_DATA_LABEL_RE = _COMPILED_GRAMMAR["DATA_LABEL"]
+_SIZE_BRACKET_RE = _COMPILED_GRAMMAR["SIZE_BRACKET"]
+_SINGLE_NUMBER_RE = _COMPILED_GRAMMAR["SINGLE_NUMBER"]
+_PARALLEL_BRACKET_RE = _COMPILED_GRAMMAR["PARALLEL_BRACKET"]
+_GEO_OBJ_RE = _COMPILED_GRAMMAR["GEO_OBJ"]
+_HEADER_RE = _COMPILED_GRAMMAR["HEADER"]
+_VERSION_TITLE_RE = _COMPILED_GRAMMAR["VERSION_TITLE"]
+_PARAMETER_RE = _COMPILED_GRAMMAR["PARAMETER"]
 
 
 class Parameter:
@@ -106,7 +123,7 @@ class Parameter:
 
     @property
     def key(self):
-        return re.sub("##", "", re.sub(r"\$", "", self.key_str)).rstrip()
+        return self.key_str.replace("##", "").replace("$", "").rstrip()
 
     @key.setter
     def key(self, key):
@@ -115,7 +132,7 @@ class Parameter:
 
     @property
     def user_defined(self):
-        return bool(re.search(GRAMMAR["USER_DEFINED"], self.key_str))
+        return bool(_USER_DEFINED_RE.search(self.key_str))
 
     @property
     def tuple(self):
@@ -186,7 +203,7 @@ class GenericParameter(Parameter):
 
     @property
     def value(self):
-        val_str = re.sub(r"\n", "", self.val_str)
+        val_str = self.val_str.replace("\n", "")
 
         # unwrap wrapped list
         if re.match(r"@[0-9]*\*", val_str) is not None:
@@ -296,7 +313,7 @@ class GenericParameter(Parameter):
     @classmethod
     def parse_value(cls, val_str, size_bracket=None):
         # remove \n
-        val_str = re.sub(r"\n", "", val_str)
+        val_str = val_str.replace("\n", "")
 
         # sharp string
         if val_str.startswith("<") and val_str.endswith(">"):
@@ -307,9 +324,12 @@ class GenericParameter(Parameter):
             return np.array(val_strs)
 
         # int/float
-        if len(re.findall(GRAMMAR["SINGLE_NUMBER"], val_str)) == 1:
+        if _SINGLE_NUMBER_RE.fullmatch(val_str):
             try:
-                value = ast.literal_eval(val_str)
+                try:
+                    value = int(val_str)
+                except ValueError:
+                    value = float(val_str)
 
                 # if value is int, or float, return, tuple will be parsed as list later on
                 if isinstance(value, (float, int)):
@@ -319,7 +339,7 @@ class GenericParameter(Parameter):
 
         # list
         if val_str.startswith("(") and val_str.endswith(""):
-            val_strs = re.split(GRAMMAR["LIST_DELIMETER"], val_str[1:-1])
+            val_strs = val_str[1:-1].split(", ")
             value = []
 
             for val_str in val_strs:
@@ -327,7 +347,7 @@ class GenericParameter(Parameter):
 
             return value
 
-        val_strs = re.split(" ", val_str)
+        val_strs = val_str.split(" ")
 
         if len(val_strs) > 1:
             # try casting into int, or float array, if both of casts fail, it should be string array
@@ -406,7 +426,7 @@ class GenericParameter(Parameter):
 
     @classmethod
     def split_parallel_lists(cls, val_str):
-        lst = re.split(GRAMMAR["PARALLEL_BRACKET"], val_str)
+        lst = _PARALLEL_BRACKET_RE.split(val_str)
 
         if len(lst) == 1:
             return lst[0]
@@ -422,17 +442,17 @@ class GenericParameter(Parameter):
         return lst
 
     def _unwrap_list(self, val_str):
-        while re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str):
-            match = re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str)
-            left = val_str[0 : match.start()]
+        while (match := _SINGLE_NUMBER_RE.search(val_str)) is not None:
+            left = val_str[: match.start()]
             right = val_str[match.end() :]
             sub = val_str[match.start() : match.end()]
-            size, value = re.split(r"\*", sub)
-            size = int(size[1:])
-            middle = ""
-            for _ in range(size):
-                middle += f"{value[1:-1]} "
-            val_str = left + middle[0:-1] + right
+
+            size_str, value = sub.split("*", 1)
+            size = int(size_str[1:])
+
+            middle = " ".join(value[1:-1] for _ in range(size))
+
+            val_str = f"{left}{middle}{right}"
 
         return val_str
 
@@ -497,7 +517,7 @@ class DataParameter(Parameter):
 
     @property
     def value(self):
-        val_list = re.split(GRAMMAR["DATA_DELIMETERS"], self.val_str)
+        val_list = self.val_str.replace("\n", ",").split(", ")
         data = [GenericParameter.parse_value(x) for x in val_list]
         return np.reshape(data, (2, -1))
 
@@ -789,13 +809,13 @@ class JCAMPDX:
                 raise JcampdxFileError(f"file {path} is not a text file") from e
 
         # remove all comments
-        content = re.sub(GRAMMAR["COMMENT_LINE"], "", content)
+        content = _COMMENT_RE.sub("", content)
 
         # split into individual entries
-        content = re.split(GRAMMAR["PARAMETER"], content)[1:-1]
+        content = _PARAMETER_RE.split(content)[1:-1]
 
         # strip trailing EOL
-        content = [re.sub(GRAMMAR["TRAILING_EOL"], "", x) for x in content]
+        content = [_TRAILING_EOL_RE.sub("", x) for x in content]
 
         # ASSUMPTION the jcampdx version string is in the second row
         try:
@@ -820,11 +840,12 @@ class JCAMPDX:
     @classmethod
     def handle_jcampdx_line(cls, line, version):
         key_str, size_str, val_str = cls.divide_jcampdx_line(line)
-        if re.search(GRAMMAR["GEO_OBJ"], line) is not None:
+
+        if _GEO_OBJ_RE.search(line) is not None:
             parameter = GeometryParameter(key_str, size_str, val_str, version)
-        elif re.search(GRAMMAR["DATA_LABEL"], line):
+        elif _DATA_LABEL_RE.search(line):
             parameter = DataParameter(key_str, size_str, val_str, version)
-        elif re.search(GRAMMAR["HEADER"], key_str):
+        elif _HEADER_RE.search(key_str):
             parameter = HeaderParameter(key_str, size_str, val_str, version)
         else:
             parameter = GenericParameter(key_str, size_str, val_str, version)
@@ -839,11 +860,12 @@ class JCAMPDX:
 
     @classmethod
     def split_key_value_pair(cls, line):
-        # ASSUMPTION the first occurrence of = in jcampdx line divides key and value pair
-        # example:
-        match = re.search(GRAMMAR["EQUAL_SIGN"], line)
-        key = line[0 : match.start()]
-        val_str = line[match.end() :].lstrip()
+        # Fast string split on first '='
+        idx = line.find("=")
+        if idx == -1:
+            raise ValueError(f"No '=' found in line: {line}")
+        key = line[:idx]
+        val_str = line[idx + 1 :].lstrip()
         return key, val_str
 
     @classmethod
@@ -858,14 +880,15 @@ class JCAMPDX:
         :return value: value string without bracket in case, size bracket is found, otherwise returns unmodified val_str
         :return size: size bracket str
         """
-        match = re.search(GRAMMAR["SIZE_BRACKET"], val_str)
-
-        if match is None:
-            return val_str, ""
-        size_bracket = val_str[match.start() : match.end()]
-        val_str = val_str[match.end() :].lstrip()
-
-        return val_str, size_bracket
+        val_str = val_str.lstrip()
+        if val_str.startswith("("):
+            # find the closing ')'
+            end_idx = val_str.find(")")
+            if end_idx != -1:
+                size_bracket = val_str[: end_idx + 1]  # include ')'
+                val_str = val_str[end_idx + 1 :].lstrip()
+                return val_str, size_bracket
+        return val_str, ""
 
     @classmethod
     def wrap_lines(cls, line):
