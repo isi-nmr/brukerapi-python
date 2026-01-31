@@ -65,7 +65,7 @@ jobs:
       run: |
         git clone https://github.com/isi-nmr/brukerapi-python.git
         cd brukerapi-python
-        pip install pytest zenodo_get
+        pip install pytest zenodo_get pytest-cov
         pip install -e .[dev] --use-pep517
 
     - name: Cache Zenodo data
@@ -75,4 +75,22 @@ jobs:
         key: zenodo-4522220
 
     - name: Run all dataset tests
-      run: python -m pytest test -v
+      run: |
+        python -m pytest test -v --cov=brukerapi --cov-branch --cov-report=xml --cov-report=term-missing --cov-report=html
+
+    - name: Upload coverage HTML
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: htmlcov/
+
+    - name: Print total coverage
+      run: |
+        echo "Total coverage:"
+        python - <<EOF
+        import xml.etree.ElementTree as ET
+        tree = ET.parse('coverage.xml')
+        root = tree.getroot()
+        line_rate = float(root.attrib['line-rate']) * 100
+        print(f"{line_rate:.2f}%")
+        EOF

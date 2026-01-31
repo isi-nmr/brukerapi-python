@@ -1,34 +1,15 @@
-from typing import Dict
-from .jcampdx import JCAMPDX
-from .exceptions import *
-import numpy as np
-import re
 from copy import deepcopy
 from pathlib import Path
-import json
 
+import numpy as np
 
-config_paths = {
-    'core': Path(__file__).parents[0]  / "config",
-    'custom': Path(__file__).parents[0]  / "config"
-}
+from .exceptions import ConditionNotMet, MissingProperty
+
+config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
-    "fid": [
-        "numpy_dtype",
-        "channels",
-        "block_size",
-        "acq_lenght",
-        "scheme_id",
-        "block_count",
-        "encoding_space",
-        "permute",
-        "k_space",
-        "encoded_dim",
-        "shape_storage",
-        "dim_type"
-    ],
+    "fid": ["numpy_dtype", "channels", "block_size", "acq_lenght", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
     "2dseq": [
         "pv_version",
         "numpy_dtype",
@@ -42,31 +23,17 @@ REQUIRED_PROPERTIES = {
         "num_slice_packages",
         "slope",
         "offset",
-        "dim_type"
+        "dim_type",
     ],
-    "rawdata": [
-        "numpy_dtype",
-        "job_desc",
-        "channels",
-        "shape_storage"
-    ],
-    "traj": [
-        "numpy_dtype",
-        "scheme_id",
-        "traj_type",
-        "shape_storage",
-        "permute",
-        "final"
-    ]
+    "rawdata": ["numpy_dtype", "job_desc", "channels", "shape_storage"],
+    "traj": ["numpy_dtype", "scheme_id", "traj_type", "shape_storage", "permute", "final"],
 }
 
 
-class Schema():
-    """Base class for all schemes
+class Schema:
+    """Base class for all schemes"""
 
-    """
     def __init__(self, dataset):
-
         # chceck if dataset contains all the required properties
         for property in REQUIRED_PROPERTIES[dataset.type]:
             if not hasattr(dataset, property):
@@ -86,38 +53,33 @@ class Schema():
 
     def value_filter(self, value):
         if isinstance(value, str):
-            if value=='Yes':
+            if value == "Yes":
                 return True
-            elif value == 'No':
+            if value == "No":
                 return False
-            else:
-                return value
-        else:
             return value
+        return value
 
     def validate_conditions(self):
-        for condition in self._meta['conditions']:
+        for condition in self._meta["conditions"]:
             # substitute parameters in expression string
             for sub_params in self._sub_params:
-                condition = condition.replace(sub_params,
-                                            "self._sub_params[\'%s\']" %
-                                   sub_params)
-            if not eval(condition):
-                raise ConditionNotMet(condition)
+                condition_f = condition.replace(sub_params, f"self._sub_params['{sub_params}']")
+            if not eval(condition_f):
+                raise ConditionNotMet(condition_f)
 
     def _get_ra_k_space_info(self, layouts, slice_full):
-
         k_space = []
         k_space_offset = []
 
-        for slc_, size_ in zip(slice_full, layouts['k_space']):
+        for slc_, size_ in zip(slice_full, layouts["k_space"]):
             if isinstance(slc_, slice):
                 start = slc_.start if slc_.start else 0
                 stop = slc_.stop if slc_.stop else size_
             elif isinstance(slc_, int):
                 start = slc_
                 stop = slc_ + 1
-            k_space.append(stop-start)
+            k_space.append(stop - start)
             k_space_offset.append(start)
         return tuple(k_space), np.array(k_space_offset)
 
@@ -138,22 +100,21 @@ class SchemaFid(Schema):
         :return: layouts: dict
         """
 
-        layouts = {'storage': (self._dataset.block_size,) + (self._dataset.block_count,)}
-        layouts['encoding_space'] = self._dataset.encoding_space
-        layouts['permute'] = self._dataset.permute
-        layouts['encoding_permuted'] = tuple(np.array(layouts['encoding_space'])[np.array(layouts['permute'])])
-        layouts['inverse_permute'] = self.permutation_inverse(layouts['permute'])
-        layouts['k_space'] = self._dataset.k_space
+        layouts = {"storage": (self._dataset.block_size,) + (self._dataset.block_count,)}
+        layouts["encoding_space"] = self._dataset.encoding_space
+        layouts["permute"] = self._dataset.permute
+        layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
+        layouts["inverse_permute"] = self.permutation_inverse(layouts["permute"])
+        layouts["k_space"] = self._dataset.k_space
 
         if "EPI" in self._dataset.scheme_id:
-            layouts['acquisition_position'] = (self._dataset.block_size - self._dataset.acq_lenght, self._dataset.acq_lenght)
+            layouts["acquisition_position"] = (self._dataset.block_size - self._dataset.acq_lenght, self._dataset.acq_lenght)
         else:
-            layouts['acquisition_position'] = (0, self._dataset.acq_lenght)
+            layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
 
         return layouts
 
     def deserialize(self, data, layouts):
-
         data = self._acquisition_trim(data, layouts)
 
         data = data[0::2, ...] + 1j * data[1::2, ...]
@@ -168,44 +129,41 @@ class SchemaFid(Schema):
         data = self._permute_to_kspace(data, layouts)
 
         # Typically for RARE, or EPI
-        data = self._reorder_fid_lines(data, dir='FW')
+        data = self._reorder_fid_lines(data, dir="FW")
 
-        if 'EPI' in self._dataset.scheme_id:
+        if "EPI" in self._dataset.scheme_id:
             data = self._mirror_odd_lines(data)
 
         return data
 
     def _acquisition_trim(self, data, layouts):
+        acquisition_offset = layouts["acquisition_position"][0]
+        acquisition_length = layouts["acquisition_position"][1]
+        block_length = self.layouts["storage"][0]
 
-        acquisition_offset =  layouts['acquisition_position'][0]
-        acquisition_length = layouts['acquisition_position'][1]
-        block_length = self.layouts['storage'][0]
-
-        if acquisition_offset>0:
+        if acquisition_offset > 0:
             # trim on channel level acquisition
-            blocks = layouts['storage'][-1]
+            blocks = layouts["storage"][-1]
             channels = self._dataset.channels
-            acquisition_offset=acquisition_offset//channels
+            acquisition_offset = acquisition_offset // channels
             acquisition_length = acquisition_length // channels
-            data = np.reshape(data, (-1, channels, blocks), order='F')
-            return np.reshape(data[acquisition_offset:acquisition_offset+acquisition_length,:,:],(acquisition_length * channels, blocks), order='F')
-        else:
-            # trim on acq level
-            if acquisition_length != block_length:
-                return data[0:acquisition_length,:]
-            else:
-                return data
+            data = np.reshape(data, (-1, channels, blocks), order="F")
+            return np.reshape(data[acquisition_offset : acquisition_offset + acquisition_length, :, :], (acquisition_length * channels, blocks), order="F")
+        # trim on acq level
+        if acquisition_length != block_length:
+            return data[0:acquisition_length, :]
+        return data
 
     def _acquisitions_to_encode(self, data, layouts):
-        return np.reshape(data, layouts['encoding_space'], order='F')
+        return np.reshape(data, layouts["encoding_space"], order="F")
 
     def _encode_to_permute(self, data, layouts):
-        return np.transpose(data, layouts['permute'])
+        return np.transpose(data, layouts["permute"])
 
     def _permute_to_kspace(self, data, layouts):
-        return np.reshape(data, layouts['k_space'], order='F')
+        return np.reshape(data, layouts["k_space"], order="F")
 
-    def _reorder_fid_lines(self,data, dir='FW'):
+    def _reorder_fid_lines(self, data, dir="FW"):
         """
         Function to sort phase encoding lines using PVM_EncSteps1
         :param data ndarray in k-space layout:
@@ -215,27 +173,26 @@ class SchemaFid(Schema):
 
         # Create local copies of variables
         try:
-            PVM_EncSteps1 = self._dataset['PVM_EncSteps1'].value
+            PVM_EncSteps1 = self._dataset["PVM_EncSteps1"].value
         except KeyError:
             return data
 
         # Order encoding steps for sorting
         PVM_EncSteps1_sorted = np.argsort(PVM_EncSteps1)
 
-        if dir == 'BW':
+        if dir == "BW":
             PVM_EncSteps1_sorted = self.permutation_inverse(PVM_EncSteps1_sorted)
 
-
-        if np.array_equal(PVM_EncSteps1_sorted,PVM_EncSteps1):
+        if np.array_equal(PVM_EncSteps1_sorted, PVM_EncSteps1):
             return data
 
         for index in np.ndindex(data.shape[2:]):
-            index = list(index)
-            index.insert(0,slice(0,data.shape[1]))
-            index.insert(0,slice(0, data.shape[0]))
-            index = tuple(index)
-            tmp = data[index]
-            data[index] = tmp[:,PVM_EncSteps1_sorted]
+            index_f = list(index)
+            index_f.insert(0, slice(0, data.shape[1]))
+            index_f.insert(0, slice(0, data.shape[0]))
+            index_f = tuple(index_f)
+            tmp = data[index_f]
+            data[index_f] = tmp[:, PVM_EncSteps1_sorted]
 
         return data
 
@@ -245,84 +202,80 @@ class SchemaFid(Schema):
 
         for index in np.ndindex(data.shape[2:]):
             index_odd = list(index)
-            index_odd.insert(0,slice(1,data.shape[1],2))
-            index_odd.insert(0,slice(0, data.shape[0]))
+            index_odd.insert(0, slice(1, data.shape[1], 2))
+            index_odd.insert(0, slice(0, data.shape[0]))
             index_odd = tuple(index_odd)
             tmp = data[index_odd]
-            data[index_odd] = tmp[::-1,:]
+            data[index_odd] = tmp[::-1, :]
         return data
 
     def serialize(self, data, layouts):
-
-        if 'EPI' in self._dataset.scheme_id:
+        if "EPI" in self._dataset.scheme_id:
             data = self._mirror_odd_lines(data)
 
-        data = self._reorder_fid_lines(data, dir='BW')
+        data = self._reorder_fid_lines(data, dir="BW")
 
-        data = np.reshape(data, layouts['encoding_permuted'], order='F')
+        data = np.reshape(data, layouts["encoding_permuted"], order="F")
 
-        data = np.transpose(data, layouts['inverse_permute'])
+        data = np.transpose(data, layouts["inverse_permute"])
 
-        data = np.reshape(data, (layouts['acquisition_position'][1]//2, layouts['storage'][1]), order='F')
+        data = np.reshape(data, (layouts["acquisition_position"][1] // 2, layouts["storage"][1]), order="F")
 
-        data_ = np.zeros(layouts['storage'], dtype=self._dataset.numpy_dtype, order='F')
+        data_ = np.zeros(layouts["storage"], dtype=self._dataset.numpy_dtype, order="F")
 
-        if layouts['acquisition_position'][0]>0:
-            channels = layouts['k_space'][self._dataset.dim_type.index('channel')]
-            data = np.reshape(data, (-1,channels, data.shape[-1]),order='F')
-            data_ = np.reshape(data_, (-1,channels, data_.shape[-1]),order='F')
-            data_[layouts['acquisition_position'][0]//channels::2,:,:] = data.real
-            data_[layouts['acquisition_position'][0]//channels+1::2,:,:] = data.imag
-            data = np.reshape(data, (-1, data.shape[-1]),order='F')
-            data_ = np.reshape(data_, (-1, data_.shape[-1]),order='F')
-        elif layouts['acquisition_position'][1] != layouts['storage'][0]:
-            data_[0:layouts['acquisition_position'][1]:2,:] = data.real
-            data_[1:layouts['acquisition_position'][1]+1:2,:] = data.imag
+        if layouts["acquisition_position"][0] > 0:
+            channels = layouts["k_space"][self._dataset.dim_type.index("channel")]
+            data = np.reshape(data, (-1, channels, data.shape[-1]), order="F")
+            data_ = np.reshape(data_, (-1, channels, data_.shape[-1]), order="F")
+            data_[layouts["acquisition_position"][0] // channels :: 2, :, :] = data.real
+            data_[layouts["acquisition_position"][0] // channels + 1 :: 2, :, :] = data.imag
+            data = np.reshape(data, (-1, data.shape[-1]), order="F")
+            data_ = np.reshape(data_, (-1, data_.shape[-1]), order="F")
+        elif layouts["acquisition_position"][1] != layouts["storage"][0]:
+            data_[0 : layouts["acquisition_position"][1] : 2, :] = data.real
+            data_[1 : layouts["acquisition_position"][1] + 1 : 2, :] = data.imag
         else:
-            data_[0::2,:] = data.real
-            data_[1::2,:] = data.imag
+            data_[0::2, :] = data.real
+            data_[1::2, :] = data.imag
 
         return data_
 
     def ra(self, slice_):
-
         layouts, layouts_ra = self.get_ra_layouts(slice_)
 
         """
         random access
         """
-        array_ra =  np.zeros(layouts_ra['storage'], dtype=self.numpy_dtype)
-        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode='r',
-                       shape=layouts['storage'], order='F')
+        array_ra = np.zeros(layouts_ra["storage"], dtype=self.numpy_dtype)
+        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode="r", shape=layouts["storage"], order="F")
 
-        for index_ra in np.ndindex(layouts_ra['k_space'][1:]):
+        for index_ra in np.ndindex(layouts_ra["k_space"][1:]):
             # index of line in the original k_space
-            index_full = tuple(i + o for i, o  in zip(index_ra, layouts_ra['k_space_offset'][1:]))
-
+            index_full = tuple(i + o for i, o in zip(index_ra, layouts_ra["k_space_offset"][1:]))
+            index_ra_f = index_ra
             # index of line in the subarray
             # index_full = self.index_to_data(layouts, (0,) + index_full)
             try:
                 index_full = self.index_to_data(layouts, (0,) + index_full)
-            except:
+            except IndexError:
                 print(index_full)
                 index_full = self.index_to_data(layouts, (0,) + index_full)
 
             # index of line in the subarray
             # index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
             try:
-                index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
-            except:
+                index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
+            except IndexError:
                 print(index_ra)
-                index_ra = self.index_to_data(layouts_ra, (0,) + index_ra)
-
+                index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
 
             try:
-                array_ra[index_ra] = np.array(fp[index_full])
-            except:
+                array_ra[index_ra_f] = np.array(fp[index_full])
+            except IndexError:
                 print(index_full)
 
-        layouts_ra['k_space'] = (layouts_ra['k_space'][0]//2,)+layouts_ra['k_space'][1:]
-        layouts_ra['encoding_space'] = (layouts_ra['encoding_space'][0]//2,)+layouts_ra['encoding_space'][1:]
+        layouts_ra["k_space"] = (layouts_ra["k_space"][0] // 2,) + layouts_ra["k_space"][1:]
+        layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // 2,) + layouts_ra["encoding_space"][1:]
 
         array_ra = self.reshape_fw(array_ra, layouts_ra)
 
@@ -332,28 +285,26 @@ class SchemaFid(Schema):
 
     def get_ra_layouts(self, slice_):
         layouts = deepcopy(self.layouts)
-        layouts['k_space'] = (layouts['k_space'][0]*2,)+layouts['k_space'][1:]
-        layouts['encoding_space'] = (layouts['encoding_space'][0]*2,)+layouts['encoding_space'][1:]
-        layouts['inverse_permute'] = tuple(self.permutation_inverse(layouts['permute']))
-        layouts['encoding_permute'] = tuple(layouts['encoding_space'][i] for i in layouts['permute'])
-        layouts['channel_index'] = self.dim_type.index('channel')
-        layouts['channels'] = layouts['k_space'][layouts['channel_index']]
-        layouts['acquisition_position_ch'] = (layouts['acquisition_position'][0]//layouts['channels'],
-                                                      layouts['acquisition_position'][1]//layouts['channels'])
-        layouts['storage_clear'] = (layouts['acquisition_position'][1], layouts['storage'][1])
-        layouts['storage_clear_ch'] = (layouts['storage_clear'][0]//layouts['channels'], layouts['channels'],
-                                  layouts['storage'][1])
-        layouts['storage_ch'] = (layouts['storage'][0]//layouts['channels'], layouts['channels'], layouts['storage'][1])
+        layouts["k_space"] = (layouts["k_space"][0] * 2,) + layouts["k_space"][1:]
+        layouts["encoding_space"] = (layouts["encoding_space"][0] * 2,) + layouts["encoding_space"][1:]
+        layouts["inverse_permute"] = tuple(self.permutation_inverse(layouts["permute"]))
+        layouts["encoding_permute"] = tuple(layouts["encoding_space"][i] for i in layouts["permute"])
+        layouts["channel_index"] = self.dim_type.index("channel")
+        layouts["channels"] = layouts["k_space"][layouts["channel_index"]]
+        layouts["acquisition_position_ch"] = (layouts["acquisition_position"][0] // layouts["channels"], layouts["acquisition_position"][1] // layouts["channels"])
+        layouts["storage_clear"] = (layouts["acquisition_position"][1], layouts["storage"][1])
+        layouts["storage_clear_ch"] = (layouts["storage_clear"][0] // layouts["channels"], layouts["channels"], layouts["storage"][1])
+        layouts["storage_ch"] = (layouts["storage"][0] // layouts["channels"], layouts["channels"], layouts["storage"][1])
 
         layouts_ra = deepcopy(layouts)
 
-        layouts_ra['k_space'], layouts_ra['k_space_offset'] = self._get_ra_k_space_info(layouts, slice_)
-        layouts_ra['channels'] = layouts_ra['k_space'][layouts_ra['channel_index']]
-        layouts_ra['acquisition_position'] = (0,self.get_acquisition_length(channels=layouts_ra['channels'])) # delete offset
+        layouts_ra["k_space"], layouts_ra["k_space_offset"] = self._get_ra_k_space_info(layouts, slice_)
+        layouts_ra["channels"] = layouts_ra["k_space"][layouts_ra["channel_index"]]
+        layouts_ra["acquisition_position"] = (0, self.get_acquisition_length(channels=layouts_ra["channels"]))  # delete offset
         # delete offset
 
-        layouts_ra['encoding_space'], layouts_ra['storage'] = self._get_e_ra(layouts, layouts_ra)
-        layouts_ra['encoding_permute'] = tuple(layouts_ra['encoding_space'][i] for i in layouts['permute'])
+        layouts_ra["encoding_space"], layouts_ra["storage"] = self._get_e_ra(layouts, layouts_ra)
+        layouts_ra["encoding_permute"] = tuple(layouts_ra["encoding_space"][i] for i in layouts["permute"])
 
         return layouts, layouts_ra
 
@@ -364,54 +315,49 @@ class SchemaFid(Schema):
 
     def encode_extrema_update(self, min_enc_index, max_enc_index, enc_index):
         for i in range(len(min_enc_index)):
-            if enc_index[i] < min_enc_index[i]:
-                min_enc_index[i] = enc_index[i]
-            if enc_index[i] > max_enc_index[i]:
-                max_enc_index[i] = enc_index[i]
+            min_enc_index[i] = min(min_enc_index[i], enc_index[i])
+            max_enc_index[i] = max(max_enc_index[i], enc_index[i])
 
     def index_to_data(self, layout, index):
-
         # kspace to linear
-        channel = index[layout['channel_index']]+1
-        index = np.ravel_multi_index(index, layout['k_space'], order='F')
+        index = np.ravel_multi_index(index, layout["k_space"], order="F")
 
         # linear to encoding permuted
-        index = np.unravel_index(index, layout['encoding_permute'], order='F')
-        #permute
-        index = tuple(index[i] for i in layout['inverse_permute'])
+        index = np.unravel_index(index, layout["encoding_permute"], order="F")
+        # permute
+        index = tuple(index[i] for i in layout["inverse_permute"])
         # encoding space to linear
-        index = np.ravel_multi_index(index, layout['encoding_space'], order='F')
-        if layout['acquisition_position'][0]>0:
-            index = np.unravel_index(index, layout['storage_clear_ch'], order='F')
-            index = (index[0] + layout['acquisition_position_ch'][0],)+index[1:]
-            index = np.ravel_multi_index(index, layout['storage_ch'], order='F')
-        elif layout['acquisition_position'][1] != layout['storage'][0]:
-            index = np.unravel_index(index, layout['storage_clear'], order='F')
-            index = np.ravel_multi_index(index, layout['storage'], order='F')
+        index = np.ravel_multi_index(index, layout["encoding_space"], order="F")
+        if layout["acquisition_position"][0] > 0:
+            index = np.unravel_index(index, layout["storage_clear_ch"], order="F")
+            index = (index[0] + layout["acquisition_position_ch"][0],) + index[1:]
+            index = np.ravel_multi_index(index, layout["storage_ch"], order="F")
+        elif layout["acquisition_position"][1] != layout["storage"][0]:
+            index = np.unravel_index(index, layout["storage_clear"], order="F")
+            index = np.ravel_multi_index(index, layout["storage"], order="F")
 
-        index = np.unravel_index(index, layout['storage'], order='F')
+        index = np.unravel_index(index, layout["storage"], order="F")
 
-        index = (slice(index[0], index[0]+layout['k_space'][0]),index[1])
+        index = (slice(index[0], index[0] + layout["k_space"][0]), index[1])
 
         return index
 
     def _get_e_ra(self, layout_full, layout_ra):
-        min_enc_index, max_enc_index = self._extrema_init(layout_full['encoding_space'][1:])
+        min_enc_index, max_enc_index = self._extrema_init(layout_full["encoding_space"][1:])
         storage_ra = []
-        for index_ra in np.ndindex(layout_ra['k_space'][1:]):
-            index_full = (0,)+tuple(i + o for i, o in zip(index_ra, layout_ra['k_space_offset'][1:]))
-            channel = index_full[layout_full['channel_index']]+1
+        for index_ra in np.ndindex(layout_ra["k_space"][1:]):
+            index_full = (0,) + tuple(i + o for i, o in zip(index_ra, layout_ra["k_space_offset"][1:]))
 
             """
             index_k_to_encode
             """
 
-            index_full = np.ravel_multi_index(index_full, layout_full['k_space'], order='F')
+            index_full = np.ravel_multi_index(index_full, layout_full["k_space"], order="F")
 
             # linear to encoding permuted
-            index_full = np.unravel_index(index_full, layout_full['encoding_permute'], order='F')
+            index_full = np.unravel_index(index_full, layout_full["encoding_permute"], order="F")
             # permute
-            index_full = tuple(index_full[i] for i in layout_full['inverse_permute'])
+            index_full = tuple(index_full[i] for i in layout_full["inverse_permute"])
 
             """
             Update encoding space extrema
@@ -421,107 +367,103 @@ class SchemaFid(Schema):
             """
             index_encode_to_data
             """
-            index_full = np.ravel_multi_index(index_full, layout_full['encoding_space'], order='F')
-            index_full = np.unravel_index(index_full, layout_full['storage_clear'], order='F')
-            if not index_full[1] in storage_ra:
+            index_full = np.ravel_multi_index(index_full, layout_full["encoding_space"], order="F")
+            index_full = np.unravel_index(index_full, layout_full["storage_clear"], order="F")
+            if index_full[1] not in storage_ra:
                 storage_ra.append(index_full[1])
 
         encoding_space_ra = max_enc_index - min_enc_index + 1
-        encoding_space_ra = (layout_full['encoding_space'][0],) + tuple(encoding_space_ra)
+        encoding_space_ra = (layout_full["encoding_space"][0],) + tuple(encoding_space_ra)
 
-        storage_ra = (self.get_acquisition_length(channels=layout_ra['channels']), len(storage_ra))
+        storage_ra = (self.get_acquisition_length(channels=layout_ra["channels"]), len(storage_ra))
 
         return encoding_space_ra, storage_ra
 
     def index_k_to_encode(self, layout, index):
-        index = np.ravel_multi_index(index, layout['k_space'], order='F')
+        index = np.ravel_multi_index(index, layout["k_space"], order="F")
         # linear to encoding permuted
-        index = np.unravel_index(index, layout['encoding_permute'], order='F')
-        #permute
-        index = tuple(index[i] for i in layout['inverse_permute'])
+        index = np.unravel_index(index, layout["encoding_permute"], order="F")
+        # permute
+        index = tuple(index[i] for i in layout["inverse_permute"])
         return index
 
     def index_encode_to_data(self, layout, index):
-        channel = index[layout['channel_index']]+1
+        channel = index[layout["channel_index"]] + 1
 
-        index = np.ravel_multi_index(index, layout['encoding_space'], order='F')
-        index = np.unravel_index(index, layout['storage'], order='F')
+        index = np.ravel_multi_index(index, layout["encoding_space"], order="F")
+        index = np.unravel_index(index, layout["storage"], order="F")
 
-        if layout['acquisition_position'][0]>0:
-            first = index[0] + (layout['acquisition_position'][0]// layout['channels']) * channel
+        if layout["acquisition_position"][0] > 0:
+            first = index[0] + (layout["acquisition_position"][0] // layout["channels"]) * channel
         else:
             first = index[0]
-        index = (slice(first,first+layout['k_space'][0]),index[1])
+        index = (slice(first, first + layout["k_space"][0]), index[1])
         return index
 
 
 class SchemaTraj(Schema):
-
     @property
     def layouts(self):
-
         layouts = {}
 
-        layouts['storage'] = self._dataset.shape_storage
-        layouts['final'] = self._dataset.final
-        layouts['permute'] = self._dataset.permute
+        layouts["storage"] = self._dataset.shape_storage
+        layouts["final"] = self._dataset.final
+        layouts["permute"] = self._dataset.permute
 
         return layouts
 
     def deserialize(self, data, layouts):
-        data = np.transpose(data, layouts['permute'])
-        return np.reshape(data, layouts['final'], order='F')
+        data = np.transpose(data, layouts["permute"])
+        return np.reshape(data, layouts["final"], order="F")
 
     def serialize(self, data, layouts):
-        data = np.transpose(data, layouts['traj_permute'])
-        return np.reshape(data, layouts['traj'], order='F')
+        data = np.transpose(data, layouts["traj_permute"])
+        return np.reshape(data, layouts["traj"], order="F")
 
 
 class SchemaRawdata(Schema):
-
     @property
     def layouts(self):
-        layouts={}
-        layouts['raw']=(int(self._dataset.job_desc[0]/2), self._dataset.channels , int(self._dataset.job_desc[3]))
-        layouts['shape_storage'] = (2, int(self._dataset.job_desc[0]/2), self._dataset.channels , int(self._dataset.job_desc[
-                                                                                                  3]))
-        layouts['final'] = layouts['raw']
+        layouts = {}
+        layouts["raw"] = (int(self._dataset.job_desc[0] / 2), self._dataset.channels, int(self._dataset.job_desc[3]))
+        layouts["shape_storage"] = (2, int(self._dataset.job_desc[0] / 2), self._dataset.channels, int(self._dataset.job_desc[3]))
+        layouts["final"] = layouts["raw"]
         return layouts
 
     def deserialize(self, data, layouts):
-        return data[0::2,...] + 1j * data[1::2,...]
+        return data[0::2, ...] + 1j * data[1::2, ...]
 
     def serialize(self, data, layouts):
-        data_ = np.zeros(layouts['shape_storage'], dtype=self.numpy_dtype, order='F')
-        data_[0,...] = data.real
+        data_ = np.zeros(layouts["shape_storage"], dtype=self.numpy_dtype, order="F")
+        data_[0, ...] = data.real
         data_[1, ...] = data.imag
         return data_
+
 
 # Compatibility alias for previous misspelling:
 SchemaRawdata.seralize = SchemaRawdata.serialize
 
 
 class SchemaSer(Schema):
-
     @property
     def layouts(self):
         if self._layouts is not None:
             return self._layouts
 
-        PVM_SpecMatrix = self._dataset.get_value('PVM_SpecMatrix')
-        PVM_Matrix = self._dataset.get_value('PVM_Matrix')
-        PVM_EncNReceivers = self._dataset.get_value('PVM_EncNReceivers')
-        layouts={}
-        layouts['raw']=(PVM_SpecMatrix,PVM_EncNReceivers , PVM_Matrix[0], PVM_Matrix[1])
+        PVM_SpecMatrix = self._dataset.get_value("PVM_SpecMatrix")
+        PVM_Matrix = self._dataset.get_value("PVM_Matrix")
+        PVM_EncNReceivers = self._dataset.get_value("PVM_EncNReceivers")
+        layouts = {}
+        layouts["raw"] = (PVM_SpecMatrix, PVM_EncNReceivers, PVM_Matrix[0], PVM_Matrix[1])
         return layouts
 
     def deserialize(self, data):
         data = data[0::2] + 1j * data[1::2]
-        data = np.reshape(data, self.layouts['raw'], order='F')
+        data = np.reshape(data, self.layouts["raw"], order="F")
         return data
 
     def serialize(self, data):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class Schema2dseq(Schema):
@@ -537,29 +479,28 @@ class Schema2dseq(Schema):
     @property
     def layouts(self):
         return {
-            "shape_fg" : self._dataset.shape_fg,
-            "shape_frames" : self._dataset.shape_frames,
-            "shape_block" : self._dataset.shape_block,
-            "shape_storage" : self._dataset.shape_storage,
-            "shape_final": self._dataset.shape_final
+            "shape_fg": self._dataset.shape_fg,
+            "shape_frames": self._dataset.shape_frames,
+            "shape_block": self._dataset.shape_block,
+            "shape_storage": self._dataset.shape_storage,
+            "shape_final": self._dataset.shape_final,
         }
 
     def get_rel_fg_index(self, fg_type):
         try:
             return self.fg_list.index(fg_type)
-        except:
-            raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
+        except MissingProperty:
+            raise KeyError(f"Framegroup {fg_type} not found in fg_list") from MissingProperty
 
     def scale(self):
-        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order='F')
-        self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, 'FW')
-        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order='F')
+        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
+        self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, "FW")
+        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order="F")
 
     def deserialize(self, data, layouts):
-
         # scale
-        if self._dataset._state['scale']:
-            data = self._scale_frames(data, layouts, 'FW')
+        if self._dataset._state["scale"]:
+            data = self._scale_frames(data, layouts, "FW")
 
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
@@ -576,24 +517,24 @@ class Schema2dseq(Schema):
         """
 
         # dataset is created with scale state set to False
-        if self._dataset._state['scale'] is False:
+        if self._dataset._state["scale"] is False:
             return data
 
         # get a float copy of the data array
         data = data.astype(float)
 
-        slope = self._dataset.slope if not 'mask' in layouts.keys() else self._dataset.slope[layouts['mask'].flatten(order='F')]
-        offset = self._dataset.offset if not 'mask' in layouts.keys() else self._dataset.offset[layouts['mask'].flatten(order='F')]
+        slope = self._dataset.slope if "mask" not in layouts else self._dataset.slope[layouts["mask"].flatten(order="F")]
+        offset = self._dataset.offset if "mask" not in layouts else self._dataset.offset[layouts["mask"].flatten(order="F")]
 
         for frame in range(data.shape[-1]):
-            if dir == 'FW':
+            if dir == "FW":
                 data[..., frame] *= float(slope[frame])
                 data[..., frame] += float(offset[frame])
-            elif dir == 'BW':
+            elif dir == "BW":
                 data[..., frame] /= float(slope[frame])
                 data[..., frame] -= float(offset[frame])
 
-        if dir == 'BW':
+        if dir == "BW":
             data = np.round(data)
 
         return data
@@ -607,27 +548,26 @@ class Schema2dseq(Schema):
         :return:
         """
         if mask:
-            return np.reshape(data, (-1,) + layouts['shape_fg'], order='F')
-        else:
-            return np.reshape(data, layouts['shape_final'], order='F')
+            return np.reshape(data, (-1,) + layouts["shape_fg"], order="F")
+        return np.reshape(data, layouts["shape_final"], order="F")
 
     def serialize(self, data, layout):
         data = self._framegroups_to_frames(data, layout)
-        data = self._scale_frames(data, layout, 'BW')
+        data = self._scale_frames(data, layout, "BW")
         return data
 
     def _frames_to_vector(self, data):
-        return data.flatten(order='F')
+        return data.flatten(order="F")
 
     def _framegroups_to_frames(self, data, layouts):
-        if layouts.get('mask'):
-            return np.reshape(data, (-1,) + layouts['shape_fg'], order='F')
-        else:
-            return np.reshape(data, layouts['shape_storage'], order='F')
+        if layouts.get("mask"):
+            return np.reshape(data, (-1,) + layouts["shape_fg"], order="F")
+        return np.reshape(data, layouts["shape_storage"], order="F")
 
     """
     Random access
     """
+
     def ra(self, slice_):
         """
         Random access to the data matrix.
@@ -639,10 +579,9 @@ class Schema2dseq(Schema):
 
         layouts, layouts_ra = self._get_ra_layouts(slice_)
 
-        array_ra = np.zeros(layouts_ra['shape_storage'], dtype=self.numpy_dtype)
+        array_ra = np.zeros(layouts_ra["shape_storage"], dtype=self.numpy_dtype)
 
-        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode='r',
-                       shape=layouts['shape_storage'], order='F')
+        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode="r", shape=layouts["shape_storage"], order="F")
 
         for slice_ra, slice_full in self._generate_ra_indices(layouts_ra, layouts):
             array_ra[slice_ra] = np.array(fp[slice_full])
@@ -654,48 +593,43 @@ class Schema2dseq(Schema):
         return np.squeeze(array_ra, axis=singletons)
 
     def _get_ra_layouts(self, slice_full):
-
         layouts = deepcopy(self.layouts)
         layouts_ra = deepcopy(layouts)
 
-        layouts_ra['mask'] = np.zeros(layouts['shape_fg'], dtype=bool, order='F')
-        layouts_ra['mask'][slice_full[self.encoded_dim:]] = True
-        layouts_ra['shape_fg'], layouts_ra['offset_fg'] = self._get_ra_shape(layouts_ra['mask'])
-        layouts_ra['shape_frames'] = (np.prod(layouts_ra['shape_fg'],dtype=int),)
-        layouts_ra['shape_storage'] = layouts_ra['shape_block'] + layouts_ra['shape_frames']
-        layouts_ra['shape_final'] = layouts_ra['shape_block'] + layouts_ra['shape_fg']
+        layouts_ra["mask"] = np.zeros(layouts["shape_fg"], dtype=bool, order="F")
+        layouts_ra["mask"][slice_full[self.encoded_dim :]] = True
+        layouts_ra["shape_fg"], layouts_ra["offset_fg"] = self._get_ra_shape(layouts_ra["mask"])
+        layouts_ra["shape_frames"] = (np.prod(layouts_ra["shape_fg"], dtype=int),)
+        layouts_ra["shape_storage"] = layouts_ra["shape_block"] + layouts_ra["shape_frames"]
+        layouts_ra["shape_final"] = layouts_ra["shape_block"] + layouts_ra["shape_fg"]
 
         return layouts, layouts_ra
 
     def _get_ra_shape(self, mask):
-
         axes = []
         for axis in range(mask.ndim):
-            axes.append(tuple(i for i in range(mask.ndim) if i!=axis))
+            axes.append(tuple(i for i in range(mask.ndim) if i != axis))
 
         ra_shape = []
         ra_offset = []
         for axis in axes:
-            ra_shape.append(np.count_nonzero(np.count_nonzero(mask,axis=axis)))
+            ra_shape.append(np.count_nonzero(np.count_nonzero(mask, axis=axis)))
             ra_offset.append(np.argmax(np.count_nonzero(mask, axis=axis)))
 
         return tuple(ra_shape), np.array(ra_offset)
 
     def _generate_ra_indices(self, layouts_ra, layouts):
-
-        for index_ra in np.ndindex(layouts_ra['shape_final'][self.encoded_dim:]):
-            index = tuple(np.array(index_ra) + layouts_ra['offset_fg'])
+        for index_ra in np.ndindex(layouts_ra["shape_final"][self.encoded_dim :]):
+            index = tuple(np.array(index_ra) + layouts_ra["offset_fg"])
             index = tuple(0 for i in range(self.encoded_dim)) + index
-            index_ra = tuple(0 for i in range(self.encoded_dim)) + index_ra
+            index_ra_f = tuple(0 for i in range(self.encoded_dim)) + index_ra
 
-            index_ra = np.ravel_multi_index(index_ra, layouts_ra['shape_final'], order='F')
-            index = np.ravel_multi_index(index, layouts['shape_final'], order='F')
+            index_ra_f = np.ravel_multi_index(index_ra_f, layouts_ra["shape_final"], order="F")
+            index = np.ravel_multi_index(index, layouts["shape_final"], order="F")
 
-            index_ra = np.unravel_index(index_ra, layouts_ra['shape_storage'], order='F')
-            index = np.unravel_index(index, layouts['shape_storage'], order='F')
+            index_ra_f = np.unravel_index(index_ra_f, layouts_ra["shape_storage"], order="F")
+            index = np.unravel_index(index, layouts["shape_storage"], order="F")
 
-            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra[self.encoded_dim:]
-            slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim:]
+            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra_f[self.encoded_dim :]
+            slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim :]
             yield slice_ra, slice_full
-
-

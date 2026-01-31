@@ -11,6 +11,9 @@ brukerapi-python
     :target: https://bruker-api.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://codecov.io/gh/isi-nmr/brukerapi-python/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/isi-nmr/brukerapi-python
+   :alt: Test coverage
 A Python package providing I/O interface for Bruker data sets.
 
 tl;dr

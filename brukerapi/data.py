@@ -1,5 +1,4 @@
-class DataRandomAccess():
-
+class DataRandomAccess:
     def __init__(self, dataset):
         self._dataset = dataset
         self._scheme = dataset._scheme

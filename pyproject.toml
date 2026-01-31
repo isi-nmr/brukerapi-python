@@ -26,4 +26,53 @@ include-package-data = true
 zip-safe = false
 
 [project.optional-dependencies]
-dev = ["pytest", "zenodo_get"]
+dev = ["pytest", "zenodo_get","ruff","pytest-cov"]
+
+
+
+[tool.ruff.lint]
+select = [
+    "E","W",   # pycodestyle
+    "F",   # Pyflakes
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "I",   # isort
+    "PERF",# Perflint
+    "C4",  # Flake8 comprehensions
+    "RET", # Flake8 return
+    "FBT", # Flake8 boolean simplifications
+    "LOG", # Flake8 logging
+    "PL",  # Flake8 pylint
+    "B9",   # Bugbear additional checks
+    "TC",
+    "RUF",
+    "PT",
+    "FLY",
+    "NPY"
+]
+ignore= [
+    "PLR2004",
+    "PLR0915",
+    "PLR0913",
+    "PLR0912",
+    "PLR0911",
+    "PLC0415",
+    "RUF005",
+    "SIM108",
+    "RET504",
+    "RUF012",
+    "PERF401",
+    "B905"
+]
+
+
+[tool.ruff]
+line-length = 180
+target-version = "py313"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
