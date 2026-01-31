@@ -1,28 +1,25 @@
 from brukerapi.dataset import Dataset
 import numpy as np
 
-from pathlib import Path
-import pytest
 
-@pytest.mark.skip(reason="in progress")
 def test_ra(test_ra_data):
 
-    d1 = Dataset(Path(test_ra_data[1])/test_ra_data[0]['path'])
+    d1 = Dataset(test_ra_data[0])
     core_index = tuple(slice(None) for i in range(d1.encoded_dim))
-    d2 = Dataset(Path(test_ra_data[1])/test_ra_data[0]['path'], random_access=True)
+    d2 = Dataset(test_ra_data[0], random_access=True)
 
-    if "slices" in test_ra_data[0].keys():
-        for s in test_ra_data[0]['slices']:
-            slice_ = json_to_slice(s)
-            assert np.array_equal(d1.data[slice_], d2.data[slice_])
-    else:
-        # test by single slice - index
-        for index in np.ndindex(d1.shape[d1.encoded_dim:]):
-            assert np.array_equal(d1.data[core_index+index], d2.data[core_index+index])
+    # if "slices" in test_ra_data[0].keys():
+    #     for s in test_ra_data[0]['slices']:
+    #         slice_ = json_to_slice(s)
+    #         assert np.array_equal(d1.data[slice_], d2.data[slice_])
+    # else:
+    # test by single slice - index
+    for index in np.ndindex(d1.shape[d1.encoded_dim:]):
+        assert np.array_equal(d1.data[core_index+index], d2.data[core_index+index])
 
-        # test all possible slices
-        for slice_ in generate_slices(d1.shape[d1.encoded_dim:]):
-            assert np.array_equal(d1.data[core_index + slice_], d2.data[core_index + slice_])
+    # test all possible slices
+    for slice_ in generate_slices(d1.shape[d1.encoded_dim:]):
+        assert np.array_equal(d1.data[core_index + slice_], d2.data[core_index + slice_])
 
 def generate_slices(shape):
     slices = []
