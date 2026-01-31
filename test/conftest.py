@@ -167,12 +167,11 @@ def pytest_generate_tests(metafunc):
         data_items = []
         for dataset_name in requested:
             dataset_root = TEST_DATA_ROOT / dataset_name
-            for subfolder in dataset_root.iterdir():
-                if subfolder.is_dir():
-                    folder_obj = Folder(subfolder, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
-                    for dataset in folder_obj.get_dataset_list_rec():
-                        data_ids.append(f"{dataset_name}/{dataset.id}")
-                        data_items.append((dataset.path, ref_state.get(dataset.id, {})))
+            folder_obj = Folder(dataset_root, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
+            for dataset in folder_obj.get_dataset_list_rec():
+                data_ids.append(f"{dataset_name}/{dataset.id}")
+                data_items.append((dataset.path, ref_state.get(dataset.id, {})))
+
         metafunc.parametrize("test_data", data_items, indirect=True, ids=data_ids)
 
     # -------------------------------
@@ -183,12 +182,12 @@ def pytest_generate_tests(metafunc):
         ra_items = []
         for dataset_name in requested:
             dataset_root = TEST_DATA_ROOT / dataset_name
-            for subfolder in dataset_root.iterdir():
-                if subfolder.is_dir():
-                    folder_obj = Folder(subfolder, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
-                    for dataset in _find_2dseq_datasets(dataset_name):
-                        ra_ids.append(f"{dataset_name}/{dataset.id}")
-                        ra_items.append((dataset.path, ref_state.get(dataset.id, {})))
+
+            folder_obj = Folder(dataset_root, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
+            for dataset in _find_2dseq_datasets(dataset_name):
+                ra_ids.append(f"{dataset_name}/{dataset.id}")
+                ra_items.append((dataset.path, ref_state.get(dataset.id, {})))
+
         metafunc.parametrize("test_ra_data", ra_items, indirect=True, ids=ra_ids)
 
     # -------------------------------

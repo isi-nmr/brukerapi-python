@@ -641,16 +641,15 @@ class JCAMPDX:
             return self.params["JCAMPDX"]
 
         try:
-            _, version = JCAMPDX.load_parameter(self.path, "JCAMPDX")
-            return version.value
-        except (InvalidJcampdxFile, ParameterNotFound):
-            pass
-
-        try:
-            _, version = JCAMPDX.load_parameter(self.path, "JCAMP-DX")
-            return version.value
-        except (InvalidJcampdxFile, ParameterNotFound):
-            pass
+            with self.path.open("r") as f:
+                for _ in range(10):
+                    line = f.readline()
+                    if line.startswith("##JCAMPDX="):
+                        return line.strip().split("=", 1)[1]
+                    if line.startswith("##JCAMP-DX="):
+                        return line.strip().split("=", 1)[1]
+        except (UnicodeDecodeError, OSError) as e:
+            raise InvalidJcampdxFile from e
 
         raise InvalidJcampdxFile(self.path)
 
