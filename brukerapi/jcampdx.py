@@ -1,4 +1,3 @@
-import ast
 import json
 import re
 from collections import OrderedDict
@@ -860,12 +859,11 @@ class JCAMPDX:
 
     @classmethod
     def split_key_value_pair(cls, line):
-        # Fast string split on first '='
-        idx = line.find("=")
-        if idx == -1:
-            raise ValueError(f"No '=' found in line: {line}")
-        key = line[:idx]
-        val_str = line[idx + 1 :].lstrip()
+        # ASSUMPTION the first occurrence of = in jcampdx line divides key and value pair
+        # example:
+        match = re.search(GRAMMAR["EQUAL_SIGN"], line)
+        key = line[0 : match.start()]
+        val_str = line[match.end() :].lstrip()
         return key, val_str
 
     @classmethod
@@ -880,15 +878,14 @@ class JCAMPDX:
         :return value: value string without bracket in case, size bracket is found, otherwise returns unmodified val_str
         :return size: size bracket str
         """
-        val_str = val_str.lstrip()
-        if val_str.startswith("("):
-            # find the closing ')'
-            end_idx = val_str.find(")")
-            if end_idx != -1:
-                size_bracket = val_str[: end_idx + 1]  # include ')'
-                val_str = val_str[end_idx + 1 :].lstrip()
-                return val_str, size_bracket
-        return val_str, ""
+        match = re.search(GRAMMAR["SIZE_BRACKET"], val_str)
+
+        if match is None:
+            return val_str, ""
+        size_bracket = val_str[match.start() : match.end()]
+        val_str = val_str[match.end() :].lstrip()
+
+        return val_str, size_bracket
 
     @classmethod
     def wrap_lines(cls, line):
