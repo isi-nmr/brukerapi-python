@@ -1,9 +1,10 @@
 from .utils import index_to_slice
 from .dataset import Dataset
-
+import os
 import numpy as np
 import copy
 from pathlib import Path
+from .exceptions import MissingProperty
 
 SUPPORTED_FG = ['FG_ISA','FG_IRMODE','FG_ECHO']
 
@@ -40,7 +41,7 @@ class Splitter(object):
         VisuCoreDataMin = visu_pars['VisuCoreDataMin']
         value = np.reshape(VisuCoreDataMin.value, dataset.shape_final[dataset.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
-        VisuCoreDataMin.size = (np.prod(value.shape),)
+        VisuCoreDataMin.size = (int(np.prod(value.shape)),)
         VisuCoreDataMin.value = value.flatten(order='F')
 
     def _split_VisuCoreDataMax(self, dataset, visu_pars, select, fg_rel_index):
@@ -54,7 +55,7 @@ class Splitter(object):
         VisuCoreDataMax = visu_pars['VisuCoreDataMax']
         value = np.reshape(VisuCoreDataMax.value, dataset.shape_final[dataset.encoded_dim:], order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
-        VisuCoreDataMax.size = (np.prod(value.shape),)
+        VisuCoreDataMax.size = (int(np.prod(value.shape)),)
         VisuCoreDataMax.value = value.flatten(order='F')
 
     def _split_VisuCoreDataOffs(self, dataset, visu_pars, select, fg_rel_index):
@@ -68,7 +69,7 @@ class Splitter(object):
         VisuCoreDataOffs = visu_pars['VisuCoreDataOffs']
         value = np.reshape(VisuCoreDataOffs.value, dataset.shape_final[dataset.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
-        VisuCoreDataOffs.size = (np.prod(value.shape),)
+        VisuCoreDataOffs.size = (int(np.prod(value.shape)),)
         VisuCoreDataOffs.value = value.flatten(order='F')
 
     def _split_VisuCoreDataSlope(self, dataset, visu_pars, select, fg_rel_index):
@@ -82,7 +83,7 @@ class Splitter(object):
         VisuCoreDataSlope = visu_pars['VisuCoreDataSlope']
         value = np.reshape(VisuCoreDataSlope.value, dataset.shape_final[dataset.encoded_dim:],order='F')
         value = value[index_to_slice(select, value.shape, fg_rel_index)]
-        VisuCoreDataSlope.size = (np.prod(value.shape),)
+        VisuCoreDataSlope.size = (int(np.prod(value.shape)),)
         VisuCoreDataSlope.value = value.flatten(order='F')
 
     def _split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_index):
@@ -93,7 +94,7 @@ class Splitter(object):
 
         value = np.reshape(VisuCoreTransposition.value, dataset.shape_final[dataset.encoded_dim:], order='F')
         value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
-        VisuCoreTransposition.size = (np.prod(value.shape),)
+        VisuCoreTransposition.size = (int(np.prod(value.shape)),)
         VisuCoreTransposition.value = value.flatten(order='F')
 
 
@@ -154,9 +155,12 @@ class FrameGroupSplitter(Splitter):
         for select_ in select:
             # construct a new Dataset, without loading data, the data will be supplied later
             name = '{}_{}_{}/2dseq'.format(dataset.path.parents[0].name, self.fg, select_)
-
+            
+            dset_path = dataset.path.parents[1] / name
+            os.makedirs(dset_path,exist_ok=True)
+            
             # construct a new Dataset, without loading data, the data will be supplied later
-            dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
+            dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
 
             dataset_.parameters = self._split_params(dataset, select_, fg_abs_index, fg_rel_index, fg_size)
 
@@ -250,7 +254,7 @@ class FrameGroupSplitter(Splitter):
 
     def _split_VisuAcqEchoTime(self, visu_pars, select):
         VisuAcqEchoTime = visu_pars['VisuAcqEchoTime']
-        value = VisuAcqEchoTime.value
+        value = VisuAcqEchoTime.list
         VisuAcqEchoTime.size=(1,)
         VisuAcqEchoTime.value = float(value[select])
 
@@ -272,9 +276,10 @@ class SlicePackageSplitter(Splitter):
         """
 
         try:
-            VisuCoreSlicePacksSlices = dataset['VisuCoreSlicePacksSlices'].value
+            VisuCoreSlicePacksSlices = dataset['VisuCoreSlicePacksSlices'].nested
         except KeyError:
-            print('Parameter VisuCoreSlicePacksSlices not found')
+            raise MissingProperty('Parameter VisuCoreSlicePacksSlices not found')
+
 
         # list of split data sets
         datasets = []
@@ -299,9 +304,10 @@ class SlicePackageSplitter(Splitter):
             # name of the data set created by the split
             name = '{}_sp_{}/2dseq'.format(dataset.path.parents[0].name, sp_index)
 
+            os.makedirs(dataset.path.parents[1] / name,exist_ok=True)
 
             # construct a new Dataset, without loading data, the data will be supplied later
-            dataset_ = Dataset(dataset.path.parents[1] / name, load=False)
+            dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
 
             # SPLIT parameters
             dataset_.parameters = self._split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
@@ -337,7 +343,8 @@ class SlicePackageSplitter(Splitter):
         self._split_VisuCoreDataMax(dataset, visu_pars_, frame_range, fg_rel_index)
         self._split_VisuCoreDataOffs(dataset, visu_pars_, frame_range, fg_rel_index)
         self._split_VisuCoreDataSlope(dataset, visu_pars_, frame_range, fg_rel_index)
-        self._split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
+        if "VisuCoreTransposition" in dataset:
+            self._split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
         self._split_VisuCoreFrameCount(dataset, visu_pars_, frame_count, fg_abs_index)
         self._split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
         self._split_VisuCoreSlicePacksDef(visu_pars_)
@@ -389,6 +396,6 @@ class SlicePackageSplitter(Splitter):
 
     def _split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
         VisuCoreSlicePacksSliceDist = visu_pars_['VisuCoreSlicePacksSliceDist']
-        value = int(VisuCoreSlicePacksSliceDist.value[sp_index])
+        value = int(VisuCoreSlicePacksSliceDist.array[sp_index])
         VisuCoreSlicePacksSliceDist.value = value
         VisuCoreSlicePacksSliceDist.size = 1
