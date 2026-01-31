@@ -2,9 +2,7 @@ from brukerapi.dataset import Dataset
 from brukerapi.schemas import *
 import numpy as np
 import json
-import os
 from pathlib import Path
-import shutil
 import pytest
 
 data = 0

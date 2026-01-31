@@ -3,10 +3,13 @@ import numpy as np
 from pathlib import Path
 import pytest
 
-@pytest.mark.skip(reason="in progress")
+# @pytest.mark.skip(reason="in progress")
 def test_jcampdx(test_jcampdx_data):
+    dataset_info, dataset_folder = test_jcampdx_data
+    jcamp_file_path = dataset_folder / dataset_info['path']
 
-    j = JCAMPDX(Path(test_jcampdx_data[1]) / test_jcampdx_data[0]['path'])
+    j = JCAMPDX(jcamp_file_path)
+    
     for key, ref in test_jcampdx_data[0]['parameters'].items():
         parameter_test  = j.get_parameter(key)
         size_test= parameter_test.size
@@ -37,4 +40,7 @@ def test_jcampdx(test_jcampdx_data):
             assert value_test == value_ref
         else:
             assert value_ref == value_test
+
+
+
 
