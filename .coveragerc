@@ -1,0 +1,11 @@
+[run]
+branch = True
+source = brukerapi
+
+[report]
+# Ignore lines matching this regex in coverage report
+exclude_lines =
+    # Ignore raise statements (intentional exceptions)
+    raise
+    # Ignore debug-only code
+    if __name__ == .__main__.:

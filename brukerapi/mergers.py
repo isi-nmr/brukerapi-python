@@ -1,7 +1,5 @@
-
-
 class FrameGroupMerger:
-    SUPPORTED_FG = ['FG_COMPLEX']
+    SUPPORTED_FG = ["FG_COMPLEX"]
 
     @classmethod
     def merge(cls, dataset, fg):
@@ -15,7 +13,7 @@ class FrameGroupMerger:
         """
 
         if f"<{fg}>" not in dataset.dim_type:
-            raise ValueError(f'Dataset does not contain {fg} frame group')
+            raise ValueError(f"Dataset does not contain {fg} frame group")
 
         """
         CHECK if FG and index are valid
@@ -40,8 +38,7 @@ class FrameGroupMerger:
 
         return dataset
 
-
-    @ classmethod
+    @classmethod
     def _merge_data(cls, dataset, fg_abs_index):
         """
         Merge the data array in-place
@@ -79,7 +76,7 @@ class FrameGroupMerger:
     @classmethod
     def _merge_VisuCoreFrameCount(cls, dataset, fg_size):
         try:
-            parameter = dataset['VisuCoreFrameCount']
+            parameter = dataset["VisuCoreFrameCount"]
         except KeyError:
             return
         new_value = int(parameter.value / fg_size)
@@ -88,7 +85,7 @@ class FrameGroupMerger:
     @classmethod
     def _merge_VisuFGOrderDescDim(cls, dataset):
         try:
-            parameter = dataset['VisuFGOrderDescDim']
+            parameter = dataset["VisuFGOrderDescDim"]
         except KeyError:
             return
         new_value = parameter.value - 1
@@ -96,20 +93,20 @@ class FrameGroupMerger:
         if new_value > 1:
             parameter.value = new_value
         else:
-            del dataset._parameters['visu_pars']['VisuFGOrderDescDim']
+            del dataset._parameters["visu_pars"]["VisuFGOrderDescDim"]
 
     @classmethod
     def _merge_VisuCoreFrameType(cls, dataset):
         try:
-            parameter = dataset['VisuCoreFrameType']
+            parameter = dataset["VisuCoreFrameType"]
         except KeyError:
             return
-        parameter.value = 'COMPLEX_IMAGE'
+        parameter.value = "COMPLEX_IMAGE"
 
     @classmethod
     def _merge_VisuFGOrderDesc(cls, dataset, fg):
         try:
-            parameter = dataset['VisuFGOrderDesc']
+            parameter = dataset["VisuFGOrderDesc"]
         except KeyError:
             return
 
@@ -118,18 +115,17 @@ class FrameGroupMerger:
 
         value = parameter.nested
         for fg_ in value:
-            if fg_[1] == f'<{fg}>':
+            if fg_[1] == f"<{fg}>":
                 value.remove(fg_)
         if value:
             parameter.value = value
         else:
-            del dataset.parameters['visu_pars']['VisuFGOrderDesc']
+            del dataset.parameters["visu_pars"]["VisuFGOrderDesc"]
 
     @classmethod
     def _merge_VisuFGElemId(cls, dataset):
         try:
-            dataset['VisuFGElemId']
+            dataset["VisuFGElemId"]
         except KeyError:
             return
-        del dataset.parameters['visu_pars']['VisuFGElemId']
-
+        del dataset.parameters["visu_pars"]["VisuFGElemId"]

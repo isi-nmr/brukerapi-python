@@ -8,23 +8,23 @@ import numpy as np
 
 from .exceptions import InvalidJcampdxFile, JcampdxFileError, JcampdxVersionError, ParameterNotFound
 
-SUPPORTED_VERSIONS = ['4.24', '5.0', '5.00 Bruker JCAMP library', '5.00 BRUKER JCAMP library', '5.01']
+SUPPORTED_VERSIONS = ["4.24", "5.0", "5.00 Bruker JCAMP library", "5.00 BRUKER JCAMP library", "5.01"]
 GRAMMAR = {
-        'COMMENT_LINE' : r'\$\$[^\n]*\n',
-        'PARAMETER': '##',
-        'USER_DEFINED' : r'\$',
-        'TRAILING_EOL' : r'\n$',
-        'DATA_LABEL' : r'\(XY..XY\)',
-        'DATA_DELIMETERS': r', |\n',
-        'SIZE_BRACKET': r'^\([^\(\)<>]*\)(?!$)',
-        'LIST_DELIMETER': ', ',
-        'EQUAL_SIGN': '=',
-        'SINGLE_NUMBER': r'-?[\d.]+(?:e[+-]?\d+)?',
-        'PARALLEL_BRACKET': r'\) ',
-        'GEO_OBJ': r'\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)',
-        'HEADER':'TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER',
-        'VERSION_TITLE':'JCAMPDX|JCAMP-DX'
-    }
+    "COMMENT_LINE": r"\$\$[^\n]*\n",
+    "PARAMETER": "##",
+    "USER_DEFINED": r"\$",
+    "TRAILING_EOL": r"\n$",
+    "DATA_LABEL": r"\(XY..XY\)",
+    "DATA_DELIMETERS": r", |\n",
+    "SIZE_BRACKET": r"^\([^\(\)<>]*\)(?!$)",
+    "LIST_DELIMETER": ", ",
+    "EQUAL_SIGN": "=",
+    "SINGLE_NUMBER": r"-?[\d.]+(?:e[+-]?\d+)?",
+    "PARALLEL_BRACKET": r"\) ",
+    "GEO_OBJ": r"\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)",
+    "HEADER": "TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER",
+    "VERSION_TITLE": "JCAMPDX|JCAMP-DX",
+}
 MAX_LINE_LEN = 78
 
 
@@ -50,6 +50,7 @@ class Parameter:
 
     The value is parsed once it is requested. Parse methods are different for individual subclasses.
     """
+
     def __init__(self, key_str, size_str, val_str, version):
         """
         :param key_str: key part of the parameter e.g. ##$ACQ_ReceiverSelect
@@ -63,18 +64,17 @@ class Parameter:
         self.version = version
 
     def __str__(self):
+        str_ = f"{self.key_str}"
 
-        str_ = f'{self.key_str}'
-
-        if self.version == '4.24':
-            str_ += '='
+        if self.version == "4.24":
+            str_ += "="
         else:
-            str_ += '= '
+            str_ += "= "
 
-        if self.size_str != '':
-            str_ += f'{self.size_str}\n'
+        if self.size_str != "":
+            str_ += f"{self.size_str}\n"
 
-        str_ += f'{self.val_str}'
+        str_ += f"{self.val_str}"
 
         return str_
 
@@ -82,11 +82,10 @@ class Parameter:
         return self.key_str
 
     def to_dict(self):
-
-        result = {'value': self._encode_parameter(self.value)}
+        result = {"value": self._encode_parameter(self.value)}
 
         if self.size:
-            result['size'] = self._encode_parameter(self.size)
+            result["size"] = self._encode_parameter(self.size)
 
         return result
 
@@ -105,19 +104,18 @@ class Parameter:
             return self._encode_parameter(list(var))
         return var
 
-
     @property
     def key(self):
-        return re.sub('##', '', re.sub(r'\$', '', self.key_str)).rstrip()
+        return re.sub("##", "", re.sub(r"\$", "", self.key_str)).rstrip()
 
     @key.setter
     def key(self, key):
-        #Throw error
+        # Throw error
         pass
 
     @property
     def user_defined(self):
-        return bool(re.search(GRAMMAR['USER_DEFINED'], self.key_str))
+        return bool(re.search(GRAMMAR["USER_DEFINED"], self.key_str))
 
     @property
     def tuple(self):
@@ -155,7 +153,6 @@ class Parameter:
             return value
         return [value]
 
-
     @property
     def array(self):
         return np.atleast_1d(self.value)
@@ -167,8 +164,6 @@ class Parameter:
             return value.shape
         raise AttributeError
 
-
-
     @classmethod
     def pack_key(cls, value, usr_defined):
         assert isinstance(value, str)
@@ -176,9 +171,9 @@ class Parameter:
         val_str = value
 
         if usr_defined:
-            val_str = '$' + val_str
+            val_str = "$" + val_str
 
-        return '##' + val_str
+        return "##" + val_str
 
 
 class GenericParameter(Parameter):
@@ -191,11 +186,10 @@ class GenericParameter(Parameter):
 
     @property
     def value(self):
-
-        val_str = re.sub(r'\n', '', self.val_str)
+        val_str = re.sub(r"\n", "", self.val_str)
 
         # unwrap wrapped list
-        if re.match(r'@[0-9]*\*',val_str) is not None:
+        if re.match(r"@[0-9]*\*", val_str) is not None:
             val_str = self._unwrap_list(val_str)
 
         val_str_list = GenericParameter.split_parallel_lists(val_str)
@@ -208,8 +202,8 @@ class GenericParameter(Parameter):
                 value.append(GenericParameter.parse_value(val_str))
 
         if isinstance(value, np.ndarray) and self.size:
-            if 'str' not in value.dtype.name:
-                return np.reshape(value, self.size, order='C')
+            if "str" not in value.dtype.name:
+                return np.reshape(value, self.size, order="C")
             return value
         return value
 
@@ -233,7 +227,7 @@ class GenericParameter(Parameter):
             val_str = value
 
         self.size = size
-        self.val_str= val_str
+        self.val_str = val_str
 
     def primed_dict(self, index):
         nested_list = self.nested
@@ -252,20 +246,17 @@ class GenericParameter(Parameter):
 
         return sub_list
 
-
-
-
     @property
     def size(self):
         size_str = self.size_str[1:-2]
 
-        if size_str == '':
+        if size_str == "":
             return None
 
-        #"(3,3)\n" -> 3,3
+        # "(3,3)\n" -> 3,3
         if ".." in size_str:
             try:
-                size_str = np.array(size_str.split(".."), dtype='int32')
+                size_str = np.array(size_str.split(".."), dtype="int32")
                 size = range(size_str[0], size_str[1])
             except ValueError:
                 # size bracket is returned as string
@@ -274,7 +265,7 @@ class GenericParameter(Parameter):
 
         elif "," in size_str:
             size_str = size_str.split(",")
-            size = tuple(np.array(size_str, dtype='int32'))
+            size = tuple(np.array(size_str, dtype="int32"))
         else:
             size = (int(size_str),)
 
@@ -283,42 +274,40 @@ class GenericParameter(Parameter):
     @size.setter
     def size(self, size):
         if size is None:
-            self.size_str = ''
+            self.size_str = ""
             return
 
         if isinstance(size, tuple):
             # (1,3,3) -> "( 1,3,3 )"
             if len(size) > 1:
-                size_str = f'( {str(size)[1:-1]} )'
-            #(1,) -> "( 1 )"
+                size_str = f"( {str(size)[1:-1]} )"
+            # (1,) -> "( 1 )"
             else:
-                size_str = f'( {str(size)[1:-2]} )'
+                size_str = f"( {str(size)[1:-2]} )"
         elif isinstance(size, range):
-            size_str = '({size.start}..{size.stop})'
+            size_str = "({size.start}..{size.stop})"
         elif isinstance(size, int):
-            size_str = f'( {size!s} )'
+            size_str = f"( {size!s} )"
         else:
-            size_str = f'({size})'
+            size_str = f"({size})"
 
         self.size_str = size_str
 
     @classmethod
     def parse_value(cls, val_str, size_bracket=None):
         # remove \n
-        val_str = re.sub(r'\n','', val_str)
+        val_str = re.sub(r"\n", "", val_str)
 
         # sharp string
-        if val_str.startswith('<') and val_str.endswith('>'):
-
-            val_strs = re.findall('<[^<>]*>', val_str)
+        if val_str.startswith("<") and val_str.endswith(">"):
+            val_strs = re.findall("<[^<>]*>", val_str)
 
             if len(val_strs) == 1:
                 return val_strs[0]
             return np.array(val_strs)
 
-
         # int/float
-        if len(re.findall(GRAMMAR['SINGLE_NUMBER'],val_str))==1:
+        if len(re.findall(GRAMMAR["SINGLE_NUMBER"], val_str)) == 1:
             try:
                 value = ast.literal_eval(val_str)
 
@@ -329,8 +318,8 @@ class GenericParameter(Parameter):
                 pass
 
         # list
-        if val_str.startswith('(') and val_str.endswith(''):
-            val_strs = re.split(GRAMMAR['LIST_DELIMETER'], val_str[1:-1])
+        if val_str.startswith("(") and val_str.endswith(""):
+            val_strs = re.split(GRAMMAR["LIST_DELIMETER"], val_str[1:-1])
             value = []
 
             for val_str in val_strs:
@@ -338,17 +327,17 @@ class GenericParameter(Parameter):
 
             return value
 
-        val_strs = re.split(' ', val_str)
+        val_strs = re.split(" ", val_str)
 
         if len(val_strs) > 1:
             # try casting into int, or float array, if both of casts fail, it should be string array
             try:
-                return np.array(val_strs).astype('int')
+                return np.array(val_strs).astype("int")
             except ValueError:
                 pass
 
             try:
-                return np.array(val_strs).astype('float')
+                return np.array(val_strs).astype("float")
             except ValueError:
                 pass
 
@@ -357,7 +346,6 @@ class GenericParameter(Parameter):
 
     @classmethod
     def serialize_value(cls, value):
-
         if isinstance(value, float):
             val_str = cls.serialize_float(value)
         elif isinstance(value, int):
@@ -378,58 +366,55 @@ class GenericParameter(Parameter):
 
     @classmethod
     def serialize_list(cls, value):
-
         if isinstance(value[0], list):
-
-            val_str = ''
+            val_str = ""
 
             for value_ in value:
                 val_str += cls.serialize_list(value_)
-                val_str += ' '
+                val_str += " "
 
             return val_str
 
-
-        val_str = '('
+        val_str = "("
 
         for item in value:
             val_str += cls.serialize_value(item)
-            val_str += ', '
+            val_str += ", "
 
-        return val_str[:-2] + ')'
+        return val_str[:-2] + ")"
 
     @classmethod
     def serialize_nested_list(cls, values):
-        val_str = ''
+        val_str = ""
 
         for value in values:
             val_str += GenericParameter.serialize_list(value)
-            val_str += ' '
+            val_str += " "
 
         return val_str[0:-1]
 
     @classmethod
     def serialize_ndarray(cls, value):
-        val_str = ''
+        val_str = ""
 
         for value_ in value:
             val_str_ = str(value_)
             val_str += val_str_
-            val_str += ' '
+            val_str += " "
 
         return val_str[:-1]
 
     @classmethod
     def split_parallel_lists(cls, val_str):
-        lst = re.split(GRAMMAR['PARALLEL_BRACKET'], val_str)
+        lst = re.split(GRAMMAR["PARALLEL_BRACKET"], val_str)
 
         if len(lst) == 1:
             return lst[0]
 
         def restore_right_bra(string):
-            if string.endswith(')'):
+            if string.endswith(")"):
                 return string
-            return string + ')'
+            return string + ")"
 
         for i in range(len(lst)):
             lst[i] = restore_right_bra(lst[i])
@@ -437,17 +422,16 @@ class GenericParameter(Parameter):
         return lst
 
     def _unwrap_list(self, val_str):
-
-        while re.search(r'@[0-9]*\*\(-?\d*\.?\d*\)', val_str):
-            match = re.search(r'@[0-9]*\*\(-?\d*\.?\d*\)', val_str)
-            left = val_str[0:match.start()]
-            right = val_str[match.end():]
-            sub = val_str[match.start():match.end()]
-            size, value = re.split(r'\*', sub)
+        while re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str):
+            match = re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str)
+            left = val_str[0 : match.start()]
+            right = val_str[match.end() :]
+            sub = val_str[match.start() : match.end()]
+            size, value = re.split(r"\*", sub)
             size = int(size[1:])
-            middle = ''
+            middle = ""
             for _ in range(size):
-                middle += f'{value[1:-1]} '
+                middle += f"{value[1:-1]} "
             val_str = left + middle[0:-1] + right
 
         return val_str
@@ -502,7 +486,6 @@ class GeometryParameter(Parameter):
     #     return affine
 
     def to_dict(self):
-
         # result = {'affine': self._encode_parameter(self.affine)}
         result = {}
         return result
@@ -514,7 +497,7 @@ class DataParameter(Parameter):
 
     @property
     def value(self):
-        val_list = re.split(GRAMMAR['DATA_DELIMETERS'], self.val_str)
+        val_list = re.split(GRAMMAR["DATA_DELIMETERS"], self.val_str)
         data = [GenericParameter.parse_value(x) for x in val_list]
         return np.reshape(data, (2, -1))
 
@@ -525,9 +508,9 @@ class DataParameter(Parameter):
         for i in range(len(value)):
             val_str += f"{value[i]:.6e}"
             if np.mod(i, 2) == 0:
-                val_str += ', '
+                val_str += ", "
             else:
-                val_str += '\n'
+                val_str += "\n"
 
         self.value = val_str
 
@@ -537,7 +520,7 @@ class DataParameter(Parameter):
 
     @size.setter
     def size(self, value):
-        self.size_str = f'({value})'
+        self.size_str = f"({value})"
 
 
 class JCAMPDX:
@@ -552,8 +535,8 @@ class JCAMPDX:
 
         from bruker.jcampdx import JCAMPDX
 
-        visu_pars = JCAMPDX('path/visu_pars')
-        size = visu_pars.get_value('VisuCoreSize')
+        visu_pars = JCAMPDX("path/visu_pars")
+        size = visu_pars.get_value("VisuCoreSize")
 
     """
 
@@ -586,21 +569,18 @@ class JCAMPDX:
         return self.path.name
 
     def __str__(self, file=None):
-
-
         if self.params == {}:
             return self.type
 
-        jcampdx_serial = ''
+        jcampdx_serial = ""
 
         for param in self.params.values():
-
             param_str = str(param)
 
             if len(param_str) > 78:
                 param_str = JCAMPDX.wrap_lines(param_str)
 
-            jcampdx_serial += f'{param_str}\n'
+            jcampdx_serial += f"{param_str}\n"
 
         return jcampdx_serial[0:-1] + "\n##END= "
 
@@ -618,7 +598,6 @@ class JCAMPDX:
     def __getitem__(self, key):
         return self.params[key]
 
-
     def __contains__(self, item):
         return item in self.params
 
@@ -635,7 +614,7 @@ class JCAMPDX:
         self.params = {}
 
     def to_dict(self):
-        parameters =  {}
+        parameters = {}
 
         for param in self.params.items():
             parameters[param[0]] = param[1].to_dict()
@@ -650,8 +629,8 @@ class JCAMPDX:
         :param names: *list* names of properties to be exported
         """
         if path:
-            with open(path, 'w') as json_file:
-                    json.dump(self.to_dict(), json_file, indent=4)
+            with open(path, "w") as json_file:
+                json.dump(self.to_dict(), json_file, indent=4)
         else:
             return json.dumps(self.to_dict(), indent=4)
         return None
@@ -659,16 +638,16 @@ class JCAMPDX:
     @property
     def version(self):
         if "JCAMPDX" in self.params:
-            return  self.params['JCAMPDX']
+            return self.params["JCAMPDX"]
 
         try:
-            _, version = JCAMPDX.load_parameter(self.path, 'JCAMPDX')
+            _, version = JCAMPDX.load_parameter(self.path, "JCAMPDX")
             return version.value
         except (InvalidJcampdxFile, ParameterNotFound):
             pass
 
         try:
-            _, version = JCAMPDX.load_parameter(self.path, 'JCAMP-DX')
+            _, version = JCAMPDX.load_parameter(self.path, "JCAMP-DX")
             return version.value
         except (InvalidJcampdxFile, ParameterNotFound):
             pass
@@ -685,6 +664,7 @@ class JCAMPDX:
     """
     PUBLIC INTERFACE
     """
+
     def get_parameters(self):
         return self.params
 
@@ -698,32 +678,37 @@ class JCAMPDX:
         return self.params[key].value
 
     def get_list(self, key):
-        """Idea is to ensure, that a parameter will be a list even if parameter only contains one entry
-        """
+        """Idea is to ensure, that a parameter will be a list even if parameter only contains one entry"""
         value = self.get_value(key)
         if isinstance(value, list):
             return value
         if isinstance(value, np.ndarray):
             return list(value)
-        return [value, ]
+        return [
+            value,
+        ]
 
     def get_nested_list(self, key):
         value = self.get_value(key)
         if not isinstance(value, list):
-            value =[value,]
+            value = [
+                value,
+            ]
 
         if not isinstance(value[0], list):
-            value = [value, ]
+            value = [
+                value,
+            ]
 
         return value
 
-    def set_nested_list(self,key, value):
+    def set_nested_list(self, key, value):
         self.params[key].value = value
 
     def get_int(self, key):
         return int(self.get_value(key))
 
-    def set_int(self,key, value):
+    def set_int(self, key, value):
         self.params[key].value = value
 
     def get_float(self, key):
@@ -736,8 +721,8 @@ class JCAMPDX:
             return (value,)
         return tuple(value)
 
-    def get_array(self, key, dtype=None, shape=(-1,), order='C'):
-        parameter=self.get_parameter(key)
+    def get_array(self, key, dtype=None, shape=(-1,), order="C"):
+        parameter = self.get_parameter(key)
         value = parameter.value
         size = parameter.size
 
@@ -752,21 +737,19 @@ class JCAMPDX:
 
         return np.reshape(value, shape, order=order)
 
-    def set_array(self, key, value, file=None , order='C'):
-
+    def set_array(self, key, value, file=None, order="C"):
         self.get_parameter(key, file)
 
-        value = np.reshape(value,(-1,), order=order)
+        value = np.reshape(value, (-1,), order=order)
         self.__setattr__(key, value.tolist())
 
     def get_str(self, key, strip_sharp=None):
-
         if strip_sharp is None:
             strip_sharp = True
 
         value = str(self.get_value(key))
 
-        if strip_sharp and value.startswith('<') and value.endswith('>'):
+        if strip_sharp and value.startswith("<") and value.endswith(">"):
             value = value[1:-1]
 
         return value
@@ -784,19 +767,18 @@ class JCAMPDX:
             except (UnicodeDecodeError, OSError) as e:
                 raise InvalidJcampdxFile(path) from e
 
-        match = re.search(rf'##{key}[^\#\$]+|##\${key}[^\#\$]+', content)
+        match = re.search(rf"##{key}[^\#\$]+|##\${key}[^\#\$]+", content)
 
         if match is None:
             raise ParameterNotFound(key, path)
 
-        line = content[match.start():match.end()-1] # strip trailing EOL
+        line = content[match.start() : match.end() - 1]  # strip trailing EOL
         key, parameter = JCAMPDX.handle_jcampdx_line(line, None)
 
         return key, parameter
 
     @classmethod
     def read_jcampdx(cls, path):
-
         path = Path(path)
 
         params = {}
@@ -805,25 +787,25 @@ class JCAMPDX:
             try:
                 content = f.read()
             except (UnicodeDecodeError, OSError) as e:
-                raise JcampdxFileError(f'file {path} is not a text file') from e
+                raise JcampdxFileError(f"file {path} is not a text file") from e
 
         # remove all comments
-        content = re.sub(GRAMMAR['COMMENT_LINE'], '', content)
+        content = re.sub(GRAMMAR["COMMENT_LINE"], "", content)
 
         # split into individual entries
-        content = re.split(GRAMMAR['PARAMETER'], content)[1:-1]
+        content = re.split(GRAMMAR["PARAMETER"], content)[1:-1]
 
         # strip trailing EOL
-        content = [re.sub(GRAMMAR['TRAILING_EOL'],'',x) for x in content]
+        content = [re.sub(GRAMMAR["TRAILING_EOL"], "", x) for x in content]
 
         # ASSUMPTION the jcampdx version string is in the second row
         try:
             version_line = content[1]
         except IndexError:
-            raise JcampdxFileError(f'file {path} is too short or not a text file') from IndexError
+            raise JcampdxFileError(f"file {path} is too short or not a text file") from IndexError
 
-        if re.search(GRAMMAR['VERSION_TITLE'], version_line) is None:
-            raise JcampdxFileError(f'file {path} is not a JCAMP-DX file')
+        if re.search(GRAMMAR["VERSION_TITLE"], version_line) is None:
+            raise JcampdxFileError(f"file {path} is not a JCAMP-DX file")
 
         _, _, version = JCAMPDX.divide_jcampdx_line(version_line)
 
@@ -832,18 +814,18 @@ class JCAMPDX:
 
         for line in content:
             # Restore the ##
-            key, parameter = JCAMPDX.handle_jcampdx_line(f'##{line}', version)
+            key, parameter = JCAMPDX.handle_jcampdx_line(f"##{line}", version)
             params[key] = parameter
         return params
 
     @classmethod
     def handle_jcampdx_line(cls, line, version):
         key_str, size_str, val_str = cls.divide_jcampdx_line(line)
-        if re.search(GRAMMAR['GEO_OBJ'], line) is not None:
+        if re.search(GRAMMAR["GEO_OBJ"], line) is not None:
             parameter = GeometryParameter(key_str, size_str, val_str, version)
-        elif re.search(GRAMMAR['DATA_LABEL'], line):
+        elif re.search(GRAMMAR["DATA_LABEL"], line):
             parameter = DataParameter(key_str, size_str, val_str, version)
-        elif re.search(GRAMMAR['HEADER'],key_str):
+        elif re.search(GRAMMAR["HEADER"], key_str):
             parameter = HeaderParameter(key_str, size_str, val_str, version)
         else:
             parameter = GenericParameter(key_str, size_str, val_str, version)
@@ -860,9 +842,9 @@ class JCAMPDX:
     def split_key_value_pair(cls, line):
         # ASSUMPTION the first occurrence of = in jcampdx line divides key and value pair
         # example:
-        match = re.search(GRAMMAR['EQUAL_SIGN'], line)
-        key = line[0:match.start()]
-        val_str = line[match.end():].lstrip()
+        match = re.search(GRAMMAR["EQUAL_SIGN"], line)
+        key = line[0 : match.start()]
+        val_str = line[match.end() :].lstrip()
         return key, val_str
 
     @classmethod
@@ -877,35 +859,35 @@ class JCAMPDX:
         :return value: value string without bracket in case, size bracket is found, otherwise returns unmodified val_str
         :return size: size bracket str
         """
-        match = re.search(GRAMMAR['SIZE_BRACKET'], val_str)
+        match = re.search(GRAMMAR["SIZE_BRACKET"], val_str)
 
         if match is None:
-            return val_str, ''
-        size_bracket = val_str[match.start():match.end()]
-        val_str = val_str[match.end():].lstrip()
+            return val_str, ""
+        size_bracket = val_str[match.start() : match.end()]
+        val_str = val_str[match.end() :].lstrip()
 
         return val_str, size_bracket
 
     @classmethod
     def wrap_lines(cls, line):
-        line_wraps = re.split(r'\n', line)
+        line_wraps = re.split(r"\n", line)
         tail = line_wraps[-1]
 
-        tail_bits = re.split(r'\s', tail)
+        tail_bits = re.split(r"\s", tail)
 
         lines = 1
-        tail = ''
+        tail = ""
 
         for tail_bit in tail_bits:
             if len(tail + tail_bit) > lines * MAX_LINE_LEN:
-                tail += '\n'
+                tail += "\n"
                 lines += 1
             tail += tail_bit
-            tail += ' '
+            tail += " "
 
         line_wraps[-1] = tail[:-1]
 
-        return '\n'.join(line_wraps)
+        return "\n".join(line_wraps)
 
     def write(self, path):
         """
@@ -913,5 +895,5 @@ class JCAMPDX:
         :param path:
         :return:
         """
-        with Path(path).open('w') as f:
+        with Path(path).open("w") as f:
             f.write(str(self))
