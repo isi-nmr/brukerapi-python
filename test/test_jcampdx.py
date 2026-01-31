@@ -1,7 +1,8 @@
-from brukerapi.jcampdx import JCAMPDX
+
 import numpy as np
-from pathlib import Path
-import pytest
+
+from brukerapi.jcampdx import JCAMPDX
+
 
 # @pytest.mark.skip(reason="in progress")
 def test_jcampdx(test_jcampdx_data):
@@ -9,7 +10,7 @@ def test_jcampdx(test_jcampdx_data):
     jcamp_file_path = dataset_folder / dataset_info['path']
 
     j = JCAMPDX(jcamp_file_path)
-    
+
     for key, ref in test_jcampdx_data[0]['parameters'].items():
         parameter_test  = j.get_parameter(key)
         size_test= parameter_test.size

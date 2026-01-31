@@ -1,16 +1,17 @@
-from brukerapi.folders import Folder
-from brukerapi.dataset import Dataset
 import json
-import numpy as np
-import pkg_resources
 import os
 from pathlib import Path
+
+import numpy as np
+import pkg_resources
+
+from brukerapi.folders import Folder
 
 API_VERSION = pkg_resources.get_distribution("brukerapi").version
 SUITES=['test_parameters', 'test_properties', 'test_data', 'test_mmap']
 
 
-def test_generator(path_folder, path_config, suites=None):
+def test_generator(path_folder, path_config, suites):
     if suites:
         if isinstance(suites, str):
             suites = [suites]
@@ -25,7 +26,7 @@ def test_generator(path_folder, path_config, suites=None):
     for dataset in folder.get_dataset_list_rec():
 
         with dataset(parameter_files=['subject']) as d:
-            print("Generating tests for {}".format(d.id))
+            print(f"Generating tests for {d.id}")
             if 'test_parameters' in suites:
                 generate_parameters_test(d)
 

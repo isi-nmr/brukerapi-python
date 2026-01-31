@@ -1,7 +1,8 @@
-from argparse import ArgumentParser
-from brukerapi.splitters import *
-from brukerapi.folders import *
 import sys
+from argparse import ArgumentParser
+
+from brukerapi.folders import Dataset, Filter, Folder, Path
+from brukerapi.splitters import FrameGroupSplitter, SlicePackageSplitter
 
 
 def main():
@@ -145,13 +146,12 @@ def report(args):
         elif output.is_dir():
             # folder to folder
             Folder(input).report(path_out=output, format_=args.format, props=args.props, verbose=args.verbose)
-    else:
-        # dataset in-place
-        if output is None:
-            Dataset(input, add_parameters=['subject']).report(props=args.props, verbose=args.verbose)
-        # dataset to folder, or dataset to file
-        elif output.is_dir():
-            Dataset(input, add_parameters=['subject']).report(path=output, props=args.props, verbose=args.verbose)
+    # dataset in-place
+    elif output is None:
+        Dataset(input, add_parameters=['subject']).report(props=args.props, verbose=args.verbose)
+    # dataset to folder, or dataset to file
+    elif output.is_dir():
+        Dataset(input, add_parameters=['subject']).report(path=output, props=args.props, verbose=args.verbose)
 
 
 def filter(args):

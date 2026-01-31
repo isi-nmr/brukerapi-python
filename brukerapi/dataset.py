@@ -1,14 +1,29 @@
-from .exceptions import *
-from .schemas import *
-from .data import *
-
-from pathlib import Path
+import datetime
 import json
-import numpy as np
 import os
 import os.path
+import re
+from copy import deepcopy
+from pathlib import Path
+
+import numpy as np
 import yaml
-import datetime
+
+from .data import DataRandomAccess
+from .exceptions import (
+    DataNotLoaded,
+    DatasetTypeMissmatch,
+    FilterEvalFalse,
+    IncompleteDataset,
+    NotADatasetDir,
+    ParametersNotLoaded,
+    PropertyConditionNotMet,
+    SchemeNotLoaded,
+    TrajNotLoaded,
+    UnsuportedDatasetType,
+)
+from .jcampdx import JCAMPDX
+from .schemas import Schema2dseq, SchemaFid, SchemaRawdata, SchemaSer, SchemaTraj
 
 LOAD_STAGES = {
     "empty": 0,
@@ -177,7 +192,8 @@ class Dataset:
 
         self.type = self.path.stem
         self.subtype = self.path.suffix
-        if self.subtype: self.subtype = self.subtype[1:] # remove the dot from the suffix
+        if self.subtype:
+            self.subtype = self.subtype[1:] # remove the dot from the suffix
         self._properties = []
 
         # set
@@ -216,11 +232,8 @@ class Dataset:
 
 
     def __contains__(self, item):
-        for parameter_file in self._parameters.values():
-            if item in parameter_file:
-                return True
-        return False
-    
+        return any(item in parameter_file for parameter_file in self._parameters.values())
+
 
     def __call__(self, **kwargs):
         self._set_state(kwargs)
@@ -229,10 +242,10 @@ class Dataset:
     def _set_state(self, passed):
         result = deepcopy(DEFAULT_STATES[self.type])
 
-        if 'parameter_files' in passed.keys():
+        if 'parameter_files' in passed:
             passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
 
-        if 'property_files' in passed.keys():
+        if 'property_files' in passed:
             passed['property_files'] = result['property_files'] + passed['property_files']
 
         result.update(passed)
@@ -249,13 +262,12 @@ class Dataset:
         """
 
         # Check whether dataset file is supported
-        if self.type not in DEFAULT_STATES.keys():
+        if self.type not in DEFAULT_STATES:
             raise UnsuportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
-        if self._state.get('load') >= LOAD_STAGES['parameters']:
-            if not (set(DEFAULT_STATES[self.type]['parameter_files']) <= set(os.listdir(str(self.path.parent)))):
-                raise IncompleteDataset
+        if self._state.get('load') >= LOAD_STAGES['parameters'] and not (set(DEFAULT_STATES[self.type]['parameter_files']) <= set(os.listdir(str(self.path.parent)))):
+            raise IncompleteDataset
 
     def load(self):
         """
@@ -263,15 +275,18 @@ class Dataset:
         traj is loaded as well.
         """
 
-        if self._state['load'] is LOAD_STAGES['empty']: return
+        if self._state['load'] is LOAD_STAGES['empty']:
+            return
 
         self.load_parameters()
 
-        if self._state['load'] is LOAD_STAGES['parameters']: return
+        if self._state['load'] is LOAD_STAGES['parameters']:
+            return
 
         self.load_properties()
 
-        if self._state['load'] is LOAD_STAGES['properties']: return
+        if self._state['load'] is LOAD_STAGES['properties']:
+            return
 
         self.load_schema()
         self.load_data()
@@ -294,7 +309,8 @@ class Dataset:
 
     def load_parameters(self):
         """
-        Load all parameters essential for reading of given dataset type. For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
+        Load all parameters essential for reading of given dataset type.
+        For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
         """
         self._read_parameters()
 
@@ -341,8 +357,7 @@ class Dataset:
                 if file in DEFAULT_STATES[self.type]['parameter_files']:
                     raise e
                 # if jcampdx file is not found, but not required, pass
-                else:
-                    pass
+                pass
 
     def _write_parameters(self, parent):
         for type_, jcampdx in self._parameters.items():
@@ -437,13 +452,14 @@ class Dataset:
         """
         if isinstance(cmd, str):
             return eval(self._sub_parameters(cmd))
-        elif isinstance(cmd, int) or isinstance(cmd, float):
+        if isinstance(cmd, (int, float)):
             return cmd
-        elif isinstance(cmd, list):
+        if isinstance(cmd, list):
             element = []
             for cmd_ in cmd:
                 element.append(self._make_element(cmd_))
             return element
+        return None
 
     def _eval_conditions(self, conditions):
         """
@@ -461,22 +477,21 @@ class Dataset:
                 if isinstance(condition, str):
                     if not self._make_element(condition):
                         raise PropertyConditionNotMet
-                elif isinstance(condition, list):
-                    if not self._make_element(condition[0]) in condition[1]:
-                        raise PropertyConditionNotMet
+                elif isinstance(condition, list) and self._make_element(condition[0]) not in condition[1]:
+                    raise PropertyConditionNotMet
             except KeyError:
-                raise PropertyConditionNotMet
+                raise PropertyConditionNotMet from KeyError
 
     def _sub_parameters(self, recipe):
         # entries with property e.g. VisuFGOrderDesc.nested to self._dataset['VisuFGOrderDesc'].nested
         for match in re.finditer(r'#[a-zA-Z0-9_]+\.[a-zA-Z]+', recipe):
             m = re.match('#[a-zA-Z0-9_]+', match.group())
-            recipe = recipe.replace(m.group(),"self['{}']".format(m.group()[1:]))
+            recipe = recipe.replace(m.group(),f"self['{m.group()[1:]}']")
         # entries without property e.g. VisuFGOrderDesc to self._dataset['VisuFGOrderDesc'].value
         for match in re.finditer('@[a-zA-Z0-9_]+', recipe):
-            recipe = recipe.replace(match.group(),"self.{}".format(match.group()[1:]))
+            recipe = recipe.replace(match.group(),f"self.{match.group()[1:]}")
         for match in re.finditer('#[a-zA-Z0-9_]+', recipe):
-            recipe = recipe.replace(match.group(),"self['{}'].value".format(match.group()[1:]))
+            recipe = recipe.replace(match.group(),f"self['{match.group()[1:]}'].value")
         return recipe
 
     """
@@ -624,7 +639,7 @@ class Dataset:
             path = Path(path) / self.id + '.json'
 
         if verbose:
-            print("bruker report: {} -> {}".format(str(self.path), str(path)))
+            print(f"bruker report: {self.path!s} -> {path!s}")
 
         if path.suffix == '.json':
             self.to_json(path, props=props)
@@ -643,6 +658,7 @@ class Dataset:
                     json.dump(self.to_dict(props=props), json_file, indent=4)
         else:
             return json.dumps(self.to_dict(props=props), indent=4)
+        return None
 
     def to_yaml(self, path=None, props=None):
         """
@@ -656,6 +672,7 @@ class Dataset:
                     yaml.dump(self.to_dict(props=props), yaml_file, default_flow_style=False)
         else:
             return yaml.dump(self.to_dict(props=props), default_flow_style=False)
+        return None
 
     def to_dict(self, props=None):
         """
@@ -688,24 +705,21 @@ class Dataset:
         """
         if isinstance(var, Path):
             return str(var)
-        elif isinstance(var, np.integer) or isinstance(var, np.int32):
+        if isinstance(var, (np.integer, np.int32)):
             return int(var)
-        elif isinstance(var, np.floating):
+        if isinstance(var, np.floating):
             return float(var)
-        elif isinstance(var, np.ndarray):
+        if isinstance(var, np.ndarray):
             return var.tolist()
-        elif isinstance(var, np.dtype):
+        if isinstance(var, np.dtype):
             return var.name
-        elif isinstance(var, list):
+        if isinstance(var, list):
             return [self._encode_property(var_) for var_ in var]
-        elif isinstance(var, tuple):
+        if isinstance(var, tuple):
             return self._encode_property(list(var))
-        elif isinstance(var, datetime.datetime):
+        if isinstance(var, (datetime.datetime, str)):
             return str(var)
-        elif isinstance(var, str):
-            return str(var)
-        else:
-            return var
+        return var
 
     def query(self, query):
         if isinstance(query, str):
@@ -716,7 +730,7 @@ class Dataset:
                 if not eval(self._sub_parameters(q)):
                     raise FilterEvalFalse
             except (KeyError, AttributeError) as e:
-                raise FilterEvalFalse
+                raise FilterEvalFalse from e
 
     """
     PROPERTIES
@@ -729,8 +743,7 @@ class Dataset:
         """
         if self._data is not None:
             return self._data
-        else:
-            raise DataNotLoaded
+        raise DataNotLoaded
 
     @data.setter
     def data(self,value):
@@ -744,15 +757,13 @@ class Dataset:
         """
         if self._traj is not None:
             return self._traj.data
-        else:
-            raise TrajNotLoaded
+        raise TrajNotLoaded
 
     @property
     def parameters(self):
         if self._parameters is not None:
             return self._parameters
-        else:
-            raise ParametersNotLoaded
+        raise ParametersNotLoaded
 
     @parameters.setter
     def parameters(self, value):
@@ -762,8 +773,7 @@ class Dataset:
     def schema(self):
         if self._schema is not None:
             return self._schema
-        else:
-            raise SchemeNotLoaded
+        raise SchemeNotLoaded
 
     @property
     def dim(self):

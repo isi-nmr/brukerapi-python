@@ -1,7 +1,4 @@
-from .utils import index_to_slice
-from .dataset import Dataset
 
-import numpy as np
 
 class FrameGroupMerger:
     SUPPORTED_FG = ['FG_COMPLEX']
@@ -17,14 +14,14 @@ class FrameGroupMerger:
 
         """
 
-        if "<{}>".format(fg) not in dataset.dim_type:
+        if f"<{fg}>" not in dataset.dim_type:
             raise ValueError(f'Dataset does not contain {fg} frame group')
 
         """
         CHECK if FG and index are valid
         """
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index("<{}>".format(fg))
+        fg_abs_index = dataset.dim_type.index(f"<{fg}>")
 
         # index of FG_SLICE among frame group dimensions of the dataset
         fg_rel_index = fg_abs_index - dataset.encoded_dim
@@ -121,7 +118,7 @@ class FrameGroupMerger:
 
         value = parameter.nested
         for fg_ in value:
-            if fg_[1] == '<{}>'.format(fg):
+            if fg_[1] == f'<{fg}>':
                 value.remove(fg_)
         if value:
             parameter.value = value
@@ -131,7 +128,7 @@ class FrameGroupMerger:
     @classmethod
     def _merge_VisuFGElemId(cls, dataset):
         try:
-            parameter = dataset['VisuFGElemId']
+            dataset['VisuFGElemId']
         except KeyError:
             return
         del dataset.parameters['visu_pars']['VisuFGElemId']

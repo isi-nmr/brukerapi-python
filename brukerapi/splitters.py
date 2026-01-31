@@ -1,21 +1,23 @@
-from .utils import index_to_slice
-from .dataset import Dataset
-import os
-import numpy as np
 import copy
+import os
 from pathlib import Path
+
+import numpy as np
+
+from .dataset import Dataset
 from .exceptions import MissingProperty
+from .utils import index_to_slice
 
 SUPPORTED_FG = ['FG_ISA','FG_IRMODE','FG_ECHO']
 
 
-class Splitter(object):
+class Splitter:
 
     def write(self, datasets, path_out=None):
 
         for dataset in datasets:
             if path_out:
-                dataset.write('{}/{}/{}'.format(Path(path_out), dataset.path.parents[0].name, dataset.path.name))
+                dataset.write(f'{Path(path_out)}/{dataset.path.parents[0].name}/{dataset.path.name}')
             else:
                 dataset.write(dataset.path)
 
@@ -96,18 +98,19 @@ class Splitter(object):
         value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
         VisuCoreTransposition.size = (int(np.prod(value.shape)),)
         VisuCoreTransposition.value = value.flatten(order='F')
+        return None
 
 
 class FrameGroupSplitter(Splitter):
     def __init__(self, fg):
         if fg not in SUPPORTED_FG:
-            raise NotImplemented('Split operation for {} is not implemented'.format(fg))
+            raise NotImplementedError(f'Split operation for {fg} is not implemented')
 
-        super(FrameGroupSplitter, self).__init__()
+        super().__init__()
         self.fg = fg
 
 
-    def split(self, dataset, select=None, write=False, path_out=None, **kwargs):
+    def split(self, dataset, select=None, write=None, path_out=None, **kwargs):
         """Split Bruker object along a dimension of specific frame group.
         Only the frame groups listed in SPLIT_FG_IMPLEMENTED can be used to split the object.
 
@@ -122,14 +125,18 @@ class FrameGroupSplitter(Splitter):
 
         """
 
-        if "<{}>".format(self.fg) not in dataset.dim_type:
+
+        if write is None:
+            write = False
+
+        if f"<{self.fg}>" not in dataset.dim_type:
             raise ValueError(f'Dataset does not contain {self.fg} frame group')
 
         """
         CHECK if FG and index are valid
         """
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index("<{}>".format(self.fg))
+        fg_abs_index = dataset.dim_type.index(f"<{self.fg}>")
 
         # index of FG_SLICE among frame group dimensions of the dataset
         fg_rel_index = fg_abs_index - dataset.encoded_dim
@@ -154,11 +161,11 @@ class FrameGroupSplitter(Splitter):
 
         for select_ in select:
             # construct a new Dataset, without loading data, the data will be supplied later
-            name = '{}_{}_{}/2dseq'.format(dataset.path.parents[0].name, self.fg, select_)
-            
+            name = f'{dataset.path.parents[0].name}_{self.fg}_{select_}/2dseq'
+
             dset_path = dataset.path.parents[1] / name
             os.makedirs(dset_path,exist_ok=True)
-            
+
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
 
@@ -235,7 +242,7 @@ class FrameGroupSplitter(Splitter):
 
         value = VisuFGOrderDesc.nested
         for fg_ in value:
-            if fg_[1] == '<{}>'.format(fg):
+            if fg_[1] == f'<{fg}>':
                 value.remove(fg_)
         if value:
             VisuFGOrderDesc.value = value
@@ -263,7 +270,7 @@ class SlicePackageSplitter(Splitter):
     """
     Split 2dseq data set along individual slice packages
     """
-    def split(self, dataset, write=False, path_out=None):
+    def split(self, dataset, write=None, path_out=None):
         """
         Split 2dseq data set containing multiple data sets into a list of 2dseq data sets containing individual slice packages.
 
@@ -275,10 +282,13 @@ class SlicePackageSplitter(Splitter):
         :return: list of split data sets
         """
 
+        if write is None:
+            write =False
+
         try:
             VisuCoreSlicePacksSlices = dataset['VisuCoreSlicePacksSlices'].nested
         except KeyError:
-            raise MissingProperty('Parameter VisuCoreSlicePacksSlices not found')
+            raise MissingProperty('Parameter VisuCoreSlicePacksSlices not found') from KeyError
 
 
         # list of split data sets
@@ -302,7 +312,7 @@ class SlicePackageSplitter(Splitter):
             frame_count = frame_range.stop - frame_range.start
 
             # name of the data set created by the split
-            name = '{}_sp_{}/2dseq'.format(dataset.path.parents[0].name, sp_index)
+            name = f'{dataset.path.parents[0].name}_sp_{sp_index}/2dseq'
 
             os.makedirs(dataset.path.parents[1] / name,exist_ok=True)
 
@@ -316,7 +326,7 @@ class SlicePackageSplitter(Splitter):
             dataset_.load_properties()
 
             # change id
-            dataset_.id = '{}_sp_{}'.format(dataset_.id, sp_index)
+            dataset_.id = f'{dataset_.id}_sp_{sp_index}'
 
             # construct schema
             dataset_.load_schema()

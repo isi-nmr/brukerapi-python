@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def index_to_slice(index, data_shape, dim_index):
     out = []
 
@@ -43,15 +44,14 @@ def simple_reconstruction(dataset, **kwargs):
 
         if kwargs.get("COMBINE_CHANNELS") is True:
             return combine_channels(data=data)
-        else:
-            return data
+        return data
 
 def combine_channels(dataset, data=None):
 
         if dataset.scheme is not None:
             channel_dim = dataset.scheme.dim_type.index('channel')
         else:
-            raise NotImplemented
+            raise NotImplementedError
 
         if data is None:
             data = dataset.data

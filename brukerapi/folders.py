@@ -1,12 +1,22 @@
-from .dataset import Dataset
-from .jcampdx import JCAMPDX
-from .exceptions import *
-from pathlib import Path
+import contextlib
 import copy
-import operator as op
 import json
-from random import random
 from copy import deepcopy
+from pathlib import Path
+
+from .dataset import Dataset
+from .exceptions import (
+    FilterEvalFalse,
+    IncompleteDataset,
+    InvalidJcampdxFile,
+    JcampdxVersionError,
+    NotADatasetDir,
+    NotExperimentFolder,
+    NotProcessingFolder,
+    NotStudyFolder,
+    UnsuportedDatasetType,
+)
+from .jcampdx import JCAMPDX
 
 DEFAULT_DATASET_STATE = {
                 "parameter_files" : [],
@@ -21,8 +31,8 @@ class Folder:
             self,
             path: str,
             parent: 'Folder' = None,
-            recursive: bool = True,
-            dataset_index: list = ['fid','2dseq','ser','rawdata'],
+            recursive: bool|None = None,  # noqa: FBT001
+            dataset_index: list|None = None,
             dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Folder class.
@@ -33,6 +43,15 @@ class Folder:
         :param dataset_index: only data sets listed here will be indexed
         :return:
         """
+
+
+        if recursive is None:
+            recursive = True
+
+        if dataset_index is None:
+            dataset_index = ['fid','2dseq','ser','rawdata']
+
+
         self.path = Path(path)
 
         self.validate()
@@ -53,10 +72,10 @@ class Folder:
     def _set_dataset_state(self, passed):
         result = deepcopy(DEFAULT_DATASET_STATE)
 
-        if 'parameter_files' in passed.keys():
+        if 'parameter_files' in passed:
             passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
 
-        if 'property_files' in passed.keys():
+        if 'property_files' in passed:
             passed['property_files'] = result['property_files'] + passed['property_files']
 
         result.update(passed)
@@ -178,7 +197,7 @@ class Folder:
 
     def make_tree(
             self,
-            recursive: bool = True
+            recursive: bool|None = None  # noqa: FBT001
     ) -> list:
         """Make a directory tree containing brukerapi objects only
 
@@ -186,6 +205,10 @@ class Folder:
         :param recursive: explore all levels of hierarchy
         :return:
         """
+
+        if recursive is None:
+            recursive = True
+
         children = []
         for file in self.path.iterdir():
             path = file
@@ -240,29 +263,28 @@ class Folder:
         :return:
         """
         for file in path.iterdir():
-            try:
+            with contextlib.suppress(ValueError):
                 required.remove(file.name)
-            except ValueError:
-                pass
 
-        if required:
-            return False
-        else:
-            return True
+        return not required
 
-    def print(self, level=0, recursive=True):
+    def print(self, level=0, recursive=None):
         """Print structure of the :obj:`.Folder` instance.
 
         :param level: level of hierarchy
         :param recursive: print recursively
         :return:
         """
+
+        if recursive is None:
+            recursive = True
+
         if level == 0:
             prefix=''
         else:
             prefix = '{} └--'.format('  ' * level)
 
-        print('{} {} [{}]'.format(prefix,self.path.name, self.__class__.__name__))
+        print(f'{prefix} {self.path.name} [{self.__class__.__name__}]')
 
         for child in self.children:
             if isinstance(child, Folder) and recursive:
@@ -270,23 +292,7 @@ class Folder:
             else:
                 print('{} {} [{}]'.format('  '+prefix,child.path.name, child.__class__.__name__))
 
-    def clean(self, node: 'Folder' = None) -> 'Folder':
-        """Remove empty folders from the tree
 
-        :param node:
-        :return: tree without empty folders
-        """
-        if node is None:
-            node = self
-
-        remove = []
-        for child in node.children:
-            if isinstance(child, Folder):
-                self.clean(child)
-                if not child.children:
-                    remove.append(child)
-        for child in remove:
-            node.children.remove(child)
 
     def to_json(self, path=None):
         if path:
@@ -294,8 +300,12 @@ class Folder:
                 json.dump(self.to_json(), json_file, sort_keys=True, indent=4)
         else:
             return json.dumps(self.to_json(), sort_keys=True, indent=4)
+        return None
 
-    def report(self, path_out=None, format_=None, write=True, props=None, verbose=None):
+    def report(self, path_out=None, format_=None, write=None, props=None, verbose=None):
+
+        if write is None:
+            write = True
 
         out = {}
 
@@ -306,14 +316,15 @@ class Folder:
             with dataset(add_parameters=['subject']) as d:
                 if write:
                     if path_out:
-                        d.report(path=path_out/'{}.{}'.format(d.id, format_), props=props, verbose=verbose)
+                        d.report(path=path_out/f'{d.id}.{format_}', props=props, verbose=verbose)
                     else:
-                        d.report(path=d.path.parent/'{}.{}'.format(d.id, format_), props=props, verbose=verbose)
+                        d.report(path=d.path.parent/f'{d.id}.{format_}', props=props, verbose=verbose)
                 else:
                     out[d.id]=d.to_json(props=props)
 
         if not write:
             return out
+        return None
 
 
 class Study(Folder):
@@ -326,8 +337,8 @@ class Study(Folder):
             self,
             path: str,
             parent: 'Folder' = None,
-            recursive: bool = True,
-            dataset_index: list = ['fid', '2dseq', 'ser', 'rawdata'],
+            recursive: bool|None = None,  # noqa: FBT001
+            dataset_index: list|None = None,
             dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Study class.
@@ -337,9 +348,16 @@ class Study(Folder):
         :param recursive: recursively create sub-folders
         :return:
         """
+
+        if recursive is None:
+            recursive = True
+
+        if dataset_index is None:
+            dataset_index = ['fid', '2dseq', 'ser', 'rawdata']
+
         self.path = Path(path)
         self.validate()
-        super(Study, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+        super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
                                     dataset_state=dataset_state)
 
     def validate(self):
@@ -355,8 +373,8 @@ class Study(Folder):
 
     def get_dataset(
             self,
-            exp_id: str = None,
-            proc_id: str = None
+            exp_id: str | None = None,
+            proc_id: str | None = None
     ) -> Dataset:
         """Get a :obj:`.Dataset` from the study folder. Fid data set is returned if `exp_id` is specified, 2dseq data set
         is returned if `exp_id` and `proc_id` are specified.
@@ -370,13 +388,13 @@ class Study(Folder):
 
         if proc_id:
             return exp._get_proc(proc_id)['2dseq']
-        else:
-            return exp['fid']
+        return exp['fid']
 
     def _get_exp(self, exp_id):
         for exp in self.experiment_list:
             if exp.path.name == exp_id:
                 return exp
+        return None
 
 
 class Experiment(Folder):
@@ -387,8 +405,8 @@ class Experiment(Folder):
             self,
             path: str,
             parent: 'Folder' = None,
-            recursive: bool = True,
-            dataset_index: list = ['fid','ser', 'rawdata'],
+            recursive: bool|None = None,  # noqa: FBT001
+            dataset_index: list|None =None,
             dataset_state: dict = DEFAULT_DATASET_STATE
     ):
         """The constructor for Experiment class.
@@ -398,9 +416,16 @@ class Experiment(Folder):
         :param recursive: recursively create sub-folders
         :return:
         """
+
+        if recursive is None:
+            recursive = True
+
+        if dataset_index is None:
+            dataset_index = ['fid','ser', 'rawdata']
+
         self.path = Path(path)
         self.validate()
-        super(Experiment, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+        super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
                                     dataset_state=dataset_state)
 
     def validate(self):
@@ -418,10 +443,11 @@ class Experiment(Folder):
         for proc in self.processing_list:
             if proc.path.name == proc_id:
                 return proc
+        return None
 
 
 class Processing(Folder):
-    def __init__(self, path, parent=None, recursive=True, dataset_index=['2dseq','1r','1i'],
+    def __init__(self, path, parent=None, recursive=None, dataset_index=None,
             dataset_state: dict = DEFAULT_DATASET_STATE):
         """The constructor for Processing class.
 
@@ -430,9 +456,16 @@ class Processing(Folder):
         :param recursive: recursively create sub-folders
         :return:
         """
+
+        if recursive is None:
+            recursive =True
+
+        if dataset_index is None:
+            dataset_index =['2dseq','1r','1i']
+
         self.path = Path(path)
         self.validate()
-        super(Processing, self).__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
+        super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index,
                                     dataset_state=dataset_state)
 
     def validate(self):
@@ -448,7 +481,14 @@ class Processing(Folder):
 
 
 class Filter:
-    def __init__(self, query, in_place=True, recursive=True):
+    def __init__(self, query, in_place=None, recursive=None):
+
+        if in_place is None:
+            in_place = True
+
+        if recursive is None:
+            recursive = True
+
         self.in_place = in_place
         self.recursive = recursive
         self.query = query
@@ -456,9 +496,7 @@ class Filter:
     def filter(self, folder):
 
         # either perform the filtering of the original folder, or make a copy
-        if self.in_place:
-            folder = folder
-        else:
+        if not self.in_place:
             folder = copy.deepcopy(folder)
 
         # perform filtering
@@ -479,9 +517,8 @@ class Filter:
             except FilterEvalFalse:
                 pass
             finally:
-                if self.recursive:
-                    if isinstance(node, Folder) or isinstance(node, Study):
-                        q += node.children
+                if self.recursive and (isinstance(node, (Folder, Study))):
+                    q += node.children
         return count
 
     def list(self, folder):
@@ -496,9 +533,8 @@ class Filter:
             except FilterEvalFalse:
                 pass
             finally:
-                if self.recursive:
-                    if isinstance(node, Folder):
-                        q += node.children
+                if self.recursive and isinstance(node, Folder):
+                    q += node.children
         return list
 
     def filter_pass(self, node):
@@ -525,8 +561,13 @@ class Filter:
 
 
 class TypeFilter(Filter):
-    def __init__(self, value, in_place=True, recursive=True):
-        super(TypeFilter, self).__init__(in_place, recursive)
+    def __init__(self, value, in_place=None, recursive=None):
+        if in_place is None:
+            in_place = True
+        if recursive is None:
+            recursive = True
+
+        super().__init__(in_place, recursive)
         self.type = value
 
     def filter_eval(self, node):

@@ -1,10 +1,11 @@
 import json
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
-import sys
+
 import pytest
-import os
+
 from brukerapi.folders import Folder
 
 

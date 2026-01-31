@@ -1,12 +1,9 @@
-from typing import Dict
-from .jcampdx import JCAMPDX
-from .exceptions import *
-import numpy as np
-import re
 from copy import deepcopy
 from pathlib import Path
-import json
 
+import numpy as np
+
+from .exceptions import ConditionNotMet, MissingProperty
 
 config_paths = {
     'core': Path(__file__).parents[0]  / "config",
@@ -61,7 +58,7 @@ REQUIRED_PROPERTIES = {
 }
 
 
-class Schema():
+class Schema:
     """Base class for all schemes
 
     """
@@ -88,29 +85,26 @@ class Schema():
         if isinstance(value, str):
             if value=='Yes':
                 return True
-            elif value == 'No':
+            if value == 'No':
                 return False
-            else:
-                return value
-        else:
             return value
+        return value
 
     def validate_conditions(self):
         for condition in self._meta['conditions']:
             # substitute parameters in expression string
             for sub_params in self._sub_params:
-                condition = condition.replace(sub_params,
-                                            "self._sub_params[\'%s\']" %
-                                   sub_params)
-            if not eval(condition):
-                raise ConditionNotMet(condition)
+                condition_f = condition.replace(sub_params,
+                                            f"self._sub_params[\'{sub_params}\']")
+            if not eval(condition_f):
+                raise ConditionNotMet(condition_f)
 
     def _get_ra_k_space_info(self, layouts, slice_full):
 
         k_space = []
         k_space_offset = []
 
-        for slc_, size_ in zip(slice_full, layouts['k_space']):
+        for slc_, size_ in zip(slice_full, layouts['k_space'],strict=False):
             if isinstance(slc_, slice):
                 start = slc_.start if slc_.start else 0
                 stop = slc_.stop if slc_.stop else size_
@@ -189,12 +183,10 @@ class SchemaFid(Schema):
             acquisition_length = acquisition_length // channels
             data = np.reshape(data, (-1, channels, blocks), order='F')
             return np.reshape(data[acquisition_offset:acquisition_offset+acquisition_length,:,:],(acquisition_length * channels, blocks), order='F')
-        else:
-            # trim on acq level
-            if acquisition_length != block_length:
-                return data[0:acquisition_length,:]
-            else:
-                return data
+        # trim on acq level
+        if acquisition_length != block_length:
+            return data[0:acquisition_length,:]
+        return data
 
     def _acquisitions_to_encode(self, data, layouts):
         return np.reshape(data, layouts['encoding_space'], order='F')
@@ -230,12 +222,12 @@ class SchemaFid(Schema):
             return data
 
         for index in np.ndindex(data.shape[2:]):
-            index = list(index)
-            index.insert(0,slice(0,data.shape[1]))
-            index.insert(0,slice(0, data.shape[0]))
-            index = tuple(index)
-            tmp = data[index]
-            data[index] = tmp[:,PVM_EncSteps1_sorted]
+            index_f = list(index)
+            index_f.insert(0,slice(0,data.shape[1]))
+            index_f.insert(0,slice(0, data.shape[0]))
+            index_f = tuple(index_f)
+            tmp = data[index_f]
+            data[index_f] = tmp[:,PVM_EncSteps1_sorted]
 
         return data
 
@@ -297,28 +289,28 @@ class SchemaFid(Schema):
 
         for index_ra in np.ndindex(layouts_ra['k_space'][1:]):
             # index of line in the original k_space
-            index_full = tuple(i + o for i, o  in zip(index_ra, layouts_ra['k_space_offset'][1:]))
-
+            index_full = tuple(i + o for i, o  in zip(index_ra, layouts_ra['k_space_offset'][1:],strict=False))
+            index_ra_f = index_ra
             # index of line in the subarray
             # index_full = self.index_to_data(layouts, (0,) + index_full)
             try:
                 index_full = self.index_to_data(layouts, (0,) + index_full)
-            except:
+            except IndexError:
                 print(index_full)
                 index_full = self.index_to_data(layouts, (0,) + index_full)
 
             # index of line in the subarray
             # index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
             try:
-                index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
-            except:
+                index_ra_f = self.index_to_data(layouts_ra, (0,)+index_ra)
+            except IndexError:
                 print(index_ra)
-                index_ra = self.index_to_data(layouts_ra, (0,) + index_ra)
+                index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
 
 
             try:
-                array_ra[index_ra] = np.array(fp[index_full])
-            except:
+                array_ra[index_ra_f] = np.array(fp[index_full])
+            except IndexError:
                 print(index_full)
 
         layouts_ra['k_space'] = (layouts_ra['k_space'][0]//2,)+layouts_ra['k_space'][1:]
@@ -364,15 +356,12 @@ class SchemaFid(Schema):
 
     def encode_extrema_update(self, min_enc_index, max_enc_index, enc_index):
         for i in range(len(min_enc_index)):
-            if enc_index[i] < min_enc_index[i]:
-                min_enc_index[i] = enc_index[i]
-            if enc_index[i] > max_enc_index[i]:
-                max_enc_index[i] = enc_index[i]
+            min_enc_index[i] = min(min_enc_index[i], enc_index[i])
+            max_enc_index[i] = max(max_enc_index[i], enc_index[i])
 
     def index_to_data(self, layout, index):
 
         # kspace to linear
-        channel = index[layout['channel_index']]+1
         index = np.ravel_multi_index(index, layout['k_space'], order='F')
 
         # linear to encoding permuted
@@ -399,8 +388,7 @@ class SchemaFid(Schema):
         min_enc_index, max_enc_index = self._extrema_init(layout_full['encoding_space'][1:])
         storage_ra = []
         for index_ra in np.ndindex(layout_ra['k_space'][1:]):
-            index_full = (0,)+tuple(i + o for i, o in zip(index_ra, layout_ra['k_space_offset'][1:]))
-            channel = index_full[layout_full['channel_index']]+1
+            index_full = (0,)+tuple(i + o for i, o in zip(index_ra, layout_ra['k_space_offset'][1:],strict=False))
 
             """
             index_k_to_encode
@@ -423,7 +411,7 @@ class SchemaFid(Schema):
             """
             index_full = np.ravel_multi_index(index_full, layout_full['encoding_space'], order='F')
             index_full = np.unravel_index(index_full, layout_full['storage_clear'], order='F')
-            if not index_full[1] in storage_ra:
+            if index_full[1] not in storage_ra:
                 storage_ra.append(index_full[1])
 
         encoding_space_ra = max_enc_index - min_enc_index + 1
@@ -521,7 +509,7 @@ class SchemaSer(Schema):
         return data
 
     def serialize(self, data):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class Schema2dseq(Schema):
@@ -547,8 +535,8 @@ class Schema2dseq(Schema):
     def get_rel_fg_index(self, fg_type):
         try:
             return self.fg_list.index(fg_type)
-        except:
-            raise KeyError('Framegroup {} not found in fg_list'.format(fg_type))
+        except MissingProperty:
+            raise KeyError(f'Framegroup {fg_type} not found in fg_list') from MissingProperty
 
     def scale(self):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order='F')
@@ -582,8 +570,8 @@ class Schema2dseq(Schema):
         # get a float copy of the data array
         data = data.astype(float)
 
-        slope = self._dataset.slope if not 'mask' in layouts.keys() else self._dataset.slope[layouts['mask'].flatten(order='F')]
-        offset = self._dataset.offset if not 'mask' in layouts.keys() else self._dataset.offset[layouts['mask'].flatten(order='F')]
+        slope = self._dataset.slope if 'mask' not in layouts else self._dataset.slope[layouts['mask'].flatten(order='F')]
+        offset = self._dataset.offset if 'mask' not in layouts else self._dataset.offset[layouts['mask'].flatten(order='F')]
 
         for frame in range(data.shape[-1]):
             if dir == 'FW':
@@ -608,8 +596,7 @@ class Schema2dseq(Schema):
         """
         if mask:
             return np.reshape(data, (-1,) + layouts['shape_fg'], order='F')
-        else:
-            return np.reshape(data, layouts['shape_final'], order='F')
+        return np.reshape(data, layouts['shape_final'], order='F')
 
     def serialize(self, data, layout):
         data = self._framegroups_to_frames(data, layout)
@@ -622,8 +609,7 @@ class Schema2dseq(Schema):
     def _framegroups_to_frames(self, data, layouts):
         if layouts.get('mask'):
             return np.reshape(data, (-1,) + layouts['shape_fg'], order='F')
-        else:
-            return np.reshape(data, layouts['shape_storage'], order='F')
+        return np.reshape(data, layouts['shape_storage'], order='F')
 
     """
     Random access
@@ -686,15 +672,15 @@ class Schema2dseq(Schema):
         for index_ra in np.ndindex(layouts_ra['shape_final'][self.encoded_dim:]):
             index = tuple(np.array(index_ra) + layouts_ra['offset_fg'])
             index = tuple(0 for i in range(self.encoded_dim)) + index
-            index_ra = tuple(0 for i in range(self.encoded_dim)) + index_ra
+            index_ra_f = tuple(0 for i in range(self.encoded_dim)) + index_ra
 
-            index_ra = np.ravel_multi_index(index_ra, layouts_ra['shape_final'], order='F')
+            index_ra_f = np.ravel_multi_index(index_ra_f, layouts_ra['shape_final'], order='F')
             index = np.ravel_multi_index(index, layouts['shape_final'], order='F')
 
-            index_ra = np.unravel_index(index_ra, layouts_ra['shape_storage'], order='F')
+            index_ra_f = np.unravel_index(index_ra_f, layouts_ra['shape_storage'], order='F')
             index = np.unravel_index(index, layouts['shape_storage'], order='F')
 
-            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra[self.encoded_dim:]
+            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra_f[self.encoded_dim:]
             slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim:]
             yield slice_ra, slice_full
 
