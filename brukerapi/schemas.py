@@ -72,7 +72,7 @@ class Schema:
         k_space = []
         k_space_offset = []
 
-        for slc_, size_ in zip(slice_full, layouts["k_space"], strict=False):
+        for slc_, size_ in zip(slice_full, layouts["k_space"]):
             if isinstance(slc_, slice):
                 start = slc_.start if slc_.start else 0
                 stop = slc_.stop if slc_.stop else size_
@@ -251,7 +251,7 @@ class SchemaFid(Schema):
 
         for index_ra in np.ndindex(layouts_ra["k_space"][1:]):
             # index of line in the original k_space
-            index_full = tuple(i + o for i, o in zip(index_ra, layouts_ra["k_space_offset"][1:], strict=False))
+            index_full = tuple(i + o for i, o in zip(index_ra, layouts_ra["k_space_offset"][1:]))
             index_ra_f = index_ra
             # index of line in the subarray
             # index_full = self.index_to_data(layouts, (0,) + index_full)
@@ -346,7 +346,7 @@ class SchemaFid(Schema):
         min_enc_index, max_enc_index = self._extrema_init(layout_full["encoding_space"][1:])
         storage_ra = []
         for index_ra in np.ndindex(layout_ra["k_space"][1:]):
-            index_full = (0,) + tuple(i + o for i, o in zip(index_ra, layout_ra["k_space_offset"][1:], strict=False))
+            index_full = (0,) + tuple(i + o for i, o in zip(index_ra, layout_ra["k_space_offset"][1:]))
 
             """
             index_k_to_encode

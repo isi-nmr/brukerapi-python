@@ -27,7 +27,7 @@ def generate_slices(shape):
     for i1 in np.ndindex(shape):
         for i2 in np.ndindex(shape):
             if np.all(np.array(i1) <= np.array(i2)):
-                slice_ = tuple(slice(i1_, i2_ + 1) for i1_, i2_ in zip(i1, i2, strict=False))
+                slice_ = tuple(slice(i1_, i2_ + 1) for i1_, i2_ in zip(i1, i2))
                 slices.append(slice_)
     return slices
 
