@@ -633,6 +633,12 @@ class JCAMPDX(object):
     def __getitem__(self, key):
         return self.params[key]
 
+
+    def __contains__(self, item):
+        if item in self.params:
+            return True
+        return False
+
     def __delitem__(self, key):
         del self.params[key]
 

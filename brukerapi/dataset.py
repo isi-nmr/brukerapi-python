@@ -166,7 +166,7 @@ class Dataset:
             raise FileNotFoundError(self.path)
 
         # directory constructor
-        if self.path.is_dir():
+        if self.path.is_dir() and state.get('load'):
             content = os.listdir(self.path)
             if 'fid' in content:
                 self.path = self.path / 'fid'
@@ -213,6 +213,14 @@ class Dataset:
                 pass
 
         raise KeyError(item)
+
+
+    def __contains__(self, item):
+        for parameter_file in self._parameters.values():
+            if item in parameter_file:
+                return True
+        return False
+    
 
     def __call__(self, **kwargs):
         self._set_state(kwargs)
@@ -593,7 +601,7 @@ class Dataset:
         parent = path.parent
 
         if not parent.exists():
-            os.mkdir(parent)
+            os.makedirs(parent,exist_ok=True)
 
         self._write_parameters(parent)
         self._write_data(path)
