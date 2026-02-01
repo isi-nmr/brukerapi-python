@@ -5,7 +5,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -13,7 +13,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -21,7 +21,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -29,7 +29,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
           "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -37,7 +37,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
           "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -45,7 +45,7 @@
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
           "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>"]]
+          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
         ]
     },
     {
@@ -53,7 +53,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV-360.1.1>"]]
+          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
         ]
     }
   ],
@@ -61,9 +61,16 @@
     {
       "cmd": "#ACQ_jobs.primed_dict(7)['<{}>'.format(@subtype)]",
       "conditions": [
-        "#ACQ_sw_version in ['<PV-360.1.1>']"
+        ["#ACQ_sw_version",["<PV-360.1.1>"]]
       ]
     },
+    {
+      "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+      "conditions": [
+        ["#ACQ_sw_version",["<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+      ]
+    },
+
     {
       "cmd": "#ACQ_jobs.nested[0]",
       "conditions": [
@@ -88,7 +95,7 @@
   ],
   "shape_storage": [
     {
-      "cmd": "(@job_desc[0],) + (@job_desc[3],)",
+      "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[3],)",
       "conditions": []
     }
   ]

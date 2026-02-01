@@ -322,7 +322,7 @@
       ]
     },
     {
-      "cmd": "#NR",
+      "cmd": "#NR*#NI",
       "conditions": [
         "@scheme_id=='SPECTROSCOPY'"
       ]
@@ -433,6 +433,7 @@
     {
       "cmd": [
         "#ACQ_size.tuple[0] // 2",
+        "#NI",
         "#NR"
       ],
       "conditions": [
@@ -531,7 +532,7 @@
       ]
     },
     {
-      "cmd": [0,1],
+      "cmd": [0,1,2],
       "conditions": [
         "@scheme_id=='SPECTROSCOPY'"
       ]
@@ -607,6 +608,7 @@
     {
       "cmd": [
         "#ACQ_size.tuple[0] // 2",
+        "#NI",
         "#NR"
       ],
       "conditions": [
