@@ -549,7 +549,7 @@ class Dataset:
         try:
             assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
         except AssertionError:
-            raise ValueError("Dimension mismatch")
+            raise ValueError("Dimension mismatch") from AssertionError
 
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 

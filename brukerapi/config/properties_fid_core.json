@@ -223,14 +223,24 @@
         ["#PULPROG[1:-1]",
           [
             "EPI.ppg",
-            "DtiEpi.ppg",
             "navigatorEPI_OM.ppg",
-            "EPSI.ppg",
             "FAIR_EPI.ppg",
             "CASL_EPI.ppg",
             "T1_EPI.ppg",
             "T2_EPI.ppg",
             "T2S_EPI.ppg"
+          ]
+        ],
+        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+      ]
+    },
+    {
+      "cmd": "'dEPI'" ,
+      "conditions": [
+        ["#PULPROG[1:-1]",
+          [
+            "DtiEpi.ppg",
+            "EPSI.ppg"
           ]
         ],
         "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
@@ -319,6 +329,12 @@
       "cmd": "#NSegments*#NI*#NR",
       "conditions": [
         "@scheme_id=='EPI'"
+      ]
+    },
+    {
+      "cmd": "#NSegments*#NI*#NR*(#ACQ_size[2] if len(#ACQ_size)>2 else 1)",
+      "conditions": [
+        "@scheme_id=='dEPI'"
       ]
     },
     {
@@ -432,6 +448,19 @@
     },
     {
       "cmd": [
+        "#PVM_EncMatrix[0] * #PVM_EncMatrix[1] // #NSegments",
+        "#PVM_EncNReceivers",
+        "#NSegments",
+        "#NI",
+        "#NR",
+        "#ACQ_size[2] if len(#ACQ_size)>2 else 1"
+      ],
+      "conditions": [
+        "@scheme_id=='dEPI'"
+      ]
+    },
+    {
+      "cmd": [
         "#ACQ_size.tuple[0] // 2",
         "#NI",
         "#NR"
@@ -528,9 +557,22 @@
     {
       "cmd": [0,2,3,4,1],
       "conditions": [
-        "@scheme_id in ['EPI', 'SPIRAL']"
+        "@scheme_id in ['SPIRAL']"
       ]
     },
+    {
+      "cmd": [0,2,3,4,1],
+      "conditions": [
+        "@scheme_id in ['EPI']"
+      ]
+    },
+    {
+      "cmd": [0,2,3,4,1,5],
+      "conditions": [
+        "@scheme_id in ['dEPI']"
+      ]
+    },
+    
     {
       "cmd": [0,1,2],
       "conditions": [
@@ -603,6 +645,19 @@
       ],
       "conditions": [
         "@scheme_id=='EPI'"
+      ]
+    },
+    {
+      "cmd": [
+        "#PVM_EncMatrix[0]",
+        "#PVM_EncMatrix[1]",
+        "#NI",
+        "#NR",
+        "#PVM_EncNReceivers",
+        "#ACQ_size[2] if len(#ACQ_size)>2 else 1"
+      ],
+      "conditions": [
+        "@scheme_id=='dEPI'"
       ]
     },
     {
@@ -703,7 +758,7 @@
         "'channel'"
       ],
       "conditions": [
-        ["@scheme_id",["CART_2D","RADIAL","EPI","SPIRAL","ZTE"]]
+        ["@scheme_id",["CART_2D","RADIAL","EPI","dEPI","SPIRAL","ZTE"]]
       ]
     },
     {
