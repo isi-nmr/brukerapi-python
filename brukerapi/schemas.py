@@ -426,7 +426,7 @@ class SchemaRawdata(Schema):
     def layouts(self):
         layouts = {}
         layouts["raw"] = (int(self._dataset.job_desc[0] / 2), self._dataset.channels, int(self._dataset.job_desc[3]))
-        layouts["shape_storage"] = (2, int(self._dataset.job_desc[0] / 2), self._dataset.channels, int(self._dataset.job_desc[3]))
+        layouts["shape_storage"] = (int(self._dataset.job_desc[0]), self._dataset.channels, int(self._dataset.job_desc[3]))
         layouts["final"] = layouts["raw"]
         return layouts
 
@@ -434,9 +434,13 @@ class SchemaRawdata(Schema):
         return data[0::2, ...] + 1j * data[1::2, ...]
 
     def serialize(self, data, layouts):
-        data_ = np.zeros(layouts["shape_storage"], dtype=self.numpy_dtype, order="F")
-        data_[0, ...] = data.real
-        data_[1, ...] = data.imag
+        # storage array
+        data_ = np.zeros(layouts["shape_storage"], dtype=self._dataset.numpy_dtype, order="F")
+
+        # interlace real and imag along first axis
+        data_[0::2, ...] = data.real
+        data_[1::2, ...] = data.imag
+
         return data_
 
 
