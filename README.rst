@@ -165,7 +165,7 @@ Compatible pulse sequences for **fid** data sets:
 * igFLASH.ppg
 
 ParaVision v6.0.1 and v7.0.0
-"""""""""""""""""
+"""""""""""""""""""""""""""""""
 Compatible data set types:
 
 * **fid**
@@ -213,7 +213,7 @@ Compatible pulse sequences for **fid** data sets:
 
 
 ParaVision 360 v1.1 v3.0-v3.7
-"""""""""""""""
+"""""""""""""""""""""""""""""""""
 Reading rawdata is supported only in a basic form, no reshaping into k-space is supported at the moment.
 Compatible data set types:
 
