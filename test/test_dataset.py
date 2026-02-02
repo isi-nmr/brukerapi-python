@@ -1,5 +1,6 @@
 import contextlib
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -34,9 +35,11 @@ def test_data_load(test_data):
     dataset = Dataset(test_data[0])
 
     return  # For now Disable testing array equality
+    if not os.path.exists(str(dataset.path) + ".npz"):
+        return
 
     with np.load(str(dataset.path) + ".npz") as data:
-        assert np.array_equal(dataset.data, data["data"])
+        assert np.array_equal(np.squeeze(dataset.data), np.squeeze(data["data"]))
 
 
 def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):

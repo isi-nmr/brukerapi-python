@@ -1,1 +1,65 @@
-{}
+{
+  "subj_id": [
+    {
+      "cmd": "#SUBJECT_id[1:-1]",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "study_id": [
+    {
+      "cmd": "str(#SUBJECT_study_nr)",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "exp_id": [
+    {
+      "cmd": "@path.parent.name",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "id": [
+    {
+      "cmd": "f'RawData_{@subtype}_{@exp_id}_{@subj_id}_{@study_id}'",
+      "conditions": [
+      ]
+    }
+  ],
+  "TR": [
+    {
+        "cmd": "#PVM_RepetitionTime",
+        "conditions": [],
+        "unit": "ms"
+    }
+  ],
+  "TE": [
+    {
+        "cmd": "#PVM_EchoTime",
+        "conditions": [],
+        "unit": "ms"
+    }
+  ]
+}

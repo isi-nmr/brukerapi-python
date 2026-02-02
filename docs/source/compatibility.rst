@@ -23,7 +23,7 @@ Compatible pulse sequences for **fid** data sets:
 
 
 
-ParaVision v6.0.1
+ParaVision v6.0.1 and v7.0.0
 """""""""""""""""
 Compatible data set types:
 
@@ -70,7 +70,9 @@ Compatible pulse sequences for **fid** data sets:
 * CPMG.ppg
 * RfProfile.ppg
 
-ParaVision v360
+
+
+ParaVision v360 1.1 3.0-3.7
 """""""""""""""
 Compatible data set types:
 
