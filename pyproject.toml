@@ -10,6 +10,8 @@ authors = [
     { name = "Tomas Psorn", email = "tomaspsorn@isibrno.cz" },
     { name = "Jiri Vitous", email = "vitous@isibrno.cz" },
 ]
+maintainers = [{ name = "Jiri Vitous", email = "vitous@isibrno.cz" }]
+
 license = { text = "MIT" }
 readme = "README.rst"
 requires-python = ">=3.8"
@@ -18,6 +20,8 @@ dependencies = [
     "numpy>=1.26.0; python_version>='3.9'",
     "pyyaml",
 ]
+
+
 urls = { "Homepage" = "https://github.com/isi-nmr/brukerapi-python", "Download" = "https://github.com/isi-nmr/brukerapi-python/releases/latest" }
 
 [project.scripts]
