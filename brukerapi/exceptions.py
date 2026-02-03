@@ -1,5 +1,3 @@
-
-
 class UnknownAcqSchemeException(Exception):
     def __init__(self, *args):
         if args:
@@ -9,9 +7,8 @@ class UnknownAcqSchemeException(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Unknown acquisition scheme, {}'.format(self.message)
-        else:
-            return 'Unknown acquisition scheme'
+            return f"Unknown acquisition scheme, {self.message}"
+        return "Unknown acquisition scheme"
 
 
 class UnsuportedDatasetType(Exception):
@@ -23,9 +20,8 @@ class UnsuportedDatasetType(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Dataset type: {} is not supported'.format(self.message)
-        else:
-            return 'Dataset type is not supported'
+            return f"Dataset type: {self.message} is not supported"
+        return "Dataset type is not supported"
 
 
 class InvalidJcampdxFile(Exception):
@@ -37,9 +33,8 @@ class InvalidJcampdxFile(Exception):
 
     def __str__(self):
         if self.message:
-            return '{} is not valid JCAMP-DX file'.format(self.message)
-        else:
-            return 'Invalid JCAMP-DX file'
+            return f"{self.message} is not valid JCAMP-DX file"
+        return "Invalid JCAMP-DX file"
 
 
 class ParameterNotFound(Exception):
@@ -48,13 +43,14 @@ class ParameterNotFound(Exception):
             self.key = args[0]
             self.path = args[1]
         else:
+            self.key = None
+            self.path = None
             self.message = None
 
     def __str__(self):
         if self.key and self.path:
-            return '{} not found in {}'.format(self.key, self.path)
-        else:
-            return 'Parameter not found'
+            return f"{self.key} not found in {self.path}"
+        return "Parameter not found"
 
 
 class JcampdxVersionError(Exception):
@@ -66,9 +62,8 @@ class JcampdxVersionError(Exception):
 
     def __str__(self):
         if self.message:
-            return '"{}" is not a valid JCAMP-DX version, supported versions are {}'.format(self.message, SUPPORTED_VERSIONS)
-        else:
-            return 'Not a valid JCAMP-DX version'
+            return f'"{self.message}" is not a valid JCAMP-DX version'
+        return "Not a valid JCAMP-DX version"
 
 
 class JcampdxFileError(Exception):
@@ -80,9 +75,8 @@ class JcampdxFileError(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Not a valid JCAMP-DX file {} '.format(self.message)
-        else:
-            return 'Not a valid JCAMP-DX file'
+            return f"Not a valid JCAMP-DX file {self.message} "
+        return "Not a valid JCAMP-DX file"
 
 
 class JcampdxInvalidLine(Exception):
@@ -94,9 +88,8 @@ class JcampdxInvalidLine(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Not a valid JCAMP-DX data line {} '.format(self.message)
-        else:
-            return 'Not a valid JCAMP-DX data line'
+            return f"Not a valid JCAMP-DX data line {self.message} "
+        return "Not a valid JCAMP-DX data line"
 
 
 class DatasetTypeMissmatch(Exception):
@@ -109,8 +102,7 @@ class DatasetTypeMissmatch(Exception):
     def __str__(self):
         if self.message:
             return self.message
-        else:
-            return 'DatasetTypeMissmatch'
+        return "DatasetTypeMissmatch"
 
 
 class IncompleteDataset(Exception):
@@ -123,8 +115,7 @@ class IncompleteDataset(Exception):
     def __str__(self):
         if self.message:
             return self.message
-        else:
-            return 'DatasetTypeMissmatch'
+        return "DatasetTypeMissmatch"
 
 
 class ConditionNotMet(Exception):
@@ -136,9 +127,8 @@ class ConditionNotMet(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Not a valid JCAMP-DX version'
+            return f"{self.message}"
+        return "Not a valid JCAMP-DX version"
 
 
 class SequenceNotMet(Exception):
@@ -150,9 +140,8 @@ class SequenceNotMet(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Message {}'.format(self.message)
-        else:
-            return 'Not a valid JCAMP-DX version'
+            return f"Message {self.message}"
+        return "Not a valid JCAMP-DX version"
 
 
 class PvVersionNotMet(Exception):
@@ -164,9 +153,8 @@ class PvVersionNotMet(Exception):
 
     def __str__(self):
         if self.message:
-            return 'Message {}'.format(self.message)
-        else:
-            return 'Not a valid ParaVision version'
+            return f"Message {self.message}"
+        return "Not a valid ParaVision version"
 
 
 class FilterEvalFalse(Exception):
@@ -178,9 +166,8 @@ class FilterEvalFalse(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'FilterEvalFalse'
+            return f"{self.message}"
+        return "FilterEvalFalse"
 
 
 class NotADatasetDir(Exception):
@@ -192,9 +179,9 @@ class NotADatasetDir(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'NotADatasetDir {}'.format(self.message)
+            return f"{self.message}"
+        return f"NotADatasetDir {self.message}"
+
 
 class ScanNotFound(Exception):
     def __init__(self, *args):
@@ -205,9 +192,8 @@ class ScanNotFound(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Scan: {} not found'.format(self.message)
+            return f"{self.message}"
+        return f"Scan: {self.message} not found"
 
 
 class RecoNotFound(Exception):
@@ -219,9 +205,8 @@ class RecoNotFound(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Reco: {} not found'.format(self.message)
+            return f"{self.message}"
+        return f"Reco: {self.message} not found"
 
 
 class ParametersNotLoaded(Exception):
@@ -233,9 +218,8 @@ class ParametersNotLoaded(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'ParametersNotLoaded'
+            return f"{self.message}"
+        return "ParametersNotLoaded"
 
 
 class SchemeNotLoaded(Exception):
@@ -247,9 +231,8 @@ class SchemeNotLoaded(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'SchemeNotLoaded'
+            return f"{self.message}"
+        return "SchemeNotLoaded"
 
 
 class DataNotLoaded(Exception):
@@ -261,9 +244,8 @@ class DataNotLoaded(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'DataNotLoaded'
+            return f"{self.message}"
+        return "DataNotLoaded"
 
 
 class TrajNotLoaded(Exception):
@@ -275,9 +257,8 @@ class TrajNotLoaded(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'TrajNotLoaded'
+            return f"{self.message}"
+        return "TrajNotLoaded"
 
 
 class NotStudyFolder(Exception):
@@ -289,9 +270,8 @@ class NotStudyFolder(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Not a Bruker study folder.'
+            return f"{self.message}"
+        return "Not a Bruker study folder."
 
 
 class NotExperimentFolder(Exception):
@@ -303,9 +283,8 @@ class NotExperimentFolder(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Not a Bruker experiment folder.'
+            return f"{self.message}"
+        return "Not a Bruker experiment folder."
 
 
 class NotProcessingFolder(Exception):
@@ -317,9 +296,8 @@ class NotProcessingFolder(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Not a Bruker processing folder.'
+            return f"{self.message}"
+        return "Not a Bruker processing folder."
 
 
 class PropertyConditionNotMet(Exception):
@@ -331,9 +309,8 @@ class PropertyConditionNotMet(Exception):
 
     def __str__(self):
         if self.message:
-            return '{}'.format(self.message)
-        else:
-            return 'Not a Bruker processing folder.'
+            return f"{self.message}"
+        return "Not a Bruker processing folder."
 
 
 class FidSchemaUndefined(Exception):
@@ -344,13 +321,13 @@ class FidSchemaUndefined(Exception):
             self.message = None
 
     def __str__(self):
-        common = 'Schema was not identified for this dataset. This issue might occur in case of a pulse sequence. ' \
-                   'Please, contact authors to include the new sequence into the API configuration.'
+        common = (
+            "Schema was not identified for this dataset. This issue might occur in case of a pulse sequence. "
+            "Please, contact authors to include the new sequence into the API configuration."
+        )
         if self.message:
-            return common + '\n The name of ' \
-                   'pulse sequence used to measure this dataset is {}'.format(self.message)
-        else:
-            return common
+            return common + f"\n The name of pulse sequence used to measure this dataset is {self.message}"
+        return common
 
 
 class MissingProperty(Exception):
@@ -362,9 +339,5 @@ class MissingProperty(Exception):
 
     def __str__(self):
         if self.message:
-            return "Dataset is missing the {} property. We can offer some help, please contact us via " \
-                   "https://github.com/isi-nmr/brukerapi-python".format(self.message)
-        else:
-            return "Dataset is missing one of the required properties. We can offer some help, please contact us via " \
-                 "https://github.com/isi-nmr/brukerapi-python"
-
+            return f"Dataset is missing the {self.message} property. We can offer some help, please contact us via https://github.com/isi-nmr/brukerapi-python"
+        return "Dataset is missing one of the required properties. We can offer some help, please contact us via https://github.com/isi-nmr/brukerapi-python"

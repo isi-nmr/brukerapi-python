@@ -11,6 +11,7 @@ brukerapi-python
     :target: https://bruker-api.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+
 A Python package providing I/O interface for Bruker data sets.
 
 tl;dr
@@ -50,6 +51,18 @@ Load an entire **study**:
     dataset.load()
     dataset.data                       # access data array
     dataset.VisuCoreSize               # get a value of a single parameter
+
+Load a parametric file:
+
+.. code-block:: python
+
+   from brukerapi.jcampdx import JCAMPDX
+
+   parameters = JCAMPDX('path_to_scan/method')
+   
+   TR = data.params["PVM_RepetitionTime"].value # This way
+   TR = data.get_value("PVM_RepetitionTime") # Or this way
+
 
 
 
@@ -151,8 +164,8 @@ Compatible pulse sequences for **fid** data sets:
 * STEAM.ppg
 * igFLASH.ppg
 
-ParaVision v6.0.1
-"""""""""""""""""
+ParaVision v6.0.1 and v7.0.0
+"""""""""""""""""""""""""""""""
 Compatible data set types:
 
 * **fid**
@@ -198,8 +211,10 @@ Compatible pulse sequences for **fid** data sets:
 * CPMG.ppg
 * RfProfile.ppg
 
-ParaVision v360
-"""""""""""""""
+
+ParaVision 360 v1.1 v3.0-v3.7
+"""""""""""""""""""""""""""""""""
+Reading rawdata is supported only in a basic form, no reshaping into k-space is supported at the moment.
 Compatible data set types:
 
 * **2dseq**

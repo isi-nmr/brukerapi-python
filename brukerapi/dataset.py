@@ -1,14 +1,29 @@
-from .exceptions import *
-from .schemas import *
-from .data import *
-
-from pathlib import Path
+import datetime
 import json
-import numpy as np
 import os
 import os.path
+import re
+from copy import deepcopy
+from pathlib import Path
+
+import numpy as np
 import yaml
-import datetime
+
+from .data import DataRandomAccess
+from .exceptions import (
+    DataNotLoaded,
+    DatasetTypeMissmatch,
+    FilterEvalFalse,
+    IncompleteDataset,
+    NotADatasetDir,
+    ParametersNotLoaded,
+    PropertyConditionNotMet,
+    SchemeNotLoaded,
+    TrajNotLoaded,
+    UnsuportedDatasetType,
+)
+from .jcampdx import JCAMPDX
+from .schemas import Schema2dseq, SchemaFid, SchemaRawdata, SchemaSer, SchemaTraj
 
 LOAD_STAGES = {
     "empty": 0,
@@ -19,21 +34,15 @@ LOAD_STAGES = {
 
 # Dict of default dataset states
 DEFAULT_STATES = {
-    'fid': {
-        "parameter_files" : ['acqp', 'method'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_fid_core.json',
-            Path(__file__).parents[0] / 'config/properties_fid_custom.json'
-        ],
-        "load": LOAD_STAGES['all'],
-        "mmap": False
+    "fid": {
+        "parameter_files": ["acqp", "method"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_fid_core.json", Path(__file__).parents[0] / "config/properties_fid_custom.json"],
+        "load": LOAD_STAGES["all"],
+        "mmap": False,
     },
     'fid_proc': {
         "parameter_files" : ['acqp', 'method'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_fid_core.json',
-            Path(__file__).parents[0] / 'config/properties_fid_custom.json'
-        ],
+        "property_files": [Path(__file__).parents[0] / 'config/properties_fid_core.json', Path(__file__).parents[0] / 'config/properties_fid_custom.json'],
         "load": LOAD_STAGES['all'],
         "mmap": False
     },
@@ -45,35 +54,26 @@ DEFAULT_STATES = {
         ],
         "load": LOAD_STAGES['all'],
         "scale": True,
-        "mmap": False
+        "mmap": False,
     },
-    'traj': {
-        "parameter_files": ['acqp', 'method'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_traj_core.json',
-            Path(__file__).parents[0] / 'config/properties_traj_custom.json'
-        ],
-        "load": LOAD_STAGES['all'],
-        "mmap": False
+    "traj": {
+        "parameter_files": ["acqp", "method"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_traj_core.json", Path(__file__).parents[0] / "config/properties_traj_custom.json"],
+        "load": LOAD_STAGES["all"],
+        "mmap": False,
     },
-    'ser': {
-        "parameter_files": ['acqp', 'method'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_ser_core.json',
-            Path(__file__).parents[0] / 'config/properties_ser_custom.json'
-        ],
-        "load": LOAD_STAGES['all'],
-        "mmap": False
+    "ser": {
+        "parameter_files": ["acqp", "method"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_ser_core.json", Path(__file__).parents[0] / "config/properties_ser_custom.json"],
+        "load": LOAD_STAGES["all"],
+        "mmap": False,
     },
-    'rawdata': {
-        "parameter_files": ['acqp', 'method'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_rawdata_core.json',
-            Path(__file__).parents[0] / 'config/properties_rawdata_custom.json'
-        ],
-        "load": LOAD_STAGES['all'],
-        "mmap": False
-    }
+    "rawdata": {
+        "parameter_files": ["acqp", "method"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_rawdata_core.json", Path(__file__).parents[0] / "config/properties_rawdata_custom.json"],
+        "load": LOAD_STAGES["all"],
+        "mmap": False,
+    },
 }
 
 RELATIVE_PATHS = {
@@ -84,7 +84,7 @@ RELATIVE_PATHS = {
         "reco": "./pdata/1/reco",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
-        "AdjStatePerStudy": "../AdjStatePerStudy"
+        "AdjStatePerStudy": "../AdjStatePerStudy",
     },
     "fid_proc": {
         "method": "../../method",
@@ -93,7 +93,7 @@ RELATIVE_PATHS = {
         "reco": "./reco",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
-        "AdjStatePerStudy": "../../../AdjStatePerStudy"
+        "AdjStatePerStudy": "../../../AdjStatePerStudy",
     },
     "2dseq": {
         "method": "../../method",
@@ -111,7 +111,7 @@ RELATIVE_PATHS = {
         "reco": "./pdata/1/reco",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
-        "AdjStatePerStudy": "../AdjStatePerStudy"
+        "AdjStatePerStudy": "../AdjStatePerStudy",
     },
     "rawdata": {
         "method": "./method",
@@ -120,8 +120,8 @@ RELATIVE_PATHS = {
         "reco": "./pdata/1/reco",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
-        "AdjStatePerStudy": "../AdjStatePerStudy"
-    }
+        "AdjStatePerStudy": "../AdjStatePerStudy",
+    },
 }
 
 
@@ -163,7 +163,7 @@ class Dataset:
 
         from bruker.dataset import Dataset
 
-        dataset = Dataset('path/2dseq')
+        dataset = Dataset("path/2dseq")
 
     """
 
@@ -180,23 +180,23 @@ class Dataset:
         """
         self.path = Path(path)
 
-        if not self.path.exists() and state.get('load') is not LOAD_STAGES['empty']:
+        if not self.path.exists() and state.get("load") is not LOAD_STAGES["empty"]:
             raise FileNotFoundError(self.path)
 
         # directory constructor
-        if self.path.is_dir():
+        if self.path.is_dir() and state.get("load"):
             content = os.listdir(self.path)
-            if 'fid' in content:
-                self.path = self.path / 'fid'
-            # TODO define correct path structure for fid_proc and rawdata?
-            elif '2dseq' in content:
-                self.path = self.path / '2dseq'
+            if "fid" in content:
+                self.path = self.path / "fid"
+            elif "2dseq" in content:
+                self.path = self.path / "2dseq"
             else:
                 raise NotADatasetDir(self.path)
 
         self.type = self.path.stem
         self.subtype = self.path.suffix
-        if self.subtype: self.subtype = self.subtype[1:] # remove the dot from the suffix
+        if self.subtype:
+            self.subtype = self.subtype[1:]  # remove the dot from the suffix
         self._properties = []
 
         # set
@@ -208,15 +208,14 @@ class Dataset:
         # load data if the load kwarg is true
         self.load()
 
-
     def __enter__(self):
-        self._state['load'] = LOAD_STAGES['all']
+        self._state["load"] = LOAD_STAGES["all"]
         self.load()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.unload()
-        self._state['load'] = LOAD_STAGES['empty']
+        self._state["load"] = LOAD_STAGES["empty"]
 
     def __str__(self):
         """
@@ -233,6 +232,9 @@ class Dataset:
 
         raise KeyError(item)
 
+    def __contains__(self, item):
+        return any(item in parameter_file for parameter_file in self._parameters.values())
+
     def __call__(self, **kwargs):
         self._set_state(kwargs)
         return self
@@ -240,11 +242,11 @@ class Dataset:
     def _set_state(self, passed):
         result = deepcopy(DEFAULT_STATES[self.type])
 
-        if 'parameter_files' in passed.keys():
-            passed['parameter_files'] = result['parameter_files'] + passed['parameter_files']
+        if "parameter_files" in passed:
+            passed["parameter_files"] = result["parameter_files"] + passed["parameter_files"]
 
-        if 'property_files' in passed.keys():
-            passed['property_files'] = result['property_files'] + passed['property_files']
+        if "property_files" in passed:
+            passed["property_files"] = result["property_files"] + passed["property_files"]
 
         result.update(passed)
         self._state = result
@@ -260,7 +262,7 @@ class Dataset:
         """
 
         # Check whether dataset file is supported
-        if self.type not in DEFAULT_STATES.keys():
+        if self.type not in DEFAULT_STATES:
             raise UnsuportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
@@ -277,15 +279,18 @@ class Dataset:
         traj is loaded as well.
         """
 
-        if self._state['load'] is LOAD_STAGES['empty']: return
+        if self._state["load"] is LOAD_STAGES["empty"]:
+            return
 
         self.load_parameters()
 
-        if self._state['load'] is LOAD_STAGES['parameters']: return
+        if self._state["load"] is LOAD_STAGES["parameters"]:
+            return
 
         self.load_properties()
 
-        if self._state['load'] is LOAD_STAGES['properties']: return
+        if self._state["load"] is LOAD_STAGES["properties"]:
+            return
 
         self.load_schema()
         self.load_data()
@@ -308,7 +313,8 @@ class Dataset:
 
     def load_parameters(self):
         """
-        Load all parameters essential for reading of given dataset type. For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
+        Load all parameters essential for reading of given dataset type.
+        For instance, type `fid` data set loads acqp and method file, from parent directory in which the fid file is contained.
         """
         self._read_parameters()
 
@@ -328,14 +334,14 @@ class Dataset:
 
             from bruker.dataset import Dataset
 
-            dataset = Dataset('.../2dseq')
-            dataset.add_parameter_file('method')
-            dataset['PVM_DwDir'].value
+            dataset = Dataset(".../2dseq")
+            dataset.add_parameter_file("method")
+            dataset["PVM_DwDir"].value
 
         """
         path = self.path.parent / RELATIVE_PATHS[self.type][file]
 
-        if not hasattr(self, '_parameters') or self._parameters is None:
+        if not hasattr(self, "_parameters") or self._parameters is None:
             self._parameters = {path.name: JCAMPDX(path)}
         else:
             self._parameters[path.name] = JCAMPDX(path)
@@ -346,17 +352,16 @@ class Dataset:
 
         :return:
         """
-        parameter_files = self._state['parameter_files']
+        parameter_files = self._state["parameter_files"]
         for file in parameter_files:
             try:
                 self.add_parameter_file(file)
             except FileNotFoundError as e:
                 # if jcampdx file is required but not found raise Error
-                if file in DEFAULT_STATES[self.type]['parameter_files']:
+                if file in DEFAULT_STATES[self.type]["parameter_files"]:
                     raise e
                 # if jcampdx file is not found, but not required, pass
-                else:
-                    pass
+                pass
 
     def _write_parameters(self, parent):
         for type_, jcampdx in self._parameters.items():
@@ -385,23 +390,23 @@ class Dataset:
 
             from bruker.dataset import Dataset
 
-            dataset = Dataset('.../fid')
-            dataset.add_parameter_file('AdjStatePerScan')
+            dataset = Dataset(".../fid")
+            dataset.add_parameter_file("AdjStatePerScan")
             dataset.load_properties()
             dataset.date
 
         """
-        for file in self._state['property_files']:
+        for file in self._state["property_files"]:
             self.add_property_file(file)
 
-        self._state['load_properties'] = True
+        self._state["load_properties"] = True
 
     def unload_properties(self):
         for property in self._properties:
             if hasattr(self, property):
                 delattr(self,property)
         self._properties = []
-        self._state['load_properties'] = False
+        self._state["load_properties"] = False
 
     def reload_properties(self):
         self.unload_properties()
@@ -413,7 +418,7 @@ class Dataset:
                 self._add_property(property)
 
     def _add_property(self, property):
-        """ Add property to the dataset and schema
+        """Add property to the dataset and schema
 
         * Evaluate the condition for a given command if these are fulfilled, the next step follows, otherwise,
             the next command is processed.
@@ -425,13 +430,15 @@ class Dataset:
         """
         for desc in property[1]:
             try:
-                self._eval_conditions(desc['conditions'])
+                self._eval_conditions(desc["conditions"])
                 try:
-                    value = self._make_element(desc['cmd'])
+                    value = self._make_element(desc["cmd"])
                     self.__setattr__(property[0], value)
 
-                    if not hasattr(self, '_properties'):
-                        self._properties = [property[0],]
+                    if not hasattr(self, "_properties"):
+                        self._properties = [
+                            property[0],
+                        ]
                     else:
                         self._properties.append(property[0])
 
@@ -452,13 +459,14 @@ class Dataset:
         """
         if isinstance(cmd, str):
             return eval(self._sub_parameters(cmd))
-        elif isinstance(cmd, int) or isinstance(cmd, float):
+        if isinstance(cmd, (int, float)):
             return cmd
-        elif isinstance(cmd, list):
+        if isinstance(cmd, list):
             element = []
             for cmd_ in cmd:
                 element.append(self._make_element(cmd_))
             return element
+        return None
 
     def _eval_conditions(self, conditions):
         """
@@ -476,22 +484,21 @@ class Dataset:
                 if isinstance(condition, str):
                     if not self._make_element(condition):
                         raise PropertyConditionNotMet
-                elif isinstance(condition, list):
-                    if not self._make_element(condition[0]) in condition[1]:
-                        raise PropertyConditionNotMet
+                elif isinstance(condition, list) and self._make_element(condition[0]) not in condition[1]:
+                    raise PropertyConditionNotMet
             except KeyError:
-                raise PropertyConditionNotMet
+                raise PropertyConditionNotMet from KeyError
 
     def _sub_parameters(self, recipe):
         # entries with property e.g. VisuFGOrderDesc.nested to self._dataset['VisuFGOrderDesc'].nested
-        for match in re.finditer(r'#[a-zA-Z0-9_]+\.[a-zA-Z]+', recipe):
-            m = re.match('#[a-zA-Z0-9_]+', match.group())
-            recipe = recipe.replace(m.group(),"self['{}']".format(m.group()[1:]))
+        for match in re.finditer(r"#[a-zA-Z0-9_]+\.[a-zA-Z]+", recipe):
+            m = re.match("#[a-zA-Z0-9_]+", match.group())
+            recipe = recipe.replace(m.group(), f"self['{m.group()[1:]}']")
         # entries without property e.g. VisuFGOrderDesc to self._dataset['VisuFGOrderDesc'].value
-        for match in re.finditer('@[a-zA-Z0-9_]+', recipe):
-            recipe = recipe.replace(match.group(),"self.{}".format(match.group()[1:]))
-        for match in re.finditer('#[a-zA-Z0-9_]+', recipe):
-            recipe = recipe.replace(match.group(),"self['{}'].value".format(match.group()[1:]))
+        for match in re.finditer("@[a-zA-Z0-9_]+", recipe):
+            recipe = recipe.replace(match.group(), f"self.{match.group()[1:]}")
+        for match in re.finditer("#[a-zA-Z0-9_]+", recipe):
+            recipe = recipe.replace(match.group(), f"self['{match.group()[1:]}'].value")
         return recipe
 
     """
@@ -502,15 +509,15 @@ class Dataset:
         """
         Load the schema for given data set.
         """
-        if self.type in ['fid', 'fid_proc']:
+        if self.type in ["fid", "fid_proc"]:
             self._schema = SchemaFid(self)
-        elif self.type == '2dseq':
+        elif self.type == "2dseq":
             self._schema = Schema2dseq(self)
-        elif self.type == 'rawdata':
+        elif self.type == "rawdata":
             self._schema = SchemaRawdata(self)
-        elif self.type == 'ser':
+        elif self.type == "ser":
             self._schema = SchemaSer(self)
-        elif self.type == 'traj':
+        elif self.type == "traj":
             self._schema = SchemaTraj(self)
 
     def unload_schema(self):
@@ -534,7 +541,7 @@ class Dataset:
 
         **called in the class constructor.**
         """
-        if self._state['mmap']:
+        if self._state["mmap"]:
             self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
@@ -562,12 +569,12 @@ class Dataset:
         1D ndarray containing the full data vector
         """
         # TODO debug with this
-        # try:
-        #     assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
-        # except AssertionError:
-        #     raise ValueError('Dimension missmatch')
+        try:
+            assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
+        except AssertionError:
+            raise ValueError("Dimension mismatch") from AssertionError
 
-        return np.array(np.memmap(path, dtype=dtype, shape=shape, order='F')[:])
+        return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 
     def _write_data(self, path):
         data = self.data.copy()
@@ -575,7 +582,7 @@ class Dataset:
         self._write_binary_file(path, data, self.shape_storage, self.numpy_dtype)
 
     def _write_binary_file(self, path, data, storage_layout, dtype):
-        fp = np.memmap(path, mode='w+', dtype=dtype, shape=storage_layout, order='F')
+        fp = np.memmap(path, mode="w+", dtype=dtype, shape=storage_layout, order="F")
         fp[:] = data
 
     """
@@ -583,11 +590,10 @@ class Dataset:
     """
 
     def load_traj(self, **kwargs):
-        if Path(self.path.parent / 'traj').exists() and self.type != 'traj':
-            self._traj = Dataset(self.path.parent / 'traj', load=False, random_access=self.random_access)
+        if Path(self.path.parent / "traj").exists() and self.type != "traj":
+            self._traj = Dataset(self.path.parent / "traj", load=False, random_access=self.random_access)
             self._traj._parameters = self.parameters
-            self._traj._schema = SchemaTraj(self._traj, meta=self.schema._meta, sub_params=self.schema._sub_params,
-                                           fid=self)
+            self._traj._schema = SchemaTraj(self._traj, meta=self.schema._meta, sub_params=self.schema._sub_params, fid=self)
             self._traj.load_data()
         else:
             self._traj = None
@@ -598,6 +604,7 @@ class Dataset:
     """
     EXPORT INTERFACE
     """
+
     def write(self, path, **kwargs):
         """
         Write the Dataset instance to the disk. This consists of writing the binary data file {fid, rawdata, 2dseq,
@@ -610,13 +617,13 @@ class Dataset:
 
         path = Path(path)
 
-        if path.name != self.type:
+        if path.name.split(".")[0] != self.type:
             raise DatasetTypeMissmatch
 
         parent = path.parent
 
         if not parent.exists():
-            os.mkdir(parent)
+            os.makedirs(parent, exist_ok=True)
 
         self._write_parameters(parent)
         self._write_data(path)
@@ -634,16 +641,16 @@ class Dataset:
         """
 
         if path is None:
-            path = self.path.parent / self.id + '.json'
+            path = self.path.parent / self.id + ".json"
         elif path.is_dir():
-            path = Path(path) / self.id + '.json'
+            path = Path(path) / self.id + ".json"
 
         if verbose:
-            print("bruker report: {} -> {}".format(str(self.path), str(path)))
+            print(f"bruker report: {self.path!s} -> {path!s}")
 
-        if path.suffix == '.json':
+        if path.suffix == ".json":
             self.to_json(path, props=props)
-        elif path.suffix == '.yml':
+        elif path.suffix == ".yml":
             self.to_yaml(path, props=props)
 
     def to_json(self, path=None, props=None):
@@ -654,10 +661,11 @@ class Dataset:
         :param names: *list* names of properties to be exported
         """
         if path:
-            with open(path, 'w') as json_file:
-                    json.dump(self.to_dict(props=props), json_file, indent=4)
+            with open(path, "w") as json_file:
+                json.dump(self.to_dict(props=props), json_file, indent=4)
         else:
             return json.dumps(self.to_dict(props=props), indent=4)
+        return None
 
     def to_yaml(self, path=None, props=None):
         """
@@ -667,10 +675,11 @@ class Dataset:
         :param names: *list* names of properties to be exported
         """
         if path:
-            with open(path, 'w') as yaml_file:
-                    yaml.dump(self.to_dict(props=props), yaml_file, default_flow_style=False)
+            with open(path, "w") as yaml_file:
+                yaml.dump(self.to_dict(props=props), yaml_file, default_flow_style=False)
         else:
             return yaml.dump(self.to_dict(props=props), default_flow_style=False)
+        return None
 
     def to_dict(self, props=None):
         """
@@ -684,8 +693,7 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ['_parameters', 'path', '_data', '_traj', '_state', '_schema', 'random_access', 'study_id',
-                    'exp_id', 'proc_id', 'subj_id', '_properties']
+        reserved = ["_parameters", "path", "_data", "_traj", "_state", "_schema", "random_access", "study_id", "exp_id", "proc_id", "subj_id", "_properties"]
         props = list(set(props) - set(reserved))
 
         properties = {}
@@ -703,24 +711,21 @@ class Dataset:
         """
         if isinstance(var, Path):
             return str(var)
-        elif isinstance(var, np.integer) or isinstance(var, np.int32):
+        if isinstance(var, (np.integer, np.int32)):
             return int(var)
-        elif isinstance(var, np.floating):
+        if isinstance(var, np.floating):
             return float(var)
-        elif isinstance(var, np.ndarray):
+        if isinstance(var, np.ndarray):
             return var.tolist()
-        elif isinstance(var, np.dtype):
+        if isinstance(var, np.dtype):
             return var.name
-        elif isinstance(var, list):
+        if isinstance(var, list):
             return [self._encode_property(var_) for var_ in var]
-        elif isinstance(var, tuple):
+        if isinstance(var, tuple):
             return self._encode_property(list(var))
-        elif isinstance(var, datetime.datetime):
+        if isinstance(var, (datetime.datetime, str)):
             return str(var)
-        elif isinstance(var, str):
-            return str(var)
-        else:
-            return var
+        return var
 
     def query(self, query):
         if isinstance(query, str):
@@ -731,11 +736,12 @@ class Dataset:
                 if not eval(self._sub_parameters(q)):
                     raise FilterEvalFalse
             except (KeyError, AttributeError) as e:
-                raise FilterEvalFalse
+                raise FilterEvalFalse from e
 
     """
     PROPERTIES
     """
+
     @property
     def data(self):
         """Data array.
@@ -744,11 +750,10 @@ class Dataset:
         """
         if self._data is not None:
             return self._data
-        else:
-            raise DataNotLoaded
+        raise DataNotLoaded
 
     @data.setter
-    def data(self,value):
+    def data(self, value):
         self._data = value
 
     @property
@@ -759,15 +764,13 @@ class Dataset:
         """
         if self._traj is not None:
             return self._traj.data
-        else:
-            raise TrajNotLoaded
+        raise TrajNotLoaded
 
     @property
     def parameters(self):
         if self._parameters is not None:
             return self._parameters
-        else:
-            raise ParametersNotLoaded
+        raise ParametersNotLoaded
 
     @parameters.setter
     def parameters(self, value):
@@ -777,8 +780,7 @@ class Dataset:
     def schema(self):
         if self._schema is not None:
             return self._schema
-        else:
-            raise SchemeNotLoaded
+        raise SchemeNotLoaded
 
     @property
     def dim(self):
@@ -795,4 +797,3 @@ class Dataset:
         :type: *tuple*
         """
         return self.data.shape
-
