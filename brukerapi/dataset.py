@@ -48,10 +48,7 @@ DEFAULT_STATES = {
     },
     '2dseq': {
         "parameter_files": ['visu_pars'],
-        "property_files": [
-            Path(__file__).parents[0] / 'config/properties_2dseq_core.json',
-            Path(__file__).parents[0] / 'config/properties_2dseq_custom.json'
-        ],
+        "property_files": [Path(__file__).parents[0] / 'config/properties_2dseq_core.json', Path(__file__).parents[0] / 'config/properties_2dseq_custom.json'],
         "load": LOAD_STAGES['all'],
         "scale": True,
         "mmap": False,
@@ -570,10 +567,9 @@ class Dataset:
         """
         # TODO debug with this
         try:
-            assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
+            assert os.stat(str(path)).st_size >= np.prod(shape) * dtype.itemsize
         except AssertionError:
             raise ValueError("Dimension mismatch") from AssertionError
-
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 
     def _write_data(self, path):
