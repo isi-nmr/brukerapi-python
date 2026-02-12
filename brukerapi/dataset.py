@@ -86,7 +86,7 @@ RELATIVE_PATHS = {
     "fid_proc": {
         "method": "../../method",
         "acqp": "../../acqp",
-        "subject": "../subject",
+        "subject": "../../../subject",
         "reco": "./reco",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
