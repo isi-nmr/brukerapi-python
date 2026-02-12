@@ -40,10 +40,16 @@ DEFAULT_STATES = {
         "load": LOAD_STAGES["all"],
         "mmap": False,
     },
-    "2dseq": {
-        "parameter_files": ["visu_pars"],
-        "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
-        "load": LOAD_STAGES["all"],
+    'fid_proc': {
+        "parameter_files" : ['acqp', 'method'],
+        "property_files": [Path(__file__).parents[0] / 'config/properties_fid_core.json', Path(__file__).parents[0] / 'config/properties_fid_custom.json'],
+        "load": LOAD_STAGES['all'],
+        "mmap": False
+    },
+    '2dseq': {
+        "parameter_files": ['visu_pars'],
+        "property_files": [Path(__file__).parents[0] / 'config/properties_2dseq_core.json', Path(__file__).parents[0] / 'config/properties_2dseq_custom.json'],
+        "load": LOAD_STAGES['all'],
         "scale": True,
         "mmap": False,
     },
@@ -76,6 +82,15 @@ RELATIVE_PATHS = {
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
         "AdjStatePerStudy": "../AdjStatePerStudy",
+    },
+    "fid_proc": {
+        "method": "../../method",
+        "acqp": "../../acqp",
+        "subject": "../../../subject",
+        "reco": "./reco",
+        "visu_pars": "./visu_pars",
+        "AdjStatePerScan": "../../AdjStatePerScan",
+        "AdjStatePerStudy": "../../../AdjStatePerStudy",
     },
     "2dseq": {
         "method": "../../method",
@@ -156,7 +171,7 @@ class Dataset:
         containing it. It is possible, to create an empty object using the load switch.
 
         :param path: **str** path to dataset
-        :raise: :UnsuportedDatasetType: In case `Dataset.type` is not in SUPPORTED
+        :raise: :UnsupportedDatasetType: In case `Dataset.type` is not in SUPPORTED
         :raise: :IncompleteDataset: If any of the JCAMP-DX files, necessary to create a Dataset instance is missing
 
         """
@@ -248,8 +263,12 @@ class Dataset:
             raise UnsuportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
-        if self._state.get("load") >= LOAD_STAGES["parameters"] and not (set(DEFAULT_STATES[self.type]["parameter_files"]) <= set(os.listdir(str(self.path.parent)))):
-            raise IncompleteDataset
+        if self._state.get('load') >= LOAD_STAGES['parameters']:
+            for i in DEFAULT_STATES[self.type]['parameter_files']:
+                param_path = self.path.parent / RELATIVE_PATHS[self.type][i]
+                if i not in set(os.listdir(str(param_path.parent))):
+                    raise IncompleteDataset
+
 
     def load(self):
         """
@@ -381,7 +400,8 @@ class Dataset:
 
     def unload_properties(self):
         for property in self._properties:
-            delattr(self, property)
+            if hasattr(self, property):
+                delattr(self,property)
         self._properties = []
         self._state["load_properties"] = False
 
@@ -486,7 +506,7 @@ class Dataset:
         """
         Load the schema for given data set.
         """
-        if self.type == "fid":
+        if self.type in ["fid", "fid_proc"]:
             self._schema = SchemaFid(self)
         elif self.type == "2dseq":
             self._schema = Schema2dseq(self)
@@ -547,10 +567,9 @@ class Dataset:
         """
         # TODO debug with this
         try:
-            assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
+            assert os.stat(str(path)).st_size >= np.prod(shape) * dtype.itemsize
         except AssertionError:
             raise ValueError("Dimension mismatch") from AssertionError
-
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 
     def _write_data(self, path):

@@ -10,6 +10,7 @@ config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__f
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
     "fid": ["numpy_dtype", "channels", "block_size", "acq_lenght", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
+    "fid_proc": ["numpy_dtype", "channels", "block_size", "acq_lenght", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
     "2dseq": [
         "pv_version",
         "numpy_dtype",
