@@ -1,2 +1,10 @@
+# Core dependencies for your docs
 numpy
 pyyaml
+
+# Sphinx and theme
+sphinx>=9.0
+sphinx_rtd_theme
+
+# Optional, useful for autodoc type hints
+sphinx-autodoc-typehints
