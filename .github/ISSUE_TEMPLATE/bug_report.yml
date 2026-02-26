@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a problem or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve the project!  
+        Please fill out the form below as completely as possible.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find a duplicate
+          required: true
+        - label: If reporting dataset incompatiblity, I am willing to provide the data
+          required: true          
+        - label: I am using the latest available version
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: Clearly describe what the bug is.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal reproducible example. 
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Project version
+      placeholder: e.g. 1.4.2
+
+  - type: input
+    id: pv_version
+    attributes:
+      label: Paravision version
+      placeholder: e.g. PV-7.0.0 or PV-360 v3.7
