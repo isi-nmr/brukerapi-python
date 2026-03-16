@@ -7,6 +7,7 @@ from .dataset import Dataset
 from .exceptions import (
     FilterEvalFalse,
     IncompleteDataset,
+    InvalidDataset,
     InvalidJcampdxFile,
     JcampdxVersionError,
     NotADatasetDir,
@@ -17,7 +18,7 @@ from .exceptions import (
 )
 from .jcampdx import JCAMPDX
 
-DEFAULT_DATASET_STATE = {"parameter_files": [], "property_files": [], "load": False}
+DEFAULT_DATASET_STATE = {"parameter_files": [], "property_files": [], "load": 3}
 
 
 class Folder:
@@ -220,7 +221,7 @@ class Folder:
             if path.name in self._dataset_index or (path.name.partition(".")[0] in self._dataset_index and "rawdata" in path.name):
                 try:
                     children.append(Dataset(path, **self._dataset_state))
-                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
+                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir, InvalidDataset):
                     continue
 
             try:

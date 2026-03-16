@@ -15,6 +15,7 @@ from .exceptions import (
     DatasetTypeMissmatch,
     FilterEvalFalse,
     IncompleteDataset,
+    InvalidDataset,
     NotADatasetDir,
     ParametersNotLoaded,
     PropertyConditionNotMet,
@@ -269,7 +270,6 @@ class Dataset:
                 if i not in set(os.listdir(str(param_path.parent))):
                     raise IncompleteDataset
 
-
     def load(self):
         """
         Load parameters, properties, schema and data. In case, there is a traj file related to a fid file,
@@ -401,7 +401,7 @@ class Dataset:
     def unload_properties(self):
         for property in self._properties:
             if hasattr(self, property):
-                delattr(self,property)
+                delattr(self, property)
         self._properties = []
         self._state["load_properties"] = False
 
@@ -565,11 +565,11 @@ class Dataset:
         -------
         1D ndarray containing the full data vector
         """
-        # TODO debug with this
+
         try:
             assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
         except AssertionError:
-            raise ValueError("Dimension mismatch") from AssertionError
+            raise InvalidDataset("Invalid dataset, dimension mismatch") from AssertionError
 
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 

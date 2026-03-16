@@ -248,6 +248,19 @@ class DataNotLoaded(Exception):
         return "DataNotLoaded"
 
 
+class InvalidDataset(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return f"{self.message}"
+        return "Invalid dataset loaded"
+
+
 class TrajNotLoaded(Exception):
     def __init__(self, *args):
         if args:
