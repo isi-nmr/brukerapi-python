@@ -1,7 +1,7 @@
 {
   "numpy_dtype": [
     {
-      "cmd": "np.dtype('i4')",
+      "cmd": "np.dtype('f8')",
       "conditions": []
     }
   ],
@@ -61,7 +61,7 @@
   "traj_type": [
     {
       "cmd": "'radial'",
-      "conditions": [["@scheme_id",["'RADIAL'","'ZTE'"]]]
+      "conditions": [["@scheme_id",["RADIAL","ZTE"]]]
     },
     {
       "cmd": "'spiral'",
