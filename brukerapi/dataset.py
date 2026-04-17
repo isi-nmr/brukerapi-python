@@ -291,7 +291,7 @@ class Dataset:
 
         self.load_schema()
         self.load_data()
-        # self.load_traj()
+        self.load_traj()
 
     def unload(self):
         """

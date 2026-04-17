@@ -27,6 +27,7 @@ ZENODO_FILES = {
     "PV51": "0.2H2.zip",
     "PV601": "20200612_094625_lego_phantom_3_1_2.zip",
     "PV700": "20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip",
+    "PV360V3.6": "20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip",
 }
 
 TEST_DIR = Path(__file__).parent
