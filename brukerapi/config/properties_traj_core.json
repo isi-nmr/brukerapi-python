@@ -1,55 +1,80 @@
 {
   "numpy_dtype": [
     {
-      "cmd": "np.dtype('i4')",
+      "cmd": "np.dtype('f8')",
       "conditions": []
     }
   ],
   "scheme_id": [
     {
-      "cmd": "'RADIAL'" ,
+      "cmd": "'RADIAL'",
       "conditions": [
-        ["#PULPROG[1:-1]",
+        [
+          "#PULPROG[1:-1]",
           [
             "UTE.ppg",
             "UTE3D.ppg",
+            "IgUTE.ppg",
             "ZTE.ppg"
           ]
         ],
-        ["#ACQ_sw_version",
+        [
+          "#ACQ_sw_version",
           [
             "<PV 6.0.1>",
-            "<PV 5.1>"
+            "<PV 5.1>",
+            "<PV-7.0.0>",
+            "<PV-360.3.0>",
+            "<PV-360.3.1>",
+            "<PV-360.3.2>",
+            "<PV-360.3.3>",
+            "<PV-360.3.4>",
+            "<PV-360.3.5>",
+            "<PV-360.3.6>",
+            "<PV-360.3.7>"
           ]
         ]
       ]
     },
     {
-      "cmd": "'SPIRAL'" ,
+      "cmd": "'SPIRAL'",
       "conditions": [
-        ["#PULPROG[1:-1]",
+        [
+          "#PULPROG[1:-1]",
           [
             "SPIRAL.ppg",
             "DtiSpiral.ppg"
           ]
         ],
-        ["#ACQ_sw_version",
+        [
+          "#ACQ_sw_version",
           [
             "<PV 6.0.1>",
-            "<PV 5.1>"
+            "<PV 5.1>",
+            "<PV-7.0.0>",
+            "<PV-360.3.0>",
+            "<PV-360.3.1>",
+            "<PV-360.3.2>",
+            "<PV-360.3.3>",
+            "<PV-360.3.4>",
+            "<PV-360.3.5>",
+            "<PV-360.3.6>",
+            "<PV-360.3.7>"
           ]
         ]
       ]
     },
     {
-      "cmd": "'ZTE'" ,
+      "cmd": "'ZTE'",
       "conditions": [
-        ["#PULPROG[1:-1]",
+        [
+          "#PULPROG[1:-1]",
           [
             "ZTE.ppg"
           ]
         ],
-        ["#ACQ_sw_version",
+        [
+          "#ACQ_sw_version",
           [
             "<PV 6.0.1>",
             "<PV 5.1>"
@@ -61,49 +86,103 @@
   "traj_type": [
     {
       "cmd": "'radial'",
-      "conditions": [["@scheme_id",["'RADIAL'","'ZTE'"]]]
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "RADIAL",
+            "ZTE"
+          ]
+        ]
+      ]
     },
     {
       "cmd": "'spiral'",
-      "conditions": [["@scheme_id",["SPIRAL"]]]
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "SPIRAL"
+          ]
+        ]
+      ]
     }
   ],
   "shape_storage": [
     {
-      "cmd": "(#ACQ_dim,#ACQ_size[0]//2,#NPro)",
-      "conditions": [["@scheme_id",["RADIAL","ZTE"]]]
+      "cmd": "(#ACQ_dim, int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #NPro), #NPro)",
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "RADIAL",
+            "ZTE"
+          ]
+        ]
+      ]
     },
     {
-      "cmd": "(#ACQ_dim,#ACQ_size[0]//2,#PVM_SpiralNbOfInterleaves)",
-      "conditions": [["@scheme_id",["SPIRAL"]]]
+      "cmd": "(#ACQ_dim, int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves), #PVM_SpiralNbOfInterleaves)",
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "SPIRAL"
+          ]
+        ]
+      ]
     }
   ],
   "permute": [
     {
       "cmd": [
-          0,
-          1,
-          2
-        ],
-      "conditions": [["@scheme_id",["RADIAL","ZTE","SPIRAL"]]]
+        0,
+        1,
+        2
+      ],
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "RADIAL",
+            "ZTE",
+            "SPIRAL"
+          ]
+        ]
+      ]
     }
   ],
   "final": [
     {
       "cmd": [
         "#ACQ_dim",
-        "#ACQ_size[0]//2",
+        "int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #NPro)",
         "#NPro"
       ],
-      "conditions": [["@scheme_id",["RADIAL","ZTE"]]]
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "RADIAL",
+            "ZTE"
+          ]
+        ]
+      ]
     },
     {
       "cmd": [
         "#ACQ_dim",
-        "#ACQ_size[0]//2",
+        "int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves)",
         "#PVM_SpiralNbOfInterleaves"
       ],
-      "conditions": [["@scheme_id",["SPIRAL"]]]
+      "conditions": [
+        [
+          "@scheme_id",
+          [
+            "SPIRAL"
+          ]
+        ]
+      ]
     }
   ]
 }
