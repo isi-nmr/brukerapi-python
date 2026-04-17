@@ -21,10 +21,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -51,10 +51,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -69,7 +69,7 @@ jobs:
         pip install -e .[dev] --use-pep517
 
     - name: Cache Zenodo data
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: test/zenodo_zips
         key: zenodo-4522220
@@ -79,7 +79,7 @@ jobs:
         python -m pytest test -v --cov=brukerapi --cov-branch --cov-report=xml --cov-report=term-missing --cov-report=html
 
     - name: Upload coverage HTML
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-report
         path: htmlcov/
