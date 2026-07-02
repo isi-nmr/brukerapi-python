@@ -20,10 +20,10 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 project = "brukerapi"
 copyright = "2025, Institute of Scientific Instruments of the CAS, v.v.i."
-author = "Tomas Psorn Jiri Vitous"
+author = "Tomas Psorn, Jiri Vitous"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.0"
+release = "0.2.5"
 
 
 # -- General configuration ---------------------------------------------------
