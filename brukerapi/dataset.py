@@ -455,7 +455,7 @@ class Dataset:
         :return: value of property, or list of values of properties
         """
         if isinstance(cmd, str):
-            return eval(self._sub_parameters(cmd))
+            return eval(self._sub_parameters(cmd), {**globals(), "self": self})
         if isinstance(cmd, (int, float)):
             return cmd
         if isinstance(cmd, list):
@@ -731,7 +731,7 @@ class Dataset:
 
         for q in query:
             try:
-                if not eval(self._sub_parameters(q)):
+                if not eval(self._sub_parameters(q), {**globals(), "self": self}):
                     raise FilterEvalFalse
             except (KeyError, AttributeError) as e:
                 raise FilterEvalFalse from e
