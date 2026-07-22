@@ -30,7 +30,7 @@
     {
         "cmd": "np.dtype('uint8').newbyteorder('<')",
         "conditions": [
-          ["#VisuCoreWordType",["_8BIT_USGN_INT"]],
+          ["#VisuCoreWordType",["_8BIT_UNSGN_INT"]],
           ["#VisuCoreByteOrder",["littleEndian"]]
         ]
     },
@@ -58,7 +58,7 @@
     {
         "cmd": "np.dtype('uint8').newbyteorder('>')",
         "conditions": [
-          ["#VisuCoreWordType",["_8BIT_USGN_INT"]],
+          ["#VisuCoreWordType",["_8BIT_UNSGN_INT"]],
           ["#VisuCoreByteOrder",["bigEndian"]]
         ]
     }
