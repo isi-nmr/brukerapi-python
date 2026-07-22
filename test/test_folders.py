@@ -1,5 +1,5 @@
 from brukerapi.dataset import Dataset
-from brukerapi.folders import Experiment, Processing
+from brukerapi.folders import Folder, Processing
 
 
 def test_folder_traversal_skips_ser_and_processed_spectra(tmp_path):
@@ -20,11 +20,12 @@ def test_folder_traversal_skips_ser_and_processed_spectra(tmp_path):
     ]:
         path.write_text("")
 
-    experiment = Experiment(
-        experiment_path,
+    folder = Folder(
+        tmp_path,
         dataset_state={"parameter_files": [], "property_files": [], "load": 0},
     )
 
+    experiment = folder["1"]
     experiment_datasets = {child.path.name for child in experiment.children if isinstance(child, Dataset)}
     assert experiment_datasets == {"fid"}
 
