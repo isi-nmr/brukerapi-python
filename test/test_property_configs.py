@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "brukerapi" / "config"
 
 
