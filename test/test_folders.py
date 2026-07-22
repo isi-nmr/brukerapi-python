@@ -28,6 +28,6 @@ def test_folder_traversal_skips_ser_and_processed_spectra(tmp_path):
     experiment_datasets = {child.path.name for child in experiment.children if isinstance(child, Dataset)}
     assert experiment_datasets == {"fid"}
 
-    processing = next(child for child in experiment.children if isinstance(child, Processing))
+    processing = next(child for child in experiment.get_processing_list() if isinstance(child, Processing))
     processing_datasets = {child.path.name for child in processing.children if isinstance(child, Dataset)}
     assert processing_datasets == {"2dseq"}
