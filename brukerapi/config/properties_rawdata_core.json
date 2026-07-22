@@ -4,48 +4,42 @@
         "cmd": "np.dtype('int32').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
-          "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('int16').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
-          "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('float32').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
-          "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('int32').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
-          "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='big'"
         ]
     },
     {
         "cmd": "np.dtype('int16').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
-          "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='big'"
         ]
     },
     {
         "cmd": "np.dtype('float32').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
-          "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>","<PV-7.0.0>"]]
+          "#BYTORDA=='big'"
         ]
     },
     {

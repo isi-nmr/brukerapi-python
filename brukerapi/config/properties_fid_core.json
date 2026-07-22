@@ -4,48 +4,42 @@
         "cmd": "np.dtype('int32').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
-          "#BYTORDA=='little'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('int16').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
-          "#BYTORDA=='little'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('float32').newbyteorder('<')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
-          "#BYTORDA=='little'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='little'"
         ]
     },
     {
         "cmd": "np.dtype('int32').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_SGN_INT'",
-          "#BYTORDA=='big'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='big'"
         ]
     },
     {
         "cmd": "np.dtype('int16').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_16BIT_SGN_INT'",
-          "#BYTORDA=='big'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='big'"
         ]
     },
     {
         "cmd": "np.dtype('float32').newbyteorder('>')",
         "conditions": [
           "#GO_raw_data_format=='GO_32BIT_FLOAT'",
-          "#BYTORDA=='big'",
-          "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+          "#BYTORDA=='big'"
         ]
     },
     {
@@ -82,15 +76,13 @@
     {
       "cmd": "int((np.ceil(#ACQ_size.tuple[0] * @channels * @numpy_dtype.itemsize / 1024.) * 1024. / @numpy_dtype.itemsize))",
       "conditions": [
-        "#GO_block_size=='Standard_KBlock_Format'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "#GO_block_size=='Standard_KBlock_Format'"
       ]
     },
     {
       "cmd": "int(#ACQ_size.tuple[0] * @channels)",
       "conditions": [
-        "#GO_block_size!='Standard_KBlock_Format'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "#GO_block_size!='Standard_KBlock_Format'"
       ]
     },
     {
@@ -115,15 +107,13 @@
     {
       "cmd": "#ACQ_size.tuple[0] * @channels",
       "conditions": [
-        "#GO_block_size=='Standard_KBlock_Format'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "#GO_block_size=='Standard_KBlock_Format'"
       ]
     },
     {
       "cmd": "int(2 * #PVM_DigNp * @channels // #NSegments)",
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
         "#PULPROG[1:-1]=='EPSI.ppg'"
       ]
     },
@@ -131,7 +121,6 @@
       "cmd": "int(2 * #PVM_DigNp * @channels)",
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']",
         "#PULPROG[1:-1]!='EPSI.ppg'"
       ]
     },
@@ -171,8 +160,7 @@
             "<DESS.ppg>"
           ]
         ],
-        "#ACQ_dim==2",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "#ACQ_dim==2"
       ]
     },
     {
@@ -189,8 +177,7 @@
             "MDEFT.ppg"
           ]
         ],
-        "#ACQ_dim==3",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "#ACQ_dim==3"
       ]
     },
     {
@@ -200,8 +187,7 @@
           [
             "FieldMap.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -213,8 +199,7 @@
             "UTE3D.ppg",
             "ZTE.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -230,8 +215,7 @@
             "T2_EPI.ppg",
             "T2S_EPI.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -242,8 +226,7 @@
             "DtiEpi.ppg",
             "EPSI.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -261,8 +244,7 @@
             "fmap_fq.ppg",
             "ste_laser_dIR_WSTM.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -272,8 +254,7 @@
           [
             "CSI.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>', '<PV-360.1.1>']"
+        ]
       ]
     },
     {
@@ -295,8 +276,7 @@
           [
             "ZTE.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     }
   ],
