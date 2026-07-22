@@ -47,7 +47,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
     },
     {
@@ -55,7 +55,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
     },
     {
@@ -63,7 +63,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='little'",
-          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
     },
     {
@@ -71,7 +71,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='big'",
-          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
     }
   ],
@@ -85,7 +85,7 @@
     {
       "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
       "conditions": [
-        ["#ACQ_sw_version",["<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+        "#ACQ_sw_version.value.startswith('<PV-360.3.')"
       ]
     },
 

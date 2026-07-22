@@ -48,6 +48,15 @@ def test_rawdata_standard_dtype_is_not_version_gated_but_pv360_v1_branch_remains
     assert _contains_sw_version_gate(config["numpy_dtype"][6]["conditions"])
 
 
+def test_rawdata_pv360_v3_uses_prefix_matching():
+    config = _load_config("properties_rawdata_core.json")
+
+    for branch in config["numpy_dtype"][6:10]:
+        assert "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')" in branch["conditions"]
+
+    assert config["job_desc"][1]["conditions"] == ["#ACQ_sw_version.value.startswith('<PV-360.3.')"]
+
+
 def test_traj_scheme_detection_is_not_version_gated():
     config = _load_config("properties_traj_core.json")
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in config["scheme_id"])
