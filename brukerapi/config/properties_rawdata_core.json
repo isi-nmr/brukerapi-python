@@ -55,6 +55,30 @@
           "#BYTORDA=='little'",
           ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
         ]
+    },
+    {
+        "cmd": "np.dtype('i4').newbyteorder('>')",
+        "conditions": [
+          "#ACQ_word_size=='_32_BIT'",
+          "#BYTORDA=='big'",
+          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('i2').newbyteorder('<')",
+        "conditions": [
+          "#ACQ_word_size=='_16_BIT'",
+          "#BYTORDA=='little'",
+          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+        ]
+    },
+    {
+        "cmd": "np.dtype('i2').newbyteorder('>')",
+        "conditions": [
+          "#ACQ_word_size=='_16_BIT'",
+          "#BYTORDA=='big'",
+          ["#ACQ_sw_version",["<PV-360.1.1>","<PV-360.3.0>","<PV-360.3.1>","<PV-360.3.2>","<PV-360.3.3>","<PV-360.3.4>","<PV-360.3.5>","<PV-360.3.6>","<PV-360.3.7>"]]
+        ]
     }
   ],
   "job_desc": [
