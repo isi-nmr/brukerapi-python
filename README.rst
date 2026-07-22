@@ -28,7 +28,7 @@ Load any **data set**:
 .. code-block:: python
 
     from brukerapi.dataset import Dataset
-    dataset = Dataset('{path}/2dseq')    # create data set, works for fid, 2dseq, rawdata.x, ser
+    dataset = Dataset('{path}/2dseq')    # create data set, works for fid, 2dseq, rawdata.x
     dataset.data                         # access data array
     dataset.VisuCoreSize                 # get a value of a single parameter
 
@@ -72,7 +72,6 @@ Features
 
 * **I/O** interface for **fid** data sets
 * **I/O** interface for **2dseq** data sets
-* **I/O** interface for **ser** data sets
 * **I/O** interface for **rawdata** data sets
 * **Random access** for **fid** and **2dseq** data sets
 * **Split** operation implemented over **2dseq** data sets
@@ -81,7 +80,7 @@ Features
 Examples
 ========
 
-* How to `read <examples/read_fid.ipynb>`_ a Bruker fid, 2dseq, rawdata, or ser file
+* How to `read <examples/read_fid.ipynb>`_ a Bruker fid, 2dseq, or rawdata file
 * How to `split slice packages <examples/split_sp_demo.ipynb>`_ of a 2dseq data set
 * How to `split FG_ECHO <examples/split_fg_echo_demo.ipynb>`_ of a 2dseq data set
 * How to `split FG_ISA <examples/examples/split_fg_isa_demo.ipynb>`_ of a 2dseq data set
@@ -220,4 +219,3 @@ Compatible data set types:
 * **2dseq**
 * **rawdata.job0**
 * **rawdata.Navigator**
-

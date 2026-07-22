@@ -45,7 +45,7 @@ class Folder:
             recursive = True
 
         if dataset_index is None:
-            dataset_index = ["fid", "2dseq", "ser", "rawdata"]
+            dataset_index = ["fid", "2dseq", "rawdata"]
 
         self.path = Path(path)
 
@@ -322,7 +322,7 @@ class Study(Folder):
             recursive = True
 
         if dataset_index is None:
-            dataset_index = ["fid", "2dseq", "ser", "rawdata"]
+            dataset_index = ["fid", "2dseq", "rawdata"]
 
         self.path = Path(path)
         self.validate()
@@ -367,7 +367,7 @@ class Study(Folder):
 
 
 class Experiment(Folder):
-    """Representation of the Bruker Experiment folder. The folder can contain *fid*, *ser* a *rawdata.SUBTYPE* data sets.
+    """Representation of the Bruker Experiment folder. The folder can contain *fid* and *rawdata.SUBTYPE* data sets.
     It can contain multiple :obj:`.Processing` instances.
     """
 
@@ -391,7 +391,7 @@ class Experiment(Folder):
             recursive = True
 
         if dataset_index is None:
-            dataset_index = ["fid", "ser", "rawdata"]
+            dataset_index = ["fid", "rawdata"]
 
         self.path = Path(path)
         self.validate()
@@ -434,7 +434,7 @@ class Processing(Folder):
             recursive = True
 
         if dataset_index is None:
-            dataset_index = ["2dseq", "1r", "1i"]
+            dataset_index = ["2dseq"]
 
         self.path = Path(path)
         self.validate()

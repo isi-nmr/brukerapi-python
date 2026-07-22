@@ -125,7 +125,7 @@ RELATIVE_PATHS = {
 
 class Dataset:
     """
-    Data set is created using one binary file {fid, 2dseq, rawdata, ser, 1r, 1i} and several JCAMP-DX
+    Data set is created using one binary file {fid, 2dseq, rawdata, ...} and several JCAMP-DX
     files (method, acqp, visu_pars,...). The JCAMP-DX files necessary for a creation of a data set are denoted as
     **essential**. Each of the binary data files (fid, 2dseq,...) has slightly different data layout, i.e. the . The
     data in the binary files is stored Since the individual types of b some features We distinguish By he name of the
@@ -606,7 +606,7 @@ class Dataset:
     def write(self, path, **kwargs):
         """
         Write the Dataset instance to the disk. This consists of writing the binary data file {fid, rawdata, 2dseq,
-        ser,...} and respective JCAMP-DX files {method, acqp, visu_pars, reco}.
+        ...} and respective JCAMP-DX files {method, acqp, visu_pars, reco}.
 
         :param path: *str* Path to one of the supported data set types.
         :param kwargs:
