@@ -508,6 +508,8 @@ class Dataset:
             return default
 
     def _infer_scheme_id(self):
+        # Source of truth for format inference:
+        # https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md
         pulprog = str(self._parameter_value("PULPROG", "")).strip("<>").upper()
         method = str(self._parameter_value("Method", "")).strip("<>").upper()
         family = f"{pulprog} {method}"

@@ -117,6 +117,14 @@ data sets:
 * `BrukerAPI test data set (Bruker ParaVision v6.0.1) <https://doi.org/10.5281/zenodo.3894651>`_
 * `bruker2nifti_qa data set <https://gitlab.com/naveau/bruker2nifti_qa>`_
 
+File format reference
+=====================
+
+`Bruker ParaVision Raw Data Format
+<https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md>`_ is the source of truth
+for file-format parsing, binary layouts, dataset typing, and metadata-driven acquisition
+scheme inference in this project.
+
 Compatibility
 =============
 
