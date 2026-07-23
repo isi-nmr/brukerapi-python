@@ -204,6 +204,12 @@ def test_wrap_lines_respects_78_columns_and_preserves_tokens():
     assert wrapped.replace("\n", "") == line
 
 
+def test_wrap_lines_preserves_existing_short_continuation_whitespace():
+    line = "##$VALUE=( 1 )\n(<>,\n 3, 2)"
+
+    assert JCAMPDX.wrap_lines(line) == line
+
+
 def test_parse_value_does_not_treat_unclosed_parenthesis_as_list():
     value = GenericParameter.parse_value("(not a closed tuple")
 

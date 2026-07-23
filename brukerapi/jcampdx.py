@@ -930,26 +930,31 @@ class JCAMPDX:
 
     @classmethod
     def wrap_lines(cls, line):
-        line_wraps = re.split(r"\n", line)
-        tail = line_wraps[-1]
-        words = tail.split()
+        line_wraps = []
 
-        if not words:
-            return line
+        for physical_line in line.split("\n"):
+            if len(physical_line) <= MAX_LINE_LEN:
+                line_wraps.append(physical_line)
+                continue
 
-        wrapped = []
-        current = words[0]
+            words = physical_line.split()
+            if not words:
+                line_wraps.append(physical_line)
+                continue
 
-        for word in words[1:]:
-            candidate = f"{current} {word}"
-            if len(candidate) > MAX_LINE_LEN:
-                wrapped.append(current)
-                current = f" {word}"
-            else:
-                current = candidate
+            wrapped = []
+            current = words[0]
 
-        wrapped.append(current)
-        line_wraps[-1] = "\n".join(wrapped)
+            for word in words[1:]:
+                candidate = f"{current} {word}"
+                if len(candidate) > MAX_LINE_LEN:
+                    wrapped.append(current)
+                    current = f" {word}"
+                else:
+                    current = candidate
+
+            wrapped.append(current)
+            line_wraps.extend(wrapped)
 
         return "\n".join(line_wraps)
 
