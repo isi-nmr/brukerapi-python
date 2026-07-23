@@ -325,6 +325,35 @@ def test_monotonic_phase_encode_steps_skip_reordering():
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_epi_standard_kblock_trims_trailing_padding():
+    dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
+    dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
+    dataset.block_size = 256
+    dataset.acq_lenght = 200
+    stored = np.concatenate([np.arange(200), np.zeros(56)]).reshape(256, 1)
+
+    layouts = dataset._schema.layouts
+    trimmed = dataset._schema._acquisition_trim(stored, layouts)
+
+    assert layouts["acquisition_position"] == (0, 200)
+    assert np.array_equal(trimmed[:, 0], np.arange(200))
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_epi_standard_kblock_warns_on_nonzero_discarded_samples():
+    dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
+    dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
+    dataset.block_size = 8
+    dataset.acq_lenght = 6
+    stored = np.arange(8).reshape(8, 1)
+
+    with pytest.warns(RuntimeWarning, match="Expected trailing K-block padding to be zero"):
+        trimmed = dataset._schema._acquisition_trim(stored, dataset._schema.layouts)
+
+    assert np.array_equal(trimmed[:, 0], np.arange(6))
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
     dataset_path = tmp_path / "dataset" / "fid"
