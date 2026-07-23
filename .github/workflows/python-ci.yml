@@ -82,7 +82,7 @@ jobs:
 
     - name: Run all dataset tests
       run: |
-        python -m pytest test -v --cov=brukerapi --cov-branch --cov-report=xml --cov-report=term-missing --cov-report=html
+        python -m pytest test -v --download_test_data --cov=brukerapi --cov-branch --cov-report=xml --cov-report=term-missing --cov-report=html
 
     - name: Upload coverage HTML
       uses: actions/upload-artifact@v7

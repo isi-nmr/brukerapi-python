@@ -20,6 +20,7 @@ def pytest_addoption(parser):
     parser.addoption("--test_data", action="store", default="")
     parser.addoption("--test_suites", action="store", default="")
     parser.addoption("--properties_reference", action="store", default="")
+    parser.addoption("--download_test_data", action="store_true", default=False)
 
 
 # -------------------------------
@@ -49,20 +50,27 @@ TEST_DATA_ROOT = TEST_DIR / "test_data"
 
 
 def pytest_sessionstart(session):
-    for dataset in ZENODO_FILES:
-        _ensure_test_data(dataset)
-    for dataset in GITHUB_DATASETS:
-        _ensure_github_test_data(dataset)
+    if not session.config.getoption("download_test_data"):
+        return
+
+    for dataset in _requested_dataset_names(session.config.getoption("test_data")):
+        if dataset in ZENODO_FILES:
+            _ensure_test_data(dataset)
+        elif dataset in GITHUB_DATASETS:
+            _ensure_github_test_data(dataset)
 
 
 # -------------------------------
 # Helpers
 # -------------------------------
-def _resolve_requested_datasets(opt: str | None):
+def _requested_dataset_names(opt: str | None):
     if not opt or opt.lower() == "all":
-        available_local_datasets = [name for name in LOCAL_DATASETS if (TEST_DATA_ROOT / name).is_dir()]
-        return [*ZENODO_FILES, *GITHUB_DATASETS, *available_local_datasets]
+        return [*ZENODO_FILES, *GITHUB_DATASETS, *LOCAL_DATASETS]
     return [opt]
+
+
+def _resolve_requested_datasets(opt: str | None):
+    return [name for name in _requested_dataset_names(opt) if (TEST_DATA_ROOT / name).is_dir()]
 
 
 def _is_required_github_data_file(path: Path):
