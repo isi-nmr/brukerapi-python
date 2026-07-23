@@ -10,7 +10,7 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import FilterEvalFalse, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -22,6 +22,19 @@ def test_unsupported_dataset_type(tmp_path):
 
     with pytest.raises(UnsuportedDatasetType, match="Dataset type: unsupported is not supported"):
         Dataset(path)
+
+
+def test_incomplete_dataset_names_missing_parameter_file(tmp_path):
+    path = tmp_path / "fid"
+    path.touch()
+
+    with pytest.raises(
+        IncompleteDataset,
+        match=rf"missing required parameter file: acqp \({re.escape(str(tmp_path / 'acqp'))}\)",
+    ):
+        Dataset(path)
+
+    assert str(IncompleteDataset()) == "Incomplete dataset"
 
 
 @pytest.mark.parametrize(

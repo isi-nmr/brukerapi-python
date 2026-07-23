@@ -285,7 +285,7 @@ class Dataset:
             for i in DEFAULT_STATES[self.type]["parameter_files"]:
                 param_path = self.path.parent / RELATIVE_PATHS[self.type][i]
                 if i not in set(os.listdir(str(param_path.parent))):
-                    raise IncompleteDataset
+                    raise IncompleteDataset(f"missing required parameter file: {i} ({param_path})")
 
     def load(self):
         """

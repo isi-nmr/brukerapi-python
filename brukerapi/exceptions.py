@@ -115,7 +115,7 @@ class IncompleteDataset(Exception):
     def __str__(self):
         if self.message:
             return self.message
-        return "DatasetTypeMissmatch"
+        return "Incomplete dataset"
 
 
 class ConditionNotMet(Exception):
