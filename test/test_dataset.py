@@ -277,6 +277,28 @@ def test_phase_encode_reorder_reports_axis_length_mismatch():
         dataset._schema._reorder_fid_lines(data)
 
 
+@pytest.mark.parametrize(
+    ("content", "message"),
+    [
+        (b"", r"empty binary file .* expected 24 bytes for shape \(4, 3\) and dtype int16"),
+        (b"1234", r"empty or stub file .* got 4 bytes, less than one frame \(8 bytes\)"),
+        (b"123456789012", r"expected 24 bytes for shape \(4, 3\) and dtype int16, got 12 bytes"),
+        (
+            b"version https://git-lfs.github.com/spec/v1\noid sha256:abc\nsize 24\n",
+            r"Git LFS pointer stub .* fetch the binary file content",
+        ),
+    ],
+    ids=["empty", "stub", "truncated", "git-lfs"],
+)
+def test_binary_size_mismatch_reports_specific_cause(tmp_path, content, message):
+    path = tmp_path / "2dseq"
+    path.write_bytes(content)
+    dataset = Dataset(path, load=LOAD_STAGES["empty"])
+
+    with pytest.raises(InvalidDataset, match=message):
+        dataset._read_binary_file(path, np.dtype("int16"), (4, 3))
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
