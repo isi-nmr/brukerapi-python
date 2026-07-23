@@ -204,9 +204,7 @@ class GenericParameter(Parameter):
     def value(self):
         val_str = self.val_str.replace("\n", "")
 
-        # unwrap wrapped list
-        if re.match(r"@[0-9]*\*", val_str) is not None:
-            val_str = self._unwrap_list(val_str)
+        val_str = self._unwrap_list(val_str)
 
         val_str_list = GenericParameter.split_parallel_lists(val_str)
 
@@ -463,17 +461,33 @@ class GenericParameter(Parameter):
         return lst
 
     def _unwrap_list(self, val_str):
-        while re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str):
-            match = re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str)
-            left = val_str[0 : match.start()]
-            right = val_str[match.end() :]
-            sub = val_str[match.start() : match.end()]
-            size, value = re.split(r"\*", sub)
-            size = int(size[1:])
-            middle = ""
-            for _ in range(size):
-                middle += f"{value[1:-1]} "
-            val_str = left + middle[0:-1] + right
+        marker = re.compile(r"@(\d+)\*\(")
+        search_from = 0
+
+        while match := marker.search(val_str, search_from):
+            angle_depth = 0
+            parenthesis_depth = 1
+            index = match.end()
+
+            while index < len(val_str) and parenthesis_depth:
+                if val_str[index] == "<":
+                    angle_depth += 1
+                elif val_str[index] == ">" and angle_depth:
+                    angle_depth -= 1
+                elif angle_depth == 0:
+                    if val_str[index] == "(":
+                        parenthesis_depth += 1
+                    elif val_str[index] == ")":
+                        parenthesis_depth -= 1
+                index += 1
+
+            if parenthesis_depth:
+                break
+
+            value = val_str[match.end() : index - 1]
+            replacement = " ".join([value] * int(match.group(1)))
+            val_str = f"{val_str[: match.start()]}{replacement}{val_str[index:]}"
+            search_from = match.start()
 
         return val_str
 

@@ -75,3 +75,24 @@ def test_jcampdx_get_value_preserves_enum_display_name(tmp_path):
         "operation",
         "<[1H] TX Volume, RX Surface Array>",
     ]
+
+
+def test_run_length_expansion_handles_mid_array_and_exponents():
+    parameter = GenericParameter("##$VALUES", "", "1 @2*(-2.5e-3) 4", "4.24")
+
+    assert np.array_equal(parameter.value, np.array([1, -2.5e-3, -2.5e-3, 4]))
+
+
+def test_run_length_expansion_handles_angle_bracket_strings():
+    parameter = GenericParameter("##$VALUES", "", "start @2*(<Name, display value>) end", "4.24")
+
+    assert np.array_equal(
+        parameter.value,
+        np.array(["start", "<Name, display value>", "<Name, display value>", "end"]),
+    )
+
+
+def test_run_length_expansion_handles_multiple_and_nested_runs():
+    parameter = GenericParameter("##$VALUES", "", "@2*(1) @2*(@2*(<enum>))", "4.24")
+
+    assert np.array_equal(parameter.value, np.array(["1", "1", "<enum>", "<enum>", "<enum>", "<enum>"]))
