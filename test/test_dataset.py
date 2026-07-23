@@ -10,7 +10,7 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.exceptions import InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -251,6 +251,30 @@ def test_2dseq_deserialize_serialize_preserves_stored_values():
     serialized = dataset._schema.serialize(dataset.data, dataset._schema.layouts)
 
     assert np.array_equal(serialized.astype(dataset.numpy_dtype), stored)
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_csi_skips_imaging_phase_encode_reordering():
+    dataset = Dataset(PV51_STUDY_PATH / "24" / "fid")
+    data = np.arange(12).reshape(4, 3)
+
+    reordered = dataset._schema._reorder_fid_lines(data.copy())
+
+    assert np.array_equal(reordered, data)
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_phase_encode_reorder_reports_axis_length_mismatch():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "fid")
+    data = np.arange(12).reshape(4, 3)
+    dataset["PVM_EncSteps1"].val_str = "0 1 2 3 4"
+    dataset["PVM_EncSteps1"].size = (5,)
+
+    with pytest.raises(
+        InvalidDataset,
+        match=r"phase-encode reorder length 5 does not match k-space axis length 3 for scheme CART_3D",
+    ):
+        dataset._schema._reorder_fid_lines(data)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
