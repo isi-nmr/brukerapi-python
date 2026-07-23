@@ -11,6 +11,24 @@ exceptions_to_test = [
     ("JcampdxVersionError", "Not a valid JCAMP-DX version", '"test" is not a valid JCAMP-DX version'),
 ]
 
+corrected_default_messages = {
+    "ConditionNotMet": "Condition not met",
+    "DataNotLoaded": "Data not loaded",
+    "DatasetTypeMissmatch": "Dataset type mismatch",
+    "FilterEvalFalse": "Filter expression evaluated false",
+    "IncompleteDataset": "Incomplete dataset",
+    "InvalidDataset": "Invalid dataset",
+    "NotADatasetDir": "Not a dataset directory",
+    "ParametersNotLoaded": "Parameters not loaded",
+    "PropertyConditionNotMet": "Property condition not met",
+    "PvVersionNotMet": "ParaVision version condition not met",
+    "RecoNotFound": "Reconstruction not found",
+    "ScanNotFound": "Scan not found",
+    "SchemeNotLoaded": "Scheme not loaded",
+    "SequenceNotMet": "Sequence condition not met",
+    "TrajNotLoaded": "Trajectory not loaded",
+}
+
 
 def get_exception_classes(module):
     """Return all exception classes defined in the module."""
@@ -45,3 +63,8 @@ def test_all_exceptions(exc_class):
     exc_default = exc_class()
     s_default = str(exc_default)
     assert isinstance(s_default, str)
+
+
+@pytest.mark.parametrize(("name", "message"), corrected_default_messages.items())
+def test_corrected_exception_default_messages(name, message):
+    assert str(getattr(exceptions, name)()) == message
