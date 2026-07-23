@@ -195,6 +195,23 @@ def test_parameter_subclass_constructors_support_named_fields():
     assert np.array_equal(data.value, np.array([[1, 2], [3, 4]]))
 
 
+def test_generic_parameter_treats_newlines_as_token_separators():
+    parameter = GenericParameter("##$VALUES", "( 4 )", "1 2\n3 4", "5.0")
+
+    assert np.array_equal(parameter.value, np.array([1, 2, 3, 4]))
+
+
+def test_parse_value_normalizes_newlines_between_parallel_lists():
+    value = GenericParameter(
+        "##$VALUES",
+        "( 2 )",
+        "(1, <FIRST>)\n(2, <SECOND>)",
+        "5.0",
+    ).value
+
+    assert value == [[1, "<FIRST>"], [2, "<SECOND>"]]
+
+
 def test_wrap_lines_respects_78_columns_and_preserves_tokens():
     line = "##$LONG=" + " ".join(["1234567890"] * 20)
 

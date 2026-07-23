@@ -208,7 +208,7 @@ class GenericParameter(Parameter):
 
     @property
     def value(self):
-        val_str = self.val_str.replace("\n", "")
+        val_str = self._normalize_line_breaks(self.val_str)
 
         val_str = self._unwrap_list(val_str)
 
@@ -340,8 +340,7 @@ class GenericParameter(Parameter):
 
     @classmethod
     def parse_value(cls, val_str, size_bracket=None):
-        # remove \n
-        val_str = val_str.replace("\n", "")
+        val_str = cls._normalize_line_breaks(val_str)
 
         # sharp string
         if val_str.startswith("<") and val_str.endswith(">"):
@@ -391,6 +390,10 @@ class GenericParameter(Parameter):
 
             return np.array(val_strs)
         return val_strs[0]
+
+    @staticmethod
+    def _normalize_line_breaks(value):
+        return re.sub(r"[ \t]*\r?\n[ \t]*", " ", value)
 
     @classmethod
     def serialize_value(cls, value, version):
