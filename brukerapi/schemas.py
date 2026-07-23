@@ -575,6 +575,7 @@ class Schema2dseq(Schema):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
         self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, "FW")
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order="F")
+        self._dataset.data = self._combine_complex_frames(self._dataset.data)
 
     def deserialize(self, data, layouts):
         # scale
@@ -584,7 +585,47 @@ class Schema2dseq(Schema):
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
 
-        return data
+        return self._combine_complex_frames(data)
+
+    def _complex_frame_axis(self, data):
+        if not self._dataset._state.get("combine_complex", True):
+            return None
+
+        try:
+            axis = self._dataset.dim_type.index("FG_COMPLEX")
+        except ValueError:
+            image_type = np.atleast_1d(self._dataset._parameter_value("RECO_image_type", []))
+            if not any("COMPLEX_IMAGE" in str(value).upper() for value in image_type):
+                return None
+            axis = data.ndim - 1
+
+        if data.shape[axis] != 2:
+            raise InvalidDataset(
+                f"complex 2dseq requires a two-element real/imag frame-group axis, got shape {data.shape} on axis {axis}"
+            )
+        return axis
+
+    def _combine_complex_frames(self, data):
+        axis = self._complex_frame_axis(data)
+        if axis is None:
+            return data
+        real = np.take(data, 0, axis=axis)
+        imaginary = np.take(data, 1, axis=axis)
+        return real + 1j * imaginary
+
+    def _split_complex_frames(self, data, layouts):
+        raw_shape = tuple(layouts["shape_final"])
+        if data.shape == raw_shape:
+            return data
+
+        axis = self._complex_frame_axis(np.empty(raw_shape))
+        if axis is None:
+            return data
+
+        expected_shape = raw_shape[:axis] + raw_shape[axis + 1 :]
+        if data.shape != expected_shape:
+            raise InvalidDataset(f"complex 2dseq data shape {data.shape} does not match expected shape {expected_shape}")
+        return np.stack((data.real, data.imag), axis=axis)
 
     def _scale_frames(self, data, layouts, dir):
         """
@@ -631,6 +672,7 @@ class Schema2dseq(Schema):
         return np.reshape(data, layouts["shape_final"], order="F")
 
     def serialize(self, data, layout):
+        data = self._split_complex_frames(data, layout)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
         return data

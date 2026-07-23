@@ -12,7 +12,7 @@ import pytest
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
-from brukerapi.schemas import SchemaFid
+from brukerapi.schemas import Schema2dseq, SchemaFid
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -307,6 +307,55 @@ def test_2dseq_deserialize_serialize_preserves_stored_values():
     serialized = dataset._schema.serialize(dataset.data, dataset._schema.layouts)
 
     assert np.array_equal(serialized.astype(dataset.numpy_dtype), stored)
+
+
+@pytest.mark.parametrize(
+    ("combine_complex", "expected"),
+    [
+        (True, np.array([1 + 10j, 2 + 20j])),
+        (False, np.array([[1, 10], [2, 20]])),
+    ],
+)
+def test_2dseq_complex_frame_group_assembly_is_reversible(combine_complex, expected):
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": combine_complex},
+        dim_type=["spatial", "FG_COMPLEX"],
+        _parameter_value=lambda name, default=None: default,
+        numpy_dtype=np.dtype("int16"),
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 2),
+        "shape_final": (2, 2),
+        "shape_fg": (2,),
+    }
+    stored = np.array([[1, 10], [2, 20]], dtype=np.int16)
+
+    decoded = schema.deserialize(stored, layouts)
+    serialized = schema.serialize(decoded, layouts)
+
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(serialized, stored)
+
+
+def test_2dseq_reco_complex_image_falls_back_to_last_frame_axis():
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": True},
+        dim_type=["spatial", "image"],
+        _parameter_value=lambda name, default=None: "COMPLEX_IMAGE" if name == "RECO_image_type" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 2),
+        "shape_final": (2, 2),
+        "shape_fg": (2,),
+    }
+
+    decoded = schema.deserialize(np.array([[1, 10], [2, 20]]), layouts)
+
+    assert np.array_equal(decoded, np.array([1 + 10j, 2 + 20j]))
 
 
 @pytest.mark.parametrize(

@@ -67,6 +67,7 @@ DEFAULT_STATES = {
         "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
         "load": LOAD_STAGES["all"],
         "scale": True,
+        "combine_complex": True,
         "mmap": False,
     },
     "traj": {
