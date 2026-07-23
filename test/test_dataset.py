@@ -10,7 +10,7 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.exceptions import TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -103,6 +103,22 @@ def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
         assert companion.data.ndim == 1
         assert np.iscomplexobj(companion.data)
         assert companion.data.size * 2 * companion.numpy_dtype.itemsize == companion.path.stat().st_size
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_invalid_optional_trajectory_does_not_abort_primary_load(tmp_path):
+    source = Dataset(PV51_STUDY_PATH / "10" / "fid")
+    fid_path = tmp_path / "dataset" / "fid"
+    source.write(fid_path)
+    (fid_path.parent / "traj").write_bytes(b"invalid trajectory")
+
+    with pytest.warns(RuntimeWarning, match=r"Could not load optional trajectory .*[/\\]traj:"):
+        dataset = Dataset(fid_path)
+
+    assert dataset.data.size > 0
+    assert dataset._traj is None
+    with pytest.raises(TrajNotLoaded):
+        _ = dataset.traj
 
 
 @pytest.mark.parametrize(
