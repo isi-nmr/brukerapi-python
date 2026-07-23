@@ -8,8 +8,8 @@ import numpy as np
 import pytest
 
 from brukerapi.cli import report as cli_report
-from brukerapi.dataset import Dataset
-from brukerapi.exceptions import UnsuportedDatasetType
+from brukerapi.dataset import LOAD_STAGES, Dataset
+from brukerapi.exceptions import UnknownAcqSchemeException, UnsuportedDatasetType
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -36,6 +36,62 @@ def test_directory_constructor_uses_default_load(path, dataset_type):
 
     assert dataset.type == dataset_type
     assert dataset.data.size > 0
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_custom_csi_pulse_program_uses_family_scheme_fallback():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<lucaCSI4.ppg>"
+
+    dataset.load_properties()
+
+    assert dataset.scheme_id == "CSI"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_scheme_id_can_be_overridden_by_caller():
+    dataset = Dataset(
+        PV51_STUDY_PATH / "10" / "fid",
+        load=LOAD_STAGES["properties"],
+        scheme_id="CSI",
+    )
+
+    assert dataset.scheme_id == "CSI"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_custom_radial_pulse_program_is_inferred_from_projection_metadata():
+    dataset = Dataset(PV51_STUDY_PATH / "21" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<mac_CS_new3DSymGr.ppg>"
+
+    dataset.load_properties()
+
+    assert dataset.scheme_id == "RADIAL"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_unknown_cartesian_program_is_inferred_from_encoding_metadata():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<customResearchSequence.ppg>"
+
+    dataset.load_properties()
+
+    assert dataset.scheme_id == "CART_3D"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_ambiguous_scheme_error_names_pulse_program_and_method():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<customResearchSequence.ppg>"
+    dataset["Method"].val_str = "<CustomMethod>"
+    dataset["PVM_EncMatrix"].val_str = "127 124 127"
+    dataset.load_properties()
+
+    with pytest.raises(
+        UnknownAcqSchemeException,
+        match=r"PULPROG='<customResearchSequence.ppg>', Method='<CustomMethod>'; pass scheme_id=",
+    ):
+        dataset.load_schema()
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")

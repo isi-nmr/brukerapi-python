@@ -21,6 +21,7 @@ from .exceptions import (
     PropertyConditionNotMet,
     SchemeNotLoaded,
     TrajNotLoaded,
+    UnknownAcqSchemeException,
     UnsuportedDatasetType,
 )
 from .jcampdx import JCAMPDX
@@ -423,6 +424,15 @@ class Dataset:
 
         :param property: tuple containing the name of the property and a list of possible commands to create it
         """
+        if property[0] == "scheme_id" and self._state.get("scheme_id") is not None:
+            scheme_id = self._state["scheme_id"]
+            if scheme_id not in {"CART_2D", "CART_3D", "FIELD_MAP", "RADIAL", "EPI", "dEPI", "SPECTROSCOPY", "CSI", "SPIRAL", "ZTE"}:
+                raise UnknownAcqSchemeException(f"invalid scheme_id override {scheme_id!r}")
+            self.scheme_id = scheme_id
+            if "scheme_id" not in self._properties:
+                self._properties.append("scheme_id")
+            return
+
         for desc in property[1]:
             try:
                 self._eval_conditions(desc["conditions"])
@@ -444,6 +454,59 @@ class Dataset:
 
             except (PropertyConditionNotMet, AttributeError, IndexError):
                 pass
+
+        if property[0] == "scheme_id" and not hasattr(self, "scheme_id"):
+            scheme_id = self._infer_scheme_id()
+            if scheme_id is not None:
+                self.scheme_id = scheme_id
+                self._properties.append("scheme_id")
+
+    def _parameter_value(self, key, default=None):
+        try:
+            return self[key].value
+        except KeyError:
+            return default
+
+    def _infer_scheme_id(self):
+        pulprog = str(self._parameter_value("PULPROG", "")).strip("<>").upper()
+        method = str(self._parameter_value("Method", "")).strip("<>").upper()
+        family = f"{pulprog} {method}"
+
+        if "SPIRAL" in family or self._parameter_value("PVM_SpiralNbOfInterleaves") is not None:
+            return "SPIRAL"
+
+        n_projections = self._parameter_value("NPro")
+        if self.type == "traj":
+            return "RADIAL" if n_projections is not None and int(n_projections) > 0 else None
+
+        if "CSI" in family:
+            return "CSI"
+        if "FIELDMAP" in family or "FLOWMAP" in family:
+            return "FIELD_MAP"
+        if "DTIEPI" in family or "EPSI" in family:
+            return "dEPI"
+        if "EPI" in family:
+            return "EPI"
+        if "RADIAL" in family or "UTE" in family or "ZTE" in family:
+            return "RADIAL"
+
+        dim = self._parameter_value("ACQ_dim")
+        descriptions = np.atleast_1d(self._parameter_value("ACQ_dim_desc", [])).tolist()
+        if descriptions and descriptions[0] == "Spectroscopic":
+            return "SPECTROSCOPY" if int(dim) == 1 else "CSI"
+
+        if n_projections is not None and int(n_projections) > 0:
+            return "RADIAL"
+
+        acq_size = np.atleast_1d(self._parameter_value("ACQ_size", []))
+        enc_matrix = np.atleast_1d(self._parameter_value("PVM_EncMatrix", []))
+        if dim in (2, 3) and len(acq_size) >= dim and len(enc_matrix) >= dim:
+            read_matches = acq_size[0] == 2 * enc_matrix[0]
+            phase_matches = np.array_equal(acq_size[1:dim], enc_matrix[1:dim])
+            if read_matches and phase_matches:
+                return f"CART_{dim}D"
+
+        return None
 
     def _make_element(self, cmd):
         """
@@ -584,7 +647,11 @@ class Dataset:
 
     def load_traj(self, **kwargs):
         if Path(self.path.parent / "traj").exists() and self.type != "traj":
-            self._traj = Dataset(self.path.parent / "traj", load=LOAD_STAGES["empty"])
+            self._traj = Dataset(
+                self.path.parent / "traj",
+                load=LOAD_STAGES["empty"],
+                scheme_id=getattr(self, "scheme_id", None),
+            )
             self._traj._parameters = self.parameters
             self._traj.load_properties()
             self._traj._schema = SchemaTraj(self._traj)

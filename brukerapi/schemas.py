@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .exceptions import ConditionNotMet, MissingProperty
+from .exceptions import ConditionNotMet, MissingProperty, UnknownAcqSchemeException
 
 config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
@@ -51,6 +51,10 @@ class Schema:
         # chceck if dataset contains all the required properties
         for property in REQUIRED_PROPERTIES[dataset.type]:
             if not hasattr(dataset, property):
+                if property == "scheme_id":
+                    pulprog = dataset._parameter_value("PULPROG", "<missing>")
+                    method = dataset._parameter_value("Method", "<missing>")
+                    raise UnknownAcqSchemeException(f"PULPROG={pulprog!r}, Method={method!r}; pass scheme_id= to override")
                 raise MissingProperty(property)
         self._dataset = dataset
 
