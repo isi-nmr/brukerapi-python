@@ -1,5 +1,7 @@
+from pathlib import Path
+
 from brukerapi.dataset import Dataset
-from brukerapi.folders import Folder, Processing
+from brukerapi.folders import Folder, Processing, Study
 
 
 def test_folder_traversal_skips_processed_spectra(tmp_path):
@@ -31,3 +33,20 @@ def test_folder_traversal_skips_processed_spectra(tmp_path):
     processing = next(child for child in experiment.get_processing_list() if isinstance(child, Processing))
     processing_datasets = {child.path.name for child in processing.children if isinstance(child, Dataset)}
     assert processing_datasets == {"2dseq"}
+
+
+def test_study_get_dataset_returns_fid_and_2dseq():
+    study = Study(
+        Path("test/test_data/PV51/0.2H2"),
+        dataset_state={"parameter_files": [], "property_files": [], "load": 0},
+    )
+
+    fid = study.get_dataset(exp_id="10")
+    reconstructed = study.get_dataset(exp_id="10", proc_id="1")
+
+    assert fid.path.name == "fid"
+    assert reconstructed.path.name == "2dseq"
+
+    with fid, reconstructed:
+        assert fid.data.size > 0
+        assert reconstructed.data.size > 0

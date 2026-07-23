@@ -352,18 +352,19 @@ class Study(Folder):
         :param proc_id: name of the processing folder
         :return: fid, or 2dseq :obj:`.Dataset`
         """
-        if exp_id:
-            exp = self._get_exp(exp_id)
+        if exp_id is None:
+            raise ValueError("exp_id is required")
 
-        if proc_id:
+        exp = self._get_exp(exp_id)
+        if proc_id is not None:
             return exp._get_proc(proc_id)["2dseq"]
         return exp["fid"]
 
     def _get_exp(self, exp_id):
-        for exp in self.experiment_list:
+        for exp in self.get_experiment_list():
             if exp.path.name == exp_id:
                 return exp
-        return None
+        raise KeyError(f"Experiment '{exp_id}' not found in {self.path}")
 
 
 class Experiment(Folder):
@@ -414,10 +415,10 @@ class Experiment(Folder):
             raise NotExperimentFolder
 
     def _get_proc(self, proc_id):
-        for proc in self.processing_list:
+        for proc in self.get_processing_list():
             if proc.path.name == proc_id:
                 return proc
-        return None
+        raise KeyError(f"Processing '{proc_id}' not found in {self.path}")
 
 
 class Processing(Folder):
