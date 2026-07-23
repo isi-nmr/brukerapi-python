@@ -175,12 +175,14 @@ class Dataset:
             raise FileNotFoundError(self.path)
 
         # directory constructor
-        if self.path.is_dir() and state.get("load"):
+        if self.path.is_dir():
             content = os.listdir(self.path)
             if "fid" in content:
                 self.path = self.path / "fid"
             elif "2dseq" in content:
                 self.path = self.path / "2dseq"
+            elif state.get("load") is LOAD_STAGES["empty"] and self.path.stem in DEFAULT_STATES:
+                pass
             else:
                 raise NotADatasetDir(self.path)
 

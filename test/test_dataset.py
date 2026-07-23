@@ -20,6 +20,20 @@ def test_unsupported_dataset_type(tmp_path):
         Dataset(path)
 
 
+@pytest.mark.parametrize(
+    ("path", "dataset_type"),
+    [
+        ("test/test_data/PV51/0.2H2/10", "fid"),
+        ("test/test_data/PV51/0.2H2/10/pdata/1", "2dseq"),
+    ],
+)
+def test_directory_constructor_uses_default_load(path, dataset_type):
+    dataset = Dataset(path)
+
+    assert dataset.type == dataset_type
+    assert dataset.data.size > 0
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)

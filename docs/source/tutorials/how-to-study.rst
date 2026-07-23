@@ -3,24 +3,24 @@ How to work with Bruker study?
 
 .. code-block:: python
 
-   from brukerapi.study import Study
+   from brukerapi.folders import Study
 
-    study = Study('path_to_study')
+   study = Study('path_to_study')
 
-    #get list of scans (fid data sets) contained in the study
-    study.scans
+   # get list of experiments contained in the study
+   study.get_experiment_list()
 
-    #get list of recos (2dseq data sets) contained in the study
-    study.recos
+   # get list of processing folders contained in the study
+   study.get_processing_list()
 
-    #get data set from the study hierarchy
-    study.get_dataset(scan_id='2', reco_id='1')
+   # get a data set from the study hierarchy
+   study.get_dataset(exp_id='2', proc_id='1')
 
 Data set obtained from ``Study`` object are empty by default, to access its content, the data set needs to be loaded. Either using the load function.
 
 .. code-block:: python
 
-    dataset = study.get_dataset(scan_id='2', reco_id='1')
+    dataset = study.get_dataset(exp_id='2', proc_id='1')
 
     dataset.load()
     dataset.data
@@ -30,9 +30,8 @@ Or using context manager.
 
 .. code-block:: python
 
-    with study.get_dataset(scan_id='2', reco_id='1') as dataset:
+    with study.get_dataset(exp_id='2', proc_id='1') as dataset:
         dataset.data
         dataset.get_value('VisuCoreSize')
-
 
 
