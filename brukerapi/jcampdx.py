@@ -552,8 +552,8 @@ class DataParameter(Parameter):
 
     @property
     def value(self):
-        val_list = self.val_str.replace("\n", ",").split(", ")
-        data = [GenericParameter.parse_value(x) for x in val_list]
+        val_list = [value for value in re.split(r",\s*|\s+", self.val_str.strip()) if value]
+        data = [GenericParameter.parse_value(value) for value in val_list]
         return np.reshape(data, (2, -1))
 
     @value.setter

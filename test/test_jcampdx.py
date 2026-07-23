@@ -96,3 +96,21 @@ def test_run_length_expansion_handles_multiple_and_nested_runs():
     parameter = GenericParameter("##$VALUES", "", "@2*(1) @2*(@2*(<enum>))", "4.24")
 
     assert np.array_equal(parameter.value, np.array(["1", "1", "<enum>", "<enum>", "<enum>", "<enum>"]))
+
+
+def test_jcampdx_data_parameter_parses_multiline_xy_pairs(tmp_path):
+    path = tmp_path / "data"
+    path.write_text(
+        "##TITLE=XY Data\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$POINTS=(XY..XY)\n"
+        "1.0, 2.0\n"
+        "3.0, 4.0\n"
+        "##END=\n"
+    )
+
+    assert np.array_equal(
+        JCAMPDX(path).get_value("POINTS"),
+        np.array([[1.0, 2.0], [3.0, 4.0]]),
+    )
