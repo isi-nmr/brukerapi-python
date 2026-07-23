@@ -193,3 +193,12 @@ def test_parameter_subclass_constructors_support_named_fields():
 
     assert np.array_equal(generic.value, np.array([1, 2]))
     assert np.array_equal(data.value, np.array([[1, 2], [3, 4]]))
+
+
+def test_wrap_lines_respects_78_columns_and_preserves_tokens():
+    line = "##$LONG=" + " ".join(["1234567890"] * 20)
+
+    wrapped = JCAMPDX.wrap_lines(line)
+
+    assert all(len(part) <= 78 for part in wrapped.splitlines())
+    assert wrapped.replace("\n", "") == line
