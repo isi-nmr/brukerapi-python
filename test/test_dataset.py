@@ -396,6 +396,25 @@ def test_dataset_query_wraps_malformed_expressions(query, error_type):
     assert isinstance(error.value.__cause__, error_type)
 
 
+@pytest.mark.parametrize("query", ["__import__('os')", "datetime.datetime.now()", "os.getcwd()"])
+def test_dataset_query_cannot_access_builtins_or_module_globals(query):
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "fid"
+
+    with pytest.raises(FilterEvalFalse, match="Invalid query") as error:
+        dataset.query(query)
+
+    assert isinstance(error.value.__cause__, NameError)
+
+
+def test_dataset_query_minimal_namespace_keeps_self_and_numpy():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "fid"
+
+    dataset.query("self.type == 'fid'")
+    dataset.query("np.pi > 3")
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")

@@ -35,6 +35,18 @@ LOAD_STAGES = {
     "all": 3,
 }
 
+RECIPE_EVAL_NAMESPACE = {
+    "__builtins__": {},
+    "abs": abs,
+    "datetime": datetime,
+    "int": int,
+    "len": len,
+    "np": np,
+    "os": os,
+    "str": str,
+    "tuple": tuple,
+}
+
 # Dict of default dataset states
 DEFAULT_STATES = {
     "fid": {
@@ -546,7 +558,7 @@ class Dataset:
         :return: value of property, or list of values of properties
         """
         if isinstance(cmd, str):
-            return eval(self._sub_parameters(cmd), {**globals(), "self": self})
+            return eval(self._sub_parameters(cmd), {**RECIPE_EVAL_NAMESPACE, "self": self})
         if isinstance(cmd, (int, float)):
             return cmd
         if isinstance(cmd, list):
@@ -894,7 +906,10 @@ class Dataset:
 
         for q in query:
             try:
-                if not eval(self._sub_parameters(q), {**globals(), "self": self}):
+                if not eval(
+                    self._sub_parameters(q),
+                    {"__builtins__": {}, "np": np, "self": self},
+                ):
                     raise FilterEvalFalse(f"Query evaluated false: {q!r}")
             except FilterEvalFalse:
                 raise
