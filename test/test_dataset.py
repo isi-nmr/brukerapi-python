@@ -1,6 +1,7 @@
 import contextlib
 import json
 import os
+import re
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -21,6 +22,87 @@ def test_unsupported_dataset_type(tmp_path):
 
     with pytest.raises(UnsuportedDatasetType, match="Dataset type: unsupported is not supported"):
         Dataset(path)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "fid.npz",
+        "fid.json",
+        "fid.navFid",
+        "fid.orig",
+        "fid.spiral",
+        "2dseq.npz",
+        "2dseq.json",
+        "traj.npy",
+        "rawdata.zip",
+    ],
+)
+def test_dataset_rejects_nonprimary_and_unknown_subtypes(tmp_path, name):
+    path = tmp_path / name
+    path.touch()
+
+    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
+        Dataset(path)
+
+
+@pytest.mark.parametrize(
+    ("name", "dataset_type", "subtype"),
+    [
+        ("fid", "fid", ""),
+        ("fid_proc.64", "fid_proc", "64"),
+        ("2dseq", "2dseq", ""),
+        ("traj", "traj", ""),
+        ("rawdata.job12", "rawdata", "job12"),
+        ("rawdata.Navigator", "rawdata", "Navigator"),
+    ],
+)
+def test_dataset_accepts_known_primary_binary_subtypes(tmp_path, name, dataset_type, subtype):
+    path = tmp_path / name
+    path.touch()
+
+    dataset = Dataset(path, load=LOAD_STAGES["empty"])
+
+    assert dataset.type == dataset_type
+    assert dataset.subtype == subtype
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "test/test_data/PV51/0.2H2/35/fid.navFid",
+        "test/test_data/PV51/0.2H2/35/fid.orig",
+        "test/test_data/PV51/0.2H2/19/fid.spiral",
+    ],
+)
+def test_fid_companion_files_are_not_loaded_as_primary_datasets(path):
+    if not Path(path).is_file():
+        pytest.skip(f"{path} is not available")
+
+    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
+        Dataset(path)
+
+
+@pytest.mark.parametrize(
+    ("fid_path", "subtypes"),
+    [
+        ("test/test_data/PV51/0.2H2/19/fid", {"spiral"}),
+        ("test/test_data/PV51/0.2H2/35/fid", {"navFid", "orig"}),
+    ],
+)
+def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
+    if not Path(fid_path).is_file():
+        pytest.skip(f"{fid_path} is not available")
+
+    dataset = Dataset(fid_path)
+
+    assert set(dataset.fid_companions) == subtypes
+    for subtype, companion in dataset.fid_companions.items():
+        assert isinstance(companion, Dataset)
+        assert companion.path == Path(fid_path).with_suffix(f".{subtype}")
+        assert companion.data.ndim == 1
+        assert np.iscomplexobj(companion.data)
+        assert companion.data.size * 2 * companion.numpy_dtype.itemsize == companion.path.stat().st_size
 
 
 @pytest.mark.parametrize(

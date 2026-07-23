@@ -423,6 +423,26 @@ class SchemaFid(Schema):
         return index
 
 
+class SchemaFidCompanion:
+    """One-dimensional complex view of an auxiliary ``fid.<subtype>`` file."""
+
+    def __init__(self, dataset):
+        self._dataset = dataset
+
+    @property
+    def layouts(self):
+        return {"storage": self._dataset.shape_storage}
+
+    def deserialize(self, data, layouts):
+        return data[0::2] + 1j * data[1::2]
+
+    def serialize(self, data, layouts):
+        serialized = np.empty(data.size * 2, dtype=self._dataset.numpy_dtype)
+        serialized[0::2] = np.real(data)
+        serialized[1::2] = np.imag(data)
+        return serialized
+
+
 class SchemaTraj(Schema):
     @property
     def layouts(self):
