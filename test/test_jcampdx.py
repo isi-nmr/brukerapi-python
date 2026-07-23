@@ -256,3 +256,22 @@ def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
     assert serialized.endswith("##END=")
     assert JCAMPDX(output).get_value("VALUE") == 1
     assert JCAMPDX(output).get_value("OTHER") == 2
+
+
+def test_jcampdx_version_detection_is_label_based_within_header(tmp_path):
+    path = tmp_path / "reordered-header"
+    path.write_text(
+        "##TITLE=Reordered Header\n"
+        "##DATATYPE=Parameter Values\n"
+        "##ORIGIN=Test\n"
+        "$$ header comment\n"
+        "##OWNER=Tester\n"
+        "##JCAMPDX=4.24\n"
+        "##$VALUE=42\n"
+        "##END=\n"
+    )
+
+    jcamp = JCAMPDX(path)
+
+    assert jcamp.version == "4.24"
+    assert jcamp.get_value("VALUE") == 42

@@ -687,20 +687,18 @@ class JCAMPDX:
 
     @property
     def version(self):
-        if "JCAMPDX" in self.params:
-            return self.params["JCAMPDX"]
+        for key in ("JCAMPDX", "JCAMP-DX"):
+            if key in self.params:
+                return self.params[key].value
 
         try:
             with self.path.open("r") as f:
-                for _ in range(10):
-                    line = f.readline()
-                    if line.startswith("##JCAMPDX="):
-                        return line.strip().split("=", 1)[1]
-                    if line.startswith("##JCAMP-DX="):
-                        return line.strip().split("=", 1)[1]
+                version = self._detect_version(f)
         except (UnicodeDecodeError, OSError) as e:
             raise InvalidJcampdxFile from e
 
+        if version is not None:
+            return version
         raise InvalidJcampdxFile(self.path)
 
     @version.setter
@@ -808,6 +806,15 @@ class JCAMPDX:
         if version not in SUPPORTED_VERSIONS:
             raise JcampdxVersionError(version)
 
+    @staticmethod
+    def _detect_version(lines):
+        for index, line in enumerate(lines):
+            if index >= 10:
+                break
+            if line.startswith(("##JCAMPDX=", "##JCAMP-DX=")):
+                return line.strip().split("=", 1)[1]
+        return None
+
     @classmethod
     def load_parameter(cls, path, key):
         with open(path) as f:
@@ -857,19 +864,11 @@ class JCAMPDX:
         # strip trailing EOL
         content = [_TRAILING_EOL_RE.sub("", x) for x in content]
 
-        # ASSUMPTION the jcampdx version string is in the second row
-        try:
-            version_line = content[1]
-        except IndexError:
-            raise JcampdxFileError(f"file {path} is too short or not a text file") from IndexError
-
-        if re.search(GRAMMAR["VERSION_TITLE"], version_line) is None:
+        version = cls._detect_version(content_without_comments)
+        if version is None:
             raise JcampdxFileError(f"file {path} is not a JCAMP-DX file")
 
-        _, _, version = JCAMPDX.divide_jcampdx_line(version_line)
-
-        if version not in SUPPORTED_VERSIONS:
-            raise JcampdxVersionError(version)
+        cls.verify_version(version)
 
         for index, line in enumerate(content):
             # Restore the ##
