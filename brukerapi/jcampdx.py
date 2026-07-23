@@ -308,7 +308,7 @@ class GenericParameter(Parameter):
             else:
                 size_str = f"( {str(size)[1:-2]} )"
         elif isinstance(size, range):
-            size_str = "({size.start}..{size.stop})"
+            size_str = f"({size.start}..{size.stop})"
         elif isinstance(size, int):
             size_str = f"( {size!s} )"
         else:
@@ -601,6 +601,7 @@ class JCAMPDX:
 
         # If path is directory
         self.path = Path(path)
+        self._version = None
 
         if self.path.is_dir():
             raise InvalidJcampdxFile(path)
@@ -687,6 +688,9 @@ class JCAMPDX:
 
     @property
     def version(self):
+        if self._version is not None:
+            return self._version
+
         for key in ("JCAMPDX", "JCAMP-DX"):
             if key in self.params:
                 return self.params[key].value
@@ -703,7 +707,8 @@ class JCAMPDX:
 
     @version.setter
     def version(self, value):
-        self.version = value
+        self.verify_version(value)
+        self._version = value
 
     def keys(self):
         return self.params.keys()
@@ -823,12 +828,16 @@ class JCAMPDX:
             except (UnicodeDecodeError, OSError) as e:
                 raise InvalidJcampdxFile(path) from e
 
-        match = re.search(rf"##{key}[^\#\$]+|##\${key}[^\#\$]+", content)
+        match = re.search(
+            rf"^##\$?{re.escape(key)}=.*?(?=^##|\Z)",
+            content,
+            flags=re.MULTILINE | re.DOTALL,
+        )
 
         if match is None:
             raise ParameterNotFound(key, path)
 
-        line = content[match.start() : match.end() - 1]  # strip trailing EOL
+        line = match.group().rstrip("\r\n")
         key, parameter = JCAMPDX.handle_jcampdx_line(line, None)
 
         return key, parameter

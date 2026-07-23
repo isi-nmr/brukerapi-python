@@ -238,6 +238,41 @@ def test_jcampdx_size_parsing_accepts_compact_and_padded_brackets(tmp_path):
     assert jcamp.get_parameter("MATRIX").size == (2, 3)
 
 
+def test_parameter_size_setter_serializes_range_bounds():
+    parameter = GenericParameter("##$VALUES", "", "", "5.0")
+
+    parameter.size = range(2, 7)
+
+    assert parameter.size_str == "(2..7)"
+    assert parameter.size == range(2, 7)
+
+
+def test_jcampdx_version_setter_uses_validated_override(tmp_path):
+    path = tmp_path / "version"
+    path.write_text("##TITLE=Version Test\n##JCAMPDX=4.24\n##END=\n")
+    jcamp = JCAMPDX(path)
+
+    jcamp.version = "5.0"
+
+    assert jcamp.version == "5.0"
+
+
+def test_load_parameter_allows_hash_and_dollar_in_value(tmp_path):
+    path = tmp_path / "special-value"
+    path.write_text(
+        "##TITLE=Special Value\n"
+        "##JCAMPDX=5.0\n"
+        "##$VALUE=<cost $5 #tag>\n"
+        "##$NEXT=2\n"
+        "##END=\n"
+    )
+
+    key, parameter = JCAMPDX.load_parameter(path, "VALUE")
+
+    assert key == "VALUE"
+    assert parameter.value == "<cost $5 #tag>"
+
+
 def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
     source = tmp_path / "comments"
     source.write_text(
