@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .exceptions import ConditionNotMet, MissingProperty, UnknownAcqSchemeException
+from .exceptions import ConditionNotMet, InvalidDataset, MissingProperty, UnknownAcqSchemeException
 
 config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
@@ -189,6 +189,9 @@ class SchemaFid(Schema):
         """
         # TODO when to use?
 
+        if self._dataset.scheme_id in {"CSI", "SPECTROSCOPY"}:
+            return data
+
         # Create local copies of variables
         try:
             PVM_EncSteps1 = self._dataset["PVM_EncSteps1"].value
@@ -200,6 +203,11 @@ class SchemaFid(Schema):
 
         if dir == "BW":
             PVM_EncSteps1_sorted = self.permutation_inverse(PVM_EncSteps1_sorted)
+
+        if data.shape[1] != len(PVM_EncSteps1_sorted):
+            raise InvalidDataset(
+                f"phase-encode reorder length {len(PVM_EncSteps1_sorted)} does not match k-space axis length {data.shape[1]} for scheme {self._dataset.scheme_id}"
+            )
 
         if np.array_equal(PVM_EncSteps1_sorted, PVM_EncSteps1):
             return data
