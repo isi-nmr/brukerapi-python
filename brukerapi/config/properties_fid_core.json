@@ -196,8 +196,7 @@
         ["#PULPROG[1:-1]",
           [
             "UTE.ppg",
-            "UTE3D.ppg",
-            "ZTE.ppg"
+            "UTE3D.ppg"
           ]
         ]
       ]
@@ -507,7 +506,7 @@
         "#PVM_EncNReceivers",
         "#ACQ_phase_factor",
         "#NI",
-        "NPro / ACQ_phase_factor",
+        "#NPro // #ACQ_phase_factor",
         "#NR"
       ],
       "conditions": [
