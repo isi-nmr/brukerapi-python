@@ -90,13 +90,12 @@ class Splitter:
         try:
             VisuCoreTransposition = visu_pars["VisuCoreTransposition"]
         except KeyError:
-            return VisuCoreTransposition
+            return
 
         value = np.reshape(VisuCoreTransposition.value, dataset.shape_final[dataset.encoded_dim :], order="F")
         value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
         VisuCoreTransposition.size = (int(np.prod(value.shape)),)
         VisuCoreTransposition.value = value.flatten(order="F")
-        return None
 
 
 class FrameGroupSplitter(Splitter):

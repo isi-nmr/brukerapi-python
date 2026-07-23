@@ -1,5 +1,15 @@
+from types import SimpleNamespace
+
 from brukerapi.dataset import Dataset
-from brukerapi.splitters import FrameGroupSplitter, SlicePackageSplitter
+from brukerapi.splitters import FrameGroupSplitter, SlicePackageSplitter, Splitter
+
+
+def test_split_transposition_is_noop_when_parameter_is_absent():
+    dataset = SimpleNamespace(shape_final=(2, 3), encoded_dim=2)
+
+    result = Splitter()._split_VisuCoreTransposition(dataset, {}, 0, 2)
+
+    assert result is None
 
 
 def test_split(test_split_data, tmp_path):
