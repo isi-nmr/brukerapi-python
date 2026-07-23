@@ -10,6 +10,7 @@ from brukerapi.dataset import Dataset
 from brukerapi.exceptions import UnsuportedDatasetType
 
 data = 0
+PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
 
 
 def test_unsupported_dataset_type(tmp_path):
@@ -27,6 +28,7 @@ def test_unsupported_dataset_type(tmp_path):
         ("test/test_data/PV51/0.2H2/10/pdata/1", "2dseq"),
     ],
 )
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_directory_constructor_uses_default_load(path, dataset_type):
     dataset = Dataset(path)
 

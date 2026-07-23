@@ -1,7 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 from brukerapi.dataset import Dataset
 from brukerapi.folders import Folder, Processing, Study
+
+PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
 
 
 def test_folder_traversal_skips_processed_spectra(tmp_path):
@@ -35,9 +39,10 @@ def test_folder_traversal_skips_processed_spectra(tmp_path):
     assert processing_datasets == {"2dseq"}
 
 
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_study_get_dataset_returns_fid_and_2dseq():
     study = Study(
-        Path("test/test_data/PV51/0.2H2"),
+        PV51_STUDY_PATH,
         dataset_state={"parameter_files": [], "property_files": [], "load": 0},
     )
 
