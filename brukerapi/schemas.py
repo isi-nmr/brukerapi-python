@@ -439,8 +439,8 @@ class SchemaRawdata(Schema):
     @property
     def layouts(self):
         layouts = {}
-        layouts["raw"] = (int(self._dataset.job_desc[0] / 2), self._dataset.channels, int(self._dataset.job_desc[3]))
-        layouts["shape_storage"] = (int(self._dataset.job_desc[0]), self._dataset.channels, int(self._dataset.job_desc[3]))
+        layouts["raw"] = (int(self._dataset.shape_storage[0] / 2), self._dataset.channels, int(self._dataset.shape_storage[2]))
+        layouts["shape_storage"] = self._dataset.shape_storage
         layouts["final"] = layouts["raw"]
         return layouts
 

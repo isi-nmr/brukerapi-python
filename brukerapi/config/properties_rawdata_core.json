@@ -113,6 +113,12 @@
   ],
   "shape_storage": [
     {
+      "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6],)",
+      "conditions": [
+        "#ACQ_sw_version.value.startswith('<PV-360.3.')"
+      ]
+    },
+    {
       "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[3],)",
       "conditions": []
     }
