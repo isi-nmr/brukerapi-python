@@ -509,8 +509,8 @@ class GeometryParameter(Parameter):
         return None
 
     @value.setter
-    def value(self):
-        pass
+    def value(self, value):
+        self.val_str = value
 
     # @property
     # def affine(self):

@@ -1,6 +1,6 @@
 import numpy as np
 
-from brukerapi.jcampdx import JCAMPDX, GenericParameter
+from brukerapi.jcampdx import JCAMPDX, GenericParameter, GeometryParameter
 
 
 # @pytest.mark.skip(reason="in progress")
@@ -161,3 +161,12 @@ def test_jcampdx_data_parameter_setter_round_trip(tmp_path):
     output = tmp_path / "round-trip-data"
     jcamp.write(output)
     assert np.array_equal(JCAMPDX(output).get_value("POINTS"), expected)
+
+
+def test_geometry_parameter_setter_stores_raw_value():
+    parameter = GeometryParameter("##$GEOMETRY", "", "old", "4.24")
+
+    parameter.value = "(((1, 0, 0), (0, 1, 0), (0, 0, 1)), (1, 2, 3))"
+
+    assert parameter.val_str == "(((1, 0, 0), (0, 1, 0), (0, 0, 1)), (1, 2, 3))"
+    assert str(parameter).endswith(parameter.val_str)
