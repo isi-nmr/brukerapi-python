@@ -312,6 +312,19 @@ def test_zte_uses_dedicated_fid_layout_branches():
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_monotonic_phase_encode_steps_skip_reordering():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "fid")
+    dataset["PVM_EncSteps1"].val_str = "10 20 30"
+    dataset["PVM_EncSteps1"].size = (3,)
+    data = np.arange(12).reshape(4, 3)
+    data.flags.writeable = False
+
+    reordered = dataset._schema._reorder_fid_lines(data)
+
+    assert reordered is data
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
     dataset_path = tmp_path / "dataset" / "fid"

@@ -209,7 +209,7 @@ class SchemaFid(Schema):
                 f"phase-encode reorder length {len(PVM_EncSteps1_sorted)} does not match k-space axis length {data.shape[1]} for scheme {self._dataset.scheme_id}"
             )
 
-        if np.array_equal(PVM_EncSteps1_sorted, PVM_EncSteps1):
+        if np.array_equal(PVM_EncSteps1_sorted, np.arange(len(PVM_EncSteps1_sorted))):
             return data
 
         for index in np.ndindex(data.shape[2:]):
