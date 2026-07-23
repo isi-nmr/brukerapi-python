@@ -78,6 +78,7 @@ class Parameter:
         self.size_str = size_str
         self.val_str = val_str
         self.version = version
+        self.comments_before = []
 
     def __str__(self):
         str_ = f"{self.key_str}"
@@ -92,6 +93,8 @@ class Parameter:
 
         str_ += f"{self.val_str}"
 
+        if self.comments_before:
+            return "\n".join(self.comments_before) + "\n" + str_
         return str_
 
     def __repr__(self):
@@ -193,20 +196,21 @@ class Parameter:
 
 
 class GenericParameter(Parameter):
-    def __init__(self, version, key, size_bracket, value):
-        super().__init__(version, key, size_bracket, value)
+    def __init__(self, key_str, size_str, val_str, version):
+        super().__init__(key_str, size_str, val_str, version)
 
     @classmethod
     def from_values(cls, version, key, size, value, user_defined):
-        return cls(version, key, size, value)
+        parameter = cls(cls.pack_key(key, user_defined), "", "", version)
+        parameter.size = size
+        parameter.value = value
+        return parameter
 
     @property
     def value(self):
-        val_str = self.val_str.replace("\n", "")
+        val_str = self._normalize_line_breaks(self.val_str)
 
-        # unwrap wrapped list
-        if re.match(r"@[0-9]*\*", val_str) is not None:
-            val_str = self._unwrap_list(val_str)
+        val_str = self._unwrap_list(val_str)
 
         val_str_list = GenericParameter.split_parallel_lists(val_str)
 
@@ -233,12 +237,12 @@ class GenericParameter(Parameter):
             val_str = str(value)
         elif isinstance(value, list):
             if isinstance(value[0], list):
-                val_str = self.serialize_nested_list(value)
+                val_str = self.serialize_nested_list(value, self.version)
                 size = (len(value),)
             else:
-                val_str = self.serialize_list(value)
+                val_str = self.serialize_list(value, self.version)
         elif isinstance(value, np.ndarray):
-            val_str = self.serialize_ndarray(value)
+            val_str = self.serialize_ndarray(value, self.version)
         else:
             val_str = value
 
@@ -264,8 +268,11 @@ class GenericParameter(Parameter):
 
     @property
     def size(self):
-        size_str = self.size_str[1:-2]
+        match = re.fullmatch(r"\(\s*(.*?)\s*\)\s*", self.size_str)
+        if match is None:
+            return None
 
+        size_str = match.group(1).strip()
         if size_str == "":
             return None
 
@@ -277,7 +284,7 @@ class GenericParameter(Parameter):
             except ValueError:
                 # size bracket is returned as string
                 # catches (XY..XY) etc.
-                pass
+                size = match.group(1).strip()
 
         elif "," in size_str:
             size_str = size_str.split(",")
@@ -301,7 +308,7 @@ class GenericParameter(Parameter):
             else:
                 size_str = f"( {str(size)[1:-2]} )"
         elif isinstance(size, range):
-            size_str = "({size.start}..{size.stop})"
+            size_str = f"({size.start}..{size.stop})"
         elif isinstance(size, int):
             size_str = f"( {size!s} )"
         else:
@@ -310,9 +317,30 @@ class GenericParameter(Parameter):
         self.size_str = size_str
 
     @classmethod
+    def _split_outside_angle_brackets(cls, value, delimiter):
+        parts = []
+        start = 0
+        angle_depth = 0
+        index = 0
+
+        while index < len(value):
+            if value[index] == "<":
+                angle_depth += 1
+            elif value[index] == ">" and angle_depth:
+                angle_depth -= 1
+            elif angle_depth == 0 and value.startswith(delimiter, index):
+                parts.append(value[start:index])
+                index += len(delimiter)
+                start = index
+                continue
+            index += 1
+
+        parts.append(value[start:])
+        return parts
+
+    @classmethod
     def parse_value(cls, val_str, size_bracket=None):
-        # remove \n
-        val_str = val_str.replace("\n", "")
+        val_str = cls._normalize_line_breaks(val_str)
 
         # sharp string
         if val_str.startswith("<") and val_str.endswith(">"):
@@ -337,8 +365,8 @@ class GenericParameter(Parameter):
                 pass
 
         # list
-        if val_str.startswith("(") and val_str.endswith(""):
-            val_strs = val_str[1:-1].split(", ")
+        if val_str.startswith("(") and val_str.endswith(")"):
+            val_strs = cls._split_outside_angle_brackets(val_str[1:-1], ", ")
             value = []
 
             for val_str in val_strs:
@@ -346,7 +374,7 @@ class GenericParameter(Parameter):
 
             return value
 
-        val_strs = val_str.split(" ")
+        val_strs = [value for value in cls._split_outside_angle_brackets(val_str, " ") if value]
 
         if len(val_strs) > 1:
             # try casting into int, or float array, if both of casts fail, it should be string array
@@ -363,33 +391,35 @@ class GenericParameter(Parameter):
             return np.array(val_strs)
         return val_strs[0]
 
+    @staticmethod
+    def _normalize_line_breaks(value):
+        return re.sub(r"[ \t]*\r?\n[ \t]*", " ", value)
+
     @classmethod
-    def serialize_value(cls, value):
-        if isinstance(value, float):
-            val_str = cls.serialize_float(value)
-        elif isinstance(value, int):
+    def serialize_value(cls, value, version):
+        if isinstance(value, (float, np.floating)):
+            val_str = cls.serialize_float(value, version)
+        elif isinstance(value, (int, np.integer)):
             val_str = str(value)
-        elif isinstance(value, list):
-            val_str = cls.serialize_float(value)
-        elif isinstance(value, np.ndarray):
-            val_str = cls.serialize_list(value)
+        elif isinstance(value, (list, np.ndarray)):
+            val_str = cls.serialize_list(value, version)
         else:
             val_str = value
         return val_str
 
     @classmethod
     def serialize_float(cls, value, version):
-        if version == 4.24:
+        if str(version) == "4.24":
             return f"{value:.6e}"
         return str(value)
 
     @classmethod
-    def serialize_list(cls, value):
-        if isinstance(value[0], list):
+    def serialize_list(cls, value, version):
+        if isinstance(value[0], (list, np.ndarray)):
             val_str = ""
 
             for value_ in value:
-                val_str += cls.serialize_list(value_)
+                val_str += cls.serialize_list(value_, version)
                 val_str += " "
 
             return val_str
@@ -397,35 +427,28 @@ class GenericParameter(Parameter):
         val_str = "("
 
         for item in value:
-            val_str += cls.serialize_value(item)
+            val_str += cls.serialize_value(item, version)
             val_str += ", "
 
         return val_str[:-2] + ")"
 
     @classmethod
-    def serialize_nested_list(cls, values):
+    def serialize_nested_list(cls, values, version):
         val_str = ""
 
         for value in values:
-            val_str += GenericParameter.serialize_list(value)
+            val_str += GenericParameter.serialize_list(value, version)
             val_str += " "
 
         return val_str[0:-1]
 
     @classmethod
-    def serialize_ndarray(cls, value):
-        val_str = ""
-
-        for value_ in value:
-            val_str_ = str(value_)
-            val_str += val_str_
-            val_str += " "
-
-        return val_str[:-1]
+    def serialize_ndarray(cls, value, version):
+        return " ".join(cls.serialize_value(value_, version) for value_ in value)
 
     @classmethod
     def split_parallel_lists(cls, val_str):
-        lst = _PARALLEL_BRACKET_RE.split(val_str)
+        lst = cls._split_outside_angle_brackets(val_str, ") ")
 
         if len(lst) == 1:
             return lst[0]
@@ -441,17 +464,33 @@ class GenericParameter(Parameter):
         return lst
 
     def _unwrap_list(self, val_str):
-        while re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str):
-            match = re.search(r"@[0-9]*\*\(-?\d*\.?\d*\)", val_str)
-            left = val_str[0 : match.start()]
-            right = val_str[match.end() :]
-            sub = val_str[match.start() : match.end()]
-            size, value = re.split(r"\*", sub)
-            size = int(size[1:])
-            middle = ""
-            for _ in range(size):
-                middle += f"{value[1:-1]} "
-            val_str = left + middle[0:-1] + right
+        marker = re.compile(r"@(\d+)\*\(")
+        search_from = 0
+
+        while match := marker.search(val_str, search_from):
+            angle_depth = 0
+            parenthesis_depth = 1
+            index = match.end()
+
+            while index < len(val_str) and parenthesis_depth:
+                if val_str[index] == "<":
+                    angle_depth += 1
+                elif val_str[index] == ">" and angle_depth:
+                    angle_depth -= 1
+                elif angle_depth == 0:
+                    if val_str[index] == "(":
+                        parenthesis_depth += 1
+                    elif val_str[index] == ")":
+                        parenthesis_depth -= 1
+                index += 1
+
+            if parenthesis_depth:
+                break
+
+            value = val_str[match.end() : index - 1]
+            replacement = " ".join([value] * int(match.group(1)))
+            val_str = f"{val_str[: match.start()]}{replacement}{val_str[index:]}"
+            search_from = match.start()
 
         return val_str
 
@@ -482,8 +521,8 @@ class GeometryParameter(Parameter):
         return None
 
     @value.setter
-    def value(self):
-        pass
+    def value(self, value):
+        self.val_str = value
 
     # @property
     # def affine(self):
@@ -511,27 +550,22 @@ class GeometryParameter(Parameter):
 
 
 class DataParameter(Parameter):
-    def __init__(self, version, key, size_bracket, value):
-        super().__init__(version, key, size_bracket, value)
+    def __init__(self, key_str, size_str, val_str, version):
+        super().__init__(key_str, size_str, val_str, version)
 
     @property
     def value(self):
-        val_list = self.val_str.replace("\n", ",").split(", ")
-        data = [GenericParameter.parse_value(x) for x in val_list]
+        val_list = [value for value in re.split(r",\s*|\s+", self.val_str.strip()) if value]
+        data = [GenericParameter.parse_value(value) for value in val_list]
         return np.reshape(data, (2, -1))
 
     @value.setter
     def value(self, value):
-        val_str = ""
+        values = np.asarray(value).reshape(-1)
+        if values.size % 2:
+            raise ValueError("XY data requires an even number of values")
 
-        for i in range(len(value)):
-            val_str += f"{value[i]:.6e}"
-            if np.mod(i, 2) == 0:
-                val_str += ", "
-            else:
-                val_str += "\n"
-
-        self.value = val_str
+        self.val_str = "\n".join(f"{values[index]:.6e}, {values[index + 1]:.6e}" for index in range(0, values.size, 2))
 
     @property
     def size(self):
@@ -570,6 +604,7 @@ class JCAMPDX:
 
         # If path is directory
         self.path = Path(path)
+        self._version = None
 
         if self.path.is_dir():
             raise InvalidJcampdxFile(path)
@@ -601,7 +636,7 @@ class JCAMPDX:
 
             jcampdx_serial += f"{param_str}\n"
 
-        return jcampdx_serial[0:-1] + "\n##END= "
+        return jcampdx_serial[0:-1] + "\n##END="
 
     def __enter__(self):
         self.load()
@@ -656,25 +691,27 @@ class JCAMPDX:
 
     @property
     def version(self):
-        if "JCAMPDX" in self.params:
-            return self.params["JCAMPDX"]
+        if self._version is not None:
+            return self._version
+
+        for key in ("JCAMPDX", "JCAMP-DX"):
+            if key in self.params:
+                return self.params[key].value
 
         try:
             with self.path.open("r") as f:
-                for _ in range(10):
-                    line = f.readline()
-                    if line.startswith("##JCAMPDX="):
-                        return line.strip().split("=", 1)[1]
-                    if line.startswith("##JCAMP-DX="):
-                        return line.strip().split("=", 1)[1]
+                version = self._detect_version(f)
         except (UnicodeDecodeError, OSError) as e:
             raise InvalidJcampdxFile from e
 
+        if version is not None:
+            return version
         raise InvalidJcampdxFile(self.path)
 
     @version.setter
     def version(self, value):
-        self.version = value
+        self.verify_version(value)
+        self._version = value
 
     def keys(self):
         return self.params.keys()
@@ -777,6 +814,15 @@ class JCAMPDX:
         if version not in SUPPORTED_VERSIONS:
             raise JcampdxVersionError(version)
 
+    @staticmethod
+    def _detect_version(lines):
+        for index, line in enumerate(lines):
+            if index >= 10:
+                break
+            if line.startswith(("##JCAMPDX=", "##JCAMP-DX=")):
+                return line.strip().split("=", 1)[1]
+        return None
+
     @classmethod
     def load_parameter(cls, path, key):
         with open(path) as f:
@@ -785,12 +831,16 @@ class JCAMPDX:
             except (UnicodeDecodeError, OSError) as e:
                 raise InvalidJcampdxFile(path) from e
 
-        match = re.search(rf"##{key}[^\#\$]+|##\${key}[^\#\$]+", content)
+        match = re.search(
+            rf"^##\$?{re.escape(key)}=.*?(?=^##|\Z)",
+            content,
+            flags=re.MULTILINE | re.DOTALL,
+        )
 
         if match is None:
             raise ParameterNotFound(key, path)
 
-        line = content[match.start() : match.end() - 1]  # strip trailing EOL
+        line = match.group().rstrip("\r\n")
         key, parameter = JCAMPDX.handle_jcampdx_line(line, None)
 
         return key, parameter
@@ -807,8 +857,18 @@ class JCAMPDX:
             except (UnicodeDecodeError, OSError) as e:
                 raise JcampdxFileError(f"file {path} is not a text file") from e
 
-        # remove all comments
-        content = _COMMENT_RE.sub("", content)
+        comments_by_parameter = []
+        pending_comments = []
+        content_without_comments = []
+        for line in content.splitlines(keepends=True):
+            if line.lstrip().startswith("$$"):
+                pending_comments.append(line.rstrip("\r\n"))
+                continue
+            if line.startswith("##"):
+                comments_by_parameter.append(pending_comments)
+                pending_comments = []
+            content_without_comments.append(line)
+        content = "".join(content_without_comments)
 
         # split into individual entries
         content = _PARAMETER_RE.split(content)[1:-1]
@@ -816,23 +876,16 @@ class JCAMPDX:
         # strip trailing EOL
         content = [_TRAILING_EOL_RE.sub("", x) for x in content]
 
-        # ASSUMPTION the jcampdx version string is in the second row
-        try:
-            version_line = content[1]
-        except IndexError:
-            raise JcampdxFileError(f"file {path} is too short or not a text file") from IndexError
-
-        if re.search(GRAMMAR["VERSION_TITLE"], version_line) is None:
+        version = cls._detect_version(content_without_comments)
+        if version is None:
             raise JcampdxFileError(f"file {path} is not a JCAMP-DX file")
 
-        _, _, version = JCAMPDX.divide_jcampdx_line(version_line)
+        cls.verify_version(version)
 
-        if version not in SUPPORTED_VERSIONS:
-            raise JcampdxVersionError(version)
-
-        for line in content:
+        for index, line in enumerate(content):
             # Restore the ##
             key, parameter = JCAMPDX.handle_jcampdx_line(f"##{line}", version)
+            parameter.comments_before = comments_by_parameter[index]
             params[key] = parameter
         return params
 
@@ -889,22 +942,31 @@ class JCAMPDX:
 
     @classmethod
     def wrap_lines(cls, line):
-        line_wraps = re.split(r"\n", line)
-        tail = line_wraps[-1]
+        line_wraps = []
 
-        tail_bits = re.split(r"\s", tail)
+        for physical_line in line.split("\n"):
+            if len(physical_line) <= MAX_LINE_LEN:
+                line_wraps.append(physical_line)
+                continue
 
-        lines = 1
-        tail = ""
+            words = physical_line.split()
+            if not words:
+                line_wraps.append(physical_line)
+                continue
 
-        for tail_bit in tail_bits:
-            if len(tail + tail_bit) > lines * MAX_LINE_LEN:
-                tail += "\n"
-                lines += 1
-            tail += tail_bit
-            tail += " "
+            wrapped = []
+            current = words[0]
 
-        line_wraps[-1] = tail[:-1]
+            for word in words[1:]:
+                candidate = f"{current} {word}"
+                if len(candidate) > MAX_LINE_LEN:
+                    wrapped.append(current)
+                    current = f" {word}"
+                else:
+                    current = candidate
+
+            wrapped.append(current)
+            line_wraps.extend(wrapped)
 
         return "\n".join(line_wraps)
 
