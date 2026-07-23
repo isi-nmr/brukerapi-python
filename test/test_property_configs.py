@@ -55,6 +55,10 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
         assert "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')" in branch["conditions"]
 
     assert config["job_desc"][1]["conditions"] == ["#ACQ_sw_version.value.startswith('<PV-360.3.')"]
+    assert config["shape_storage"][0] == {
+        "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6],)",
+        "conditions": ["#ACQ_sw_version.value.startswith('<PV-360.3.')"],
+    }
 
 
 def test_traj_scheme_detection_is_not_version_gated():
