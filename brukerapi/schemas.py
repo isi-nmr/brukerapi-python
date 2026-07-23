@@ -481,8 +481,10 @@ class SchemaTraj(Schema):
         return np.reshape(data, layouts["final"], order="F")
 
     def serialize(self, data, layouts):
-        data = np.transpose(data, layouts["traj_permute"])
-        return np.reshape(data, layouts["traj"], order="F")
+        permuted_storage = tuple(np.asarray(layouts["storage"])[layouts["permute"]])
+        data = np.reshape(data, permuted_storage, order="F")
+        data = np.transpose(data, self.permutation_inverse(layouts["permute"]))
+        return np.reshape(data, layouts["storage"], order="F")
 
 
 class SchemaRawdata(Schema):
