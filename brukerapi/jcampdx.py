@@ -231,12 +231,12 @@ class GenericParameter(Parameter):
             val_str = str(value)
         elif isinstance(value, list):
             if isinstance(value[0], list):
-                val_str = self.serialize_nested_list(value)
+                val_str = self.serialize_nested_list(value, self.version)
                 size = (len(value),)
             else:
-                val_str = self.serialize_list(value)
+                val_str = self.serialize_list(value, self.version)
         elif isinstance(value, np.ndarray):
-            val_str = self.serialize_ndarray(value)
+            val_str = self.serialize_ndarray(value, self.version)
         else:
             val_str = value
 
@@ -384,32 +384,30 @@ class GenericParameter(Parameter):
         return val_strs[0]
 
     @classmethod
-    def serialize_value(cls, value):
-        if isinstance(value, float):
-            val_str = cls.serialize_float(value)
-        elif isinstance(value, int):
+    def serialize_value(cls, value, version):
+        if isinstance(value, (float, np.floating)):
+            val_str = cls.serialize_float(value, version)
+        elif isinstance(value, (int, np.integer)):
             val_str = str(value)
-        elif isinstance(value, list):
-            val_str = cls.serialize_float(value)
-        elif isinstance(value, np.ndarray):
-            val_str = cls.serialize_list(value)
+        elif isinstance(value, (list, np.ndarray)):
+            val_str = cls.serialize_list(value, version)
         else:
             val_str = value
         return val_str
 
     @classmethod
     def serialize_float(cls, value, version):
-        if version == 4.24:
+        if str(version) == "4.24":
             return f"{value:.6e}"
         return str(value)
 
     @classmethod
-    def serialize_list(cls, value):
-        if isinstance(value[0], list):
+    def serialize_list(cls, value, version):
+        if isinstance(value[0], (list, np.ndarray)):
             val_str = ""
 
             for value_ in value:
-                val_str += cls.serialize_list(value_)
+                val_str += cls.serialize_list(value_, version)
                 val_str += " "
 
             return val_str
@@ -417,31 +415,24 @@ class GenericParameter(Parameter):
         val_str = "("
 
         for item in value:
-            val_str += cls.serialize_value(item)
+            val_str += cls.serialize_value(item, version)
             val_str += ", "
 
         return val_str[:-2] + ")"
 
     @classmethod
-    def serialize_nested_list(cls, values):
+    def serialize_nested_list(cls, values, version):
         val_str = ""
 
         for value in values:
-            val_str += GenericParameter.serialize_list(value)
+            val_str += GenericParameter.serialize_list(value, version)
             val_str += " "
 
         return val_str[0:-1]
 
     @classmethod
-    def serialize_ndarray(cls, value):
-        val_str = ""
-
-        for value_ in value:
-            val_str_ = str(value_)
-            val_str += val_str_
-            val_str += " "
-
-        return val_str[:-1]
+    def serialize_ndarray(cls, value, version):
+        return " ".join(cls.serialize_value(value_, version) for value_ in value)
 
     @classmethod
     def split_parallel_lists(cls, val_str):

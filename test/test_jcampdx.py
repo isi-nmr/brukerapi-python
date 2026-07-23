@@ -114,3 +114,28 @@ def test_jcampdx_data_parameter_parses_multiline_xy_pairs(tmp_path):
         JCAMPDX(path).get_value("POINTS"),
         np.array([[1.0, 2.0], [3.0, 4.0]]),
     )
+
+
+def test_jcampdx_float_and_list_serialization_round_trip(tmp_path):
+    source = tmp_path / "source"
+    source.write_text(
+        "##TITLE=Serialization Test\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$FLOAT=0.0\n"
+        "##$VALUES=( 2 )\n"
+        "0.0 0.0\n"
+        "##END=\n"
+    )
+    jcamp = JCAMPDX(source)
+
+    jcamp.get_parameter("FLOAT").value = 1.25
+    jcamp.get_parameter("VALUES").value = [2.5, 3.75]
+
+    output = tmp_path / "round-trip"
+    jcamp.write(output)
+    restored = JCAMPDX(output)
+
+    assert restored.get_value("FLOAT") == 1.25
+    assert restored.get_value("VALUES") == [2.5, 3.75]
+    assert "1.250000e+00" in output.read_text()
