@@ -24,6 +24,36 @@ Data is typically and n-dimensional array, the physical meaning of individual di
    >> dataset.dim_type
    >> ['spatial', 'spatial', 'FG_SLICE']
 
+Stored integer pixels are scaled using the Visu slope and offset (or RECO
+fallbacks). Complex reconstructions are assembled from ``FG_COMPLEX`` frames
+by default, and reversed on-disk slice order is normalized:
+
+.. code-block:: python
+
+   dataset = Dataset('path/to/2dseq')
+   scaled_or_complex_data = dataset.data
+
+   raw_frames = Dataset(
+       'path/to/2dseq',
+       scale=False,
+       combine_complex=False,
+   ).data
+
+Multiple slice packages may have unequal depths. Access package-specific
+in-memory datasets, including their own geometry, with:
+
+.. code-block:: python
+
+   for package in dataset.slice_packages:
+       print(package.data.shape, package.affine, package.resolution)
+
+Use memory-mapped random access when only a sub-array is needed:
+
+.. code-block:: python
+
+   dataset = Dataset('path/to/2dseq', mmap=True)
+   frame = dataset.data[:, :, 0]
+
 It is possible to directly access some of the most wanted measurement parameters.
 
 .. code-block:: python

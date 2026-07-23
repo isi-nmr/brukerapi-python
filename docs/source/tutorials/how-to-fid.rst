@@ -24,6 +24,29 @@ Data is typically and n-dimensional array, the physical meaning of individual di
    >> dataset.dim_type
    >> ['kspace_encode_step_0', 'kspace_encode_step_1', 'slice', 'repetition', 'channel']
 
+``Dataset.data`` contains ordered raw k-space, not a reconstructed image.
+RARE/EPI line ordering is applied, while ramp-sampling regridding remains a
+downstream reconstruction step. Real-only ``AQ_mod=qf`` data stays real;
+quadrature acquisition modes are returned as complex arrays.
+
+For custom pulse-program names the scheme is inferred from acquisition
+metadata. An explicit override is available when inference is ambiguous:
+
+.. code-block:: python
+
+   dataset = Dataset('path/to/fid', scheme_id='RADIAL')
+
+Use ``mmap=True`` for random-access slices:
+
+.. code-block:: python
+
+   dataset = Dataset('path/to/fid', mmap=True)
+   first_repetition = dataset.data[:, :, 0]
+
+Known ``fid.spiral``, ``fid.navFid``, and ``fid.orig`` companions are loaded
+under ``dataset.fid_companions``. They are auxiliary subdatasets rather than
+standalone primary datasets. TopSpin/NMR ``ser`` is not supported.
+
 It is possible to directly access some of the most wanted measurement parameters.
 
 .. code-block:: python
