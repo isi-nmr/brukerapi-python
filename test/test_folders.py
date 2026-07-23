@@ -2,7 +2,7 @@ from brukerapi.dataset import Dataset
 from brukerapi.folders import Folder, Processing
 
 
-def test_folder_traversal_skips_ser_and_processed_spectra(tmp_path):
+def test_folder_traversal_skips_processed_spectra(tmp_path):
     experiment_path = tmp_path / "1"
     processing_path = experiment_path / "pdata" / "1"
     processing_path.mkdir(parents=True)
@@ -11,7 +11,6 @@ def test_folder_traversal_skips_ser_and_processed_spectra(tmp_path):
         experiment_path / "acqp",
         experiment_path / "method",
         experiment_path / "fid",
-        experiment_path / "ser",
         processing_path / "visu_pars",
         processing_path / "reco",
         processing_path / "2dseq",

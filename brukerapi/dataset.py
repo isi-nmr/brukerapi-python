@@ -24,7 +24,7 @@ from .exceptions import (
     UnsuportedDatasetType,
 )
 from .jcampdx import JCAMPDX
-from .schemas import Schema2dseq, SchemaFid, SchemaRawdata, SchemaSer, SchemaTraj
+from .schemas import Schema2dseq, SchemaFid, SchemaRawdata, SchemaTraj
 
 LOAD_STAGES = {
     "empty": 0,
@@ -57,12 +57,6 @@ DEFAULT_STATES = {
     "traj": {
         "parameter_files": ["acqp", "method"],
         "property_files": [Path(__file__).parents[0] / "config/properties_traj_core.json", Path(__file__).parents[0] / "config/properties_traj_custom.json"],
-        "load": LOAD_STAGES["all"],
-        "mmap": False,
-    },
-    "ser": {
-        "parameter_files": ["acqp", "method"],
-        "property_files": [Path(__file__).parents[0] / "config/properties_ser_core.json", Path(__file__).parents[0] / "config/properties_ser_custom.json"],
         "load": LOAD_STAGES["all"],
         "mmap": False,
     },
@@ -144,7 +138,6 @@ class Dataset:
     - **schema**:
         - :py:class:`~brukerapi.schemas.SchemaFid`
         - :py:class:`~brukerapi.schemas.Schema2dseq`
-        - :py:class:`~brukerapi.schemas.SchemaSer`
         - :py:class:`~brukerapi.schemas.SchemaRawdata`
 
     An object encapsulating all functionality dependent on metadata. It provides method to reshape data.
@@ -196,6 +189,9 @@ class Dataset:
         if self.subtype:
             self.subtype = self.subtype[1:]  # remove the dot from the suffix
         self._properties = []
+
+        if self.type not in DEFAULT_STATES:
+            raise UnsuportedDatasetType(self.type)
 
         # set
         self._set_state(state)
@@ -512,8 +508,6 @@ class Dataset:
             self._schema = Schema2dseq(self)
         elif self.type == "rawdata":
             self._schema = SchemaRawdata(self)
-        elif self.type == "ser":
-            self._schema = SchemaSer(self)
         elif self.type == "traj":
             self._schema = SchemaTraj(self)
 
@@ -531,7 +525,7 @@ class Dataset:
         deserialized into a data array. The process of deserialization is different for each data set type and is
         implemented in the individual subclasses of the :class:`brukerapi.schemas.Schema`,
         i.e. :class:`brukerapi.schemas.SchemaFid`, :class:`brukerapi.schemas.Schema2dseq`,
-        :class:`brukerapi.schemas.SchemaRawdata`, :class:`brukerapi.schemas.SchemaSer`.
+        :class:`brukerapi.schemas.SchemaRawdata`.
 
         If the object was created with random_access=True, the data is not read,
         instead it can be accessed using sub-arrays.
