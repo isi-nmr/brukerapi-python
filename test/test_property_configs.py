@@ -87,3 +87,18 @@ def test_epi_layout_uses_actual_digitized_sample_count():
 
     assert encoding["cmd"][0] == "#PVM_DigNp"
     assert k_space["cmd"][0] == "#PVM_DigNp // (#PVM_EncMatrix[1] // #NSegments)"
+
+
+def test_zte_scheme_is_not_shadowed_by_radial():
+    fid = _load_config("properties_fid_core.json")
+    traj = _load_config("properties_traj_core.json")
+
+    fid_radial_programs = fid["scheme_id"][3]["conditions"][0][1]
+    traj_radial_programs = traj["scheme_id"][0]["conditions"][0][1]
+
+    assert "ZTE.ppg" not in fid_radial_programs
+    assert "ZTE.ppg" not in traj_radial_programs
+    assert any(branch["cmd"] == "'ZTE'" for branch in fid["scheme_id"])
+    assert any(branch["cmd"] == "'ZTE'" for branch in traj["scheme_id"])
+    zte_encoding = next(branch for branch in fid["encoding_space"] if branch["conditions"] == ["@scheme_id=='ZTE'"])
+    assert zte_encoding["cmd"][4] == "#NPro // #ACQ_phase_factor"

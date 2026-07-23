@@ -300,6 +300,18 @@ def test_binary_size_mismatch_reports_specific_cause(tmp_path, content, message)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_zte_uses_dedicated_fid_layout_branches():
+    dataset = Dataset(PV51_STUDY_PATH / "21" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<ZTE.ppg>"
+
+    dataset.load_properties()
+
+    assert dataset.scheme_id == "ZTE"
+    assert dataset.encoding_space[4] == dataset["NPro"].value // dataset["ACQ_phase_factor"].value
+    assert dataset.permute == [0, 2, 3, 4, 5, 1]
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
     dataset_path = tmp_path / "dataset" / "fid"

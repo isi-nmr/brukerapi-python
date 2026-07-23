@@ -501,6 +501,8 @@ class Dataset:
 
         if "SPIRAL" in family or self._parameter_value("PVM_SpiralNbOfInterleaves") is not None:
             return "SPIRAL"
+        if "ZTE" in family:
+            return "ZTE"
 
         n_projections = self._parameter_value("NPro")
         if self.type == "traj":
@@ -514,7 +516,7 @@ class Dataset:
             return "dEPI"
         if "EPI" in family:
             return "EPI"
-        if "RADIAL" in family or "UTE" in family or "ZTE" in family:
+        if "RADIAL" in family or "UTE" in family:
             return "RADIAL"
 
         dim = self._parameter_value("ACQ_dim")
