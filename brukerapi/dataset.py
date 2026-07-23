@@ -312,6 +312,13 @@ class Dataset:
                 if i not in set(os.listdir(str(param_path.parent))):
                     raise IncompleteDataset(f"missing required parameter file: {i} ({param_path})")
 
+            if self.type == "2dseq":
+                visu_path = self.path.parent / RELATIVE_PATHS[self.type]["visu_pars"]
+                empty_components = [path for path in (self.path, visu_path) if path.is_file() and path.stat().st_size == 0]
+                if empty_components:
+                    components = ", ".join(f"{path.name} ({path})" for path in empty_components)
+                    raise InvalidDataset(f"Invalid dataset, empty or incomplete reconstruction: empty {components}")
+
     def load(self):
         """
         Load parameters, properties, schema and data. In case, there is a traj file related to a fid file,

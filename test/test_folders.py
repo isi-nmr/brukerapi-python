@@ -89,6 +89,16 @@ def test_folder_discovery_reuses_dataset_rawdata_subtype_rules(tmp_path):
     assert datasets == {"rawdata.job0", "rawdata.Navigator"}
 
 
+def test_folder_skips_empty_reconstruction_with_warning(tmp_path):
+    (tmp_path / "2dseq").touch()
+    (tmp_path / "visu_pars").touch()
+
+    with pytest.warns(RuntimeWarning, match="Skipping invalid dataset.*empty or incomplete reconstruction"):
+        folder = Folder(tmp_path, recursive=False)
+
+    assert not any(isinstance(child, Dataset) for child in folder.children)
+
+
 def test_folder_traversal_skips_processed_spectra(tmp_path):
     experiment_path = tmp_path / "1"
     processing_path = experiment_path / "pdata" / "1"

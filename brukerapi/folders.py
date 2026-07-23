@@ -1,5 +1,6 @@
 import copy
 import json
+import warnings
 from copy import deepcopy
 from pathlib import Path
 
@@ -227,7 +228,10 @@ class Folder:
             if Dataset.is_supported_path(path, self._dataset_index):
                 try:
                     children.append(Dataset(path, **self._dataset_state))
-                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir, InvalidDataset):
+                except InvalidDataset as error:
+                    warnings.warn(f"Skipping invalid dataset {path}: {error}", RuntimeWarning, stacklevel=2)
+                    continue
+                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
                     continue
 
             try:

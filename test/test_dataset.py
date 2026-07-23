@@ -39,6 +39,25 @@ def test_incomplete_dataset_names_missing_parameter_file(tmp_path):
 
 
 @pytest.mark.parametrize(
+    ("binary_content", "visu_content", "empty_names"),
+    [
+        (b"", b"", "2dseq.*visu_pars"),
+        (b"not empty", b"", "visu_pars"),
+        (b"", b"not empty", "2dseq"),
+    ],
+)
+def test_empty_2dseq_reconstruction_has_clear_dataset_error(tmp_path, binary_content, visu_content, empty_names):
+    (tmp_path / "2dseq").write_bytes(binary_content)
+    (tmp_path / "visu_pars").write_bytes(visu_content)
+
+    with pytest.raises(
+        InvalidDataset,
+        match=rf"empty or incomplete reconstruction: empty {empty_names}",
+    ):
+        Dataset(tmp_path / "2dseq", load=LOAD_STAGES["parameters"])
+
+
+@pytest.mark.parametrize(
     "name",
     [
         "fid.npz",
