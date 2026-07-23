@@ -64,3 +64,17 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
 def test_traj_scheme_detection_is_not_version_gated():
     config = _load_config("properties_traj_core.json")
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in config["scheme_id"])
+
+
+def test_fid_scheme_config_keeps_exact_matches_before_code_fallback():
+    config = _load_config("properties_fid_core.json")
+    branches = config["scheme_id"]
+
+    assert branches[0]["cmd"] == "'CART_2D'"
+    assert branches[-1]["cmd"] == "'ZTE'"
+
+
+def test_traj_scheme_config_keeps_exact_matches_before_code_fallback():
+    config = _load_config("properties_traj_core.json")
+
+    assert [branch["cmd"] for branch in config["scheme_id"]] == ["'RADIAL'", "'SPIRAL'", "'ZTE'"]
