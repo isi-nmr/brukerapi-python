@@ -1,3 +1,4 @@
+import warnings
 from copy import deepcopy
 from pathlib import Path
 
@@ -126,7 +127,13 @@ class SchemaFid(Schema):
         layouts["k_space"] = self._dataset.k_space
 
         if "EPI" in self._dataset.scheme_id:
-            layouts["acquisition_position"] = (self._dataset.block_size - self._dataset.acq_lenght, self._dataset.acq_lenght)
+            discarded = self._dataset.block_size - self._dataset.acq_lenght
+            block_format = self._dataset._parameter_value("GO_block_size")
+            scan_shift = self._dataset._parameter_value("ACQ_scan_shift", 0)
+            if block_format == "Standard_KBlock_Format" or scan_shift >= 0:
+                layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
+            else:
+                layouts["acquisition_position"] = (discarded, self._dataset.acq_lenght)
         else:
             layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
 
@@ -169,6 +176,13 @@ class SchemaFid(Schema):
             return np.reshape(data[acquisition_offset : acquisition_offset + acquisition_length, :, :], (acquisition_length * channels, blocks), order="F")
         # trim on acq level
         if acquisition_length != block_length:
+            discarded = data[acquisition_length:, :]
+            if self._dataset._parameter_value("GO_block_size") == "Standard_KBlock_Format" and np.any(discarded):
+                warnings.warn(
+                    f"Expected trailing K-block padding to be zero for {self._dataset.path}, but found nonzero samples",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
             return data[0:acquisition_length, :]
         return data
 
