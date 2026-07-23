@@ -193,12 +193,15 @@ class Parameter:
 
 
 class GenericParameter(Parameter):
-    def __init__(self, version, key, size_bracket, value):
-        super().__init__(version, key, size_bracket, value)
+    def __init__(self, key_str, size_str, val_str, version):
+        super().__init__(key_str, size_str, val_str, version)
 
     @classmethod
     def from_values(cls, version, key, size, value, user_defined):
-        return cls(version, key, size, value)
+        parameter = cls(cls.pack_key(key, user_defined), "", "", version)
+        parameter.size = size
+        parameter.value = value
+        return parameter
 
     @property
     def value(self):
@@ -538,8 +541,8 @@ class GeometryParameter(Parameter):
 
 
 class DataParameter(Parameter):
-    def __init__(self, version, key, size_bracket, value):
-        super().__init__(version, key, size_bracket, value)
+    def __init__(self, key_str, size_str, val_str, version):
+        super().__init__(key_str, size_str, val_str, version)
 
     @property
     def value(self):

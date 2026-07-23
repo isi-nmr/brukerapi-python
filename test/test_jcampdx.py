@@ -1,6 +1,6 @@
 import numpy as np
 
-from brukerapi.jcampdx import JCAMPDX, GenericParameter, GeometryParameter
+from brukerapi.jcampdx import DataParameter, JCAMPDX, GenericParameter, GeometryParameter
 
 
 # @pytest.mark.skip(reason="in progress")
@@ -170,3 +170,21 @@ def test_geometry_parameter_setter_stores_raw_value():
 
     assert parameter.val_str == "(((1, 0, 0), (0, 1, 0), (0, 0, 1)), (1, 2, 3))"
     assert str(parameter).endswith(parameter.val_str)
+
+
+def test_generic_parameter_from_values_preserves_constructor_fields():
+    parameter = GenericParameter.from_values("4.24", "FLOAT", None, 1.25, True)
+
+    assert parameter.key_str == "##$FLOAT"
+    assert parameter.size is None
+    assert parameter.val_str == "1.250000e+00"
+    assert parameter.version == "4.24"
+    assert parameter.value == 1.25
+
+
+def test_parameter_subclass_constructors_support_named_fields():
+    generic = GenericParameter(key_str="##$VALUES", size_str="", val_str="1 2", version="5.0")
+    data = DataParameter(key_str="##$POINTS", size_str="(XY..XY)", val_str="1, 2\n3, 4", version="5.0")
+
+    assert np.array_equal(generic.value, np.array([1, 2]))
+    assert np.array_equal(data.value, np.array([[1, 2], [3, 4]]))
