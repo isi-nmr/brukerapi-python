@@ -1,6 +1,10 @@
 import json
+import os
+import shutil
 import subprocess
 import sys
+import urllib.parse
+import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -27,7 +31,16 @@ ZENODO_FILES = {
     "PV51": "0.2H2.zip",
     "PV601": "20200612_094625_lego_phantom_3_1_2.zip",
     "PV700": "20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip",
-    # "PV360V37": "20210128_122257_LEGO_PHANTOM_API_TEST_1_1.zip",
+}
+
+LOCAL_DATASETS = ["PV360-V37"]
+
+GITHUB_DATASETS = {
+    "PV360_StdData": {
+        "repository": "https://github.com/cecilyen/PV360_StdData.git",
+        "revision": "6f1b67e5dbc3d7b3646a6315959ccf6d4bd02237",
+        "media": "https://media.githubusercontent.com/media/cecilyen/PV360_StdData/6f1b67e5dbc3d7b3646a6315959ccf6d4bd02237",
+    },
 }
 
 TEST_DIR = Path(__file__).parent
@@ -38,6 +51,8 @@ TEST_DATA_ROOT = TEST_DIR / "test_data"
 def pytest_sessionstart(session):
     for dataset in ZENODO_FILES:
         _ensure_test_data(dataset)
+    for dataset in GITHUB_DATASETS:
+        _ensure_github_test_data(dataset)
 
 
 # -------------------------------
@@ -45,8 +60,81 @@ def pytest_sessionstart(session):
 # -------------------------------
 def _resolve_requested_datasets(opt: str | None):
     if not opt or opt.lower() == "all":
-        return list(ZENODO_FILES.keys())
+        available_local_datasets = [name for name in LOCAL_DATASETS if (TEST_DATA_ROOT / name).is_dir()]
+        return [*ZENODO_FILES, *GITHUB_DATASETS, *available_local_datasets]
     return [opt]
+
+
+def _is_required_github_data_file(path: Path):
+    return path.name in {"2dseq", "traj"} or path.name.startswith("rawdata.job")
+
+
+def _is_git_lfs_pointer(path: Path):
+    try:
+        with path.open("rb") as file:
+            return file.read(42) == b"version https://git-lfs.github.com/spec/v1"
+    except OSError:
+        return False
+
+
+def _download_github_lfs_file(dataset_name: str, path: Path):
+    relative_path = path.relative_to(TEST_DATA_ROOT / dataset_name)
+    media_root = GITHUB_DATASETS[dataset_name]["media"]
+    url = f"{media_root}/{urllib.parse.quote(relative_path.as_posix())}"
+    temporary_path = path.with_name(f"{path.name}.download")
+
+    try:
+        with urllib.request.urlopen(url) as response, temporary_path.open("wb") as output:
+            shutil.copyfileobj(response, output)
+        temporary_path.replace(path)
+    except OSError as error:
+        temporary_path.unlink(missing_ok=True)
+        pytest.exit(f"GitHub test-data download failed for {relative_path}: {error}", returncode=1)
+
+
+def _ensure_github_test_data(dataset_name: str):
+    dataset_dir = TEST_DATA_ROOT / dataset_name
+    config = GITHUB_DATASETS[dataset_name]
+    git_environment = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
+
+    if not dataset_dir.exists():
+        process = subprocess.run(
+            ["git", "clone", "--depth", "1", config["repository"], str(dataset_dir)],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=git_environment,
+        )
+        if process.returncode != 0:
+            pytest.exit(f"GitHub test-data clone failed: {process.stderr.strip()}", returncode=1)
+
+    revision = subprocess.run(
+        ["git", "-C", str(dataset_dir), "rev-parse", "HEAD"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if revision.returncode != 0 or revision.stdout.strip() != config["revision"]:
+        fetch = subprocess.run(
+            ["git", "-C", str(dataset_dir), "fetch", "--depth", "1", "origin", config["revision"]],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=git_environment,
+        )
+        checkout = subprocess.run(
+            ["git", "-C", str(dataset_dir), "checkout", "--detach", config["revision"]],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=git_environment,
+        )
+        if fetch.returncode != 0 or checkout.returncode != 0:
+            pytest.exit(f"GitHub test-data checkout failed: {fetch.stderr}{checkout.stderr}".strip(), returncode=1)
+
+    for path in dataset_dir.rglob("*"):
+        if path.is_file() and _is_required_github_data_file(path) and _is_git_lfs_pointer(path):
+            _download_github_lfs_file(dataset_name, path)
 
 
 def _download_zenodo():
