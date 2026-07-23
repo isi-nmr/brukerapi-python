@@ -61,6 +61,35 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
     }
 
 
+def test_fid_pv360_word_size_branches_match_rawdata():
+    fid = _load_config("properties_fid_core.json")
+    rawdata = _load_config("properties_rawdata_core.json")
+
+    assert fid["numpy_dtype"][6:10] == rawdata["numpy_dtype"][6:10]
+
+
+def test_fid_has_endian_aware_topspin_dtypa_fallbacks():
+    config = _load_config("properties_fid_core.json")
+    branches = config["numpy_dtype"][10:]
+
+    expected = {
+        (0, "little"): "np.dtype('i4').newbyteorder('<')",
+        (0, "big"): "np.dtype('i4').newbyteorder('>')",
+        (1, "little"): "np.dtype('f4').newbyteorder('<')",
+        (1, "big"): "np.dtype('f4').newbyteorder('>')",
+        (2, "little"): "np.dtype('f8').newbyteorder('<')",
+        (2, "big"): "np.dtype('f8').newbyteorder('>')",
+    }
+
+    for branch in branches:
+        dtypa_condition, byte_order_condition = branch["conditions"]
+        dtypa = int(dtypa_condition.split("[", 1)[1].split(",", 1)[0])
+        byte_order = "little" if "'little'" in byte_order_condition else "big"
+        assert branch["cmd"] == expected.pop((dtypa, byte_order))
+
+    assert not expected
+
+
 def test_traj_scheme_detection_is_not_version_gated():
     config = _load_config("properties_traj_core.json")
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in config["scheme_id"])
