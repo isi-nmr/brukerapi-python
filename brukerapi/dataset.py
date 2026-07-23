@@ -957,6 +957,28 @@ class Dataset:
     def data(self, value):
         self._data = value
 
+    def get_slice_packages(self):
+        """Return one in-memory 2dseq dataset per slice package.
+
+        Package datasets carry their package-specific ``visu_pars``,
+        geometry properties, and data array. Unequal package depths are
+        therefore represented without padding. No files are written unless
+        the caller explicitly writes the returned datasets.
+        """
+        if self.type != "2dseq":
+            raise UnsuportedDatasetType(f"slice packages are only available for 2dseq, not {self.type}")
+        if self.num_slice_packages <= 1:
+            return [self]
+
+        from .splitters import SlicePackageSplitter
+
+        return SlicePackageSplitter().split(self, write=False)
+
+    @property
+    def slice_packages(self):
+        """In-memory package-specific 2dseq datasets."""
+        return self.get_slice_packages()
+
     @property
     def traj(self):
         """Trajectory array loaded from a `traj` file

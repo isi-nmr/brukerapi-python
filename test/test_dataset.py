@@ -358,6 +358,23 @@ def test_2dseq_reco_complex_image_falls_back_to_last_frame_axis():
     assert np.array_equal(decoded, np.array([1 + 10j, 2 + 20j]))
 
 
+def test_2dseq_slice_packages_are_separate_in_memory_datasets():
+    path = Path("test/test_data/PV601/20200612_094625_lego_phantom_3_1_2/8/pdata/1/2dseq")
+    if not path.is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path)
+    packages = dataset.get_slice_packages()
+
+    assert dataset.num_slice_packages == 3
+    assert [package.shape[2] for package in packages] == [5, 3, 5]
+    assert all(package.num_slice_packages == 1 for package in packages)
+    assert [package["VisuCorePosition"].shape[0] for package in packages] == [5, 3, 5]
+    assert np.array_equal(packages[0].data, dataset.data[:, :, :5])
+    assert np.array_equal(packages[1].data, dataset.data[:, :, 5:8])
+    assert np.array_equal(packages[2].data, dataset.data[:, :, 8:13])
+
+
 @pytest.mark.parametrize(
     ("aq_mod", "encoding_space", "expected"),
     [
