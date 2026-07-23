@@ -540,11 +540,6 @@ class SchemaRawdata(Schema):
 
         return data_
 
-
-# Compatibility alias for previous misspelling:
-SchemaRawdata.seralize = SchemaRawdata.serialize
-
-
 class Schema2dseq(Schema):
     """
     Schema2dseq class

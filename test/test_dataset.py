@@ -12,10 +12,15 @@ import pytest
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
-from brukerapi.schemas import Schema2dseq, SchemaFid
+from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
+
+
+def test_rawdata_schema_exposes_only_correct_serialize_spelling():
+    assert hasattr(SchemaRawdata, "serialize")
+    assert not hasattr(SchemaRawdata, "seralize")
 
 
 def test_unsupported_dataset_type(tmp_path):
