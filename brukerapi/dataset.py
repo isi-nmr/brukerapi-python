@@ -230,9 +230,21 @@ class Dataset:
         self.load()
 
     def _is_supported_subtype(self):
-        if self.type == "rawdata" and re.fullmatch(r"job\d+", self.subtype):
+        return self.is_supported_path(self.path)
+
+    @staticmethod
+    def is_supported_path(path, dataset_types=None):
+        """Return whether a filename denotes a supported primary dataset binary."""
+        path = Path(path)
+        dataset_type = path.stem
+        subtype = path.suffix.removeprefix(".")
+        if dataset_type not in SUPPORTED_SUBTYPES:
+            return False
+        if dataset_types is not None and dataset_type not in dataset_types:
+            return False
+        if dataset_type == "rawdata" and re.fullmatch(r"job\d+", subtype):
             return True
-        return self.subtype in SUPPORTED_SUBTYPES[self.type]
+        return subtype in SUPPORTED_SUBTYPES[dataset_type]
 
     def __enter__(self):
         self._state["load"] = LOAD_STAGES["all"]

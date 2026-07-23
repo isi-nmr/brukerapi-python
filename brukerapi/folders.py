@@ -224,7 +224,7 @@ class Folder:
                 children.append(Folder(path, parent=self, recursive=recursive, dataset_index=self._dataset_index, dataset_state=self._dataset_state))
                 continue
 
-            if path.name in self._dataset_index or (path.name.partition(".")[0] in self._dataset_index and "rawdata" in path.name):
+            if Dataset.is_supported_path(path, self._dataset_index):
                 try:
                     children.append(Dataset(path, **self._dataset_state))
                 except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir, InvalidDataset):
