@@ -229,6 +229,31 @@ def test_epi_layout_uses_digitized_samples_and_preserves_total_size():
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_2dseq_scaling_backward_transform_inverts_slope_and_offset():
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "pdata" / "1" / "2dseq")
+    dataset.slope = np.array([2.0, 4.0])
+    dataset.offset = np.array([3.0, -5.0])
+    stored = np.array([[1, 2], [-3, 4]], dtype=np.int16)
+
+    scaled = dataset._schema._scale_frames(stored, {}, "FW")
+    restored = dataset._schema._scale_frames(scaled, {}, "BW")
+
+    assert np.array_equal(restored, stored)
+
+
+def test_2dseq_deserialize_serialize_preserves_stored_values():
+    path = Path("test/test_data/PV360-V37/1/pdata/1/2dseq")
+    if not path.is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path)
+    stored = dataset._read_binary_file(path, dataset.numpy_dtype, dataset.shape_storage)
+    serialized = dataset._schema.serialize(dataset.data, dataset._schema.layouts)
+
+    assert np.array_equal(serialized.astype(dataset.numpy_dtype), stored)
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
     dataset_path = tmp_path / "dataset" / "fid"
