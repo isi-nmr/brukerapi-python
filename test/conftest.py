@@ -44,6 +44,13 @@ GITHUB_DATASETS = {
     },
 }
 
+PROPERTY_REFERENCE_FILES = {
+    "PV51": "properties_0.2H2.json",
+    "PV601": "properties_20200612_094625_lego_phantom_3_1_2.json",
+    "PV700": "properties_20210128_122257_LEGO_PHANTOM_API_TEST_1_1.json",
+    "PV360_StdData": "properties_PV360_StdData.json",
+}
+
 TEST_DIR = Path(__file__).parent
 ZENODO_ZIP_DIR = TEST_DIR / "zenodo_zips"
 TEST_DATA_ROOT = TEST_DIR / "test_data"
@@ -259,9 +266,14 @@ def _ensure_test_data(dataset_name: str):
 def pytest_generate_tests(metafunc):
     requested = _resolve_requested_datasets(metafunc.config.option.test_data or "all")
     ref_state = {}
+    for dataset_name in requested:
+        reference_file = PROPERTY_REFERENCE_FILES.get(dataset_name)
+        if reference_file:
+            with (TEST_DIR / "config" / reference_file).open() as file:
+                ref_state.update(json.load(file))
     if metafunc.config.option.properties_reference and Path(metafunc.config.option.properties_reference).exists():
         with open(metafunc.config.option.properties_reference) as f:
-            ref_state = json.load(f)
+            ref_state.update(json.load(f))
 
     # -------------------------------
     # JCAMPDX tests
@@ -272,7 +284,18 @@ def pytest_generate_tests(metafunc):
         for dataset_name in requested:
             for folder, file_path in _find_jcampdx_files(dataset_name):
                 jcamp_ids.append(f"{dataset_name}/{folder.name}/{file_path.name}")
-                jcamp_data.append(({"parameters": {}, "path": file_path.relative_to(folder)}, folder))
+                jcamp_data.append(
+                    (
+                        {
+                            "parameters": {
+                                "JCAMPDX": {"value": "4.24", "size": None, "type": "str"},
+                                "DATATYPE": {"value": "Parameter Values", "size": None, "type": "str"},
+                            },
+                            "path": file_path.relative_to(folder),
+                        },
+                        folder,
+                    )
+                )
         metafunc.parametrize("test_jcampdx_data", jcamp_data, ids=jcamp_ids)
 
     # -------------------------------
@@ -289,6 +312,18 @@ def pytest_generate_tests(metafunc):
                 data_items.append((dataset.path, ref_state.get(dataset.id, {})))
 
         metafunc.parametrize("test_data", data_items, indirect=True, ids=data_ids)
+
+    if "test_properties" in metafunc.fixturenames:
+        property_ids = []
+        property_items = []
+        for dataset_name in requested:
+            dataset_root = TEST_DATA_ROOT / dataset_name
+            folder_obj = Folder(dataset_root, dataset_state={"parameter_files": ["subject"], "property_files": [], "load": 2})
+            for dataset in folder_obj.get_dataset_list_rec():
+                if dataset.id in ref_state:
+                    property_ids.append(f"{dataset_name}/{dataset.id}")
+                    property_items.append((dataset.path, ref_state[dataset.id]))
+        metafunc.parametrize("test_properties", property_items, indirect=True, ids=property_ids)
 
     # -------------------------------
     # Random access tests
@@ -334,10 +369,7 @@ def test_parameters(request):
 
 @pytest.fixture
 def test_properties(request):
-    try:
-        return request.param
-    except AttributeError:
-        return None
+    return request.param
 
 
 @pytest.fixture

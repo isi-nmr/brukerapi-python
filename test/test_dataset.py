@@ -1,7 +1,6 @@
 import contextlib
 import datetime
 import json
-import os
 import re
 from pathlib import Path
 from types import SimpleNamespace
@@ -708,21 +707,30 @@ def test_parameters(test_parameters):
 
 
 def test_properties(test_properties):
-    if test_properties:
-        dataset = Dataset(test_properties[0], load=False, parameter_files=["subject"])
-        dataset.load_parameters()
-        dataset.load_properties()
-        assert dataset.to_dict() == test_properties[1]
+    dataset = Dataset(test_properties[0], load=False, parameter_files=["subject"])
+    dataset.load_parameters()
+    dataset.load_properties()
+    reference = dict(test_properties[1])
+    reference.pop("type", None)
+    reference.pop("subtype", None)
+
+    assert reference, f"Property reference for {dataset.path} must not be empty"
+    assert dataset.to_dict() == reference
 
 
 def test_data_load(test_data):
     dataset = Dataset(test_data[0])
+    reference_path = Path(str(dataset.path) + ".npz")
 
-    return  # For now Disable testing array equality
-    if not os.path.exists(str(dataset.path) + ".npz"):
+    assert isinstance(dataset.data, np.ndarray)
+    assert dataset.data.size > 0
+    assert np.all(np.isfinite(dataset.data))
+
+    if not reference_path.exists():
         return
 
-    with np.load(str(dataset.path) + ".npz") as data:
+    with np.load(reference_path) as data:
+        assert "data" in data
         assert np.array_equal(np.squeeze(dataset.data), np.squeeze(data["data"]))
 
 

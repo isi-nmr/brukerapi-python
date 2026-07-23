@@ -3,11 +3,9 @@ import os
 from pathlib import Path
 
 import numpy as np
-import pkg_resources
 
 from brukerapi.folders import Folder
 
-API_VERSION = pkg_resources.get_distribution("brukerapi").version
 SUITES = ["test_parameters", "test_properties", "test_data", "test_mmap"]
 
 
