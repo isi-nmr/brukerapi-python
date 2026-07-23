@@ -58,8 +58,8 @@ It is possible to directly access some of the most wanted measurement parameters
    >> dataset.flip_angle
    >> 10.0
 
-Both acqp and method files are used to construct a fid data set, it is possible to get value of any of hereby stored
-parameters.
+Both ``acqp`` and ``method`` files are used to construct a fid dataset. Any
+parameter stored in those files can also be accessed directly.
 
 .. code-block:: python
 

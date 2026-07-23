@@ -6582,7 +6582,7 @@
     },
     "FID_10_lego_phantom_3_2": {
         "TE": 20,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 384,
         "block_size": 512,
         "channels": 1,
@@ -6631,7 +6631,7 @@
     "FID_11_lego_phantom_3_2": {
         "TE": 5,
         "TR": 3000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2130,
         "block_size": 512,
         "channels": 1,
@@ -6679,7 +6679,7 @@
     },
     "FID_12_lego_phantom_3_2": {
         "TR": 2308.90237404559,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 4096,
         "block_size": 512,
         "channels": 1,
@@ -6728,7 +6728,7 @@
     "FID_13_lego_phantom_3_2": {
         "TE": 2.5,
         "TR": 5,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 3060,
         "block_size": 512,
         "channels": 1,
@@ -6777,7 +6777,7 @@
     "FID_14_lego_phantom_3_2": {
         "TE": 5,
         "TR": 50,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1536,
         "block_size": 256,
         "channels": 1,
@@ -6826,7 +6826,7 @@
     "FID_15_lego_phantom_3_2": {
         "TE": 20,
         "TR": 500,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1536,
         "block_size": 256,
         "channels": 1,
@@ -6875,7 +6875,7 @@
     "FID_16_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 4992,
+        "acq_length": 4992,
         "block_count": 3,
         "block_size": 6362,
         "channels": 1,
@@ -6922,7 +6922,7 @@
     "FID_17_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 3000,
-        "acq_lenght": 3072,
+        "acq_length": 3072,
         "block_count": 24,
         "block_size": 3072,
         "channels": 1,
@@ -6969,7 +6969,7 @@
     "FID_18_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 6144,
+        "acq_length": 6144,
         "block_count": 40,
         "block_size": 6144,
         "channels": 1,
@@ -7016,7 +7016,7 @@
     "FID_19_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 6144,
+        "acq_length": 6144,
         "block_count": 58,
         "block_size": 6670,
         "channels": 1,
@@ -7066,7 +7066,7 @@
     "FID_20_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 3000,
-        "acq_lenght": 2304,
+        "acq_length": 2304,
         "block_count": 64,
         "block_size": 2304,
         "channels": 1,
@@ -7113,7 +7113,7 @@
     "FID_21_lego_phantom_3_2": {
         "TE": 0.426666666666667,
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 10,
         "block_size": 4096,
         "channels": 1,
@@ -7160,7 +7160,7 @@
     "FID_22_lego_phantom_3_2": {
         "TE": 0.426666666666667,
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 8,
         "block_size": 4458,
         "channels": 1,
@@ -7207,7 +7207,7 @@
     "FID_23_lego_phantom_3_2": {
         "TE": 1.661,
         "TR": 1000,
-        "acq_lenght": 1956,
+        "acq_length": 1956,
         "block_count": 48,
         "block_size": 2048,
         "channels": 1,
@@ -7254,7 +7254,7 @@
     "FID_24_lego_phantom_3_2": {
         "TE": 16.511,
         "TR": 1000,
-        "acq_lenght": 672,
+        "acq_length": 672,
         "block_count": 496,
         "block_size": 768,
         "channels": 1,
@@ -7301,7 +7301,7 @@
     "FID_25_lego_phantom_3_2": {
         "TE": 0.340437415180885,
         "TR": 30,
-        "acq_lenght": 270,
+        "acq_length": 270,
         "block_count": 804,
         "block_size": 512,
         "channels": 1,
@@ -7350,7 +7350,7 @@
     "FID_26_lego_phantom_3_2": {
         "TE": 0.340437415180885,
         "TR": 30,
-        "acq_lenght": 270,
+        "acq_length": 270,
         "block_count": 804,
         "block_size": 512,
         "channels": 1,
@@ -7399,7 +7399,7 @@
     "FID_27_lego_phantom_3_2": {
         "TE": 0.340437415180885,
         "TR": 30,
-        "acq_lenght": 270,
+        "acq_length": 270,
         "block_count": 804,
         "block_size": 512,
         "channels": 1,
@@ -7448,7 +7448,7 @@
     "FID_28_lego_phantom_3_2": {
         "TE": 0.00813333333333333,
         "TR": 4.41926666666667,
-        "acq_lenght": 142,
+        "acq_length": 142,
         "block_count": 51360,
         "block_size": 256,
         "channels": 1,
@@ -7496,7 +7496,7 @@
     },
     "FID_29_lego_phantom_3_2": {
         "TR": 2.5,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 51896,
         "block_size": 512,
         "channels": 1,
@@ -7545,7 +7545,7 @@
     "FID_30_lego_phantom_3_2": {
         "TE": 5,
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 256,
         "block_size": 4096,
         "channels": 1,
@@ -7584,7 +7584,7 @@
     "FID_31_lego_phantom_3_2": {
         "TE": 2.141,
         "TR": 35,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 32768,
         "block_size": 256,
         "channels": 1,
@@ -7630,7 +7630,7 @@
     },
     "FID_32_lego_phantom_3_2": {
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 25,
         "block_size": 4096,
         "channels": 1,
@@ -7667,7 +7667,7 @@
     },
     "FID_33_lego_phantom_3_2": {
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 3,
         "block_size": 4096,
         "channels": 1,
@@ -7705,7 +7705,7 @@
     "FID_34_lego_phantom_3_2": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 3072,
+        "acq_length": 3072,
         "block_count": 256,
         "block_size": 12288,
         "channels": 1,
@@ -7755,7 +7755,7 @@
     "FID_35_lego_phantom_3_2": {
         "TE": 20,
         "TR": 2000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 2,
         "block_size": 4096,
         "channels": 1,
@@ -7793,7 +7793,7 @@
     "FID_36_lego_phantom_3_2": {
         "TE": 15,
         "TR": 2000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -7830,7 +7830,7 @@
     },
     "FID_37_lego_phantom_3_2": {
         "TR": 2000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -7867,7 +7867,7 @@
     },
     "FID_38_lego_phantom_3_2": {
         "TR": 5000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 12,
         "block_size": 512,
         "channels": 1,
@@ -7905,7 +7905,7 @@
     "FID_39_lego_phantom_3_2": {
         "TE": 13.804,
         "TR": 500,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 1,
         "block_size": 512,
         "channels": 1,
@@ -7943,7 +7943,7 @@
     "FID_3_lego_phantom_3_2": {
         "TE": 4,
         "TR": 100,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 768,
         "block_size": 512,
         "channels": 1,
@@ -7992,7 +7992,7 @@
     "FID_40_lego_phantom_3_2": {
         "TE": 3.4,
         "TR": 15.0516888888889,
-        "acq_lenght": 384,
+        "acq_length": 384,
         "block_count": 1024,
         "block_size": 512,
         "channels": 1,
@@ -8041,7 +8041,7 @@
     "FID_42_lego_phantom_3_2": {
         "TE": 4.60714285714286,
         "TR": 12000,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 2048,
         "block_size": 256,
         "channels": 1,
@@ -8089,7 +8089,7 @@
     },
     "FID_43_lego_phantom_3_2": {
         "TE": 7,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 1152,
         "block_size": 512,
         "channels": 1,
@@ -8138,7 +8138,7 @@
     "FID_44_lego_phantom_3_2": {
         "TE": 8,
         "TR": 2000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 38400,
         "block_size": 512,
         "channels": 1,
@@ -8187,7 +8187,7 @@
     "FID_45_lego_phantom_3_2": {
         "TE": 0.392533333333333,
         "TR": 1500,
-        "acq_lenght": 20480,
+        "acq_length": 20480,
         "block_count": 5,
         "block_size": 20480,
         "channels": 1,
@@ -8234,7 +8234,7 @@
     "FID_47_lego_phantom_3_2": {
         "TE": 11,
         "TR": 2500,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2304,
         "block_size": 512,
         "channels": 1,
@@ -8283,7 +8283,7 @@
     "FID_48_lego_phantom_3_2": {
         "TE": 0.384,
         "TR": 2100,
-        "acq_lenght": 15360,
+        "acq_length": 15360,
         "block_count": 720,
         "block_size": 15360,
         "channels": 1,
@@ -8333,7 +8333,7 @@
     "FID_4_lego_phantom_3_2": {
         "TE": 4,
         "TR": 100,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 768,
         "block_size": 512,
         "channels": 1,
@@ -8382,7 +8382,7 @@
     "FID_6_lego_phantom_3_2": {
         "TE": 4,
         "TR": 355.92,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 7680,
         "block_size": 512,
         "channels": 1,
@@ -8431,7 +8431,7 @@
     "FID_7_lego_phantom_3_2": {
         "TE": 20,
         "TR": 1000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 512,
         "block_size": 512,
         "channels": 1,
@@ -8480,7 +8480,7 @@
     "FID_8_lego_phantom_3_2": {
         "TE": 20,
         "TR": 2567.625,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 3328,
         "block_size": 512,
         "channels": 1,
@@ -8529,7 +8529,7 @@
     "FID_9_lego_phantom_3_2": {
         "TE": 5.06,
         "TR": 1368.3126870228,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 1536,
         "block_size": 512,
         "channels": 1,

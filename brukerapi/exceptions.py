@@ -11,7 +11,7 @@ class UnknownAcqSchemeException(Exception):
         return "Unknown acquisition scheme"
 
 
-class UnsuportedDatasetType(Exception):
+class UnsupportedDatasetType(Exception):
     def __init__(self, *args):
         if args:
             self.message = args[0]
@@ -92,7 +92,7 @@ class JcampdxInvalidLine(Exception):
         return "Not a valid JCAMP-DX data line"
 
 
-class DatasetTypeMissmatch(Exception):
+class DatasetTypeMismatch(Exception):
     def __init__(self, *args):
         if args:
             self.message = args[0]

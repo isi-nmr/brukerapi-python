@@ -15,7 +15,7 @@ from .exceptions import (
     NotExperimentFolder,
     NotProcessingFolder,
     NotStudyFolder,
-    UnsuportedDatasetType,
+    UnsupportedDatasetType,
 )
 from .jcampdx import JCAMPDX
 
@@ -231,7 +231,7 @@ class Folder:
                 except InvalidDataset as error:
                     warnings.warn(f"Skipping invalid dataset {path}: {error}", RuntimeWarning, stacklevel=2)
                     continue
-                except (UnsuportedDatasetType, IncompleteDataset, NotADatasetDir):
+                except (UnsupportedDatasetType, IncompleteDataset, NotADatasetDir):
                     continue
 
             try:

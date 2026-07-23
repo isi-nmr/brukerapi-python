@@ -162,7 +162,7 @@
       ]
     }
   ],
-  "acq_lenght": [
+  "acq_length": [
     {
       "cmd": "#ACQ_size.tuple[0] * @channels",
       "conditions": [

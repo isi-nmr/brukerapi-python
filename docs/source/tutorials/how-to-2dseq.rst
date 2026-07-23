@@ -65,7 +65,8 @@ It is possible to directly access some of the most wanted measurement parameters
    >> dataset.flip_angle
    >> 10.0
 
-The visu_pars file is used to construct a 2dseq data set, it is possible to get value of any of hereby stored parameters.
+The ``visu_pars`` file is used to construct a 2dseq dataset. Any parameter
+stored in that file can also be accessed directly.
 
 .. code-block:: python
 

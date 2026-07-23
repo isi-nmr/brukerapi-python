@@ -5382,7 +5382,7 @@
     "FID_10_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 3072,
+        "acq_length": 3072,
         "block_count": 28,
         "block_size": 6666,
         "channels": 1,
@@ -5432,7 +5432,7 @@
     "FID_11_LEGO_PHANTOM_1": {
         "TE": 16.511,
         "TR": 1000,
-        "acq_lenght": 1594,
+        "acq_length": 1594,
         "block_count": 8,
         "block_size": 1792,
         "channels": 1,
@@ -5479,7 +5479,7 @@
     "FID_12_LEGO_PHANTOM_1": {
         "TE": 20,
         "TR": 500,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1152,
         "block_size": 256,
         "channels": 1,
@@ -5528,7 +5528,7 @@
     "FID_13_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 2304,
+        "acq_length": 2304,
         "block_count": 8,
         "block_size": 5130,
         "channels": 1,
@@ -5575,7 +5575,7 @@
     "FID_14_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 12288,
+        "acq_length": 12288,
         "block_count": 1,
         "block_size": 12288,
         "channels": 1,
@@ -5622,7 +5622,7 @@
     "FID_15_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_lenght": 3072,
+        "acq_length": 3072,
         "block_count": 256,
         "block_size": 12288,
         "channels": 1,
@@ -5672,7 +5672,7 @@
     "FID_16_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 3000,
-        "acq_lenght": 9216,
+        "acq_length": 9216,
         "block_count": 48,
         "block_size": 9216,
         "channels": 1,
@@ -5719,7 +5719,7 @@
     "FID_17_LEGO_PHANTOM_1": {
         "TE": 5.06,
         "TR": 1502.8461870228,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 1536,
         "block_size": 512,
         "channels": 1,
@@ -5768,7 +5768,7 @@
     "FID_18_LEGO_PHANTOM_1": {
         "TE": 2.5,
         "TR": 5,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1280,
         "block_size": 256,
         "channels": 1,
@@ -5817,7 +5817,7 @@
     "FID_19_LEGO_PHANTOM_1": {
         "TE": 6.71584791649453,
         "TR": 100,
-        "acq_lenght": 1024,
+        "acq_length": 1024,
         "block_count": 512,
         "block_size": 1024,
         "channels": 1,
@@ -5866,7 +5866,7 @@
     "FID_20_LEGO_PHANTOM_1": {
         "TE": 5,
         "TR": 50,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 512,
         "block_size": 256,
         "channels": 1,
@@ -5915,7 +5915,7 @@
     "FID_21_LEGO_PHANTOM_1": {
         "TE": 5,
         "TR": 100,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 7168,
         "block_size": 256,
         "channels": 1,
@@ -5964,7 +5964,7 @@
     "FID_22_LEGO_PHANTOM_1": {
         "TE": 2.141,
         "TR": 35,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 32768,
         "block_size": 256,
         "channels": 1,
@@ -6010,7 +6010,7 @@
     },
     "FID_25_LEGO_PHANTOM_1": {
         "TR": 2308.91237404559,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 4096,
         "block_size": 512,
         "channels": 1,
@@ -6059,7 +6059,7 @@
     "FID_26_LEGO_PHANTOM_1": {
         "TE": 4,
         "TR": 232.202197802198,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 5120,
         "block_size": 256,
         "channels": 1,
@@ -6108,7 +6108,7 @@
     "FID_27_LEGO_PHANTOM_1": {
         "TE": 20,
         "TR": 1000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2304,
         "block_size": 512,
         "channels": 1,
@@ -6156,7 +6156,7 @@
     },
     "FID_28_LEGO_PHANTOM_1": {
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -6194,7 +6194,7 @@
     "FID_30_LEGO_PHANTOM_1": {
         "TE": 20,
         "TR": 2000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 4,
         "block_size": 4096,
         "channels": 1,
@@ -6232,7 +6232,7 @@
     "FID_31_LEGO_PHANTOM_1": {
         "TE": 20,
         "TR": 1655.725,
-        "acq_lenght": 1024,
+        "acq_length": 1024,
         "block_count": 2560,
         "block_size": 1024,
         "channels": 1,
@@ -6280,7 +6280,7 @@
     },
     "FID_32_LEGO_PHANTOM_1": {
         "TE": 20,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2688,
         "block_size": 512,
         "channels": 1,
@@ -6329,7 +6329,7 @@
     "FID_33_LEGO_PHANTOM_1": {
         "TE": 5,
         "TR": 3000,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 71,
         "block_size": 256,
         "channels": 1,
@@ -6378,7 +6378,7 @@
     "FID_34_LEGO_PHANTOM_1": {
         "TE": 13.804,
         "TR": 500,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 1,
         "block_size": 512,
         "channels": 1,
@@ -6415,7 +6415,7 @@
     },
     "FID_35_LEGO_PHANTOM_1": {
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -6453,7 +6453,7 @@
     "FID_36_LEGO_PHANTOM_1": {
         "TE": 1.661,
         "TR": 1000,
-        "acq_lenght": 6956,
+        "acq_length": 6956,
         "block_count": 48,
         "block_size": 7168,
         "channels": 1,
@@ -6500,7 +6500,7 @@
     "FID_37_LEGO_PHANTOM_1": {
         "TE": 15,
         "TR": 2000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -6538,7 +6538,7 @@
     "FID_39_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 3000,
-        "acq_lenght": 12288,
+        "acq_length": 12288,
         "block_count": 48,
         "block_size": 12288,
         "channels": 1,
@@ -6585,7 +6585,7 @@
     "FID_40_LEGO_PHANTOM_1": {
         "TE": 0.426666666666667,
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 24,
         "block_size": 4096,
         "channels": 1,
@@ -6632,7 +6632,7 @@
     "FID_41_LEGO_PHANTOM_1": {
         "TE": 0.426666666666667,
         "TR": 1000,
-        "acq_lenght": 8192,
+        "acq_length": 8192,
         "block_count": 24,
         "block_size": 8192,
         "channels": 1,
@@ -6679,7 +6679,7 @@
     "FID_42_LEGO_PHANTOM_1": {
         "TE": 0.391727379405287,
         "TR": 30,
-        "acq_lenght": 142,
+        "acq_length": 142,
         "block_count": 3216,
         "block_size": 256,
         "channels": 1,
@@ -6728,7 +6728,7 @@
     "FID_43_LEGO_PHANTOM_1": {
         "TE": 0.00813333333333333,
         "TR": 4.53426666666667,
-        "acq_lenght": 142,
+        "acq_length": 142,
         "block_count": 102720,
         "block_size": 256,
         "channels": 1,
@@ -6776,7 +6776,7 @@
     },
     "FID_44_LEGO_PHANTOM_1": {
         "TR": 2.5,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 51896,
         "block_size": 512,
         "channels": 1,
@@ -6825,7 +6825,7 @@
     "FID_45_LEGO_PHANTOM_1": {
         "TE": 0.00813333333333333,
         "TR": 4,
-        "acq_lenght": 142,
+        "acq_length": 142,
         "block_count": 51360,
         "block_size": 256,
         "channels": 1,
@@ -6874,7 +6874,7 @@
     "FID_5_LEGO_PHANTOM_1": {
         "TE": 3,
         "TR": 15,
-        "acq_lenght": 320,
+        "acq_length": 320,
         "block_count": 2880,
         "block_size": 512,
         "channels": 1,
@@ -6923,7 +6923,7 @@
     "FID_6_LEGO_PHANTOM_1": {
         "TE": 4,
         "TR": 11.829403240324,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1280,
         "block_size": 256,
         "channels": 1,
@@ -6971,7 +6971,7 @@
     },
     "FID_7_LEGO_PHANTOM_1": {
         "TR": 5000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 12,
         "block_size": 512,
         "channels": 1,
@@ -7009,7 +7009,7 @@
     "FID_8_LEGO_PHANTOM_1": {
         "TE": 5,
         "TR": 1000,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1024,
         "block_size": 4096,
         "channels": 1,
@@ -7048,7 +7048,7 @@
     "FID_9_LEGO_PHANTOM_1": {
         "TE": 2.855,
         "TR": 10,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1024,
         "block_size": 256,
         "channels": 1,

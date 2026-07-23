@@ -6,7 +6,7 @@ from brukerapi import exceptions
 
 exceptions_to_test = [
     ("UnknownAcqSchemeException", "Unknown acquisition scheme", "Unknown acquisition scheme, test"),
-    ("UnsuportedDatasetType", "Dataset type is not supported", "Dataset type: test is not supported"),
+    ("UnsupportedDatasetType", "Dataset type is not supported", "Dataset type: test is not supported"),
     ("InvalidJcampdxFile", "Invalid JCAMP-DX file", "test is not valid JCAMP-DX file"),
     ("JcampdxVersionError", "Not a valid JCAMP-DX version", '"test" is not a valid JCAMP-DX version'),
 ]
@@ -14,7 +14,7 @@ exceptions_to_test = [
 corrected_default_messages = {
     "ConditionNotMet": "Condition not met",
     "DataNotLoaded": "Data not loaded",
-    "DatasetTypeMissmatch": "Dataset type mismatch",
+    "DatasetTypeMismatch": "Dataset type mismatch",
     "FilterEvalFalse": "Filter expression evaluated false",
     "IncompleteDataset": "Incomplete dataset",
     "InvalidDataset": "Invalid dataset",

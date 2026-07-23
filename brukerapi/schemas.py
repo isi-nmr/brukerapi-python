@@ -10,12 +10,12 @@ config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__f
 
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
-    "fid": ["numpy_dtype", "channels", "block_size", "acq_lenght", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
+    "fid": ["numpy_dtype", "channels", "block_size", "acq_length", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
     "fid_proc": [
         "numpy_dtype",
         "channels",
         "block_size",
-        "acq_lenght",
+        "acq_length",
         "scheme_id",
         "block_count",
         "encoding_space",
@@ -49,7 +49,7 @@ class Schema:
     """Base class for all schemes"""
 
     def __init__(self, dataset):
-        # chceck if dataset contains all the required properties
+        # Check whether the dataset contains all required properties.
         for property in REQUIRED_PROPERTIES[dataset.type]:
             if not hasattr(dataset, property):
                 if property == "scheme_id":
@@ -135,7 +135,7 @@ class SchemaFid(Schema):
         layouts["k_space"] = self._dataset.k_space
 
         if self.acquisition_factor == 1:
-            stored_samples = self._dataset.acq_lenght * self._dataset.block_count
+            stored_samples = self._dataset.acq_length * self._dataset.block_count
             for name in ("encoding_space", "k_space"):
                 logical_samples = int(np.prod(layouts[name]))
                 if stored_samples % logical_samples:
@@ -149,15 +149,15 @@ class SchemaFid(Schema):
         layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
 
         if "EPI" in self._dataset.scheme_id:
-            discarded = self._dataset.block_size - self._dataset.acq_lenght
+            discarded = self._dataset.block_size - self._dataset.acq_length
             block_format = self._dataset._parameter_value("GO_block_size")
             scan_shift = self._dataset._parameter_value("ACQ_scan_shift", 0)
             if block_format == "Standard_KBlock_Format" or scan_shift >= 0:
-                layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
+                layouts["acquisition_position"] = (0, self._dataset.acq_length)
             else:
-                layouts["acquisition_position"] = (discarded, self._dataset.acq_lenght)
+                layouts["acquisition_position"] = (discarded, self._dataset.acq_length)
         else:
-            layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
+            layouts["acquisition_position"] = (0, self._dataset.acq_length)
 
         return layouts
 

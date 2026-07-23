@@ -6826,7 +6826,7 @@
     "FID_10_0_2": {
         "TE": 2,
         "TR": 4,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 16000,
         "block_size": 256,
         "channels": 1,
@@ -6875,7 +6875,7 @@
     "FID_11_0_2": {
         "TE": 6,
         "TR": 20,
-        "acq_lenght": 1024,
+        "acq_length": 1024,
         "block_count": 768,
         "block_size": 1024,
         "channels": 1,
@@ -6924,7 +6924,7 @@
     "FID_12_0_2": {
         "TE": 20,
         "TR": 1500,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1792,
         "block_size": 256,
         "channels": 1,
@@ -6973,7 +6973,7 @@
     "FID_13_0_2": {
         "TE": 0.64,
         "TR": 1000,
-        "acq_lenght": 2176,
+        "acq_length": 2176,
         "block_count": 12,
         "block_size": 2690,
         "channels": 1,
@@ -7020,7 +7020,7 @@
     "FID_14_0_2": {
         "TE": 0.64,
         "TR": 4000,
-        "acq_lenght": 2048,
+        "acq_length": 2048,
         "block_count": 40,
         "block_size": 2562,
         "channels": 1,
@@ -7067,7 +7067,7 @@
     "FID_15_0_2": {
         "TE": 0.5376,
         "TR": 1500.001,
-        "acq_lenght": 1536,
+        "acq_length": 1536,
         "block_count": 135,
         "block_size": 1536,
         "channels": 1,
@@ -7117,7 +7117,7 @@
     "FID_16_0_2": {
         "TE": 0.64,
         "TR": 10000,
-        "acq_lenght": 16384,
+        "acq_length": 16384,
         "block_count": 32,
         "block_size": 16384,
         "channels": 1,
@@ -7164,7 +7164,7 @@
     "FID_17_0_2": {
         "TE": 0.64,
         "TR": 11553.716,
-        "acq_lenght": 32768,
+        "acq_length": 32768,
         "block_count": 120,
         "block_size": 32768,
         "channels": 1,
@@ -7211,7 +7211,7 @@
     "FID_18_0_2": {
         "TE": 0.32,
         "TR": 1500,
-        "acq_lenght": 8192,
+        "acq_length": 8192,
         "block_count": 4,
         "block_size": 8192,
         "channels": 1,
@@ -7258,7 +7258,7 @@
     "FID_19_0_2": {
         "TE": 0.5632,
         "TR": 1000,
-        "acq_lenght": 1024,
+        "acq_length": 1024,
         "block_count": 2048,
         "block_size": 1024,
         "channels": 1,
@@ -7305,7 +7305,7 @@
     "FID_1_0_2": {
         "TE": 3,
         "TR": 200,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1920,
         "block_size": 256,
         "channels": 1,
@@ -7354,7 +7354,7 @@
     "FID_20_0_2": {
         "TE": 21.7794736842105,
         "TR": 3000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 4608,
         "block_size": 512,
         "channels": 1,
@@ -7401,7 +7401,7 @@
     "FID_21_0_2": {
         "TE": 0.316319272829721,
         "TR": 30,
-        "acq_lenght": 128,
+        "acq_length": 128,
         "block_count": 1608,
         "block_size": 256,
         "channels": 1,
@@ -7450,7 +7450,7 @@
     "FID_22_0_2": {
         "TE": 0.02,
         "TR": 8,
-        "acq_lenght": 128,
+        "acq_length": 128,
         "block_count": 51360,
         "block_size": 256,
         "channels": 1,
@@ -7498,7 +7498,7 @@
     },
     "FID_23_0_2": {
         "TR": 4,
-        "acq_lenght": 1024,
+        "acq_length": 1024,
         "block_count": 51896,
         "block_size": 1024,
         "channels": 1,
@@ -7547,7 +7547,7 @@
     "FID_24_0_2": {
         "TE": 20,
         "TR": 1200,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 361,
         "block_size": 4096,
         "channels": 1,
@@ -7586,7 +7586,7 @@
     "FID_25_0_2": {
         "TE": 4,
         "TR": 20,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 32768,
         "block_size": 256,
         "channels": 1,
@@ -7632,7 +7632,7 @@
     },
     "FID_26_0_2": {
         "TR": 800,
-        "acq_lenght": 2048,
+        "acq_length": 2048,
         "block_count": 3,
         "block_size": 2048,
         "channels": 1,
@@ -7670,7 +7670,7 @@
     "FID_27_0_2": {
         "TE": 20,
         "TR": 2500,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -7708,7 +7708,7 @@
     "FID_28_0_2": {
         "TE": 10,
         "TR": 1500,
-        "acq_lenght": 4096,
+        "acq_length": 4096,
         "block_count": 1,
         "block_size": 4096,
         "channels": 1,
@@ -7746,7 +7746,7 @@
     "FID_2_0_2": {
         "TE": 6,
         "TR": 100,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 768,
         "block_size": 512,
         "channels": 1,
@@ -7794,7 +7794,7 @@
     },
     "FID_31_0_2": {
         "TE": 10,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 2880,
         "block_size": 256,
         "channels": 1,
@@ -7843,7 +7843,7 @@
     "FID_32_0_2": {
         "TE": 0.512,
         "TR": 3800,
-        "acq_lenght": 4116,
+        "acq_length": 4116,
         "block_count": 2100,
         "block_size": 4974,
         "channels": 1,
@@ -7893,7 +7893,7 @@
     "FID_33_0_2": {
         "TE": 11,
         "TR": 2500,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1536,
         "block_size": 256,
         "channels": 1,
@@ -7942,7 +7942,7 @@
     "FID_35_0_2": {
         "TE": 2.90666666666667,
         "TR": 8,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 38400,
         "block_size": 256,
         "channels": 1,
@@ -7991,7 +7991,7 @@
     "FID_3_0_2": {
         "TE": 6,
         "TR": 1500,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 18432,
         "block_size": 512,
         "channels": 1,
@@ -8040,7 +8040,7 @@
     "FID_4_0_2": {
         "TE": 10.545,
         "TR": 1000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2048,
         "block_size": 512,
         "channels": 1,
@@ -8089,7 +8089,7 @@
     "FID_5_0_2": {
         "TE": 14,
         "TR": 5000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 4608,
         "block_size": 512,
         "channels": 1,
@@ -8138,7 +8138,7 @@
     "FID_6_0_2": {
         "TE": 3,
         "TR": 3000,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 1240,
         "block_size": 256,
         "channels": 1,
@@ -8186,7 +8186,7 @@
     },
     "FID_7_0_2": {
         "TE": 14,
-        "acq_lenght": 256,
+        "acq_length": 256,
         "block_count": 2560,
         "block_size": 256,
         "channels": 1,
@@ -8235,7 +8235,7 @@
     "FID_8_0_2": {
         "TE": 3.8,
         "TR": 3000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 264,
         "block_size": 512,
         "channels": 1,
@@ -8284,7 +8284,7 @@
     "FID_9_0_2": {
         "TE": 15,
         "TR": 4000,
-        "acq_lenght": 512,
+        "acq_length": 512,
         "block_count": 2560,
         "block_size": 512,
         "channels": 1,

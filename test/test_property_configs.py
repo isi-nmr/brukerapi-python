@@ -27,7 +27,7 @@ def test_fid_dtype_and_block_layout_are_not_version_gated():
     standard_block_size_branches = config["block_size"][:2]
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_block_size_branches)
 
-    standard_acq_length_branches = config["acq_lenght"][1:4]
+    standard_acq_length_branches = config["acq_length"][1:4]
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_acq_length_branches)
 
 

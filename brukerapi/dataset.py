@@ -13,7 +13,7 @@ import yaml
 from .data import DataRandomAccess
 from .exceptions import (
     DataNotLoaded,
-    DatasetTypeMissmatch,
+    DatasetTypeMismatch,
     FilterEvalFalse,
     IncompleteDataset,
     InvalidDataset,
@@ -23,7 +23,7 @@ from .exceptions import (
     SchemeNotLoaded,
     TrajNotLoaded,
     UnknownAcqSchemeException,
-    UnsuportedDatasetType,
+    UnsupportedDatasetType,
 )
 from .jcampdx import JCAMPDX
 from .schemas import Schema2dseq, SchemaFid, SchemaFidCompanion, SchemaRawdata, SchemaTraj
@@ -218,9 +218,9 @@ class Dataset:
         self._properties = []
 
         if self.type not in DEFAULT_STATES:
-            raise UnsuportedDatasetType(self.type)
+            raise UnsupportedDatasetType(self.type)
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
-            raise UnsuportedDatasetType(self.path.name)
+            raise UnsupportedDatasetType(self.path.name)
 
         # set
         self._set_state(state)
@@ -298,13 +298,13 @@ class Dataset:
         Check whether the dataset type is supported and complete. Dataset is allowed to be incomplete when load is
         set to `False`.
 
-        :raise: :UnsuportedDatasetType: In case `Dataset.type` is not in SUPPORTED
+        :raise: :UnsupportedDatasetType: If ``Dataset.type`` is unsupported
         :raise: :IncompleteDataset: If any of the JCAMP-DX files, necessary to create a Dataset instance is missing
         """
 
         # Check whether dataset file is supported
         if self.type not in DEFAULT_STATES:
-            raise UnsuportedDatasetType(self.type)
+            raise UnsupportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
         if self._state.get("load") >= LOAD_STAGES["parameters"]:
@@ -405,7 +405,7 @@ class Dataset:
 
     def _read_parameters(self):
         """
-        Read parameters form the essential JCAMP-DX files.
+        Read parameters from the essential JCAMP-DX files.
 
         :return:
         """
@@ -796,7 +796,7 @@ class Dataset:
         path = Path(path)
 
         if path.name.split(".")[0] != self.type:
-            raise DatasetTypeMissmatch
+            raise DatasetTypeMismatch
 
         parent = path.parent
 
@@ -966,7 +966,7 @@ class Dataset:
         the caller explicitly writes the returned datasets.
         """
         if self.type != "2dseq":
-            raise UnsuportedDatasetType(f"slice packages are only available for 2dseq, not {self.type}")
+            raise UnsupportedDatasetType(f"slice packages are only available for 2dseq, not {self.type}")
         if self.num_slice_packages <= 1:
             return [self]
 

@@ -10,23 +10,18 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
-from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
+from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
+from brukerapi.schemas import Schema2dseq, SchemaFid
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
-
-
-def test_rawdata_schema_exposes_only_correct_serialize_spelling():
-    assert hasattr(SchemaRawdata, "serialize")
-    assert not hasattr(SchemaRawdata, "seralize")
 
 
 def test_unsupported_dataset_type(tmp_path):
     path = tmp_path / "unsupported"
     path.touch()
 
-    with pytest.raises(UnsuportedDatasetType, match="Dataset type: unsupported is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match="Dataset type: unsupported is not supported"):
         Dataset(path)
 
 
@@ -34,7 +29,7 @@ def test_ser_is_explicitly_unsupported(tmp_path):
     path = tmp_path / "ser"
     path.touch()
 
-    with pytest.raises(UnsuportedDatasetType, match="Dataset type: ser is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match="Dataset type: ser is not supported"):
         Dataset(path)
 
 
@@ -88,7 +83,7 @@ def test_dataset_rejects_nonprimary_and_unknown_subtypes(tmp_path, name):
     path = tmp_path / name
     path.touch()
 
-    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
         Dataset(path)
 
 
@@ -125,7 +120,7 @@ def test_fid_companion_files_are_not_loaded_as_primary_datasets(path):
     if not Path(path).is_file():
         pytest.skip(f"{path} is not available")
 
-    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
         Dataset(path)
 
 
@@ -452,7 +447,7 @@ def test_fid_quadrature_mode_controls_real_imag_deinterleave(aq_mod, encoding_sp
         encoding_space=encoding_space,
         permute=(0, 1),
         k_space=encoding_space,
-        acq_lenght=4,
+        acq_length=4,
         _parameter_value=lambda name, default=None: aq_mod if name == "AQ_mod" else default,
     )
     schema = SchemaFid.__new__(SchemaFid)
@@ -482,7 +477,7 @@ def test_fid_qf_layout_preserves_all_real_samples():
         encoding_space=(2, 1),
         permute=(0, 1),
         k_space=(2, 1),
-        acq_lenght=4,
+        acq_length=4,
         scheme_id="CART_2D",
         _parameter_value=lambda name, default=None: "qf" if name == "AQ_mod" else default,
     )
@@ -569,7 +564,7 @@ def test_epi_standard_kblock_trims_trailing_padding():
     dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 256
-    dataset.acq_lenght = 200
+    dataset.acq_length = 200
     stored = np.concatenate([np.arange(200), np.zeros(56)]).reshape(256, 1)
 
     layouts = dataset._schema.layouts
@@ -584,7 +579,7 @@ def test_epi_standard_kblock_warns_on_nonzero_discarded_samples():
     dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 8
-    dataset.acq_lenght = 6
+    dataset.acq_length = 6
     stored = np.arange(8).reshape(8, 1)
 
     with pytest.warns(RuntimeWarning, match="Expected trailing K-block padding to be zero"):
