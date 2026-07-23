@@ -1,4 +1,5 @@
 import contextlib
+import datetime
 import json
 import os
 import re
@@ -413,6 +414,25 @@ def test_dataset_query_minimal_namespace_keeps_self_and_numpy():
 
     dataset.query("self.type == 'fid'")
     dataset.query("np.pi > 3")
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "test/test_data/PV51/0.2H2/10/fid",
+        "test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/fid",
+        "test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/pdata/1/2dseq",
+        "test/test_data/PV360-V37/10/pdata/1/2dseq",
+    ],
+    ids=["PV5-fid", "PV7-fid", "PV7-2dseq", "PV360-2dseq"],
+)
+def test_date_property_uses_timestamp_format_instead_of_version(path):
+    if not Path(path).is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path, load=LOAD_STAGES["properties"])
+
+    assert isinstance(dataset.date, datetime.datetime)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")

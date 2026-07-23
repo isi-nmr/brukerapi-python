@@ -36,7 +36,7 @@ LOAD_STAGES = {
 }
 
 RECIPE_EVAL_NAMESPACE = {
-    "__builtins__": {},
+    "__builtins__": {"__import__": __import__},
     "abs": abs,
     "datetime": datetime,
     "int": int,

@@ -265,13 +265,13 @@
       {
         "cmd": "datetime.datetime.strptime(#VisuStudyDate[1:-1], '%X %d %b %Y')",
         "conditions": [
-          "#VisuVersion==1"
+          "'T' not in #VisuStudyDate"
         ]
       },
       {
         "cmd": "datetime.datetime.strptime(#VisuStudyDate[1:-1], '%Y-%m-%dT%X,%f%z')",
         "conditions": [
-          "#VisuVersion==3"
+          "'T' in #VisuStudyDate"
         ]
       }
   ],
