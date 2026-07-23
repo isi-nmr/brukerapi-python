@@ -131,6 +131,18 @@
         "#VisuCoreDim==2"]
     },
     {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], np.linalg.norm(#VisuCorePosition[1,:] - #VisuCorePosition[0,:])])",
+      "conditions": [
+        "#VisuCorePosition.size[0]>1",
+        "#VisuCoreDim==2"]
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness])",
+      "conditions": [
+        "#VisuCorePosition.size[0]==1",
+        "#VisuCoreDim==2"]
+    },
+    {
       "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreExtent[2] / #VisuCoreSize[2]])",
       "conditions": [
         "#VisuCoreDimDesc.list[0]=='spatial'",

@@ -94,6 +94,32 @@ def test_ambiguous_scheme_error_names_pulse_program_and_method():
         dataset.load_schema()
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/26/pdata/1/2dseq",
+        "test/test_data/PV360_StdData/T1_FLASH/pdata/1/2dseq",
+    ],
+    ids=["PV7", "PV360"],
+)
+def test_modern_2dseq_geometry_has_resolution_and_nonidentity_affine(path):
+    if not Path(path).is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path, load=LOAD_STAGES["properties"])
+    positions = np.asarray(dataset["VisuCorePosition"].value)
+    expected_resolution = np.array(
+        [
+            dataset["VisuCoreExtent"].value[0] / dataset["VisuCoreSize"].value[0],
+            dataset["VisuCoreExtent"].value[1] / dataset["VisuCoreSize"].value[1],
+            np.linalg.norm(positions[1] - positions[0]),
+        ]
+    )
+
+    assert np.allclose(dataset.resolution, expected_resolution)
+    assert not np.allclose(dataset.affine, np.eye(4))
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
