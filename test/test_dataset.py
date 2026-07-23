@@ -255,6 +255,28 @@ def test_2dseq_scaling_backward_transform_inverts_slope_and_offset():
     assert np.array_equal(restored, stored)
 
 
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+@pytest.mark.parametrize(
+    ("missing_visu_parameter", "property_name", "reco_parameter"),
+    [
+        ("VisuCoreDataSlope", "slope", "RECO_map_slope"),
+        ("VisuCoreDataOffs", "offset", "RECO_map_offset"),
+    ],
+)
+def test_2dseq_scaling_uses_reco_when_visu_parameter_is_missing(
+    missing_visu_parameter,
+    property_name,
+    reco_parameter,
+):
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "pdata" / "1" / "2dseq", load=LOAD_STAGES["parameters"])
+
+    assert "reco" in dataset._parameters
+    del dataset._parameters["visu_pars"].params[missing_visu_parameter]
+    dataset.load_properties()
+
+    assert np.array_equal(getattr(dataset, property_name), dataset[reco_parameter].array)
+
+
 def test_2dseq_deserialize_serialize_preserves_stored_values():
     path = Path("test/test_data/PV360-V37/1/pdata/1/2dseq")
     if not path.is_file():

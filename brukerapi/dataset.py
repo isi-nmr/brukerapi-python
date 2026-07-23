@@ -63,6 +63,7 @@ DEFAULT_STATES = {
     },
     "2dseq": {
         "parameter_files": ["visu_pars"],
+        "optional_parameter_files": ["reco"],
         "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
         "load": LOAD_STAGES["all"],
         "scale": True,
@@ -400,7 +401,7 @@ class Dataset:
 
         :return:
         """
-        parameter_files = self._state["parameter_files"]
+        parameter_files = self._state["parameter_files"] + self._state.get("optional_parameter_files", [])
         for file in parameter_files:
             try:
                 self.add_parameter_file(file)

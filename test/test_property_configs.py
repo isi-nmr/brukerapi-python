@@ -118,6 +118,19 @@ def test_epi_layout_uses_actual_digitized_sample_count():
     assert k_space["cmd"][0] == "#PVM_DigNp // (#PVM_EncMatrix[1] // #NSegments)"
 
 
+def test_2dseq_scaling_prefers_visu_and_falls_back_to_reco():
+    config = _load_config("properties_2dseq_core.json")
+
+    assert [branch["cmd"] for branch in config["slope"]] == [
+        "#VisuCoreDataSlope.array",
+        "#RECO_map_slope.array",
+    ]
+    assert [branch["cmd"] for branch in config["offset"]] == [
+        "#VisuCoreDataOffs.array",
+        "#RECO_map_offset.array",
+    ]
+
+
 def test_zte_scheme_is_not_shadowed_by_radial():
     fid = _load_config("properties_fid_core.json")
     traj = _load_config("properties_traj_core.json")
