@@ -177,6 +177,8 @@ class Folder:
                     remove.append(child)
         for child in remove:
             node.children.remove(child)
+        node.make_children_map()
+        return node
 
     def get_dataset_list(self) -> list:
         """List of :obj:`.Dataset` instances contained in folder"""
@@ -545,7 +547,7 @@ class TypeFilter(Filter):
         if recursive is None:
             recursive = True
 
-        super().__init__(in_place, recursive)
+        super().__init__(query=None, in_place=in_place, recursive=recursive)
         self.type = value
 
     def filter_eval(self, node):
