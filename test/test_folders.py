@@ -1,3 +1,5 @@
+import copy
+import pickle
 from pathlib import Path
 
 import pytest
@@ -6,6 +8,25 @@ from brukerapi.dataset import Dataset
 from brukerapi.folders import Folder, Processing, Study
 
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
+
+
+def test_folder_attribute_miss_supports_hasattr_deepcopy_and_pickle(tmp_path):
+    (tmp_path / "child").mkdir()
+    folder = Folder(tmp_path, recursive=False)
+
+    assert not hasattr(folder, "missing")
+    with pytest.raises(AttributeError, match="missing"):
+        _ = folder.missing
+    with pytest.raises(KeyError, match="Child 'missing' not found"):
+        _ = folder["missing"]
+
+    copied = copy.deepcopy(folder)
+    restored = pickle.loads(pickle.dumps(folder))
+
+    assert copied.path == folder.path
+    assert restored.path == folder.path
+    assert [child.path.name for child in copied.children] == [child.path.name for child in folder.children]
+    assert [child.path.name for child in restored.children] == [child.path.name for child in folder.children]
 
 
 def test_folder_traversal_skips_processed_spectra(tmp_path):
