@@ -1,6 +1,6 @@
 import numpy as np
 
-from brukerapi.jcampdx import JCAMPDX
+from brukerapi.jcampdx import JCAMPDX, GenericParameter
 
 
 # @pytest.mark.skip(reason="in progress")
@@ -40,3 +40,38 @@ def test_jcampdx(test_jcampdx_data):
             assert value_test == value_ref
         else:
             assert value_ref == value_test
+
+
+def test_parse_value_preserves_delimiters_inside_angle_brackets():
+    enum = "(operation, <[1H] TX Volume, RX Surface Array>)"
+    struct = "(7, <label, with comma) and parenthesis>, 9)"
+
+    assert GenericParameter.parse_value(enum) == ["operation", "<[1H] TX Volume, RX Surface Array>"]
+    assert GenericParameter.parse_value(struct) == [7, "<label, with comma) and parenthesis>", 9]
+
+
+def test_parallel_lists_preserve_delimiters_inside_angle_brackets():
+    value = "(first, <Display, One>) (second, <Display) Two, value>)"
+
+    parts = GenericParameter.split_parallel_lists(value)
+
+    assert [GenericParameter.parse_value(part) for part in parts] == [
+        ["first", "<Display, One>"],
+        ["second", "<Display) Two, value>"],
+    ]
+
+
+def test_jcampdx_get_value_preserves_enum_display_name(tmp_path):
+    path = tmp_path / "configscan"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$CONFIG_SCAN_operation_mode=(operation, <[1H] TX Volume, RX Surface Array>)\n"
+        "##END=\n"
+    )
+
+    assert JCAMPDX(path).get_value("CONFIG_SCAN_operation_mode") == [
+        "operation",
+        "<[1H] TX Volume, RX Surface Array>",
+    ]

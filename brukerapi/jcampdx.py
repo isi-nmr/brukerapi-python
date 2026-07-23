@@ -310,6 +310,28 @@ class GenericParameter(Parameter):
         self.size_str = size_str
 
     @classmethod
+    def _split_outside_angle_brackets(cls, value, delimiter):
+        parts = []
+        start = 0
+        angle_depth = 0
+        index = 0
+
+        while index < len(value):
+            if value[index] == "<":
+                angle_depth += 1
+            elif value[index] == ">" and angle_depth:
+                angle_depth -= 1
+            elif angle_depth == 0 and value.startswith(delimiter, index):
+                parts.append(value[start:index])
+                index += len(delimiter)
+                start = index
+                continue
+            index += 1
+
+        parts.append(value[start:])
+        return parts
+
+    @classmethod
     def parse_value(cls, val_str, size_bracket=None):
         # remove \n
         val_str = val_str.replace("\n", "")
@@ -337,8 +359,8 @@ class GenericParameter(Parameter):
                 pass
 
         # list
-        if val_str.startswith("(") and val_str.endswith(""):
-            val_strs = val_str[1:-1].split(", ")
+        if val_str.startswith("(") and val_str.endswith(")"):
+            val_strs = cls._split_outside_angle_brackets(val_str[1:-1], ", ")
             value = []
 
             for val_str in val_strs:
@@ -346,7 +368,7 @@ class GenericParameter(Parameter):
 
             return value
 
-        val_strs = val_str.split(" ")
+        val_strs = [value for value in cls._split_outside_angle_brackets(val_str, " ") if value]
 
         if len(val_strs) > 1:
             # try casting into int, or float array, if both of casts fail, it should be string array
@@ -425,7 +447,7 @@ class GenericParameter(Parameter):
 
     @classmethod
     def split_parallel_lists(cls, val_str):
-        lst = _PARALLEL_BRACKET_RE.split(val_str)
+        lst = cls._split_outside_angle_brackets(val_str, ") ")
 
         if len(lst) == 1:
             return lst[0]
