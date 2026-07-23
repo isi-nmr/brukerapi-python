@@ -2,10 +2,12 @@ import contextlib
 import json
 import os
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
 
+from brukerapi.cli import report as cli_report
 from brukerapi.dataset import Dataset
 from brukerapi.exceptions import UnsuportedDatasetType
 
@@ -34,6 +36,35 @@ def test_directory_constructor_uses_default_load(path, dataset_type):
 
     assert dataset.type == dataset_type
     assert dataset.data.size > 0
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_report_default_directory_and_cli_file_outputs(tmp_path):
+    source = Dataset(PV51_STUDY_PATH / "10" / "fid")
+    dataset_path = tmp_path / "dataset" / "fid"
+    source.write(dataset_path)
+    dataset = Dataset(dataset_path)
+
+    dataset.report(props=["type"])
+    default_report = dataset.path.parent / f"{dataset.id}.json"
+    assert json.loads(default_report.read_text()) == {"type": "fid"}
+
+    output_directory = tmp_path / "reports"
+    output_directory.mkdir()
+    dataset.report(output_directory, props=["type"])
+    assert json.loads((output_directory / f"{dataset.id}.json").read_text()) == {"type": "fid"}
+
+    cli_output = tmp_path / "cli-report.json"
+    cli_report(
+        SimpleNamespace(
+            input=str(dataset_path),
+            output=str(cli_output),
+            format="json",
+            props=["type"],
+            verbose=False,
+        )
+    )
+    assert json.loads(cli_output.read_text()) == {"type": "fid"}
 
 
 @pytest.mark.skip(reason="in progress")
