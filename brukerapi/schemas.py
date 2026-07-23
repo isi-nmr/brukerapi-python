@@ -260,8 +260,8 @@ class SchemaFid(Schema):
         """
         random access
         """
-        array_ra = np.zeros(layouts_ra["storage"], dtype=self.numpy_dtype)
-        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode="r", shape=layouts["storage"], order="F")
+        array_ra = np.zeros(layouts_ra["storage"], dtype=self._dataset.numpy_dtype)
+        fp = np.memmap(self._dataset.path, dtype=self._dataset.numpy_dtype, mode="r", shape=layouts["storage"], order="F")
 
         for index_ra in np.ndindex(layouts_ra["k_space"][1:]):
             # index of line in the original k_space
@@ -291,7 +291,7 @@ class SchemaFid(Schema):
         layouts_ra["k_space"] = (layouts_ra["k_space"][0] // 2,) + layouts_ra["k_space"][1:]
         layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // 2,) + layouts_ra["encoding_space"][1:]
 
-        array_ra = self.reshape_fw(array_ra, layouts_ra)
+        array_ra = self.deserialize(array_ra, layouts_ra)
 
         singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))
 
@@ -299,12 +299,12 @@ class SchemaFid(Schema):
 
     def get_ra_layouts(self, slice_):
         layouts = deepcopy(self.layouts)
-        layouts["k_space"] = (layouts["k_space"][0] * 2,) + layouts["k_space"][1:]
-        layouts["encoding_space"] = (layouts["encoding_space"][0] * 2,) + layouts["encoding_space"][1:]
+        layouts["k_space"] = (layouts["k_space"][0] * 2,) + tuple(layouts["k_space"][1:])
+        layouts["encoding_space"] = (layouts["encoding_space"][0] * 2,) + tuple(layouts["encoding_space"][1:])
         layouts["inverse_permute"] = tuple(self.permutation_inverse(layouts["permute"]))
         layouts["encoding_permute"] = tuple(layouts["encoding_space"][i] for i in layouts["permute"])
-        layouts["channel_index"] = self.dim_type.index("channel")
-        layouts["channels"] = layouts["k_space"][layouts["channel_index"]]
+        layouts["channel_index"] = self._dataset.dim_type.index("channel") if "channel" in self._dataset.dim_type else None
+        layouts["channels"] = self._dataset.channels if layouts["channel_index"] is None else layouts["k_space"][layouts["channel_index"]]
         layouts["acquisition_position_ch"] = (layouts["acquisition_position"][0] // layouts["channels"], layouts["acquisition_position"][1] // layouts["channels"])
         layouts["storage_clear"] = (layouts["acquisition_position"][1], layouts["storage"][1])
         layouts["storage_clear_ch"] = (layouts["storage_clear"][0] // layouts["channels"], layouts["channels"], layouts["storage"][1])
@@ -313,8 +313,8 @@ class SchemaFid(Schema):
         layouts_ra = deepcopy(layouts)
 
         layouts_ra["k_space"], layouts_ra["k_space_offset"] = self._get_ra_k_space_info(layouts, slice_)
-        layouts_ra["channels"] = layouts_ra["k_space"][layouts_ra["channel_index"]]
-        layouts_ra["acquisition_position"] = (0, self.get_acquisition_length(channels=layouts_ra["channels"]))  # delete offset
+        layouts_ra["channels"] = layouts["channels"] if layouts_ra["channel_index"] is None else layouts_ra["k_space"][layouts_ra["channel_index"]]
+        layouts_ra["acquisition_position"] = (0, self._get_acquisition_length(layouts, layouts_ra["channels"]))  # delete offset
         # delete offset
 
         layouts_ra["encoding_space"], layouts_ra["storage"] = self._get_e_ra(layouts, layouts_ra)
@@ -389,9 +389,13 @@ class SchemaFid(Schema):
         encoding_space_ra = max_enc_index - min_enc_index + 1
         encoding_space_ra = (layout_full["encoding_space"][0],) + tuple(encoding_space_ra)
 
-        storage_ra = (self.get_acquisition_length(channels=layout_ra["channels"]), len(storage_ra))
+        storage_ra = (self._get_acquisition_length(layout_full, layout_ra["channels"]), len(storage_ra))
 
         return encoding_space_ra, storage_ra
+
+    @staticmethod
+    def _get_acquisition_length(layouts, channels):
+        return layouts["acquisition_position"][1] // layouts["channels"] * channels
 
     def index_k_to_encode(self, layout, index):
         index = np.ravel_multi_index(index, layout["k_space"], order="F")
@@ -484,9 +488,9 @@ class Schema2dseq(Schema):
 
     def get_rel_fg_index(self, fg_type):
         try:
-            return self.fg_list.index(fg_type)
-        except MissingProperty:
-            raise KeyError(f"Framegroup {fg_type} not found in fg_list") from MissingProperty
+            return self._dataset.dim_type[self._dataset.encoded_dim :].index(fg_type)
+        except ValueError:
+            raise KeyError(f"Framegroup {fg_type} not found in dim_type") from ValueError
 
     def scale(self):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
@@ -575,14 +579,14 @@ class Schema2dseq(Schema):
 
         layouts, layouts_ra = self._get_ra_layouts(slice_)
 
-        array_ra = np.zeros(layouts_ra["shape_storage"], dtype=self.numpy_dtype)
+        array_ra = np.zeros(layouts_ra["shape_storage"], dtype=self._dataset.numpy_dtype)
 
-        fp = np.memmap(self._dataset.path, dtype=self.numpy_dtype, mode="r", shape=layouts["shape_storage"], order="F")
+        fp = np.memmap(self._dataset.path, dtype=self._dataset.numpy_dtype, mode="r", shape=layouts["shape_storage"], order="F")
 
         for slice_ra, slice_full in self._generate_ra_indices(layouts_ra, layouts):
             array_ra[slice_ra] = np.array(fp[slice_full])
 
-        array_ra = self.reshape_fw(array_ra, layouts_ra)
+        array_ra = self.deserialize(array_ra, layouts_ra)
 
         singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))
 
@@ -593,7 +597,7 @@ class Schema2dseq(Schema):
         layouts_ra = deepcopy(layouts)
 
         layouts_ra["mask"] = np.zeros(layouts["shape_fg"], dtype=bool, order="F")
-        layouts_ra["mask"][slice_full[self.encoded_dim :]] = True
+        layouts_ra["mask"][slice_full[self._dataset.encoded_dim :]] = True
         layouts_ra["shape_fg"], layouts_ra["offset_fg"] = self._get_ra_shape(layouts_ra["mask"])
         layouts_ra["shape_frames"] = (np.prod(layouts_ra["shape_fg"], dtype=int),)
         layouts_ra["shape_storage"] = layouts_ra["shape_block"] + layouts_ra["shape_frames"]
@@ -615,10 +619,10 @@ class Schema2dseq(Schema):
         return tuple(ra_shape), np.array(ra_offset)
 
     def _generate_ra_indices(self, layouts_ra, layouts):
-        for index_ra in np.ndindex(layouts_ra["shape_final"][self.encoded_dim :]):
+        for index_ra in np.ndindex(layouts_ra["shape_final"][self._dataset.encoded_dim :]):
             index = tuple(np.array(index_ra) + layouts_ra["offset_fg"])
-            index = tuple(0 for i in range(self.encoded_dim)) + index
-            index_ra_f = tuple(0 for i in range(self.encoded_dim)) + index_ra
+            index = tuple(0 for i in range(self._dataset.encoded_dim)) + index
+            index_ra_f = tuple(0 for i in range(self._dataset.encoded_dim)) + index_ra
 
             index_ra_f = np.ravel_multi_index(index_ra_f, layouts_ra["shape_final"], order="F")
             index = np.ravel_multi_index(index, layouts["shape_final"], order="F")
@@ -626,6 +630,6 @@ class Schema2dseq(Schema):
             index_ra_f = np.unravel_index(index_ra_f, layouts_ra["shape_storage"], order="F")
             index = np.unravel_index(index, layouts["shape_storage"], order="F")
 
-            slice_ra = tuple(slice(None) for i in range(self.encoded_dim)) + index_ra_f[self.encoded_dim :]
-            slice_full = tuple(slice(None) for i in range(self.encoded_dim)) + index[self.encoded_dim :]
+            slice_ra = tuple(slice(None) for i in range(self._dataset.encoded_dim)) + index_ra_f[self._dataset.encoded_dim :]
+            slice_full = tuple(slice(None) for i in range(self._dataset.encoded_dim)) + index[self._dataset.encoded_dim :]
             yield slice_ra, slice_full

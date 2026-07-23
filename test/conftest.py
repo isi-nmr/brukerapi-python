@@ -199,6 +199,25 @@ def _find_2dseq_datasets(dataset_name: str):
     return datasets
 
 
+def _find_random_access_datasets(dataset_name: str):
+    dataset_root = TEST_DATA_ROOT / dataset_name
+    if not dataset_root.exists():
+        return []
+
+    folder_obj = Folder(dataset_root, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
+    datasets = folder_obj.get_dataset_list_rec()
+    datasets_2dseq = [dataset for dataset in datasets if dataset.type == "2dseq"]
+
+    representative_fids = {}
+    for dataset in (dataset for dataset in datasets if dataset.type == "fid"):
+        layout = "channel" in dataset.dim_type
+        current = representative_fids.get(layout)
+        if current is None or dataset.path.stat().st_size < current.path.stat().st_size:
+            representative_fids[layout] = dataset
+
+    return [*datasets_2dseq, *representative_fids.values()]
+
+
 def _ensure_test_data(dataset_name: str):
     dataset_dir = TEST_DATA_ROOT / dataset_name
     if dataset_dir.exists() and any(dataset_dir.iterdir()):
@@ -273,7 +292,7 @@ def pytest_generate_tests(metafunc):
             dataset_root = TEST_DATA_ROOT / dataset_name
 
             folder_obj = Folder(dataset_root, dataset_state={"parameter_files": [], "property_files": [], "load": 2})
-            for dataset in _find_2dseq_datasets(dataset_name):
+            for dataset in _find_random_access_datasets(dataset_name):
                 ra_ids.append(f"{dataset_name}/{dataset.id}")
                 ra_items.append((dataset.path, ref_state.get(dataset.id, {})))
 
