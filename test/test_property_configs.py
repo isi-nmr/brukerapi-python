@@ -78,3 +78,12 @@ def test_traj_scheme_config_keeps_exact_matches_before_code_fallback():
     config = _load_config("properties_traj_core.json")
 
     assert [branch["cmd"] for branch in config["scheme_id"]] == ["'RADIAL'", "'SPIRAL'", "'ZTE'"]
+
+
+def test_epi_layout_uses_actual_digitized_sample_count():
+    config = _load_config("properties_fid_core.json")
+    encoding = next(branch for branch in config["encoding_space"] if branch["conditions"] == ["@scheme_id=='EPI'"])
+    k_space = next(branch for branch in config["k_space"] if branch["conditions"] == ["@scheme_id=='EPI'"])
+
+    assert encoding["cmd"][0] == "#PVM_DigNp"
+    assert k_space["cmd"][0] == "#PVM_DigNp // (#PVM_EncMatrix[1] // #NSegments)"
