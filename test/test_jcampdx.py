@@ -139,3 +139,25 @@ def test_jcampdx_float_and_list_serialization_round_trip(tmp_path):
     assert restored.get_value("FLOAT") == 1.25
     assert restored.get_value("VALUES") == [2.5, 3.75]
     assert "1.250000e+00" in output.read_text()
+
+
+def test_jcampdx_data_parameter_setter_round_trip(tmp_path):
+    source = tmp_path / "source-data"
+    source.write_text(
+        "##TITLE=XY Data\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$POINTS=(XY..XY)\n"
+        "1.0, 2.0\n"
+        "3.0, 4.0\n"
+        "##END=\n"
+    )
+    jcamp = JCAMPDX(source)
+    expected = np.array([[5.0, 6.0], [7.0, 8.0]])
+
+    jcamp.get_parameter("POINTS").value = expected
+    assert np.array_equal(jcamp.get_value("POINTS"), expected)
+
+    output = tmp_path / "round-trip-data"
+    jcamp.write(output)
+    assert np.array_equal(JCAMPDX(output).get_value("POINTS"), expected)

@@ -549,16 +549,11 @@ class DataParameter(Parameter):
 
     @value.setter
     def value(self, value):
-        val_str = ""
+        values = np.asarray(value).reshape(-1)
+        if values.size % 2:
+            raise ValueError("XY data requires an even number of values")
 
-        for i in range(len(value)):
-            val_str += f"{value[i]:.6e}"
-            if np.mod(i, 2) == 0:
-                val_str += ", "
-            else:
-                val_str += "\n"
-
-        self.value = val_str
+        self.val_str = "\n".join(f"{values[index]:.6e}, {values[index + 1]:.6e}" for index in range(0, values.size, 2))
 
     @property
     def size(self):
