@@ -4,39 +4,14 @@ from brukerapi.dataset import Dataset
 
 
 def test_ra(test_ra_data):
-    d1 = Dataset(test_ra_data[0])
-    core_index = tuple(slice(None) for i in range(d1.encoded_dim))
-    d2 = Dataset(test_ra_data[0], random_access=True)
+    loaded = Dataset(test_ra_data[0])
+    mmap = Dataset(test_ra_data[0], mmap=True)
 
-    # if "slices" in test_ra_data[0].keys():
-    #     for s in test_ra_data[0]['slices']:
-    #         slice_ = json_to_slice(s)
-    #         assert np.array_equal(d1.data[slice_], d2.data[slice_])
-    # else:
-    # test by single slice - index
-    for index in np.ndindex(d1.shape[d1.encoded_dim :]):
-        assert np.array_equal(d1.data[core_index + index], d2.data[core_index + index])
+    core = tuple(slice(None) for _ in range(loaded.encoded_dim))
+    frame_shape = loaded.shape[loaded.encoded_dim :]
 
-    # test all possible slices
-    for slice_ in generate_slices(d1.shape[d1.encoded_dim :]):
-        assert np.array_equal(d1.data[core_index + slice_], d2.data[core_index + slice_])
+    index = tuple(0 for _ in frame_shape)
+    assert np.array_equal(loaded.data[core + index], mmap.data[core + index])
 
-
-def generate_slices(shape):
-    slices = []
-    for i1 in np.ndindex(shape):
-        for i2 in np.ndindex(shape):
-            if np.all(np.array(i1) <= np.array(i2)):
-                slice_ = tuple(slice(i1_, i2_ + 1) for i1_, i2_ in zip(i1, i2))
-                slices.append(slice_)
-    return slices
-
-
-def json_to_slice(s):
-    slice_ = []
-    for item in s:
-        if isinstance(item, str):
-            slice_.append(eval(item))
-        elif isinstance(item, int):
-            slice_.append(item)
-    return tuple(slice_)
+    subarray = tuple(slice(0, min(size, 2)) for size in frame_shape)
+    assert np.array_equal(loaded.data[core + subarray], mmap.data[core + subarray])

@@ -1,7 +1,7 @@
 class DataRandomAccess:
     def __init__(self, dataset):
         self._dataset = dataset
-        self._scheme = dataset._scheme
+        self._schema = dataset._schema
 
-    def __getitem__(self, slice):
-        return self._scheme.ra(slice)
+    def __getitem__(self, key):
+        return self._schema.ra(key)
