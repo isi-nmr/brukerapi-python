@@ -3,6 +3,7 @@ import json
 import os
 import os.path
 import re
+import warnings
 from copy import deepcopy
 from pathlib import Path
 
@@ -306,7 +307,15 @@ class Dataset:
 
         self.load_schema()
         self.load_data()
-        self.load_traj()
+        try:
+            self.load_traj()
+        except Exception as error:
+            self._traj = None
+            warnings.warn(
+                f"Could not load optional trajectory {self.path.parent / 'traj'}: {error}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
         self.load_fid_companions()
 
     def unload(self):
