@@ -25,7 +25,7 @@ from .exceptions import (
     UnsuportedDatasetType,
 )
 from .jcampdx import JCAMPDX
-from .schemas import Schema2dseq, SchemaFid, SchemaRawdata, SchemaTraj
+from .schemas import Schema2dseq, SchemaFid, SchemaFidCompanion, SchemaRawdata, SchemaTraj
 
 LOAD_STAGES = {
     "empty": 0,
@@ -117,6 +117,15 @@ RELATIVE_PATHS = {
     },
 }
 
+SUPPORTED_SUBTYPES = {
+    "fid": {""},
+    "fid_proc": {"64"},
+    "2dseq": {""},
+    "traj": {""},
+    "rawdata": {"Navigator"},
+}
+FID_COMPANION_SUBTYPES = {"navFid", "orig", "spiral"}
+
 
 class Dataset:
     """
@@ -195,6 +204,8 @@ class Dataset:
 
         if self.type not in DEFAULT_STATES:
             raise UnsuportedDatasetType(self.type)
+        if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
+            raise UnsuportedDatasetType(self.path.name)
 
         # set
         self._set_state(state)
@@ -204,6 +215,11 @@ class Dataset:
 
         # load data if the load kwarg is true
         self.load()
+
+    def _is_supported_subtype(self):
+        if self.type == "rawdata" and re.fullmatch(r"job\d+", self.subtype):
+            return True
+        return self.subtype in SUPPORTED_SUBTYPES[self.type]
 
     def __enter__(self):
         self._state["load"] = LOAD_STAGES["all"]
@@ -291,6 +307,7 @@ class Dataset:
         self.load_schema()
         self.load_data()
         self.load_traj()
+        self.load_fid_companions()
 
     def unload(self):
         """
@@ -302,6 +319,7 @@ class Dataset:
         self.unload_schema()
         self.unload_data()
         self.unload_traj()
+        self.unload_fid_companions()
 
     """
     PARAMETERS
@@ -663,6 +681,32 @@ class Dataset:
         self._traj = None
 
     """
+    FID COMPANIONS
+    """
+
+    def load_fid_companions(self):
+        self._fid_companions = {}
+        if self.type != "fid" or self.subtype or self._state.get("_auxiliary"):
+            return
+
+        for subtype in sorted(FID_COMPANION_SUBTYPES):
+            path = self.path.with_suffix(f".{subtype}")
+            if not path.exists():
+                continue
+
+            companion = Dataset(path, load=LOAD_STAGES["empty"], _auxiliary=True)
+            companion._parameters = self.parameters
+            companion.numpy_dtype = self.numpy_dtype
+            companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
+            companion.dim_type = ["sample"]
+            companion._schema = SchemaFidCompanion(companion)
+            companion.load_data()
+            self._fid_companions[subtype] = companion
+
+    def unload_fid_companions(self):
+        self._fid_companions = {}
+
+    """
     EXPORT INTERFACE
     """
 
@@ -756,7 +800,7 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ["_parameters", "path", "_data", "_traj", "_state", "_schema", "random_access", "study_id", "exp_id", "proc_id", "subj_id", "_properties"]
+        reserved = ["_parameters", "path", "_data", "_traj", "_fid_companions", "_state", "_schema", "random_access", "study_id", "exp_id", "proc_id", "subj_id", "_properties"]
         props = list(set(props) - set(reserved))
 
         properties = {}
@@ -828,6 +872,11 @@ class Dataset:
         if self._traj is not None:
             return self._traj.data
         raise TrajNotLoaded
+
+    @property
+    def fid_companions(self):
+        """Auxiliary ``fid.<subtype>`` datasets keyed by subtype."""
+        return self._fid_companions.copy()
 
     @property
     def parameters(self):
