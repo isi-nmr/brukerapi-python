@@ -462,28 +462,6 @@ class SchemaRawdata(Schema):
 SchemaRawdata.seralize = SchemaRawdata.serialize
 
 
-class SchemaSer(Schema):
-    @property
-    def layouts(self):
-        if self._layouts is not None:
-            return self._layouts
-
-        PVM_SpecMatrix = self._dataset.get_value("PVM_SpecMatrix")
-        PVM_Matrix = self._dataset.get_value("PVM_Matrix")
-        PVM_EncNReceivers = self._dataset.get_value("PVM_EncNReceivers")
-        layouts = {}
-        layouts["raw"] = (PVM_SpecMatrix, PVM_EncNReceivers, PVM_Matrix[0], PVM_Matrix[1])
-        return layouts
-
-    def deserialize(self, data):
-        data = data[0::2] + 1j * data[1::2]
-        data = np.reshape(data, self.layouts["raw"], order="F")
-        return data
-
-    def serialize(self, data):
-        raise NotImplementedError
-
-
 class Schema2dseq(Schema):
     """
     Schema2dseq class

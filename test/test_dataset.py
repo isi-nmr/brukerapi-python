@@ -7,8 +7,17 @@ import numpy as np
 import pytest
 
 from brukerapi.dataset import Dataset
+from brukerapi.exceptions import UnsuportedDatasetType
 
 data = 0
+
+
+def test_unsupported_dataset_type(tmp_path):
+    path = tmp_path / "unsupported"
+    path.touch()
+
+    with pytest.raises(UnsuportedDatasetType, match="Dataset type: unsupported is not supported"):
+        Dataset(path)
 
 
 @pytest.mark.skip(reason="in progress")
