@@ -102,7 +102,7 @@ class DatasetTypeMissmatch(Exception):
     def __str__(self):
         if self.message:
             return self.message
-        return "DatasetTypeMissmatch"
+        return "Dataset type mismatch"
 
 
 class IncompleteDataset(Exception):
@@ -115,7 +115,7 @@ class IncompleteDataset(Exception):
     def __str__(self):
         if self.message:
             return self.message
-        return "DatasetTypeMissmatch"
+        return "Incomplete dataset"
 
 
 class ConditionNotMet(Exception):
@@ -128,7 +128,7 @@ class ConditionNotMet(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "Not a valid JCAMP-DX version"
+        return "Condition not met"
 
 
 class SequenceNotMet(Exception):
@@ -141,7 +141,7 @@ class SequenceNotMet(Exception):
     def __str__(self):
         if self.message:
             return f"Message {self.message}"
-        return "Not a valid JCAMP-DX version"
+        return "Sequence condition not met"
 
 
 class PvVersionNotMet(Exception):
@@ -154,7 +154,7 @@ class PvVersionNotMet(Exception):
     def __str__(self):
         if self.message:
             return f"Message {self.message}"
-        return "Not a valid ParaVision version"
+        return "ParaVision version condition not met"
 
 
 class FilterEvalFalse(Exception):
@@ -167,7 +167,7 @@ class FilterEvalFalse(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "FilterEvalFalse"
+        return "Filter expression evaluated false"
 
 
 class NotADatasetDir(Exception):
@@ -180,7 +180,7 @@ class NotADatasetDir(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return f"NotADatasetDir {self.message}"
+        return "Not a dataset directory"
 
 
 class ScanNotFound(Exception):
@@ -193,7 +193,7 @@ class ScanNotFound(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return f"Scan: {self.message} not found"
+        return "Scan not found"
 
 
 class RecoNotFound(Exception):
@@ -206,7 +206,7 @@ class RecoNotFound(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return f"Reco: {self.message} not found"
+        return "Reconstruction not found"
 
 
 class ParametersNotLoaded(Exception):
@@ -219,7 +219,7 @@ class ParametersNotLoaded(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "ParametersNotLoaded"
+        return "Parameters not loaded"
 
 
 class SchemeNotLoaded(Exception):
@@ -232,7 +232,7 @@ class SchemeNotLoaded(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "SchemeNotLoaded"
+        return "Scheme not loaded"
 
 
 class DataNotLoaded(Exception):
@@ -245,7 +245,7 @@ class DataNotLoaded(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "DataNotLoaded"
+        return "Data not loaded"
 
 
 class InvalidDataset(Exception):
@@ -258,7 +258,7 @@ class InvalidDataset(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "Invalid dataset loaded"
+        return "Invalid dataset"
 
 
 class TrajNotLoaded(Exception):
@@ -271,7 +271,7 @@ class TrajNotLoaded(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "TrajNotLoaded"
+        return "Trajectory not loaded"
 
 
 class NotStudyFolder(Exception):
@@ -323,7 +323,7 @@ class PropertyConditionNotMet(Exception):
     def __str__(self):
         if self.message:
             return f"{self.message}"
-        return "Not a Bruker processing folder."
+        return "Property condition not met"
 
 
 class FidSchemaUndefined(Exception):

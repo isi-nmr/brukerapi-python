@@ -30,7 +30,7 @@ class Folder:
         parent: "Folder" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
-        dataset_state: dict = DEFAULT_DATASET_STATE,
+        dataset_state: dict | None = None,
     ):
         """The constructor for Folder class.
 
@@ -67,6 +67,7 @@ class Folder:
 
     def _set_dataset_state(self, passed):
         result = deepcopy(DEFAULT_DATASET_STATE)
+        passed = deepcopy(passed) if passed is not None else {}
 
         if "parameter_files" in passed:
             passed["parameter_files"] = result["parameter_files"] + passed["parameter_files"]
@@ -177,6 +178,8 @@ class Folder:
                     remove.append(child)
         for child in remove:
             node.children.remove(child)
+        node.make_children_map()
+        return node
 
     def get_dataset_list(self) -> list:
         """List of :obj:`.Dataset` instances contained in folder"""
@@ -311,7 +314,7 @@ class Study(Folder):
         parent: "Folder" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
-        dataset_state: dict = DEFAULT_DATASET_STATE,
+        dataset_state: dict | None = None,
     ):
         """The constructor for Study class.
 
@@ -381,7 +384,7 @@ class Experiment(Folder):
         parent: "Folder" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
-        dataset_state: dict = DEFAULT_DATASET_STATE,
+        dataset_state: dict | None = None,
     ):
         """The constructor for Experiment class.
 
@@ -425,7 +428,7 @@ class Experiment(Folder):
 
 
 class Processing(Folder):
-    def __init__(self, path, parent=None, recursive=None, dataset_index=None, dataset_state: dict = DEFAULT_DATASET_STATE):
+    def __init__(self, path, parent=None, recursive=None, dataset_index=None, dataset_state: dict | None = None):
         """The constructor for Processing class.
 
         :param path: path to a folder
@@ -545,7 +548,7 @@ class TypeFilter(Filter):
         if recursive is None:
             recursive = True
 
-        super().__init__(in_place, recursive)
+        super().__init__(query=None, in_place=in_place, recursive=recursive)
         self.type = value
 
     def filter_eval(self, node):

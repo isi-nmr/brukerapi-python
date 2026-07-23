@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from brukerapi.dataset import Dataset
-from brukerapi.folders import Folder, Processing, Study
+from brukerapi.folders import DEFAULT_DATASET_STATE, Folder, Processing, Study, TypeFilter
 
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
 
@@ -27,6 +27,46 @@ def test_folder_attribute_miss_supports_hasattr_deepcopy_and_pickle(tmp_path):
     assert restored.path == folder.path
     assert [child.path.name for child in copied.children] == [child.path.name for child in folder.children]
     assert [child.path.name for child in restored.children] == [child.path.name for child in folder.children]
+
+
+def test_type_filter_forwards_nondefault_filter_options(tmp_path):
+    folder = Folder(tmp_path, recursive=False)
+    type_filter = TypeFilter(Dataset, in_place=False, recursive=False)
+
+    filtered = type_filter.filter(folder)
+
+    assert type_filter.query is None
+    assert type_filter.in_place is False
+    assert type_filter.recursive is False
+    assert isinstance(filtered, Folder)
+    assert filtered is not folder
+
+
+def test_folder_clean_and_in_place_filter_return_folder(tmp_path):
+    folder = Folder(tmp_path, recursive=False)
+
+    assert folder.clean() is folder
+    assert TypeFilter(Dataset, in_place=True).filter(folder) is folder
+
+
+def test_folder_dataset_state_defaults_are_fresh_and_inputs_are_not_mutated(tmp_path):
+    custom_state = {
+        "parameter_files": ["custom-parameter"],
+        "property_files": [Path("custom-property.json")],
+        "load": 1,
+    }
+    original_custom_state = copy.deepcopy(custom_state)
+    original_default_state = copy.deepcopy(DEFAULT_DATASET_STATE)
+
+    configured = Folder(tmp_path, recursive=False, dataset_state=custom_state)
+    defaulted = Folder(tmp_path, recursive=False)
+
+    assert custom_state == original_custom_state
+    assert original_default_state == DEFAULT_DATASET_STATE
+    assert configured._dataset_state["parameter_files"][-1] == "custom-parameter"
+    assert configured._dataset_state["property_files"][-1] == Path("custom-property.json")
+    assert defaulted._dataset_state == original_default_state
+    assert configured._dataset_state is not defaulted._dataset_state
 
 
 def test_folder_traversal_skips_processed_spectra(tmp_path):
