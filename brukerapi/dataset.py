@@ -652,10 +652,29 @@ class Dataset:
         1D ndarray containing the full data vector
         """
 
-        try:
-            assert os.stat(str(path)).st_size == np.prod(shape) * dtype.itemsize
-        except AssertionError:
-            raise InvalidDataset("Invalid dataset, dimension mismatch") from AssertionError
+        actual_bytes = os.stat(path).st_size
+        expected_bytes = int(np.prod(shape) * dtype.itemsize)
+        if actual_bytes != expected_bytes:
+            with Path(path).open("rb") as binary:
+                signature = binary.read(42)
+
+            if signature == b"version https://git-lfs.github.com/spec/v1":
+                raise InvalidDataset(f"Invalid dataset, Git LFS pointer stub at {path}; fetch the binary file content")
+
+            if actual_bytes == 0:
+                raise InvalidDataset(f"Invalid dataset, empty binary file at {path}; expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}")
+
+            frame_shape = tuple(shape[:-1]) if len(shape) > 1 else tuple(shape)
+            frame_bytes = int(np.prod(frame_shape) * dtype.itemsize)
+            if actual_bytes < frame_bytes:
+                raise InvalidDataset(
+                    f"Invalid dataset, empty or stub file at {path}: got {actual_bytes} bytes, less than one frame ({frame_bytes} bytes); "
+                    f"expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}"
+                )
+
+            raise InvalidDataset(
+                f"Invalid dataset size at {path}: expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}, got {actual_bytes} bytes"
+            )
 
         return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
 
