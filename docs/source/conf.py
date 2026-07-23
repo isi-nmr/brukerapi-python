@@ -11,7 +11,10 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import re
 import sys
+from datetime import date
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -19,11 +22,14 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- Project information -----------------------------------------------------
 
 project = "brukerapi"
-copyright = "2025, Institute of Scientific Instruments of the CAS, v.v.i."
+copyright = f"{date.today().year}, Institute of Scientific Instruments of the CAS, v.v.i."
 author = "Tomas Psorn, Jiri Vitous"
 
-# The full version, including alpha/beta/rc tags
-release = "0.2.5"
+# Keep the documentation version synchronized with the package metadata.
+pyproject = (Path(__file__).resolve().parents[2] / "pyproject.toml").read_text(encoding="utf-8")
+project_metadata = pyproject.split("[project]", maxsplit=1)[1].split("\n[", maxsplit=1)[0]
+release = re.search(r'^version\s*=\s*"([^"]+)"', project_metadata, flags=re.MULTILINE).group(1)
+version = release
 
 
 # -- General configuration ---------------------------------------------------
