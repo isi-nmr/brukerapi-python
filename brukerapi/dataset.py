@@ -635,9 +635,11 @@ class Dataset:
         """
 
         if path is None:
-            path = self.path.parent / self.id + ".json"
-        elif path.is_dir():
-            path = Path(path) / self.id + ".json"
+            path = self.path.parent / f"{self.id}.json"
+        else:
+            path = Path(path)
+            if path.is_dir():
+                path /= f"{self.id}.json"
 
         if verbose:
             print(f"bruker report: {self.path!s} -> {path!s}")

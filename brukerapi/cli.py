@@ -141,7 +141,7 @@ def report(args):
     elif output is None:
         Dataset(input, add_parameters=["subject"]).report(props=args.props, verbose=args.verbose)
     # dataset to folder, or dataset to file
-    elif output.is_dir():
+    else:
         Dataset(input, add_parameters=["subject"]).report(path=output, props=args.props, verbose=args.verbose)
 
 
