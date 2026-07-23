@@ -12,6 +12,7 @@ import pytest
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.schemas import SchemaFid
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -306,6 +307,63 @@ def test_2dseq_deserialize_serialize_preserves_stored_values():
     serialized = dataset._schema.serialize(dataset.data, dataset._schema.layouts)
 
     assert np.array_equal(serialized.astype(dataset.numpy_dtype), stored)
+
+
+@pytest.mark.parametrize(
+    ("aq_mod", "encoding_space", "expected"),
+    [
+        ("qf", (4, 1), np.array([[1], [2], [3], [4]], dtype=np.int32)),
+        ("qdig", (2, 1), np.array([[1 + 2j], [3 + 4j]])),
+    ],
+)
+def test_fid_quadrature_mode_controls_real_imag_deinterleave(aq_mod, encoding_space, expected):
+    dataset = SimpleNamespace(
+        scheme_id="CART_2D",
+        numpy_dtype=np.dtype("int32"),
+        block_size=4,
+        block_count=1,
+        encoding_space=encoding_space,
+        permute=(0, 1),
+        k_space=encoding_space,
+        acq_lenght=4,
+        _parameter_value=lambda name, default=None: aq_mod if name == "AQ_mod" else default,
+    )
+    schema = SchemaFid.__new__(SchemaFid)
+    schema._dataset = dataset
+    schema._reorder_fid_lines = lambda data, dir="FW": data
+    layouts = {
+        "storage": (4, 1),
+        "acquisition_position": (0, 4),
+        "encoding_space": encoding_space,
+        "encoding_permuted": encoding_space,
+        "permute": (0, 1),
+        "inverse_permute": (0, 1),
+        "k_space": encoding_space,
+    }
+    stored = np.array([[1], [2], [3], [4]], dtype=np.int32)
+
+    decoded = schema.deserialize(stored, layouts)
+
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(schema.serialize(decoded, layouts), stored)
+
+
+def test_fid_qf_layout_preserves_all_real_samples():
+    dataset = SimpleNamespace(
+        block_size=4,
+        block_count=1,
+        encoding_space=(2, 1),
+        permute=(0, 1),
+        k_space=(2, 1),
+        acq_lenght=4,
+        scheme_id="CART_2D",
+        _parameter_value=lambda name, default=None: "qf" if name == "AQ_mod" else default,
+    )
+    schema = SchemaFid.__new__(SchemaFid)
+    schema._dataset = dataset
+
+    assert schema.layouts["encoding_space"] == (4, 1)
+    assert schema.layouts["k_space"] == (4, 1)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")

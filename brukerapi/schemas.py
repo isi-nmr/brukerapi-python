@@ -104,9 +104,18 @@ class Schema:
 
 
 class SchemaFid(Schema):
+    """Raw ordered FID/k-space schema.
+
+    This reader applies storage trimming, dimensional permutation, RARE/EPI
+    phase-line ordering, and EPI odd-line mirroring. It does not perform a
+    full reconstruction: ramp-sampling regridding and ``RECO_qopts``
+    quadrature corrections remain the caller's responsibility.
     """
-    SchemeFid class
-    """
+
+    @property
+    def acquisition_factor(self):
+        """Number of stored scalar samples per logical sample."""
+        return 1 if str(self._dataset._parameter_value("AQ_mod", "")).lower() == "qf" else 2
 
     @property
     def layouts(self):
@@ -122,9 +131,22 @@ class SchemaFid(Schema):
         layouts = {"storage": (self._dataset.block_size,) + (self._dataset.block_count,)}
         layouts["encoding_space"] = self._dataset.encoding_space
         layouts["permute"] = self._dataset.permute
-        layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
         layouts["inverse_permute"] = self.permutation_inverse(layouts["permute"])
         layouts["k_space"] = self._dataset.k_space
+
+        if self.acquisition_factor == 1:
+            stored_samples = self._dataset.acq_lenght * self._dataset.block_count
+            for name in ("encoding_space", "k_space"):
+                logical_samples = int(np.prod(layouts[name]))
+                if stored_samples % logical_samples:
+                    raise InvalidDataset(
+                        f"real-only AQ_mod=qf sample count {stored_samples} is incompatible with {name} layout {layouts[name]}"
+                    )
+                ratio = stored_samples // logical_samples
+                if ratio > 1:
+                    layouts[name] = (layouts[name][0] * ratio,) + tuple(layouts[name][1:])
+
+        layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
 
         if "EPI" in self._dataset.scheme_id:
             discarded = self._dataset.block_size - self._dataset.acq_lenght
@@ -142,7 +164,8 @@ class SchemaFid(Schema):
     def deserialize(self, data, layouts):
         data = self._acquisition_trim(data, layouts)
 
-        data = data[0::2, ...] + 1j * data[1::2, ...]
+        if self.acquisition_factor == 2:
+            data = data[0::2, ...] + 1j * data[1::2, ...]
 
         # Form encoding space
         data = self._acquisitions_to_encode(data, layouts)
@@ -259,11 +282,19 @@ class SchemaFid(Schema):
 
         data = np.transpose(data, layouts["inverse_permute"])
 
-        data = np.reshape(data, (layouts["acquisition_position"][1] // 2, layouts["storage"][1]), order="F")
+        data = np.reshape(
+            data,
+            (layouts["acquisition_position"][1] // self.acquisition_factor, layouts["storage"][1]),
+            order="F",
+        )
 
         data_ = np.zeros(layouts["storage"], dtype=self._dataset.numpy_dtype, order="F")
 
-        if layouts["acquisition_position"][0] > 0:
+        if self.acquisition_factor == 1:
+            start = layouts["acquisition_position"][0]
+            stop = start + layouts["acquisition_position"][1]
+            data_[start:stop, :] = data.real
+        elif layouts["acquisition_position"][0] > 0:
             channels = layouts["k_space"][self._dataset.dim_type.index("channel")]
             data = np.reshape(data, (-1, channels, data.shape[-1]), order="F")
             data_ = np.reshape(data_, (-1, channels, data_.shape[-1]), order="F")
@@ -314,8 +345,8 @@ class SchemaFid(Schema):
             except IndexError:
                 print(index_full)
 
-        layouts_ra["k_space"] = (layouts_ra["k_space"][0] // 2,) + layouts_ra["k_space"][1:]
-        layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // 2,) + layouts_ra["encoding_space"][1:]
+        layouts_ra["k_space"] = (layouts_ra["k_space"][0] // self.acquisition_factor,) + layouts_ra["k_space"][1:]
+        layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // self.acquisition_factor,) + layouts_ra["encoding_space"][1:]
 
         array_ra = self.deserialize(array_ra, layouts_ra)
 
@@ -325,8 +356,8 @@ class SchemaFid(Schema):
 
     def get_ra_layouts(self, slice_):
         layouts = deepcopy(self.layouts)
-        layouts["k_space"] = (layouts["k_space"][0] * 2,) + tuple(layouts["k_space"][1:])
-        layouts["encoding_space"] = (layouts["encoding_space"][0] * 2,) + tuple(layouts["encoding_space"][1:])
+        layouts["k_space"] = (layouts["k_space"][0] * self.acquisition_factor,) + tuple(layouts["k_space"][1:])
+        layouts["encoding_space"] = (layouts["encoding_space"][0] * self.acquisition_factor,) + tuple(layouts["encoding_space"][1:])
         layouts["inverse_permute"] = tuple(self.permutation_inverse(layouts["permute"]))
         layouts["encoding_permute"] = tuple(layouts["encoding_space"][i] for i in layouts["permute"])
         layouts["channel_index"] = self._dataset.dim_type.index("channel") if "channel" in self._dataset.dim_type else None
