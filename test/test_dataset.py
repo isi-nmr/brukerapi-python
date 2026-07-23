@@ -10,7 +10,7 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.exceptions import FilterEvalFalse, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -353,6 +353,36 @@ def test_epi_standard_kblock_warns_on_nonzero_discarded_samples():
     assert np.array_equal(trimmed[:, 0], np.arange(6))
 
 
+def test_recipe_substitution_preserves_overlapping_identifiers():
+    dataset = Dataset.__new__(Dataset)
+    recipe = "@Foo + @FooBar + #X + #XY + #Matrix.tuple"
+
+    substituted = dataset._sub_parameters(recipe)
+
+    assert substituted == (
+        "self.Foo + self.FooBar + self['X'].value + "
+        "self['XY'].value + self['Matrix'].tuple"
+    )
+
+
+@pytest.mark.parametrize(
+    ("query", "error_type"),
+    [
+        ("unknown_name > 0", NameError),
+        ("self.type ==", SyntaxError),
+        ("self.type + 1", TypeError),
+    ],
+)
+def test_dataset_query_wraps_malformed_expressions(query, error_type):
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "fid"
+
+    with pytest.raises(FilterEvalFalse, match=rf"Invalid query .*{re.escape(query)}") as error:
+        dataset.query(query)
+
+    assert isinstance(error.value.__cause__, error_type)
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
@@ -360,14 +390,14 @@ def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source.write(dataset_path)
     dataset = Dataset(dataset_path)
 
-    dataset.report(props=["type"])
+    dataset.report(props=["scheme_id"])
     default_report = dataset.path.parent / f"{dataset.id}.json"
-    assert json.loads(default_report.read_text()) == {"type": "fid"}
+    assert json.loads(default_report.read_text()) == {"scheme_id": "CART_3D"}
 
     output_directory = tmp_path / "reports"
     output_directory.mkdir()
-    dataset.report(output_directory, props=["type"])
-    assert json.loads((output_directory / f"{dataset.id}.json").read_text()) == {"type": "fid"}
+    dataset.report(output_directory, props=["scheme_id"])
+    assert json.loads((output_directory / f"{dataset.id}.json").read_text()) == {"scheme_id": "CART_3D"}
 
     cli_output = tmp_path / "cli-report.json"
     cli_report(
@@ -375,11 +405,42 @@ def test_report_default_directory_and_cli_file_outputs(tmp_path):
             input=str(dataset_path),
             output=str(cli_output),
             format="json",
-            props=["type"],
+            props=["scheme_id"],
             verbose=False,
         )
     )
-    assert json.loads(cli_output.read_text()) == {"type": "fid"}
+    assert json.loads(cli_output.read_text()) == {"scheme_id": "CART_3D"}
+
+
+def test_to_dict_excludes_dataset_typing_and_preserves_property_order():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "fid"
+    dataset.subtype = ""
+    dataset.first = 1
+    dataset.second = 2
+    dataset.third = 3
+
+    exported = dataset.to_dict()
+
+    assert list(exported) == ["first", "second", "third"]
+    assert exported == {"first": 1, "second": 2, "third": 3}
+
+
+def test_chained_dataset_configuration_merges_onto_current_state(tmp_path):
+    path = tmp_path / "2dseq"
+    path.touch()
+    dataset = Dataset(path, load=LOAD_STAGES["empty"])
+    first_config = {"mmap": True, "parameter_files": ["method"]}
+
+    returned = dataset(**first_config)(scale=False, property_files=[tmp_path / "custom.json"])
+
+    assert returned is dataset
+    assert dataset._state["mmap"] is True
+    assert dataset._state["scale"] is False
+    assert dataset._state["load"] == LOAD_STAGES["empty"]
+    assert dataset._state["parameter_files"][-1] == "method"
+    assert dataset._state["property_files"][-1] == tmp_path / "custom.json"
+    assert first_config == {"mmap": True, "parameter_files": ["method"]}
 
 
 @pytest.mark.skip(reason="in progress")

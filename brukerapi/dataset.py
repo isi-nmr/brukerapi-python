@@ -254,7 +254,8 @@ class Dataset:
         return self
 
     def _set_state(self, passed):
-        result = deepcopy(DEFAULT_STATES[self.type])
+        result = deepcopy(getattr(self, "_state", DEFAULT_STATES[self.type]))
+        passed = deepcopy(passed)
 
         if "parameter_files" in passed:
             passed["parameter_files"] = result["parameter_files"] + passed["parameter_files"]
@@ -577,16 +578,23 @@ class Dataset:
                 raise PropertyConditionNotMet from KeyError
 
     def _sub_parameters(self, recipe):
-        # entries with property e.g. VisuFGOrderDesc.nested to self._dataset['VisuFGOrderDesc'].nested
-        for match in re.finditer(r"#[a-zA-Z0-9_]+\.[a-zA-Z]+", recipe):
-            m = re.match("#[a-zA-Z0-9_]+", match.group())
-            recipe = recipe.replace(m.group(), f"self['{m.group()[1:]}']")
-        # entries without property e.g. VisuFGOrderDesc to self._dataset['VisuFGOrderDesc'].value
-        for match in re.finditer("@[a-zA-Z0-9_]+", recipe):
-            recipe = recipe.replace(match.group(), f"self.{match.group()[1:]}")
-        for match in re.finditer("#[a-zA-Z0-9_]+", recipe):
-            recipe = recipe.replace(match.group(), f"self['{match.group()[1:]}'].value")
-        return recipe
+        def substitute_parameter(match):
+            name = match.group("name")
+            accessor = match.group("accessor")
+            if accessor is not None:
+                return f"self['{name}'].{accessor}"
+            return f"self['{name}'].value"
+
+        recipe = re.sub(
+            r"#(?P<name>[a-zA-Z0-9_]+)(?:\.(?P<accessor>[a-zA-Z_][a-zA-Z0-9_]*))?(?![a-zA-Z0-9_])",
+            substitute_parameter,
+            recipe,
+        )
+        return re.sub(
+            r"@(?P<name>[a-zA-Z0-9_]+)(?![a-zA-Z0-9_])",
+            lambda match: f"self.{match.group('name')}",
+            recipe,
+        )
 
     """
     SCHEMA
@@ -830,8 +838,24 @@ class Dataset:
             props = list(vars(self).keys())
 
         # list of Dataset properties to be excluded from the export
-        reserved = ["_parameters", "path", "_data", "_traj", "_fid_companions", "_state", "_schema", "random_access", "study_id", "exp_id", "proc_id", "subj_id", "_properties"]
-        props = list(set(props) - set(reserved))
+        reserved = {
+            "_parameters",
+            "path",
+            "_data",
+            "_traj",
+            "_fid_companions",
+            "_state",
+            "_schema",
+            "random_access",
+            "study_id",
+            "exp_id",
+            "proc_id",
+            "subj_id",
+            "_properties",
+            "type",
+            "subtype",
+        }
+        props = [prop for prop in props if prop not in reserved]
 
         properties = {}
 
@@ -871,9 +895,11 @@ class Dataset:
         for q in query:
             try:
                 if not eval(self._sub_parameters(q), {**globals(), "self": self}):
-                    raise FilterEvalFalse
-            except (KeyError, AttributeError) as e:
-                raise FilterEvalFalse from e
+                    raise FilterEvalFalse(f"Query evaluated false: {q!r}")
+            except FilterEvalFalse:
+                raise
+            except (KeyError, AttributeError, NameError, SyntaxError, TypeError) as error:
+                raise FilterEvalFalse(f"Invalid query {q!r}: {type(error).__name__}: {error}") from error
 
     """
     PROPERTIES
