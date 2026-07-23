@@ -575,6 +575,7 @@ class Schema2dseq(Schema):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
         self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, "FW")
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order="F")
+        self._dataset.data = self._apply_disk_slice_order(self._dataset.data)
         self._dataset.data = self._combine_complex_frames(self._dataset.data)
 
     def deserialize(self, data, layouts):
@@ -584,16 +585,33 @@ class Schema2dseq(Schema):
 
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
+        data = self._apply_disk_slice_order(data)
 
         return self._combine_complex_frames(data)
+
+    def _frame_group_axis(self, name):
+        normalized_name = name.strip("<>").upper()
+        for axis, dim_type in enumerate(self._dataset.dim_type):
+            if str(dim_type).strip("<>").upper() == normalized_name:
+                return axis
+        return None
+
+    def _apply_disk_slice_order(self, data):
+        disk_order = str(self._dataset._parameter_value("VisuCoreDiskSliceOrder", "")).strip("<>").lower()
+        if disk_order != "disk_reverse_slice_order":
+            return data
+
+        axis = self._frame_group_axis("FG_SLICE")
+        if axis is None:
+            raise InvalidDataset("VisuCoreDiskSliceOrder requests reversed slices, but no FG_SLICE axis is present")
+        return np.flip(data, axis=axis)
 
     def _complex_frame_axis(self, data):
         if not self._dataset._state.get("combine_complex", True):
             return None
 
-        try:
-            axis = self._dataset.dim_type.index("FG_COMPLEX")
-        except ValueError:
+        axis = self._frame_group_axis("FG_COMPLEX")
+        if axis is None:
             image_type = np.atleast_1d(self._dataset._parameter_value("RECO_image_type", []))
             if not any("COMPLEX_IMAGE" in str(value).upper() for value in image_type):
                 return None
@@ -673,6 +691,7 @@ class Schema2dseq(Schema):
 
     def serialize(self, data, layout):
         data = self._split_complex_frames(data, layout)
+        data = self._apply_disk_slice_order(data)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
         return data

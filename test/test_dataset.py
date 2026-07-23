@@ -376,6 +376,36 @@ def test_2dseq_slice_packages_are_separate_in_memory_datasets():
 
 
 @pytest.mark.parametrize(
+    ("disk_order", "reverse"),
+    [
+        ("<disk_reverse_slice_order>", True),
+        ("disk_normal_slice_order", False),
+    ],
+)
+def test_2dseq_disk_slice_order_is_applied_and_reversible(disk_order, reverse):
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": False},
+        dim_type=["spatial", "<FG_SLICE>", "<FG_ECHO>"],
+        _parameter_value=lambda name, default=None: disk_order if name == "VisuCoreDiskSliceOrder" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 3, 2),
+        "shape_final": (2, 3, 2),
+        "shape_fg": (3, 2),
+    }
+    stored = np.arange(12).reshape(layouts["shape_storage"], order="F")
+
+    decoded = schema.deserialize(stored, layouts)
+    serialized = schema.serialize(decoded, layouts)
+
+    expected = np.flip(stored, axis=1) if reverse else stored
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(serialized, stored)
+
+
+@pytest.mark.parametrize(
     ("aq_mod", "encoding_space", "expected"),
     [
         ("qf", (4, 1), np.array([[1], [2], [3], [4]], dtype=np.int32)),
