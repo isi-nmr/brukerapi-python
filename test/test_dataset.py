@@ -30,6 +30,14 @@ def test_unsupported_dataset_type(tmp_path):
         Dataset(path)
 
 
+def test_ser_is_explicitly_unsupported(tmp_path):
+    path = tmp_path / "ser"
+    path.touch()
+
+    with pytest.raises(UnsuportedDatasetType, match="Dataset type: ser is not supported"):
+        Dataset(path)
+
+
 def test_incomplete_dataset_names_missing_parameter_file(tmp_path):
     path = tmp_path / "fid"
     path.touch()
@@ -277,6 +285,25 @@ def test_2dseq_scaling_backward_transform_inverts_slope_and_offset():
     restored = dataset._schema._scale_frames(scaled, {}, "BW")
 
     assert np.array_equal(restored, stored)
+
+
+def test_2dseq_loaded_values_apply_per_frame_slope_and_offset():
+    path = Path("test/test_data/PV360_StdData/T1_FLASH/pdata/1/2dseq")
+    if not path.is_file():
+        pytest.skip(f"{path} is not available")
+
+    raw = Dataset(path, scale=False)
+    scaled = Dataset(path)
+    stored = raw._read_binary_file(path, raw.numpy_dtype, raw.shape_storage).astype(float)
+
+    for frame in range(stored.shape[-1]):
+        stored[..., frame] *= float(raw.slope[frame])
+        stored[..., frame] += float(raw.offset[frame])
+    expected = np.reshape(stored, raw.shape_final, order="F")
+
+    assert np.array_equal(raw.data, raw._read_binary_file(path, raw.numpy_dtype, raw.shape_storage).reshape(raw.shape_final, order="F"))
+    assert np.allclose(scaled.data, expected)
+    assert scaled.data.dtype.kind == "f"
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
