@@ -416,7 +416,7 @@
     },
     {
       "cmd": [
-        "#PVM_EncMatrix[0] * #PVM_EncMatrix[1] // #NSegments",
+        "#PVM_DigNp",
         "#PVM_EncNReceivers",
         "#NSegments",
         "#NI",
@@ -617,7 +617,7 @@
     },
     {
       "cmd": [
-        "#PVM_EncMatrix[0]",
+        "#PVM_DigNp // (#PVM_EncMatrix[1] // #NSegments)",
         "#PVM_EncMatrix[1]",
         "#NI",
         "#NR",

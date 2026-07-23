@@ -121,6 +121,16 @@ def test_modern_2dseq_geometry_has_resolution_and_nonidentity_affine(path):
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_epi_layout_uses_digitized_samples_and_preserves_total_size():
+    dataset = Dataset(PV51_STUDY_PATH / "13" / "fid", load=LOAD_STAGES["properties"])
+    phase_lines_per_segment = dataset["PVM_EncMatrix"].value[1] // dataset["NSegments"].value
+
+    assert dataset.encoding_space[0] == dataset["PVM_DigNp"].value
+    assert dataset.k_space[0] == dataset["PVM_DigNp"].value // phase_lines_per_segment
+    assert np.prod(dataset.encoding_space) == np.prod(dataset.k_space)
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_report_default_directory_and_cli_file_outputs(tmp_path):
     source = Dataset(PV51_STUDY_PATH / "10" / "fid")
     dataset_path = tmp_path / "dataset" / "fid"
