@@ -61,6 +61,14 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
     }
 
 
+def test_rawdata_pv360_v1_job_lookup_is_keyed_by_title():
+    config = _load_config("properties_rawdata_core.json")
+    branch = config["job_desc"][0]
+
+    assert branch["cmd"] == "#ACQ_jobs.primed_dict(-1)['<{}>'.format(@subtype)]"
+    assert branch["conditions"] == [["#ACQ_sw_version", ["<PV-360.1.1>"]]]
+
+
 def test_fid_pv360_word_size_branches_match_rawdata():
     fid = _load_config("properties_fid_core.json")
     rawdata = _load_config("properties_rawdata_core.json")
