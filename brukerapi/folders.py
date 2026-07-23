@@ -99,17 +99,17 @@ class Folder:
         :param name: Name of Dataset, JCAMPDX, or Folder
         :return:
         """
-        if hasattr(self, "_children_map"):
-            try:
-                return self._children_map[name]
-            except KeyError:
-                pass
-        else:
+        children_map = self.__dict__.get("_children_map")
+        if children_map is None:
+            if "children" not in self.__dict__:
+                raise AttributeError(name)
             self.make_children_map()
-            if name in self._children_map:
-                return self._children_map[name]
+            children_map = self._children_map
 
-        raise KeyError(f"Child '{name}' not found in {self.path}")
+        try:
+            return children_map[name]
+        except KeyError:
+            raise AttributeError(name) from None
 
     def __getitem__(self, name):
         """Access individual files in folder, dict style. :obj:`.Dataset` and :obj:`.JCAMPDX` instances are not loaded, to access the
@@ -127,7 +127,10 @@ class Folder:
         :param name: Name of :obj:`.Dataset`, :obj:`.JCAMPDX`, or :obj:`.Folder` object
         :return:
         """
-        return self.__getattr__(name)
+        try:
+            return self.__getattr__(name)
+        except AttributeError:
+            raise KeyError(f"Child '{name}' not found in {self.path}") from None
 
     def query(self, query):
         """Query each dataset in the folder recursively.
