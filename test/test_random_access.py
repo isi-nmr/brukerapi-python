@@ -1,11 +1,14 @@
 import numpy as np
 
+from brukerapi.data import DataRandomAccess
 from brukerapi.dataset import Dataset
 
 
 def test_ra(test_ra_data):
     loaded = Dataset(test_ra_data[0])
     mmap = Dataset(test_ra_data[0], mmap=True)
+
+    assert isinstance(mmap.data, DataRandomAccess)
 
     core = tuple(slice(None) for _ in range(loaded.encoded_dim))
     frame_shape = loaded.shape[loaded.encoded_dim :]

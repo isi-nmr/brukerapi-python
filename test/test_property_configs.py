@@ -27,7 +27,7 @@ def test_fid_dtype_and_block_layout_are_not_version_gated():
     standard_block_size_branches = config["block_size"][:2]
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_block_size_branches)
 
-    standard_acq_length_branches = config["acq_lenght"][1:4]
+    standard_acq_length_branches = config["acq_length"][1:4]
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_acq_length_branches)
 
 
@@ -61,6 +61,43 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
     }
 
 
+def test_rawdata_pv360_v1_job_lookup_is_keyed_by_title():
+    config = _load_config("properties_rawdata_core.json")
+    branch = config["job_desc"][0]
+
+    assert branch["cmd"] == "#ACQ_jobs.primed_dict(-1)['<{}>'.format(@subtype)]"
+    assert branch["conditions"] == [["#ACQ_sw_version", ["<PV-360.1.1>"]]]
+
+
+def test_fid_pv360_word_size_branches_match_rawdata():
+    fid = _load_config("properties_fid_core.json")
+    rawdata = _load_config("properties_rawdata_core.json")
+
+    assert fid["numpy_dtype"][6:10] == rawdata["numpy_dtype"][6:10]
+
+
+def test_fid_has_endian_aware_topspin_dtypa_fallbacks():
+    config = _load_config("properties_fid_core.json")
+    branches = config["numpy_dtype"][10:]
+
+    expected = {
+        (0, "little"): "np.dtype('i4').newbyteorder('<')",
+        (0, "big"): "np.dtype('i4').newbyteorder('>')",
+        (1, "little"): "np.dtype('f4').newbyteorder('<')",
+        (1, "big"): "np.dtype('f4').newbyteorder('>')",
+        (2, "little"): "np.dtype('f8').newbyteorder('<')",
+        (2, "big"): "np.dtype('f8').newbyteorder('>')",
+    }
+
+    for branch in branches:
+        dtypa_condition, byte_order_condition = branch["conditions"]
+        dtypa = int(dtypa_condition.split("[", 1)[1].split(",", 1)[0])
+        byte_order = "little" if "'little'" in byte_order_condition else "big"
+        assert branch["cmd"] == expected.pop((dtypa, byte_order))
+
+    assert not expected
+
+
 def test_traj_scheme_detection_is_not_version_gated():
     config = _load_config("properties_traj_core.json")
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in config["scheme_id"])
@@ -87,6 +124,19 @@ def test_epi_layout_uses_actual_digitized_sample_count():
 
     assert encoding["cmd"][0] == "#PVM_DigNp"
     assert k_space["cmd"][0] == "#PVM_DigNp // (#PVM_EncMatrix[1] // #NSegments)"
+
+
+def test_2dseq_scaling_prefers_visu_and_falls_back_to_reco():
+    config = _load_config("properties_2dseq_core.json")
+
+    assert [branch["cmd"] for branch in config["slope"]] == [
+        "#VisuCoreDataSlope.array",
+        "#RECO_map_slope.array",
+    ]
+    assert [branch["cmd"] for branch in config["offset"]] == [
+        "#VisuCoreDataOffs.array",
+        "#RECO_map_offset.array",
+    ]
 
 
 def test_zte_scheme_is_not_shadowed_by_radial():

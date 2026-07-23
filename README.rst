@@ -28,9 +28,9 @@ Load any **data set**:
 .. code-block:: python
 
     from brukerapi.dataset import Dataset
-    dataset = Dataset('{path}/2dseq')    # create data set, works for fid, 2dseq, rawdata.x
+    dataset = Dataset('{path}/2dseq')    # also supports fid, fid_proc.64, traj, and rawdata.jobN
     dataset.data                         # access data array
-    dataset.VisuCoreSize                 # get a value of a single parameter
+    dataset.get_value('VisuCoreSize')    # get a parameter value
 
 Load an entire **study**:
 
@@ -40,17 +40,7 @@ Load an entire **study**:
     study = Study('{path_to_study_folder}')
     dataset = study.get_dataset(exp_id='1', proc_id='1')
 
-    # get_dataset returns an empty dataset
-    # in order to load data into the data set, you can either use the context manager:
-
-    with dataset as d:
-        d.data                         # access data array
-        d.VisuCoreSize                 # get a value of a parameter
-
-    # or the load function
-    dataset.load()
-    dataset.data                       # access data array
-    dataset.VisuCoreSize               # get a value of a single parameter
+    dataset.data                         # Study loads datasets by default
 
 Load a parametric file:
 
@@ -60,8 +50,8 @@ Load a parametric file:
 
    parameters = JCAMPDX('path_to_scan/method')
    
-   TR = data.params["PVM_RepetitionTime"].value # This way
-   TR = data.get_value("PVM_RepetitionTime") # Or this way
+   TR = parameters.params["PVM_RepetitionTime"].value
+   TR = parameters.get_value("PVM_RepetitionTime")
 
 
 
@@ -76,6 +66,8 @@ Features
 * **Random access** for **fid** and **2dseq** data sets
 * **Split** operation implemented over **2dseq** data sets
 * **Filter** operation implemented over Bruker **folders** (allowing you to work with a subset of your study only)
+* ParaVision 5.1, 6.0.1, 7.0.0, and 360 metadata and binary-layout support
+* Metadata-based fallback inference for custom Cartesian, EPI, radial/UTE, spiral, ZTE, CSI, and spectroscopy sequences
 
 Examples
 ========
@@ -105,8 +97,7 @@ From source:
 
     git clone https://github.com/isi-nmr/brukerapi-python.git
     cd brukerapi-python
-    python setup.py build
-    python setup.py install
+    python -m pip install -e .[dev]
 
 Testing
 ========
@@ -115,7 +106,17 @@ data sets:
 
 * `BrukerAPI test data set (Bruker ParaVision v5.1) <https://doi.org/10.5281/zenodo.3899268>`_
 * `BrukerAPI test data set (Bruker ParaVision v6.0.1) <https://doi.org/10.5281/zenodo.3894651>`_
-* `bruker2nifti_qa data set <https://gitlab.com/naveau/bruker2nifti_qa>`_
+* BrukerAPI test data set for ParaVision v7.0.0 (Zenodo DOI collection ``10.5281/zenodo.4522220``)
+* `PV360 standard data <https://github.com/cecilyen/PV360_StdData>`_
+
+The corpus download is opt-in for local runs:
+
+.. code-block:: shell
+
+    python -m pytest test --download_test_data
+
+Without that flag, pytest uses any corpus already present under ``test/test_data`` and
+skips unavailable collections.
 
 File format reference
 =====================
@@ -128,102 +129,15 @@ scheme inference in this project.
 Compatibility
 =============
 
-The API was tested using various data sets obtained by **ParaVision 5.1**, **6.0.1** and **360**. It it is compatible
-with the following data set types from individual ParaVision versions.
+Tested releases are ParaVision 5.1, 6.0.1, 7.0.0, and PV360 3.x. Supported
+primary binaries are ``fid``, ``fid_proc.64``, ``2dseq``, ``traj``,
+``rawdata.jobN``, and ``rawdata.Navigator``. Known ``fid.spiral``,
+``fid.navFid``, and ``fid.orig`` files are exposed as auxiliary subdatasets of
+their parent ``fid``; they are not accepted as standalone primary datasets.
+TopSpin/NMR ``ser`` is intentionally unsupported.
 
-ParaVision v5.1
-"""""""""""""""
-Compatible data set types:
-
-* **fid**
-* **2dseq**
-* **rawdata.job0**
-* **rawdata.Navigator**
-
-Compatible pulse sequences for **fid** data sets:
-
-* FLASH.ppg
-* MGE.ppg
-* MSME.ppg
-* RARE.ppg
-* FAIR_RARE.ppg
-* RAREVTR.ppg
-* RAREst.ppg
-* MDEFT.ppg
-* FISP.ppg
-* FLOWMAP.ppg
-* DtiStandard.ppg
-* EPI.ppg
-* FAIR_EPI.ppg
-* DtiEpi.ppg
-* T1_EPI.ppg
-* T2_EPI.ppg
-* T2S_EPI.ppg
-* SPIRAL.ppg
-* DtiSpiral.ppg
-* UTE.ppg
-* UTE3D.ppg
-* ZTE.ppg
-* CSI.ppg
-* FieldMap.ppg
-* NSPECT.ppg
-* PRESS.ppg
-* STEAM.ppg
-* igFLASH.ppg
-
-ParaVision v6.0.1 and v7.0.0
-"""""""""""""""""""""""""""""""
-Compatible data set types:
-
-* **fid**
-* **2dseq**
-* **rawdata.job0**
-* **rawdata.Navigator**
-
-Compatible pulse sequences for **fid** data sets:
-
-* FLASH.ppg,
-* FLASHAngio.ppg
-* IgFLASH.ppg
-* MGE.ppg
-* MSME.ppg
-* RARE.ppg
-* FAIR_RARE.ppg
-* RAREVTR.ppg
-* RAREst.ppg
-* MDEFT.ppg
-* FISP.ppg
-* FLOWMAP.ppg
-* DtiStandard.ppg
-* EPI.ppg
-* FAIR_EPI.ppg
-* CASL_EPI.ppg
-* DtiEpi.ppg
-* T1_EPI.ppg
-* T2_EPI.ppg
-* T2S_EPI.ppg
-* SPIRAL.ppg
-* DtiSpiral.ppg
-* UTE.ppg
-* UTE3D.ppg
-* ZTE.ppg
-* CSI.ppg
-* FieldMap.ppg
-* SINGLEPULSE.ppg
-* NSPECT.ppg
-* EPSI.ppg
-* PRESS.ppg
-* STEAM.ppg
-* ISIS.ppg
-* CPMG.ppg
-* RfProfile.ppg
-
-
-ParaVision 360 v1.1 v3.0-v3.7
-"""""""""""""""""""""""""""""""""
-Reading rawdata is supported only in a basic form, no reshaping into k-space is supported at the moment.
-Compatible data set types:
-
-* **2dseq**
-* **rawdata.job0**
-* **rawdata.Navigator**
+Known pulse-program names use dedicated layouts. For custom sequences the
+reader also infers common acquisition families from metadata; callers can pass
+``scheme_id=`` when inference is ambiguous. Rawdata is returned as complex
+ordered samples, not as reconstructed k-space. See the compatibility page in
+the documentation for behavior and current reconstruction limitations.

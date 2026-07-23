@@ -90,13 +90,12 @@ class Splitter:
         try:
             VisuCoreTransposition = visu_pars["VisuCoreTransposition"]
         except KeyError:
-            return VisuCoreTransposition
+            return
 
         value = np.reshape(VisuCoreTransposition.value, dataset.shape_final[dataset.encoded_dim :], order="F")
         value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
         VisuCoreTransposition.size = (int(np.prod(value.shape)),)
         VisuCoreTransposition.value = value.flatten(order="F")
-        return None
 
 
 class FrameGroupSplitter(Splitter):
@@ -309,8 +308,6 @@ class SlicePackageSplitter(Splitter):
 
             # name of the data set created by the split
             name = f"{dataset.path.parents[0].name}_sp_{sp_index}/2dseq"
-
-            os.makedirs(dataset.path.parents[1] / name, exist_ok=True)
 
             # construct a new Dataset, without loading data, the data will be supplied later
             dataset_ = Dataset(dataset.path.parents[1] / name, load=0)

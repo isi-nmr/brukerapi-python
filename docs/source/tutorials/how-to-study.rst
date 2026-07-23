@@ -16,22 +16,25 @@ How to work with Bruker study?
    # get a data set from the study hierarchy
    study.get_dataset(exp_id='2', proc_id='1')
 
-Data set obtained from ``Study`` object are empty by default, to access its content, the data set needs to be loaded. Either using the load function.
+By default ``Study`` recursively constructs and loads its datasets, so the
+returned dataset can be used immediately:
 
 .. code-block:: python
 
     dataset = study.get_dataset(exp_id='2', proc_id='1')
 
-    dataset.load()
     dataset.data
     dataset.get_value('VisuCoreSize')
 
-Or using context manager.
+For metadata-only traversal, provide a dataset state with the properties load
+stage:
 
 .. code-block:: python
 
-    with study.get_dataset(exp_id='2', proc_id='1') as dataset:
-        dataset.data
-        dataset.get_value('VisuCoreSize')
+    from brukerapi.dataset import LOAD_STAGES
 
+    study = Study(
+        'path_to_study',
+        dataset_state={'load': LOAD_STAGES['properties']}
+    )
 

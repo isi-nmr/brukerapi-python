@@ -13,7 +13,7 @@ import yaml
 from .data import DataRandomAccess
 from .exceptions import (
     DataNotLoaded,
-    DatasetTypeMissmatch,
+    DatasetTypeMismatch,
     FilterEvalFalse,
     IncompleteDataset,
     InvalidDataset,
@@ -23,7 +23,7 @@ from .exceptions import (
     SchemeNotLoaded,
     TrajNotLoaded,
     UnknownAcqSchemeException,
-    UnsuportedDatasetType,
+    UnsupportedDatasetType,
 )
 from .jcampdx import JCAMPDX
 from .schemas import Schema2dseq, SchemaFid, SchemaFidCompanion, SchemaRawdata, SchemaTraj
@@ -36,7 +36,7 @@ LOAD_STAGES = {
 }
 
 RECIPE_EVAL_NAMESPACE = {
-    "__builtins__": {},
+    "__builtins__": {"__import__": __import__},
     "abs": abs,
     "datetime": datetime,
     "int": int,
@@ -63,9 +63,11 @@ DEFAULT_STATES = {
     },
     "2dseq": {
         "parameter_files": ["visu_pars"],
+        "optional_parameter_files": ["reco"],
         "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
         "load": LOAD_STAGES["all"],
         "scale": True,
+        "combine_complex": True,
         "mmap": False,
     },
     "traj": {
@@ -216,9 +218,9 @@ class Dataset:
         self._properties = []
 
         if self.type not in DEFAULT_STATES:
-            raise UnsuportedDatasetType(self.type)
+            raise UnsupportedDatasetType(self.type)
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
-            raise UnsuportedDatasetType(self.path.name)
+            raise UnsupportedDatasetType(self.path.name)
 
         # set
         self._set_state(state)
@@ -230,9 +232,21 @@ class Dataset:
         self.load()
 
     def _is_supported_subtype(self):
-        if self.type == "rawdata" and re.fullmatch(r"job\d+", self.subtype):
+        return self.is_supported_path(self.path)
+
+    @staticmethod
+    def is_supported_path(path, dataset_types=None):
+        """Return whether a filename denotes a supported primary dataset binary."""
+        path = Path(path)
+        dataset_type = path.stem
+        subtype = path.suffix.removeprefix(".")
+        if dataset_type not in SUPPORTED_SUBTYPES:
+            return False
+        if dataset_types is not None and dataset_type not in dataset_types:
+            return False
+        if dataset_type == "rawdata" and re.fullmatch(r"job\d+", subtype):
             return True
-        return self.subtype in SUPPORTED_SUBTYPES[self.type]
+        return subtype in SUPPORTED_SUBTYPES[dataset_type]
 
     def __enter__(self):
         self._state["load"] = LOAD_STAGES["all"]
@@ -284,13 +298,13 @@ class Dataset:
         Check whether the dataset type is supported and complete. Dataset is allowed to be incomplete when load is
         set to `False`.
 
-        :raise: :UnsuportedDatasetType: In case `Dataset.type` is not in SUPPORTED
+        :raise: :UnsupportedDatasetType: If ``Dataset.type`` is unsupported
         :raise: :IncompleteDataset: If any of the JCAMP-DX files, necessary to create a Dataset instance is missing
         """
 
         # Check whether dataset file is supported
         if self.type not in DEFAULT_STATES:
-            raise UnsuportedDatasetType(self.type)
+            raise UnsupportedDatasetType(self.type)
 
         # Check whether all necessary JCAMP-DX files are present
         if self._state.get("load") >= LOAD_STAGES["parameters"]:
@@ -298,6 +312,13 @@ class Dataset:
                 param_path = self.path.parent / RELATIVE_PATHS[self.type][i]
                 if i not in set(os.listdir(str(param_path.parent))):
                     raise IncompleteDataset(f"missing required parameter file: {i} ({param_path})")
+
+            if self.type == "2dseq":
+                visu_path = self.path.parent / RELATIVE_PATHS[self.type]["visu_pars"]
+                empty_components = [path for path in (self.path, visu_path) if path.is_file() and path.stat().st_size == 0]
+                if empty_components:
+                    components = ", ".join(f"{path.name} ({path})" for path in empty_components)
+                    raise InvalidDataset(f"Invalid dataset, empty or incomplete reconstruction: empty {components}")
 
     def load(self):
         """
@@ -384,11 +405,11 @@ class Dataset:
 
     def _read_parameters(self):
         """
-        Read parameters form the essential JCAMP-DX files.
+        Read parameters from the essential JCAMP-DX files.
 
         :return:
         """
-        parameter_files = self._state["parameter_files"]
+        parameter_files = self._state["parameter_files"] + self._state.get("optional_parameter_files", [])
         for file in parameter_files:
             try:
                 self.add_parameter_file(file)
@@ -775,7 +796,7 @@ class Dataset:
         path = Path(path)
 
         if path.name.split(".")[0] != self.type:
-            raise DatasetTypeMissmatch
+            raise DatasetTypeMismatch
 
         parent = path.parent
 
@@ -935,6 +956,28 @@ class Dataset:
     @data.setter
     def data(self, value):
         self._data = value
+
+    def get_slice_packages(self):
+        """Return one in-memory 2dseq dataset per slice package.
+
+        Package datasets carry their package-specific ``visu_pars``,
+        geometry properties, and data array. Unequal package depths are
+        therefore represented without padding. No files are written unless
+        the caller explicitly writes the returned datasets.
+        """
+        if self.type != "2dseq":
+            raise UnsupportedDatasetType(f"slice packages are only available for 2dseq, not {self.type}")
+        if self.num_slice_packages <= 1:
+            return [self]
+
+        from .splitters import SlicePackageSplitter
+
+        return SlicePackageSplitter().split(self, write=False)
+
+    @property
+    def slice_packages(self):
+        """In-memory package-specific 2dseq datasets."""
+        return self.get_slice_packages()
 
     @property
     def traj(self):

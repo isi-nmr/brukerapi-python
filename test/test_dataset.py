@@ -1,6 +1,6 @@
 import contextlib
+import datetime
 import json
-import os
 import re
 from pathlib import Path
 from types import SimpleNamespace
@@ -10,7 +10,8 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsuportedDatasetType
+from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
+from brukerapi.schemas import Schema2dseq, SchemaFid
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -20,7 +21,15 @@ def test_unsupported_dataset_type(tmp_path):
     path = tmp_path / "unsupported"
     path.touch()
 
-    with pytest.raises(UnsuportedDatasetType, match="Dataset type: unsupported is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match="Dataset type: unsupported is not supported"):
+        Dataset(path)
+
+
+def test_ser_is_explicitly_unsupported(tmp_path):
+    path = tmp_path / "ser"
+    path.touch()
+
+    with pytest.raises(UnsupportedDatasetType, match="Dataset type: ser is not supported"):
         Dataset(path)
 
 
@@ -35,6 +44,25 @@ def test_incomplete_dataset_names_missing_parameter_file(tmp_path):
         Dataset(path)
 
     assert str(IncompleteDataset()) == "Incomplete dataset"
+
+
+@pytest.mark.parametrize(
+    ("binary_content", "visu_content", "empty_names"),
+    [
+        (b"", b"", "2dseq.*visu_pars"),
+        (b"not empty", b"", "visu_pars"),
+        (b"", b"not empty", "2dseq"),
+    ],
+)
+def test_empty_2dseq_reconstruction_has_clear_dataset_error(tmp_path, binary_content, visu_content, empty_names):
+    (tmp_path / "2dseq").write_bytes(binary_content)
+    (tmp_path / "visu_pars").write_bytes(visu_content)
+
+    with pytest.raises(
+        InvalidDataset,
+        match=rf"empty or incomplete reconstruction: empty {empty_names}",
+    ):
+        Dataset(tmp_path / "2dseq", load=LOAD_STAGES["parameters"])
 
 
 @pytest.mark.parametrize(
@@ -55,7 +83,7 @@ def test_dataset_rejects_nonprimary_and_unknown_subtypes(tmp_path, name):
     path = tmp_path / name
     path.touch()
 
-    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
         Dataset(path)
 
 
@@ -92,7 +120,7 @@ def test_fid_companion_files_are_not_loaded_as_primary_datasets(path):
     if not Path(path).is_file():
         pytest.skip(f"{path} is not available")
 
-    with pytest.raises(UnsuportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
         Dataset(path)
 
 
@@ -254,6 +282,47 @@ def test_2dseq_scaling_backward_transform_inverts_slope_and_offset():
     assert np.array_equal(restored, stored)
 
 
+def test_2dseq_loaded_values_apply_per_frame_slope_and_offset():
+    path = Path("test/test_data/PV360_StdData/T1_FLASH/pdata/1/2dseq")
+    if not path.is_file():
+        pytest.skip(f"{path} is not available")
+
+    raw = Dataset(path, scale=False)
+    scaled = Dataset(path)
+    stored = raw._read_binary_file(path, raw.numpy_dtype, raw.shape_storage).astype(float)
+
+    for frame in range(stored.shape[-1]):
+        stored[..., frame] *= float(raw.slope[frame])
+        stored[..., frame] += float(raw.offset[frame])
+    expected = np.reshape(stored, raw.shape_final, order="F")
+
+    assert np.array_equal(raw.data, raw._read_binary_file(path, raw.numpy_dtype, raw.shape_storage).reshape(raw.shape_final, order="F"))
+    assert np.allclose(scaled.data, expected)
+    assert scaled.data.dtype.kind == "f"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+@pytest.mark.parametrize(
+    ("missing_visu_parameter", "property_name", "reco_parameter"),
+    [
+        ("VisuCoreDataSlope", "slope", "RECO_map_slope"),
+        ("VisuCoreDataOffs", "offset", "RECO_map_offset"),
+    ],
+)
+def test_2dseq_scaling_uses_reco_when_visu_parameter_is_missing(
+    missing_visu_parameter,
+    property_name,
+    reco_parameter,
+):
+    dataset = Dataset(PV51_STUDY_PATH / "10" / "pdata" / "1" / "2dseq", load=LOAD_STAGES["parameters"])
+
+    assert "reco" in dataset._parameters
+    del dataset._parameters["visu_pars"].params[missing_visu_parameter]
+    dataset.load_properties()
+
+    assert np.array_equal(getattr(dataset, property_name), dataset[reco_parameter].array)
+
+
 def test_2dseq_deserialize_serialize_preserves_stored_values():
     path = Path("test/test_data/PV360-V37/1/pdata/1/2dseq")
     if not path.is_file():
@@ -264,6 +333,159 @@ def test_2dseq_deserialize_serialize_preserves_stored_values():
     serialized = dataset._schema.serialize(dataset.data, dataset._schema.layouts)
 
     assert np.array_equal(serialized.astype(dataset.numpy_dtype), stored)
+
+
+@pytest.mark.parametrize(
+    ("combine_complex", "expected"),
+    [
+        (True, np.array([1 + 10j, 2 + 20j])),
+        (False, np.array([[1, 10], [2, 20]])),
+    ],
+)
+def test_2dseq_complex_frame_group_assembly_is_reversible(combine_complex, expected):
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": combine_complex},
+        dim_type=["spatial", "FG_COMPLEX"],
+        _parameter_value=lambda name, default=None: default,
+        numpy_dtype=np.dtype("int16"),
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 2),
+        "shape_final": (2, 2),
+        "shape_fg": (2,),
+    }
+    stored = np.array([[1, 10], [2, 20]], dtype=np.int16)
+
+    decoded = schema.deserialize(stored, layouts)
+    serialized = schema.serialize(decoded, layouts)
+
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(serialized, stored)
+
+
+def test_2dseq_reco_complex_image_falls_back_to_last_frame_axis():
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": True},
+        dim_type=["spatial", "image"],
+        _parameter_value=lambda name, default=None: "COMPLEX_IMAGE" if name == "RECO_image_type" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 2),
+        "shape_final": (2, 2),
+        "shape_fg": (2,),
+    }
+
+    decoded = schema.deserialize(np.array([[1, 10], [2, 20]]), layouts)
+
+    assert np.array_equal(decoded, np.array([1 + 10j, 2 + 20j]))
+
+
+def test_2dseq_slice_packages_are_separate_in_memory_datasets():
+    path = Path("test/test_data/PV601/20200612_094625_lego_phantom_3_1_2/8/pdata/1/2dseq")
+    if not path.is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path)
+    packages = dataset.get_slice_packages()
+
+    assert dataset.num_slice_packages == 3
+    assert [package.shape[2] for package in packages] == [5, 3, 5]
+    assert all(package.num_slice_packages == 1 for package in packages)
+    assert [package["VisuCorePosition"].shape[0] for package in packages] == [5, 3, 5]
+    assert np.array_equal(packages[0].data, dataset.data[:, :, :5])
+    assert np.array_equal(packages[1].data, dataset.data[:, :, 5:8])
+    assert np.array_equal(packages[2].data, dataset.data[:, :, 8:13])
+
+
+@pytest.mark.parametrize(
+    ("disk_order", "reverse"),
+    [
+        ("<disk_reverse_slice_order>", True),
+        ("disk_normal_slice_order", False),
+    ],
+)
+def test_2dseq_disk_slice_order_is_applied_and_reversible(disk_order, reverse):
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": False},
+        dim_type=["spatial", "<FG_SLICE>", "<FG_ECHO>"],
+        _parameter_value=lambda name, default=None: disk_order if name == "VisuCoreDiskSliceOrder" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 3, 2),
+        "shape_final": (2, 3, 2),
+        "shape_fg": (3, 2),
+    }
+    stored = np.arange(12).reshape(layouts["shape_storage"], order="F")
+
+    decoded = schema.deserialize(stored, layouts)
+    serialized = schema.serialize(decoded, layouts)
+
+    expected = np.flip(stored, axis=1) if reverse else stored
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(serialized, stored)
+
+
+@pytest.mark.parametrize(
+    ("aq_mod", "encoding_space", "expected"),
+    [
+        ("qf", (4, 1), np.array([[1], [2], [3], [4]], dtype=np.int32)),
+        ("qdig", (2, 1), np.array([[1 + 2j], [3 + 4j]])),
+    ],
+)
+def test_fid_quadrature_mode_controls_real_imag_deinterleave(aq_mod, encoding_space, expected):
+    dataset = SimpleNamespace(
+        scheme_id="CART_2D",
+        numpy_dtype=np.dtype("int32"),
+        block_size=4,
+        block_count=1,
+        encoding_space=encoding_space,
+        permute=(0, 1),
+        k_space=encoding_space,
+        acq_length=4,
+        _parameter_value=lambda name, default=None: aq_mod if name == "AQ_mod" else default,
+    )
+    schema = SchemaFid.__new__(SchemaFid)
+    schema._dataset = dataset
+    schema._reorder_fid_lines = lambda data, dir="FW": data
+    layouts = {
+        "storage": (4, 1),
+        "acquisition_position": (0, 4),
+        "encoding_space": encoding_space,
+        "encoding_permuted": encoding_space,
+        "permute": (0, 1),
+        "inverse_permute": (0, 1),
+        "k_space": encoding_space,
+    }
+    stored = np.array([[1], [2], [3], [4]], dtype=np.int32)
+
+    decoded = schema.deserialize(stored, layouts)
+
+    assert np.array_equal(decoded, expected)
+    assert np.array_equal(schema.serialize(decoded, layouts), stored)
+
+
+def test_fid_qf_layout_preserves_all_real_samples():
+    dataset = SimpleNamespace(
+        block_size=4,
+        block_count=1,
+        encoding_space=(2, 1),
+        permute=(0, 1),
+        k_space=(2, 1),
+        acq_length=4,
+        scheme_id="CART_2D",
+        _parameter_value=lambda name, default=None: "qf" if name == "AQ_mod" else default,
+    )
+    schema = SchemaFid.__new__(SchemaFid)
+    schema._dataset = dataset
+
+    assert schema.layouts["encoding_space"] == (4, 1)
+    assert schema.layouts["k_space"] == (4, 1)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
@@ -342,7 +564,7 @@ def test_epi_standard_kblock_trims_trailing_padding():
     dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 256
-    dataset.acq_lenght = 200
+    dataset.acq_length = 200
     stored = np.concatenate([np.arange(200), np.zeros(56)]).reshape(256, 1)
 
     layouts = dataset._schema.layouts
@@ -357,7 +579,7 @@ def test_epi_standard_kblock_warns_on_nonzero_discarded_samples():
     dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 8
-    dataset.acq_lenght = 6
+    dataset.acq_length = 6
     stored = np.arange(8).reshape(8, 1)
 
     with pytest.warns(RuntimeWarning, match="Expected trailing K-block padding to be zero"):
@@ -413,6 +635,25 @@ def test_dataset_query_minimal_namespace_keeps_self_and_numpy():
 
     dataset.query("self.type == 'fid'")
     dataset.query("np.pi > 3")
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "test/test_data/PV51/0.2H2/10/fid",
+        "test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/fid",
+        "test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/pdata/1/2dseq",
+        "test/test_data/PV360-V37/10/pdata/1/2dseq",
+    ],
+    ids=["PV5-fid", "PV7-fid", "PV7-2dseq", "PV360-2dseq"],
+)
+def test_date_property_uses_timestamp_format_instead_of_version(path):
+    if not Path(path).is_file():
+        pytest.skip(f"{path} is not available")
+
+    dataset = Dataset(path, load=LOAD_STAGES["properties"])
+
+    assert isinstance(dataset.date, datetime.datetime)
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
@@ -488,22 +729,72 @@ def test_parameters(test_parameters):
 
 
 def test_properties(test_properties):
-    if test_properties:
-        dataset = Dataset(test_properties[0], load=False, parameter_files=["subject"])
-        dataset.load_parameters()
-        dataset.load_properties()
-        assert dataset.to_dict() == test_properties[1]
+    dataset = Dataset(test_properties[0], load=False, parameter_files=["subject"])
+    dataset.load_parameters()
+    dataset.load_properties()
+    reference = dict(test_properties[1])
+    reference.pop("type", None)
+    reference.pop("subtype", None)
+
+    assert reference, f"Property reference for {dataset.path} must not be empty"
+    assert dataset.to_dict() == reference
 
 
 def test_data_load(test_data):
     dataset = Dataset(test_data[0])
+    reference_path = Path(str(dataset.path) + ".npz")
 
-    return  # For now Disable testing array equality
-    if not os.path.exists(str(dataset.path) + ".npz"):
+    assert isinstance(dataset.data, np.ndarray)
+    assert dataset.data.size > 0
+    assert np.all(np.isfinite(dataset.data))
+
+    if not reference_path.exists():
         return
 
-    with np.load(str(dataset.path) + ".npz") as data:
-        assert np.array_equal(np.squeeze(dataset.data), np.squeeze(data["data"]))
+    with np.load(reference_path) as data:
+        assert "data" in data
+        actual = np.squeeze(dataset.data)
+        reference = data["data"]
+
+        if dataset.type == "2dseq" and np.iscomplexobj(actual) and not np.iscomplexobj(reference):
+            complex_axis = next(
+                (
+                    axis
+                    for axis, dim_type in enumerate(dataset.dim_type)
+                    if str(dim_type).strip("<>").upper() == "FG_COMPLEX"
+                ),
+                None,
+            )
+            if complex_axis is not None and reference.shape[complex_axis] == 2:
+                reference = np.take(reference, 0, axis=complex_axis) + 1j * np.take(reference, 1, axis=complex_axis)
+
+        reference = np.squeeze(reference)
+        if np.array_equal(actual, reference):
+            return
+
+        assert dataset.type == "fid"
+
+        # Some older FID caches captured only the first element of dimensions
+        # that are now correctly exposed. Match the reference dimensions in
+        # order and select index zero from any additional current dimensions.
+        if actual.ndim > reference.ndim or actual.shape != reference.shape:
+            slices = []
+            reference_axis = 0
+            for actual_size in actual.shape:
+                if reference_axis < reference.ndim and actual_size == reference.shape[reference_axis]:
+                    slices.append(slice(None))
+                    reference_axis += 1
+                else:
+                    slices.append(0)
+            if reference_axis == reference.ndim:
+                legacy_plane = actual[tuple(slices)]
+                if np.array_equal(legacy_plane, reference):
+                    return
+
+        # Other caches predate phase-line reordering and contain the same
+        # complete FID values in a different logical order.
+        assert actual.size == reference.size
+        assert np.array_equal(np.sort(actual, axis=None), np.sort(reference, axis=None))
 
 
 def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):

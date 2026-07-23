@@ -10,12 +10,12 @@ config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__f
 
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
-    "fid": ["numpy_dtype", "channels", "block_size", "acq_lenght", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
+    "fid": ["numpy_dtype", "channels", "block_size", "acq_length", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
     "fid_proc": [
         "numpy_dtype",
         "channels",
         "block_size",
-        "acq_lenght",
+        "acq_length",
         "scheme_id",
         "block_count",
         "encoding_space",
@@ -49,7 +49,7 @@ class Schema:
     """Base class for all schemes"""
 
     def __init__(self, dataset):
-        # chceck if dataset contains all the required properties
+        # Check whether the dataset contains all required properties.
         for property in REQUIRED_PROPERTIES[dataset.type]:
             if not hasattr(dataset, property):
                 if property == "scheme_id":
@@ -104,9 +104,18 @@ class Schema:
 
 
 class SchemaFid(Schema):
+    """Raw ordered FID/k-space schema.
+
+    This reader applies storage trimming, dimensional permutation, RARE/EPI
+    phase-line ordering, and EPI odd-line mirroring. It does not perform a
+    full reconstruction: ramp-sampling regridding and ``RECO_qopts``
+    quadrature corrections remain the caller's responsibility.
     """
-    SchemeFid class
-    """
+
+    @property
+    def acquisition_factor(self):
+        """Number of stored scalar samples per logical sample."""
+        return 1 if str(self._dataset._parameter_value("AQ_mod", "")).lower() == "qf" else 2
 
     @property
     def layouts(self):
@@ -122,27 +131,41 @@ class SchemaFid(Schema):
         layouts = {"storage": (self._dataset.block_size,) + (self._dataset.block_count,)}
         layouts["encoding_space"] = self._dataset.encoding_space
         layouts["permute"] = self._dataset.permute
-        layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
         layouts["inverse_permute"] = self.permutation_inverse(layouts["permute"])
         layouts["k_space"] = self._dataset.k_space
 
+        if self.acquisition_factor == 1:
+            stored_samples = self._dataset.acq_length * self._dataset.block_count
+            for name in ("encoding_space", "k_space"):
+                logical_samples = int(np.prod(layouts[name]))
+                if stored_samples % logical_samples:
+                    raise InvalidDataset(
+                        f"real-only AQ_mod=qf sample count {stored_samples} is incompatible with {name} layout {layouts[name]}"
+                    )
+                ratio = stored_samples // logical_samples
+                if ratio > 1:
+                    layouts[name] = (layouts[name][0] * ratio,) + tuple(layouts[name][1:])
+
+        layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
+
         if "EPI" in self._dataset.scheme_id:
-            discarded = self._dataset.block_size - self._dataset.acq_lenght
+            discarded = self._dataset.block_size - self._dataset.acq_length
             block_format = self._dataset._parameter_value("GO_block_size")
             scan_shift = self._dataset._parameter_value("ACQ_scan_shift", 0)
             if block_format == "Standard_KBlock_Format" or scan_shift >= 0:
-                layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
+                layouts["acquisition_position"] = (0, self._dataset.acq_length)
             else:
-                layouts["acquisition_position"] = (discarded, self._dataset.acq_lenght)
+                layouts["acquisition_position"] = (discarded, self._dataset.acq_length)
         else:
-            layouts["acquisition_position"] = (0, self._dataset.acq_lenght)
+            layouts["acquisition_position"] = (0, self._dataset.acq_length)
 
         return layouts
 
     def deserialize(self, data, layouts):
         data = self._acquisition_trim(data, layouts)
 
-        data = data[0::2, ...] + 1j * data[1::2, ...]
+        if self.acquisition_factor == 2:
+            data = data[0::2, ...] + 1j * data[1::2, ...]
 
         # Form encoding space
         data = self._acquisitions_to_encode(data, layouts)
@@ -259,11 +282,19 @@ class SchemaFid(Schema):
 
         data = np.transpose(data, layouts["inverse_permute"])
 
-        data = np.reshape(data, (layouts["acquisition_position"][1] // 2, layouts["storage"][1]), order="F")
+        data = np.reshape(
+            data,
+            (layouts["acquisition_position"][1] // self.acquisition_factor, layouts["storage"][1]),
+            order="F",
+        )
 
         data_ = np.zeros(layouts["storage"], dtype=self._dataset.numpy_dtype, order="F")
 
-        if layouts["acquisition_position"][0] > 0:
+        if self.acquisition_factor == 1:
+            start = layouts["acquisition_position"][0]
+            stop = start + layouts["acquisition_position"][1]
+            data_[start:stop, :] = data.real
+        elif layouts["acquisition_position"][0] > 0:
             channels = layouts["k_space"][self._dataset.dim_type.index("channel")]
             data = np.reshape(data, (-1, channels, data.shape[-1]), order="F")
             data_ = np.reshape(data_, (-1, channels, data_.shape[-1]), order="F")
@@ -314,8 +345,8 @@ class SchemaFid(Schema):
             except IndexError:
                 print(index_full)
 
-        layouts_ra["k_space"] = (layouts_ra["k_space"][0] // 2,) + layouts_ra["k_space"][1:]
-        layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // 2,) + layouts_ra["encoding_space"][1:]
+        layouts_ra["k_space"] = (layouts_ra["k_space"][0] // self.acquisition_factor,) + layouts_ra["k_space"][1:]
+        layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // self.acquisition_factor,) + layouts_ra["encoding_space"][1:]
 
         array_ra = self.deserialize(array_ra, layouts_ra)
 
@@ -325,8 +356,8 @@ class SchemaFid(Schema):
 
     def get_ra_layouts(self, slice_):
         layouts = deepcopy(self.layouts)
-        layouts["k_space"] = (layouts["k_space"][0] * 2,) + tuple(layouts["k_space"][1:])
-        layouts["encoding_space"] = (layouts["encoding_space"][0] * 2,) + tuple(layouts["encoding_space"][1:])
+        layouts["k_space"] = (layouts["k_space"][0] * self.acquisition_factor,) + tuple(layouts["k_space"][1:])
+        layouts["encoding_space"] = (layouts["encoding_space"][0] * self.acquisition_factor,) + tuple(layouts["encoding_space"][1:])
         layouts["inverse_permute"] = tuple(self.permutation_inverse(layouts["permute"]))
         layouts["encoding_permute"] = tuple(layouts["encoding_space"][i] for i in layouts["permute"])
         layouts["channel_index"] = self._dataset.dim_type.index("channel") if "channel" in self._dataset.dim_type else None
@@ -509,11 +540,6 @@ class SchemaRawdata(Schema):
 
         return data_
 
-
-# Compatibility alias for previous misspelling:
-SchemaRawdata.seralize = SchemaRawdata.serialize
-
-
 class Schema2dseq(Schema):
     """
     Schema2dseq class
@@ -544,6 +570,8 @@ class Schema2dseq(Schema):
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
         self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, "FW")
         self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order="F")
+        self._dataset.data = self._apply_disk_slice_order(self._dataset.data)
+        self._dataset.data = self._combine_complex_frames(self._dataset.data)
 
     def deserialize(self, data, layouts):
         # scale
@@ -552,8 +580,65 @@ class Schema2dseq(Schema):
 
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
+        data = self._apply_disk_slice_order(data)
 
-        return data
+        return self._combine_complex_frames(data)
+
+    def _frame_group_axis(self, name):
+        normalized_name = name.strip("<>").upper()
+        for axis, dim_type in enumerate(self._dataset.dim_type):
+            if str(dim_type).strip("<>").upper() == normalized_name:
+                return axis
+        return None
+
+    def _apply_disk_slice_order(self, data):
+        disk_order = str(self._dataset._parameter_value("VisuCoreDiskSliceOrder", "")).strip("<>").lower()
+        if disk_order != "disk_reverse_slice_order":
+            return data
+
+        axis = self._frame_group_axis("FG_SLICE")
+        if axis is None:
+            raise InvalidDataset("VisuCoreDiskSliceOrder requests reversed slices, but no FG_SLICE axis is present")
+        return np.flip(data, axis=axis)
+
+    def _complex_frame_axis(self, data):
+        if not self._dataset._state.get("combine_complex", True):
+            return None
+
+        axis = self._frame_group_axis("FG_COMPLEX")
+        if axis is None:
+            image_type = np.atleast_1d(self._dataset._parameter_value("RECO_image_type", []))
+            if not any("COMPLEX_IMAGE" in str(value).upper() for value in image_type):
+                return None
+            axis = data.ndim - 1
+
+        if data.shape[axis] != 2:
+            raise InvalidDataset(
+                f"complex 2dseq requires a two-element real/imag frame-group axis, got shape {data.shape} on axis {axis}"
+            )
+        return axis
+
+    def _combine_complex_frames(self, data):
+        axis = self._complex_frame_axis(data)
+        if axis is None:
+            return data
+        real = np.take(data, 0, axis=axis)
+        imaginary = np.take(data, 1, axis=axis)
+        return real + 1j * imaginary
+
+    def _split_complex_frames(self, data, layouts):
+        raw_shape = tuple(layouts["shape_final"])
+        if data.shape == raw_shape:
+            return data
+
+        axis = self._complex_frame_axis(np.empty(raw_shape))
+        if axis is None:
+            return data
+
+        expected_shape = raw_shape[:axis] + raw_shape[axis + 1 :]
+        if data.shape != expected_shape:
+            raise InvalidDataset(f"complex 2dseq data shape {data.shape} does not match expected shape {expected_shape}")
+        return np.stack((data.real, data.imag), axis=axis)
 
     def _scale_frames(self, data, layouts, dir):
         """
@@ -600,6 +685,8 @@ class Schema2dseq(Schema):
         return np.reshape(data, layouts["shape_final"], order="F")
 
     def serialize(self, data, layout):
+        data = self._split_complex_frames(data, layout)
+        data = self._apply_disk_slice_order(data)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
         return data

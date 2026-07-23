@@ -52,13 +52,13 @@
     {
         "cmd": "datetime.datetime.strptime(#ACQ_time,'<%Y-%m-%dT%X,%f%z>')",
         "conditions": [
-          "#ACQ_sw_version=='<PV 6.0.1>'"
+          "'T' in #ACQ_time"
         ]
     },
     {
         "cmd": "datetime.datetime.strptime(#ACQ_time,'<%H:%M:%S %d %b %Y>')",
         "conditions": [
-          "#ACQ_sw_version=='<PV 5.1>'"
+          "'T' not in #ACQ_time"
         ]
     }
   ],

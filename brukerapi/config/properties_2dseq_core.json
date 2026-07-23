@@ -143,11 +143,19 @@
     {
       "cmd": "#VisuCoreDataSlope.array",
       "conditions": []
+    },
+    {
+      "cmd": "#RECO_map_slope.array",
+      "conditions": []
     }
   ],
   "offset": [
     {
       "cmd": "#VisuCoreDataOffs.array",
+      "conditions": []
+    },
+    {
+      "cmd": "#RECO_map_offset.array",
       "conditions": []
     }
   ],

@@ -14,8 +14,12 @@ def test_jcampdx(test_jcampdx_data):
     jcamp_file_path = dataset_folder / dataset_info["path"]
 
     j = JCAMPDX(jcamp_file_path)
+    references = dataset_info["parameters"]
 
-    for key, ref in test_jcampdx_data[0]["parameters"].items():
+    assert references, f"JCAMP-DX reference for {jcamp_file_path} must not be empty"
+    assert j.params, f"JCAMP-DX parser returned no parameters for {jcamp_file_path}"
+
+    for key, ref in references.items():
         parameter_test = j.get_parameter(key)
         size_test = parameter_test.size
         value_test = parameter_test.value
