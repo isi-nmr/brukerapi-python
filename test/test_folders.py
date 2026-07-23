@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from brukerapi.dataset import Dataset
-from brukerapi.folders import Folder, Processing, Study, TypeFilter
+from brukerapi.folders import DEFAULT_DATASET_STATE, Folder, Processing, Study, TypeFilter
 
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
 
@@ -47,6 +47,26 @@ def test_folder_clean_and_in_place_filter_return_folder(tmp_path):
 
     assert folder.clean() is folder
     assert TypeFilter(Dataset, in_place=True).filter(folder) is folder
+
+
+def test_folder_dataset_state_defaults_are_fresh_and_inputs_are_not_mutated(tmp_path):
+    custom_state = {
+        "parameter_files": ["custom-parameter"],
+        "property_files": [Path("custom-property.json")],
+        "load": 1,
+    }
+    original_custom_state = copy.deepcopy(custom_state)
+    original_default_state = copy.deepcopy(DEFAULT_DATASET_STATE)
+
+    configured = Folder(tmp_path, recursive=False, dataset_state=custom_state)
+    defaulted = Folder(tmp_path, recursive=False)
+
+    assert custom_state == original_custom_state
+    assert original_default_state == DEFAULT_DATASET_STATE
+    assert configured._dataset_state["parameter_files"][-1] == "custom-parameter"
+    assert configured._dataset_state["property_files"][-1] == Path("custom-property.json")
+    assert defaulted._dataset_state == original_default_state
+    assert configured._dataset_state is not defaulted._dataset_state
 
 
 def test_folder_traversal_skips_processed_spectra(tmp_path):
