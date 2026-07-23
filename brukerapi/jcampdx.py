@@ -78,6 +78,7 @@ class Parameter:
         self.size_str = size_str
         self.val_str = val_str
         self.version = version
+        self.comments_before = []
 
     def __str__(self):
         str_ = f"{self.key_str}"
@@ -92,6 +93,8 @@ class Parameter:
 
         str_ += f"{self.val_str}"
 
+        if self.comments_before:
+            return "\n".join(self.comments_before) + "\n" + str_
         return str_
 
     def __repr__(self):
@@ -265,8 +268,11 @@ class GenericParameter(Parameter):
 
     @property
     def size(self):
-        size_str = self.size_str[1:-2]
+        match = re.fullmatch(r"\(\s*(.*?)\s*\)\s*", self.size_str)
+        if match is None:
+            return None
 
+        size_str = match.group(1).strip()
         if size_str == "":
             return None
 
@@ -278,7 +284,7 @@ class GenericParameter(Parameter):
             except ValueError:
                 # size bracket is returned as string
                 # catches (XY..XY) etc.
-                pass
+                size = match.group(1).strip()
 
         elif "," in size_str:
             size_str = size_str.split(",")
@@ -626,7 +632,7 @@ class JCAMPDX:
 
             jcampdx_serial += f"{param_str}\n"
 
-        return jcampdx_serial[0:-1] + "\n##END= "
+        return jcampdx_serial[0:-1] + "\n##END="
 
     def __enter__(self):
         self.load()
@@ -832,8 +838,18 @@ class JCAMPDX:
             except (UnicodeDecodeError, OSError) as e:
                 raise JcampdxFileError(f"file {path} is not a text file") from e
 
-        # remove all comments
-        content = _COMMENT_RE.sub("", content)
+        comments_by_parameter = []
+        pending_comments = []
+        content_without_comments = []
+        for line in content.splitlines(keepends=True):
+            if line.lstrip().startswith("$$"):
+                pending_comments.append(line.rstrip("\r\n"))
+                continue
+            if line.startswith("##"):
+                comments_by_parameter.append(pending_comments)
+                pending_comments = []
+            content_without_comments.append(line)
+        content = "".join(content_without_comments)
 
         # split into individual entries
         content = _PARAMETER_RE.split(content)[1:-1]
@@ -855,9 +871,10 @@ class JCAMPDX:
         if version not in SUPPORTED_VERSIONS:
             raise JcampdxVersionError(version)
 
-        for line in content:
+        for index, line in enumerate(content):
             # Restore the ##
             key, parameter = JCAMPDX.handle_jcampdx_line(f"##{line}", version)
+            parameter.comments_before = comments_by_parameter[index]
             params[key] = parameter
         return params
 

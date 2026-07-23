@@ -202,3 +202,57 @@ def test_wrap_lines_respects_78_columns_and_preserves_tokens():
 
     assert all(len(part) <= 78 for part in wrapped.splitlines())
     assert wrapped.replace("\n", "") == line
+
+
+def test_parse_value_does_not_treat_unclosed_parenthesis_as_list():
+    value = GenericParameter.parse_value("(not a closed tuple")
+
+    assert isinstance(value, np.ndarray)
+    assert np.array_equal(value, np.array(["(not", "a", "closed", "tuple"]))
+
+
+def test_jcampdx_size_parsing_accepts_compact_and_padded_brackets(tmp_path):
+    path = tmp_path / "sizes"
+    path.write_text(
+        "##TITLE=Size Test\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$COMPACT=(2)\n"
+        "1 2\n"
+        "##$PADDED=(   2   )\n"
+        "3 4\n"
+        "##$MATRIX=(2, 3)\n"
+        "1 2 3 4 5 6\n"
+        "##END=\n"
+    )
+    jcamp = JCAMPDX(path)
+
+    assert jcamp.get_parameter("COMPACT").size == (2,)
+    assert jcamp.get_parameter("PADDED").size == (2,)
+    assert jcamp.get_parameter("MATRIX").size == (2, 3)
+
+
+def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
+    source = tmp_path / "comments"
+    source.write_text(
+        "##TITLE=Comment Test\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "$$ comment attached to VALUE\n"
+        "$$ second comment\n"
+        "##$VALUE=1\n"
+        "$$ comment attached to OTHER\n"
+        "##$OTHER=2\n"
+        "##END=\n"
+    )
+    jcamp = JCAMPDX(source)
+
+    output = tmp_path / "round-trip-comments"
+    jcamp.write(output)
+    serialized = output.read_text()
+
+    assert "$$ comment attached to VALUE\n$$ second comment\n##$VALUE=1" in serialized
+    assert "$$ comment attached to OTHER\n##$OTHER=2" in serialized
+    assert serialized.endswith("##END=")
+    assert JCAMPDX(output).get_value("VALUE") == 1
+    assert JCAMPDX(output).get_value("OTHER") == 2
