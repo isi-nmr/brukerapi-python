@@ -1016,17 +1016,18 @@ class Dataset:
 
         return SlicePackageSplitter().split(self, write=False)
 
-    def to_kspace(self):
+    def to_kspace(self, *, bart=False):
         """Return a supported raw acquisition in k-space order.
 
         At present this converts validated Cartesian ParaVision 360
-        ``rawdata.jobN`` streams.  It is intentionally not a reconstruction
+        ``rawdata.jobN`` streams.  Set ``bart=True`` for BART's 16-axis array
+        layout. It is intentionally not a reconstruction
         API: EPI and non-Cartesian raw data require acquisition-specific
         handling.
         """
         if self.type != "rawdata":
             raise UnsupportedDatasetType(f"k-space conversion is only available for rawdata jobs, not {self.type}")
-        return self._schema.to_kspace()
+        return self._schema.to_kspace(bart=bart)
 
     @property
     def slice_packages(self):

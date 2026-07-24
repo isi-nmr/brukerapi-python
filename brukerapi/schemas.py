@@ -8,6 +8,19 @@ from .exceptions import ConditionNotMet, InvalidDataset, MissingProperty, Unknow
 
 config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
+# BART's ``enum mri_dims`` indices.  Keeping these local avoids making BART a
+# runtime dependency while allowing callers to request arrays in its layout.
+BART_DIMS = 16
+BART_READ_DIM = 0
+BART_PHS1_DIM = 1
+BART_PHS2_DIM = 2
+BART_COIL_DIM = 3
+BART_TIME_DIM = 9
+BART_TIME2_DIM = 10
+BART_SLICE_DIM = 13
+BART_AVG_DIM = 14
+BART_BATCH_DIM = 15
+
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
     "fid": ["numpy_dtype", "channels", "block_size", "acq_length", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
@@ -566,13 +579,17 @@ class SchemaRawdata(Schema):
 
         return data_
 
-    def to_kspace(self, data=None):
+    def to_kspace(self, data=None, *, bart=False):
         """Return a Cartesian PV-360 raw-data job in k-space order.
 
         The returned axes are ``(readout, phase[, partition], object,
         repetition, channel)`` for 2-D and ``(readout, phase, partition,
-        repetition, channel)`` for 3-D.  The method intentionally does not
-        reconstruct EPI or non-Cartesian acquisitions.
+        repetition, channel)`` for 3-D.  Retrospectively self-gated 2-D
+        acquisitions retain their ``NI`` and ``NR`` axes and add an
+        ``acquisition_cycle`` axis before the channel axis.  The method
+        intentionally does not reconstruct EPI or non-Cartesian acquisitions.
+        With ``bart=True``, the same data is returned in the 16-axis BART
+        layout.
         """
         if data is None:
             data = self._dataset.data
@@ -597,6 +614,11 @@ class SchemaRawdata(Schema):
         objects = int(self._dataset._parameter_value("NI", 1))
         repetitions = int(self._dataset._parameter_value("NR", 1))
         readout, phase = matrix[:2]
+
+        if encoded_dim == 2 and self._dataset._parameter_value("SelfGating") == "Yes":
+            k_space = self._self_gated_k_space(data, readout, phase, receivers, objects, repetitions)
+            axes = (BART_READ_DIM, BART_PHS1_DIM, BART_TIME_DIM, BART_TIME2_DIM, BART_BATCH_DIM, BART_COIL_DIM)
+            return self._as_bart(k_space, axes) if bart else k_space
 
         if encoded_dim == 2:
             encoding_space = (readout, receivers, phase, objects, repetitions)
@@ -623,7 +645,56 @@ class SchemaRawdata(Schema):
 
         k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
         k_space = self._reorder_phase_lines(k_space)
-        return self._reorder_objects(k_space)
+        k_space = self._reorder_objects(k_space)
+        if not bart:
+            return k_space
+        axes = (
+            (BART_READ_DIM, BART_PHS1_DIM, BART_SLICE_DIM, BART_TIME_DIM, BART_COIL_DIM)
+            if encoded_dim == 2
+            else (BART_READ_DIM, BART_PHS1_DIM, BART_PHS2_DIM, BART_TIME_DIM, BART_COIL_DIM)
+        )
+        return self._as_bart(k_space, axes)
+
+    @staticmethod
+    def _as_bart(data, axes):
+        """Place a compact k-space array into BART's 16-dimensional layout."""
+        if data.ndim != len(axes) or len(set(axes)) != len(axes):
+            raise ValueError("BART axis mapping must assign each compact axis exactly once")
+        source_to_bart = tuple(axes) + tuple(axis for axis in range(BART_DIMS) if axis not in axes)
+        padded = np.reshape(data, data.shape + (1,) * (BART_DIMS - data.ndim))
+        return np.transpose(padded, np.argsort(source_to_bart))
+
+    def _self_gated_k_space(self, data, readout, phase, receivers, objects, repetitions):
+        """Arrange retrospectively gated Cartesian data before cine binning."""
+        steps = np.atleast_1d(self._dataset._parameter_value("PVM_EncGenSteps1", []))
+        if steps.size == 0 or steps.size % phase:
+            raise InvalidDataset(
+                f"self-gated phase-encode sequence has {steps.size} steps, which is incompatible "
+                f"with phase size {phase} for {self._dataset.path}"
+            )
+        acquired_frames = steps.size // phase
+        output_frames = int(self._dataset._parameter_value("PVM_NMovieFrames", objects))
+        if output_frames != objects or acquired_frames % (objects * repetitions):
+            raise InvalidDataset(
+                f"self-gated dimensions (NI={objects}, NR={repetitions}, PVM_NMovieFrames={output_frames}) "
+                f"do not describe {acquired_frames} acquired frames for {self._dataset.path}"
+            )
+        acquisition_cycles = acquired_frames // (objects * repetitions)
+        layout = (readout, receivers, phase, acquired_frames)
+        if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers or data.size != int(np.prod(layout)):
+            raise InvalidDataset(
+                f"rawdata sample layout {data.shape} does not match self-gated Cartesian layout "
+                f"{layout} for {self._dataset.path}"
+            )
+
+        k_space = np.transpose(np.reshape(data, layout, order="F"), (0, 2, 3, 1))
+        order = np.argsort(np.reshape(steps, (phase, acquired_frames), order="F"), axis=0)
+        k_space = np.take_along_axis(k_space, order[None, :, :, None], axis=1)
+        return np.reshape(
+            k_space,
+            (readout, phase, objects, acquisition_cycles, repetitions, receivers),
+            order="F",
+        )
 
     def _reorder_phase_lines(self, data):
         steps = self._dataset._parameter_value("PVM_EncSteps1")
