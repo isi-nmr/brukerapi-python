@@ -467,7 +467,32 @@ class Dataset:
         for file in self._state["property_files"]:
             self.add_property_file(file)
 
+        self._warn_unapplied_transposition()
         self._state["load_properties"] = True
+
+    def _warn_unapplied_transposition(self):
+        """Warn when reconstruction metadata would invalidate reported axis labels."""
+        if self.type != "2dseq":
+            return
+
+        transpositions = []
+        for name in ("RECO_transposition", "VisuCoreTransposition"):
+            value = self._parameter_value(name)
+            if value is None:
+                continue
+            try:
+                is_nonzero = np.any(np.asarray(value, dtype=float) != 0)
+            except (TypeError, ValueError):
+                is_nonzero = True
+            if is_nonzero:
+                transpositions.append(name)
+
+        if transpositions:
+            warnings.warn(
+                f"{', '.join(transpositions)} is non-zero for {self.path}; axis transposition is not applied",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     def unload_properties(self):
         for property in self._properties:

@@ -2,6 +2,7 @@ import contextlib
 import datetime
 import json
 import re
+import warnings
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -828,6 +829,27 @@ def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
     dataset.report(tmp_path, props=["scheme_id"])
 
     assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
+
+
+def test_2dseq_nonzero_transposition_warns_about_unapplied_axis_change():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "2dseq"
+    dataset.path = Path("transposed/2dseq")
+    dataset._parameter_value = lambda name, default=None: [0, 1] if name == "VisuCoreTransposition" else default
+
+    with pytest.warns(RuntimeWarning, match="VisuCoreTransposition is non-zero.*not applied"):
+        dataset._warn_unapplied_transposition()
+
+
+def test_2dseq_zero_transposition_does_not_warn():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "2dseq"
+    dataset.path = Path("untransposed/2dseq")
+    dataset._parameter_value = lambda name, default=None: 0
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        dataset._warn_unapplied_transposition()
 
 
 @pytest.mark.skip(reason="in progress")
