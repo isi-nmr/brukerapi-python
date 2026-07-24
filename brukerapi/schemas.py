@@ -190,7 +190,26 @@ class SchemaFid(Schema):
         if "EPI" in self._dataset.scheme_id:
             data = self._mirror_odd_lines(data)
 
+        data = self._reorder_objects(data, dir="FW")
+
         return data
+
+    def _reorder_objects(self, data, dir="FW"):
+        """Map the stored acquisition-object order onto the labelled slice axis."""
+        if "slice" not in self._dataset.dim_type:
+            return data
+
+        try:
+            object_order = np.atleast_1d(self._dataset["ACQ_obj_order"].value).astype(int)
+        except KeyError:
+            return data
+
+        axis = self._dataset.dim_type.index("slice")
+        if object_order.size != data.shape[axis] or np.array_equal(object_order, np.arange(object_order.size)):
+            return data
+
+        indices = np.argsort(object_order) if dir == "FW" else object_order
+        return np.take(data, indices, axis=axis)
 
     def _acquisition_trim(self, data, layouts):
         acquisition_offset = layouts["acquisition_position"][0]
@@ -281,6 +300,8 @@ class SchemaFid(Schema):
         return data
 
     def serialize(self, data, layouts):
+        data = self._reorder_objects(data, dir="BW")
+
         if "EPI" in self._dataset.scheme_id:
             data = self._mirror_odd_lines(data)
 
