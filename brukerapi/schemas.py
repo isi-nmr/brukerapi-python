@@ -196,7 +196,8 @@ class SchemaFid(Schema):
 
     def _reorder_objects(self, data, dir="FW"):
         """Map the stored acquisition-object order onto the labelled slice axis."""
-        if "slice" not in self._dataset.dim_type:
+        dim_type = getattr(self._dataset, "dim_type", ())
+        if "slice" not in dim_type:
             return data
 
         try:
@@ -204,7 +205,7 @@ class SchemaFid(Schema):
         except KeyError:
             return data
 
-        axis = self._dataset.dim_type.index("slice")
+        axis = dim_type.index("slice")
         if object_order.size != data.shape[axis] or np.array_equal(object_order, np.arange(object_order.size)):
             return data
 
@@ -537,6 +538,13 @@ class SchemaTraj(Schema):
 
 
 class SchemaRawdata(Schema):
+    """PV-360 rawdata.jobN schema.
+
+    The on-disk job records describe a complex sample stream, not its
+    acquisition-space layout.  ``to_kspace`` deliberately supports only the
+    Cartesian subset for which the method metadata proves that layout.
+    """
+
     @property
     def layouts(self):
         layouts = {}
@@ -557,6 +565,91 @@ class SchemaRawdata(Schema):
         data_[1::2, ...] = data.imag
 
         return data_
+
+    def to_kspace(self, data=None):
+        """Return a Cartesian PV-360 raw-data job in k-space order.
+
+        The returned axes are ``(readout, phase[, partition], object,
+        repetition, channel)`` for 2-D and ``(readout, phase, partition,
+        repetition, channel)`` for 3-D.  The method intentionally does not
+        reconstruct EPI or non-Cartesian acquisitions.
+        """
+        if data is None:
+            data = self._dataset.data
+
+        scheme_id = self._dataset._infer_scheme_id()
+        if scheme_id is not None:
+            raise UnknownAcqSchemeException(
+                f"rawdata-to-k-space is currently supported only for Cartesian PV-360 jobs, "
+                f"but {self._dataset.path} is {scheme_id}; use its acquisition-specific reader"
+            )
+
+        encoded_dim = self._dataset._parameter_value("ACQ_dim")
+        matrix = np.atleast_1d(self._dataset._parameter_value("PVM_EncMatrix", []))
+        if encoded_dim not in (2, 3) or matrix.size < encoded_dim:
+            raise UnknownAcqSchemeException(
+                f"cannot establish a Cartesian rawdata layout for {self._dataset.path}; "
+                "pass data through an acquisition-specific reader"
+            )
+
+        matrix = tuple(int(value) for value in matrix[:encoded_dim])
+        receivers = int(self._dataset.channels)
+        objects = int(self._dataset._parameter_value("NI", 1))
+        repetitions = int(self._dataset._parameter_value("NR", 1))
+        readout, phase = matrix[:2]
+
+        if encoded_dim == 2:
+            encoding_space = (readout, receivers, phase, objects, repetitions)
+            permute = (0, 2, 3, 4, 1)
+        else:
+            if objects != 1:
+                raise UnknownAcqSchemeException(
+                    f"cannot establish a 3-D Cartesian rawdata layout with NI={objects} for "
+                    f"{self._dataset.path}"
+                )
+            encoding_space = (readout, receivers, phase, matrix[2], repetitions)
+            permute = (0, 2, 3, 4, 1)
+
+        if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers:
+            raise InvalidDataset(
+                f"rawdata sample layout {data.shape} does not match Cartesian metadata "
+                f"(readout={readout}, receivers={receivers}) for {self._dataset.path}"
+            )
+        if data.size != int(np.prod(encoding_space)):
+            raise InvalidDataset(
+                f"rawdata contains {data.size} complex samples but Cartesian layout {encoding_space} "
+                f"requires {int(np.prod(encoding_space))} for {self._dataset.path}"
+            )
+
+        k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
+        k_space = self._reorder_phase_lines(k_space)
+        return self._reorder_objects(k_space)
+
+    def _reorder_phase_lines(self, data):
+        steps = self._dataset._parameter_value("PVM_EncSteps1")
+        if steps is None:
+            return data
+        indices = np.argsort(np.atleast_1d(steps))
+        if indices.size != data.shape[1]:
+            raise InvalidDataset(
+                f"phase-encode reorder length {indices.size} does not match k-space axis length "
+                f"{data.shape[1]} for {self._dataset.path}"
+            )
+        return np.take(data, indices, axis=1)
+
+    def _reorder_objects(self, data):
+        if self._dataset._parameter_value("ACQ_dim") != 2 or data.ndim != 5:
+            return data
+        order = self._dataset._parameter_value("ACQ_obj_order")
+        if order is None:
+            return data
+        indices = np.argsort(np.atleast_1d(order).astype(int))
+        if indices.size != data.shape[2]:
+            raise InvalidDataset(
+                f"object-order length {indices.size} does not match k-space axis length "
+                f"{data.shape[2]} for {self._dataset.path}"
+            )
+        return np.take(data, indices, axis=2)
 
 class Schema2dseq(Schema):
     """

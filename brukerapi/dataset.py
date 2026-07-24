@@ -1016,6 +1016,18 @@ class Dataset:
 
         return SlicePackageSplitter().split(self, write=False)
 
+    def to_kspace(self):
+        """Return a supported raw acquisition in k-space order.
+
+        At present this converts validated Cartesian ParaVision 360
+        ``rawdata.jobN`` streams.  It is intentionally not a reconstruction
+        API: EPI and non-Cartesian raw data require acquisition-specific
+        handling.
+        """
+        if self.type != "rawdata":
+            raise UnsupportedDatasetType(f"k-space conversion is only available for rawdata jobs, not {self.type}")
+        return self._schema.to_kspace()
+
     @property
     def slice_packages(self):
         """In-memory package-specific 2dseq datasets."""
