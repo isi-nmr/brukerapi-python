@@ -197,17 +197,17 @@ class FrameGroupSplitter(Splitter):
         self._split_VisuCoreDataMax(dataset, visu_pars, select, fg_rel_index)
 
         if self.fg == "FG_ECHO":
-            self._split_params_FG_ECHO(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
+            self._split_params_FG_ECHO(select, visu_pars)
         if self.fg == "FG_ISA":
-            self._split_params_FG_ISA(dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars)
+            self._split_params_FG_ISA(dataset, select, fg_rel_index, visu_pars)
 
         return {"visu_pars": visu_pars}
 
-    def _split_params_FG_ISA(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
+    def _split_params_FG_ISA(self, dataset, select, fg_rel_index, visu_pars):
         self._split_VisuCoreDataUnits(visu_pars, dataset, select, fg_rel_index)
         self._split_VisuFGElemComment(visu_pars, dataset, select, fg_rel_index)
 
-    def _split_params_FG_ECHO(self, dataset, select, fg_abs_index, fg_rel_index, fg_size, visu_pars):
+    def _split_params_FG_ECHO(self, select, visu_pars):
         self._split_VisuAcqEchoTime(visu_pars, select)
 
     def _split_VisuCoreFrameCount(self, visu_pars, fg_size):
@@ -313,7 +313,14 @@ class SlicePackageSplitter(Splitter):
             dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
 
             # SPLIT parameters
-            dataset_.parameters = self._split_parameters(dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count)
+            dataset_.parameters = self._split_parameters(
+                dataset,
+                frame_range,
+                fg_rel_index=fg_rel_index,
+                fg_abs_index=fg_abs_index,
+                sp_index=sp_index,
+                frame_count=frame_count,
+            )
 
             # construct properties from the new set of parameters
             dataset_.load_properties()
@@ -335,7 +342,7 @@ class SlicePackageSplitter(Splitter):
 
         return datasets
 
-    def _split_parameters(self, dataset, frame_range, fg_rel_index, fg_abs_index, sp_index, frame_count):
+    def _split_parameters(self, dataset, frame_range, *, fg_rel_index, fg_abs_index, sp_index, frame_count):
         # create a copy of visu_pars of the original data set
         visu_pars_ = copy.deepcopy(dataset.parameters["visu_pars"])
 

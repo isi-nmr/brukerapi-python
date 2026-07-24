@@ -597,8 +597,18 @@ class Schema2dseq(Schema):
             return data
 
         axis = self._frame_group_axis("FG_SLICE")
-        if axis is None:
-            raise InvalidDataset("VisuCoreDiskSliceOrder requests reversed slices, but no FG_SLICE axis is present")
+        if axis is None and getattr(self._dataset, "encoded_dim", None) == 3:
+            # A 3-D VisuCore volume stores slices in its third encoded
+            # dimension; it does not need an FG_SLICE frame group.
+            axis = 2
+        if axis is None or axis >= data.ndim:
+            warnings.warn(
+                "VisuCoreDiskSliceOrder requests reversed slices but no slice axis is identifiable "
+                f"for {getattr(self._dataset, 'path', '<unknown>')}; leaving order unchanged",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return data
         return np.flip(data, axis=axis)
 
     def _complex_frame_axis(self, data):
