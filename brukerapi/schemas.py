@@ -40,8 +40,8 @@ REQUIRED_PROPERTIES = {
         "offset",
         "dim_type",
     ],
-    "rawdata": ["numpy_dtype", "job_desc", "channels", "shape_storage"],
-    "traj": ["numpy_dtype", "scheme_id", "traj_type", "shape_storage", "permute", "final"],
+    "rawdata": ["numpy_dtype", "job_desc", "channels", "shape_storage", "dim_type"],
+    "traj": ["numpy_dtype", "scheme_id", "traj_type", "shape_storage", "permute", "final", "dim_type"],
 }
 
 
@@ -58,6 +58,14 @@ class Schema:
                     raise UnknownAcqSchemeException(f"PULPROG={pulprog!r}, Method={method!r}; pass scheme_id= to override")
                 raise MissingProperty(property)
         self._dataset = dataset
+        shape = getattr(dataset, "shape_final", None) or getattr(dataset, "k_space", None) or getattr(dataset, "final", None) or getattr(dataset, "shape_storage", None)
+        dim_type = getattr(dataset, "dim_type", None)
+        if shape is not None and dim_type is not None and len(dim_type) != len(shape):
+            warnings.warn(
+                f"dim_type {dim_type} does not describe shape {tuple(shape)} for {dataset.path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     def permutation_inverse(self, permutation):
         """Get permutation inverse to the input permutation
@@ -606,10 +614,12 @@ class Schema2dseq(Schema):
 
         axis = self._frame_group_axis("FG_COMPLEX")
         if axis is None:
-            image_type = np.atleast_1d(self._dataset._parameter_value("RECO_image_type", []))
-            if not any("COMPLEX_IMAGE" in str(value).upper() for value in image_type):
-                return None
-            axis = data.ndim - 1
+            axis = getattr(self._dataset, "_combined_complex_axis", None)
+            if axis is None:
+                image_type = np.atleast_1d(self._dataset._parameter_value("RECO_image_type", []))
+                if not any("COMPLEX_IMAGE" in str(value).upper() for value in image_type):
+                    return None
+                axis = data.ndim - 1
 
         if data.shape[axis] != 2:
             raise InvalidDataset(
@@ -623,6 +633,10 @@ class Schema2dseq(Schema):
             return data
         real = np.take(data, 0, axis=axis)
         imaginary = np.take(data, 1, axis=axis)
+        self._dataset._combined_complex_axis = axis
+        label_axis = self._frame_group_axis("FG_COMPLEX")
+        if label_axis is not None:
+            del self._dataset.dim_type[label_axis]
         return real + 1j * imaginary
 
     def _split_complex_frames(self, data, layouts):

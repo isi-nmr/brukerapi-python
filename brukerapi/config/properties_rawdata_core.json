@@ -96,6 +96,12 @@
       ]
     }
   ],
+  "dim_type": [
+    {
+      "cmd": ["'sample'", "'channel'", "'scan'"],
+      "conditions": []
+    }
+  ],
   "shape_storage": [
     {
       "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[3],)",

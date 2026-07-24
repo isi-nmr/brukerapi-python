@@ -173,7 +173,7 @@
       "conditions": ["@is_single_slice==False"]
     },
     {
-      "cmd": "#VisuCoreDimDesc.list",
+      "cmd": "#VisuCoreDimDesc.list + ['frame']",
       "conditions": ["@is_single_slice==False"]
     }
   ]
