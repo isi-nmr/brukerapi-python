@@ -73,48 +73,6 @@
           "#BYTORDA=='big'",
           "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
-    },
-    {
-        "cmd": "np.dtype('i4').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [0, 'Integer']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('i4').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [0, 'Integer']",
-          "#BYTORDA=='big'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f4').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [1, 'Float']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f4').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [1, 'Float']",
-          "#BYTORDA=='big'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f8').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [2, 'Double']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f8').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [2, 'Double']",
-          "#BYTORDA=='big'"
-        ]
     }
   ],
   "channels": [
