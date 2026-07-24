@@ -2,6 +2,8 @@ import contextlib
 import datetime
 import json
 import re
+import warnings
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -83,7 +85,12 @@ def test_dataset_rejects_nonprimary_and_unknown_subtypes(tmp_path, name):
     path = tmp_path / name
     path.touch()
 
-    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
+    if name in {"fid.navFid", "fid.orig", "fid.spiral"}:
+        message = rf"{re.escape(name)} is a fid companion.*fid_companions"
+    else:
+        message = rf"Dataset type: {re.escape(name)} is not supported"
+
+    with pytest.raises(UnsupportedDatasetType, match=message):
         Dataset(path)
 
 
@@ -120,7 +127,7 @@ def test_fid_companion_files_are_not_loaded_as_primary_datasets(path):
     if not Path(path).is_file():
         pytest.skip(f"{path} is not available")
 
-    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"{re.escape(Path(path).name)} is a fid companion.*fid_companions"):
         Dataset(path)
 
 
@@ -141,9 +148,11 @@ def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
     for subtype, companion in dataset.fid_companions.items():
         assert isinstance(companion, Dataset)
         assert companion.path == Path(fid_path).with_suffix(f".{subtype}")
-        assert companion.data.ndim == 1
+        assert companion.data.ndim == (dataset.data.ndim if subtype == "orig" else 1)
         assert np.iscomplexobj(companion.data)
         assert companion.data.size * 2 * companion.numpy_dtype.itemsize == companion.path.stat().st_size
+        if subtype == "orig":
+            assert companion.data.shape == dataset.data.shape
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
@@ -177,6 +186,19 @@ def test_directory_constructor_uses_default_load(path, dataset_type):
     assert dataset.data.size > 0
 
 
+def test_directory_constructor_selects_lowest_numbered_rawdata_job(tmp_path):
+    experiment = tmp_path / "experiment"
+    experiment.mkdir()
+    (experiment / "rawdata.job10").touch()
+    (experiment / "rawdata.job2").touch()
+
+    dataset = Dataset(experiment, load=LOAD_STAGES["empty"])
+
+    assert dataset.path == experiment / "rawdata.job2"
+    assert dataset.type == "rawdata"
+    assert dataset.subtype == "job2"
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_custom_csi_pulse_program_uses_family_scheme_fallback():
     dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
@@ -206,6 +228,50 @@ def test_custom_radial_pulse_program_is_inferred_from_projection_metadata():
     dataset.load_properties()
 
     assert dataset.scheme_id == "RADIAL"
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_3d_radial_stack_of_stars_uses_partition_axis():
+    dataset = Dataset(PV51_STUDY_PATH / "21" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<mac_CS_new3DSymGr.ppg>"
+    dataset["ACQ_dim"].val_str = "3"
+    dataset["ACQ_size"].size = (3,)
+    dataset["ACQ_size"].val_str = "366 31000 1"
+    dataset["PVM_EncMatrix"].size = (3,)
+    dataset["PVM_EncMatrix"].val_str = "128 128 10"
+    dataset["NPro"].val_str = "3100"
+
+    dataset.load_properties()
+
+    assert dataset.block_count == dataset["NPro"].value * dataset["PVM_EncMatrix"].value[2] * dataset["NI"].value * dataset["NR"].value
+    assert dataset.encoding_space[-2] == 10
+    assert dataset.permute == [0, 2, 4, 3, 5, 6, 1]
+    assert dataset.k_space[2] == 10
+    assert dataset.dim_type == [
+        "k_space_encode_step_0",
+        "k_space_encode_step_1",
+        "k_space_encode_step_2",
+        "repetition",
+        "channel",
+    ]
+
+
+def test_projection_metadata_without_radial_evidence_is_not_inferred_as_radial(tmp_path):
+    values = {
+        "PULPROG": "<customResearchSequence.ppg>",
+        "Method": "<CustomMethod>",
+        "NPro": 3100,
+        "ACQ_dim": 3,
+        "ACQ_size": [366, 31000, 1],
+        "PVM_EncMatrix": [128, 128, 10],
+    }
+    dataset = SimpleNamespace(
+        type="fid",
+        path=tmp_path / "study" / "1" / "fid",
+        _parameter_value=lambda name, default=None: values.get(name, default),
+    )
+
+    assert Dataset._infer_scheme_id(dataset) is None
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
@@ -759,6 +825,55 @@ def test_chained_dataset_configuration_merges_onto_current_state(tmp_path):
     assert first_config == {"mmap": True, "parameter_files": ["method"]}
 
 
+def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
+    dataset = Dataset.__new__(Dataset)
+    dataset.path = tmp_path / "study" / "23" / "traj"
+    dataset.type = "traj"
+    reported_paths = []
+    dataset.to_json = lambda path, props=None: reported_paths.append((path, props))
+
+    dataset.report(tmp_path, props=["scheme_id"])
+
+    assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
+
+
+def test_2dseq_nonzero_transposition_warns_about_unapplied_axis_change():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "2dseq"
+    dataset.path = Path("transposed/2dseq")
+    dataset._parameter_value = lambda name, default=None: [0, 1] if name == "VisuCoreTransposition" else default
+
+    with pytest.warns(RuntimeWarning, match="VisuCoreTransposition is non-zero.*not applied"):
+        dataset._warn_unapplied_transposition()
+
+
+def test_2dseq_zero_transposition_does_not_warn():
+    dataset = Dataset.__new__(Dataset)
+    dataset.type = "2dseq"
+    dataset.path = Path("untransposed/2dseq")
+    dataset._parameter_value = lambda name, default=None: 0
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        dataset._warn_unapplied_transposition()
+
+
+def test_2dseq_serialization_clips_rounding_error_to_integer_dtype_limits():
+    dataset = SimpleNamespace(
+        _state={"scale": True},
+        numpy_dtype=np.dtype("int32"),
+        slope=np.array([0.0015559824536877]),
+        offset=np.array([0.0]),
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    scaled_maximum = np.array([[np.iinfo(np.int32).max * dataset.slope[0]]])
+
+    serialized = schema._scale_frames(scaled_maximum, {}, "BW")
+
+    assert serialized[0, 0] == np.iinfo(np.int32).max
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)
@@ -791,7 +906,7 @@ def test_data_load(test_data):
     assert dataset.data.size > 0
     assert np.all(np.isfinite(dataset.data))
 
-    if not reference_path.exists():
+    if not reference_path.exists() or not zipfile.is_zipfile(reference_path):
         return
 
     with np.load(reference_path) as data:

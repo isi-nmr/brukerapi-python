@@ -54,19 +54,28 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
     for branch in config["numpy_dtype"][6:10]:
         assert "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')" in branch["conditions"]
 
-    assert config["job_desc"][1]["conditions"] == ["#ACQ_sw_version.value.startswith('<PV-360.3.')"]
-    assert config["shape_storage"][0] == {
-        "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6],)",
-        "conditions": ["#ACQ_sw_version.value.startswith('<PV-360.3.')"],
-    }
+    assert all("ACQ_sw_version" not in " ".join(branch["conditions"]) for branch in config["job_desc"])
 
 
-def test_rawdata_pv360_v1_job_lookup_is_keyed_by_title():
+def test_rawdata_job_layout_is_selected_by_record_arity():
     config = _load_config("properties_rawdata_core.json")
-    branch = config["job_desc"][0]
 
-    assert branch["cmd"] == "#ACQ_jobs.primed_dict(-1)['<{}>'.format(@subtype)]"
-    assert branch["conditions"] == [["#ACQ_sw_version", ["<PV-360.1.1>"]]]
+    assert config["job_desc"] == [
+        {
+            "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+            "conditions": ["len(#ACQ_jobs.nested[0])==9"],
+        },
+        {
+            "cmd": "#ACQ_jobs.nested[int(@subtype[3:])]",
+            "conditions": ["len(#ACQ_jobs.nested[0])==8"],
+        },
+    ]
+    assert config["shape_storage"] == [
+        {
+            "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[3],)",
+            "conditions": [],
+        }
+    ]
 
 
 def test_fid_pv360_word_size_branches_match_rawdata():
@@ -76,31 +85,22 @@ def test_fid_pv360_word_size_branches_match_rawdata():
     assert fid["numpy_dtype"][6:10] == rawdata["numpy_dtype"][6:10]
 
 
-def test_fid_has_endian_aware_topspin_dtypa_fallbacks():
-    config = _load_config("properties_fid_core.json")
-    branches = config["numpy_dtype"][10:]
+def test_fid_dtype_configuration_has_no_topspin_dtypa_fallbacks():
+    fid = _load_config("properties_fid_core.json")
 
-    expected = {
-        (0, "little"): "np.dtype('i4').newbyteorder('<')",
-        (0, "big"): "np.dtype('i4').newbyteorder('>')",
-        (1, "little"): "np.dtype('f4').newbyteorder('<')",
-        (1, "big"): "np.dtype('f4').newbyteorder('>')",
-        (2, "little"): "np.dtype('f8').newbyteorder('<')",
-        (2, "big"): "np.dtype('f8').newbyteorder('>')",
-    }
-
-    for branch in branches:
-        dtypa_condition, byte_order_condition = branch["conditions"]
-        dtypa = int(dtypa_condition.split("[", 1)[1].split(",", 1)[0])
-        byte_order = "little" if "'little'" in byte_order_condition else "big"
-        assert branch["cmd"] == expected.pop((dtypa, byte_order))
-
-    assert not expected
+    assert all("DTYPA" not in " ".join(branch["conditions"]) for branch in fid["numpy_dtype"])
 
 
 def test_traj_scheme_detection_is_not_version_gated():
     config = _load_config("properties_traj_core.json")
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in config["scheme_id"])
+
+
+def test_traj_custom_properties_define_a_stable_id():
+    traj = _load_config("properties_traj_custom.json")
+
+    assert [*traj] == ["subj_id", "study_id", "exp_id", "id"]
+    assert traj["id"][0]["cmd"] == "'Traj_{}*{}*{}'.format(@exp_id, @subj_id, @study_id)"
 
 
 def test_fid_scheme_config_keeps_exact_matches_before_code_fallback():
@@ -152,3 +152,25 @@ def test_zte_scheme_is_not_shadowed_by_radial():
     assert any(branch["cmd"] == "'ZTE'" for branch in traj["scheme_id"])
     zte_encoding = next(branch for branch in fid["encoding_space"] if branch["conditions"] == ["@scheme_id=='ZTE'"])
     assert zte_encoding["cmd"][4] == "#NPro // #ACQ_phase_factor"
+
+
+def test_fid_3d_radial_layout_includes_the_partition_axis():
+    fid = _load_config("properties_fid_core.json")
+    conditions = [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]",
+    ]
+
+    block_count = next(branch for branch in fid["block_count"] if branch["conditions"] == conditions)
+    encoding = next(branch for branch in fid["encoding_space"] if branch["conditions"] == conditions)
+    permute = next(branch for branch in fid["permute"] if branch["conditions"] == conditions)
+    k_space = next(branch for branch in fid["k_space"] if branch["conditions"] == conditions)
+    dim_type = next(branch for branch in fid["dim_type"] if branch["conditions"] == conditions)
+
+    assert block_count["cmd"] == "#NPro*#PVM_EncMatrix[2]*#NI*#NR"
+    assert encoding["cmd"][-2] == "#PVM_EncMatrix[2]"
+    assert permute["cmd"] == [0, 2, 4, 3, 5, 6, 1]
+    assert k_space["cmd"][2] == "#PVM_EncMatrix[2]"
+    assert len(dim_type["cmd"]) == 5

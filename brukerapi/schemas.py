@@ -323,27 +323,9 @@ class SchemaFid(Schema):
         for index_ra in np.ndindex(layouts_ra["k_space"][1:]):
             # index of line in the original k_space
             index_full = tuple(i + o for i, o in zip(index_ra, layouts_ra["k_space_offset"][1:]))
-            index_ra_f = index_ra
-            # index of line in the subarray
-            # index_full = self.index_to_data(layouts, (0,) + index_full)
-            try:
-                index_full = self.index_to_data(layouts, (0,) + index_full)
-            except IndexError:
-                print(index_full)
-                index_full = self.index_to_data(layouts, (0,) + index_full)
-
-            # index of line in the subarray
-            # index_ra = self.index_to_data(layouts_ra, (0,)+index_ra)
-            try:
-                index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
-            except IndexError:
-                print(index_ra)
-                index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
-
-            try:
-                array_ra[index_ra_f] = np.array(fp[index_full])
-            except IndexError:
-                print(index_full)
+            index_full = self.index_to_data(layouts, (0,) + index_full)
+            index_ra_f = self.index_to_data(layouts_ra, (0,) + index_ra)
+            array_ra[index_ra_f] = np.array(fp[index_full])
 
         layouts_ra["k_space"] = (layouts_ra["k_space"][0] // self.acquisition_factor,) + layouts_ra["k_space"][1:]
         layouts_ra["encoding_space"] = (layouts_ra["encoding_space"][0] // self.acquisition_factor,) + layouts_ra["encoding_space"][1:]
@@ -477,19 +459,26 @@ class SchemaFid(Schema):
 
 
 class SchemaFidCompanion:
-    """One-dimensional complex view of an auxiliary ``fid.<subtype>`` file."""
+    """Decoder for auxiliary ``fid.<subtype>`` files."""
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, primary_schema=None):
         self._dataset = dataset
+        self._primary_schema = primary_schema
 
     @property
     def layouts(self):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.layouts
         return {"storage": self._dataset.shape_storage}
 
     def deserialize(self, data, layouts):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.deserialize(data, layouts)
         return data[0::2] + 1j * data[1::2]
 
     def serialize(self, data, layouts):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.serialize(data, layouts)
         serialized = np.empty(data.size * 2, dtype=self._dataset.numpy_dtype)
         serialized[0::2] = np.real(data)
         serialized[1::2] = np.imag(data)
@@ -679,6 +668,9 @@ class Schema2dseq(Schema):
 
         if dir == "BW":
             data = np.round(data)
+            if np.issubdtype(self._dataset.numpy_dtype, np.integer):
+                dtype_limits = np.iinfo(self._dataset.numpy_dtype)
+                data = np.clip(data, dtype_limits.min, dtype_limits.max)
 
         return data
 
@@ -732,6 +724,14 @@ class Schema2dseq(Schema):
             array_ra[slice_ra] = np.array(fp[slice_full])
 
         array_ra = self.deserialize(array_ra, layouts_ra)
+
+        # Frame-group selection above does not alter encoded dimensions.
+        # Apply their requested selection after deserializing the selected
+        # frames, preserving singleton axes for the final squeeze below.
+        encoded_slice = tuple(
+            slice(index, index + 1) if isinstance(index, int) else index for index in slice_[: self._dataset.encoded_dim]
+        )
+        array_ra = array_ra[encoded_slice + (slice(None),) * (array_ra.ndim - self._dataset.encoded_dim)]
 
         singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))
 

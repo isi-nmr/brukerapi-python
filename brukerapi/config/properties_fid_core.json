@@ -73,48 +73,6 @@
           "#BYTORDA=='big'",
           "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
         ]
-    },
-    {
-        "cmd": "np.dtype('i4').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [0, 'Integer']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('i4').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [0, 'Integer']",
-          "#BYTORDA=='big'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f4').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [1, 'Float']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f4').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [1, 'Float']",
-          "#BYTORDA=='big'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f8').newbyteorder('<')",
-        "conditions": [
-          "#DTYPA in [2, 'Double']",
-          "#BYTORDA=='little'"
-        ]
-    },
-    {
-        "cmd": "np.dtype('f8').newbyteorder('>')",
-        "conditions": [
-          "#DTYPA in [2, 'Double']",
-          "#BYTORDA=='big'"
-        ]
     }
   ],
   "channels": [
@@ -347,6 +305,15 @@
   ],
   "block_count": [
     {
+      "cmd": "#NPro*#PVM_EncMatrix[2]*#NI*#NR",
+      "conditions": [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
+    {
       "cmd": "#NI*#NR*#PVM_EncMatrix[1]",
       "conditions": [
         "@scheme_id=='CART_2D'"
@@ -428,6 +395,23 @@
     }
   ],
   "encoding_space": [
+    {
+      "cmd": [
+        "#ACQ_size[0]//2",
+        "#PVM_EncNReceivers",
+        "#ACQ_phase_factor",
+        "#NI",
+        "#NPro // #ACQ_phase_factor",
+        "#PVM_EncMatrix[2]",
+        "#NR"
+      ],
+      "conditions": [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
     {
       "cmd": [
         "#PVM_EncMatrix[0]",
@@ -582,6 +566,15 @@
   ],
   "permute": [
     {
+      "cmd": [0,2,4,3,5,6,1],
+      "conditions": [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
+    {
       "cmd": [0,2,4,3,5,1],
       "conditions": [
         "@scheme_id in ['CART_2D', 'RADIAL']"
@@ -632,6 +625,22 @@
     }
   ],
   "k_space": [
+    {
+      "cmd": [
+        "#ACQ_size[0]//2",
+        "#NPro",
+        "#PVM_EncMatrix[2]",
+        "#NI",
+        "#NR",
+        "#PVM_EncNReceivers"
+      ],
+      "conditions": [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
     {
       "cmd": [
         "#PVM_EncMatrix[0]",
@@ -794,7 +803,22 @@
     }
   ],
   "dim_type": [
-        {
+    {
+      "cmd": [
+        "'k_space_encode_step_0'",
+        "'k_space_encode_step_1'",
+        "'k_space_encode_step_2'",
+        "'repetition'",
+        "'channel'"
+      ],
+      "conditions": [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
+    {
       "cmd": [
         "'k_space_encode_step_0'",
         "'k_space_encode_step_1'",

@@ -202,10 +202,16 @@ class Dataset:
         # directory constructor
         if self.path.is_dir():
             content = os.listdir(self.path)
+            rawdata_jobs = sorted(
+                (name for name in content if re.fullmatch(r"rawdata\.job\d+", name)),
+                key=lambda name: int(name.rsplit("job", 1)[1]),
+            )
             if "fid" in content:
                 self.path = self.path / "fid"
             elif "2dseq" in content:
                 self.path = self.path / "2dseq"
+            elif rawdata_jobs:
+                self.path = self.path / rawdata_jobs[0]
             elif state.get("load") is LOAD_STAGES["empty"] and self.path.stem in DEFAULT_STATES:
                 pass
             else:
@@ -219,6 +225,11 @@ class Dataset:
 
         if self.type not in DEFAULT_STATES:
             raise UnsupportedDatasetType(self.type)
+        if self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES and not state.get("_auxiliary"):
+            raise UnsupportedDatasetType(
+                f"{self.path.name} is a fid companion (spec §3.5); load it as "
+                f"Dataset({self.path.with_suffix('')!s}).fid_companions[{self.subtype!r}]"
+            )
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
             raise UnsupportedDatasetType(self.path.name)
 
@@ -456,7 +467,32 @@ class Dataset:
         for file in self._state["property_files"]:
             self.add_property_file(file)
 
+        self._warn_unapplied_transposition()
         self._state["load_properties"] = True
+
+    def _warn_unapplied_transposition(self):
+        """Warn when reconstruction metadata would invalidate reported axis labels."""
+        if self.type != "2dseq":
+            return
+
+        transpositions = []
+        for name in ("RECO_transposition", "VisuCoreTransposition"):
+            value = self._parameter_value(name)
+            if value is None:
+                continue
+            try:
+                is_nonzero = np.any(np.asarray(value, dtype=float) != 0)
+            except (TypeError, ValueError):
+                is_nonzero = True
+            if is_nonzero:
+                transpositions.append(name)
+
+        if transpositions:
+            warnings.warn(
+                f"{', '.join(transpositions)} is non-zero for {self.path}; axis transposition is not applied",
+                RuntimeWarning,
+                stacklevel=2,
+            )
 
     def unload_properties(self):
         for property in self._properties:
@@ -552,15 +588,14 @@ class Dataset:
             return "dEPI"
         if "EPI" in family:
             return "EPI"
-        if "RADIAL" in family or "UTE" in family:
-            return "RADIAL"
-
         dim = self._parameter_value("ACQ_dim")
         descriptions = np.atleast_1d(self._parameter_value("ACQ_dim_desc", [])).tolist()
         if descriptions and descriptions[0] == "Spectroscopic":
             return "SPECTROSCOPY" if int(dim) == 1 else "CSI"
 
-        if n_projections is not None and int(n_projections) > 0:
+        if n_projections is not None and int(n_projections) > 0 and (
+            (self.path.parent / "traj").exists() or "RADIAL" in family or "UTE" in family
+        ):
             return "RADIAL"
 
         acq_size = np.atleast_1d(self._parameter_value("ACQ_size", []))
@@ -670,6 +705,8 @@ class Dataset:
         **called in the class constructor.**
         """
         if self._state["mmap"]:
+            if self.type != "2dseq":
+                raise UnsupportedDatasetType(f"random access (mmap=True) is not supported for {self.type} datasets")
             self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
@@ -770,9 +807,13 @@ class Dataset:
             companion = Dataset(path, load=LOAD_STAGES["empty"], _auxiliary=True)
             companion._parameters = self.parameters
             companion.numpy_dtype = self.numpy_dtype
-            companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
-            companion.dim_type = ["sample"]
-            companion._schema = SchemaFidCompanion(companion)
+            if subtype == "orig":
+                companion.shape_storage = self.shape_storage
+                companion.dim_type = self.dim_type
+            else:
+                companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
+                companion.dim_type = ["sample"]
+            companion._schema = SchemaFidCompanion(companion, primary_schema=self._schema)
             companion.load_data()
             self._fid_companions[subtype] = companion
 
@@ -818,12 +859,13 @@ class Dataset:
         :param names: *list* names of properties to be exported
         """
 
+        report_id = getattr(self, "id", f"{self.path.parent.name}_{self.type}")
         if path is None:
-            path = self.path.parent / f"{self.id}.json"
+            path = self.path.parent / f"{report_id}.json"
         else:
             path = Path(path)
             if path.is_dir():
-                path /= f"{self.id}.json"
+                path /= f"{report_id}.json"
 
         if verbose:
             print(f"bruker report: {self.path!s} -> {path!s}")
