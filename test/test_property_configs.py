@@ -54,19 +54,28 @@ def test_rawdata_pv360_v3_uses_prefix_matching():
     for branch in config["numpy_dtype"][6:10]:
         assert "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')" in branch["conditions"]
 
-    assert config["job_desc"][1]["conditions"] == ["#ACQ_sw_version.value.startswith('<PV-360.3.')"]
-    assert config["shape_storage"][0] == {
-        "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6],)",
-        "conditions": ["#ACQ_sw_version.value.startswith('<PV-360.3.')"],
-    }
+    assert all("ACQ_sw_version" not in " ".join(branch["conditions"]) for branch in config["job_desc"])
 
 
-def test_rawdata_pv360_v1_job_lookup_is_keyed_by_title():
+def test_rawdata_job_layout_is_selected_by_record_arity():
     config = _load_config("properties_rawdata_core.json")
-    branch = config["job_desc"][0]
 
-    assert branch["cmd"] == "#ACQ_jobs.primed_dict(-1)['<{}>'.format(@subtype)]"
-    assert branch["conditions"] == [["#ACQ_sw_version", ["<PV-360.1.1>"]]]
+    assert config["job_desc"] == [
+        {
+            "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+            "conditions": ["len(#ACQ_jobs.nested[0])==9"],
+        },
+        {
+            "cmd": "#ACQ_jobs.nested[int(@subtype[3:])]",
+            "conditions": ["len(#ACQ_jobs.nested[0])==8"],
+        },
+    ]
+    assert config["shape_storage"] == [
+        {
+            "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[3],)",
+            "conditions": [],
+        }
+    ]
 
 
 def test_fid_pv360_word_size_branches_match_rawdata():
