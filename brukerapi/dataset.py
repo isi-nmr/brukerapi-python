@@ -669,6 +669,8 @@ class Dataset:
         **called in the class constructor.**
         """
         if self._state["mmap"]:
+            if self.type != "2dseq":
+                raise UnsupportedDatasetType(f"random access (mmap=True) is not supported for {self.type} datasets")
             self._data = DataRandomAccess(self)
         else:
             self._data = self._read_data()
