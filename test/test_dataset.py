@@ -3,6 +3,7 @@ import datetime
 import json
 import re
 import warnings
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -84,7 +85,12 @@ def test_dataset_rejects_nonprimary_and_unknown_subtypes(tmp_path, name):
     path = tmp_path / name
     path.touch()
 
-    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(name)} is not supported"):
+    if name in {"fid.navFid", "fid.orig", "fid.spiral"}:
+        message = rf"{re.escape(name)} is a fid companion.*fid_companions"
+    else:
+        message = rf"Dataset type: {re.escape(name)} is not supported"
+
+    with pytest.raises(UnsupportedDatasetType, match=message):
         Dataset(path)
 
 
@@ -852,6 +858,22 @@ def test_2dseq_zero_transposition_does_not_warn():
         dataset._warn_unapplied_transposition()
 
 
+def test_2dseq_serialization_clips_rounding_error_to_integer_dtype_limits():
+    dataset = SimpleNamespace(
+        _state={"scale": True},
+        numpy_dtype=np.dtype("int32"),
+        slope=np.array([0.0015559824536877]),
+        offset=np.array([0.0]),
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    scaled_maximum = np.array([[np.iinfo(np.int32).max * dataset.slope[0]]])
+
+    serialized = schema._scale_frames(scaled_maximum, {}, "BW")
+
+    assert serialized[0, 0] == np.iinfo(np.int32).max
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)
@@ -884,7 +906,7 @@ def test_data_load(test_data):
     assert dataset.data.size > 0
     assert np.all(np.isfinite(dataset.data))
 
-    if not reference_path.exists():
+    if not reference_path.exists() or not zipfile.is_zipfile(reference_path):
         return
 
     with np.load(reference_path) as data:

@@ -668,6 +668,9 @@ class Schema2dseq(Schema):
 
         if dir == "BW":
             data = np.round(data)
+            if np.issubdtype(self._dataset.numpy_dtype, np.integer):
+                dtype_limits = np.iinfo(self._dataset.numpy_dtype)
+                data = np.clip(data, dtype_limits.min, dtype_limits.max)
 
         return data
 
