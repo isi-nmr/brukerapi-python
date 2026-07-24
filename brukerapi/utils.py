@@ -42,20 +42,16 @@ def simple_reconstruction(dataset, **kwargs):
     data = np.fft.fftshift(np.fft.ifft2(dataset.data, axes=axes), axes=axes)
 
     if kwargs.get("COMBINE_CHANNELS") is True:
-        return combine_channels(data=data)
+        return combine_channels(dataset, data=data)
     return data
 
 
 def combine_channels(dataset, data=None):
-    if dataset.scheme is not None:
-        channel_dim = dataset.scheme.dim_type.index("channel")
-    else:
-        raise NotImplementedError
-
     if data is None:
         data = dataset.data
 
-    data = data**2
-    data = np.expand_dims(np.sum(data, channel_dim), channel_dim)
+    if "channel" not in dataset.dim_type:
+        return data
 
-    return np.sqrt(data)
+    channel_dim = dataset.dim_type.index("channel")
+    return np.sqrt(np.sum(np.abs(data) ** 2, axis=channel_dim, keepdims=True))
