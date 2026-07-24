@@ -959,6 +959,31 @@ def test_fid_raw_preserves_acquisition_order_as_samples_shots_receivers():
     assert np.array_equal(dataset.raw, expected)
 
 
+def test_frame_group_values_align_echo_times_and_diffusion_matrices_to_data_axes():
+    echo = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/23/pdata/1/2dseq")
+    echo_times = echo.frame_group_values["VisuAcqEchoTime"]
+
+    assert echo_times.shape == (1, 1, 1, 6)
+    assert np.array_equal(np.broadcast_to(echo_times, echo.data.shape)[0, 0, 0], echo["VisuAcqEchoTime"].value)
+
+    diffusion = Dataset("test/test_data/PV601/20200612_094625_lego_phantom_3_1_2/15/pdata/1/2dseq")
+    b_matrices = diffusion.frame_group_values["VisuAcqDiffusionBMatrix"]
+
+    assert b_matrices.shape == (1, 1, 1, 6, 9)
+    assert np.array_equal(b_matrices[0, 0, 0], diffusion["VisuAcqDiffusionBMatrix"].value)
+
+
+def test_metadata_groups_visu_and_subject_parameters_under_normalized_names():
+    dataset = Dataset(
+        "test/test_data/PV601/20200612_094625_lego_phantom_3_1_2/5/pdata/1/2dseq",
+        parameter_files=["subject"],
+    )
+
+    assert dataset.metadata["visu_study"]["uid"] == dataset["VisuStudyUid"].value
+    assert dataset.metadata["visu_acq"]["sequence_name"] == dataset["VisuAcqSequenceName"].value
+    assert dataset.metadata["subject"]["id"] == dataset["SUBJECT_id"].value
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)

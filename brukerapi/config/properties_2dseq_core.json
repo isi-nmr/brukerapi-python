@@ -61,6 +61,14 @@
           ["#VisuCoreWordType",["_8BIT_UNSGN_INT"]],
           ["#VisuCoreByteOrder",["bigEndian"]]
         ]
+    },
+    {
+        "cmd": "np.dtype({'_32BIT_SGN_INT':'int32','_16BIT_SGN_INT':'int16','_32BIT_FLOAT':'float32','_8BIT_UNSGN_INT':'uint8'}[#RECO_wordtype]).newbyteorder('<' if #RECO_byte_order=='littleEndian' else '>')",
+        "conditions": ["#RECO_wordtype in ['_32BIT_SGN_INT','_16BIT_SGN_INT','_32BIT_FLOAT','_8BIT_UNSGN_INT']", "#RECO_byte_order in ['littleEndian','bigEndian']"]
+    },
+    {
+        "cmd": "np.dtype({'ip_int':'int32','ip_short':'int16','ip_float':'float32'}[#DATTYPE]).newbyteorder('<')",
+        "conditions": ["#DATTYPE in ['ip_int','ip_short','ip_float']"]
     }
   ],
   "shape_frames": [
@@ -108,11 +116,23 @@
       {
         "cmd": "#VisuCoreSize.tuple",
         "conditions": []
+      },
+      {
+        "cmd": "#RECO_size.tuple",
+        "conditions": []
+      },
+      {
+        "cmd": "tuple(size for size in (int(#IM_SIX), int(#IM_SIY), int(#IM_SIZ)) if size > 1)",
+        "conditions": []
       }
   ],
   "encoded_dim": [
       {
         "cmd": "len(#VisuCoreSize.tuple)",
+        "conditions": []
+      },
+      {
+        "cmd": "len(@shape_block)",
         "conditions": []
       }
   ],

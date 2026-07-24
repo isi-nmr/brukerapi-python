@@ -63,7 +63,7 @@ DEFAULT_STATES = {
     },
     "2dseq": {
         "parameter_files": ["visu_pars"],
-        "optional_parameter_files": ["reco"],
+        "optional_parameter_files": ["reco", "d3proc"],
         "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
         "load": LOAD_STAGES["all"],
         "scale": True,
@@ -99,6 +99,7 @@ RELATIVE_PATHS = {
         "acqp": "../../acqp",
         "subject": "../../../subject",
         "reco": "./reco",
+        "d3proc": "./d3proc",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
         "AdjStatePerStudy": "../../../AdjStatePerStudy",
@@ -108,6 +109,7 @@ RELATIVE_PATHS = {
         "acqp": "../../acqp",
         "subject": "../../../subject",
         "reco": "./reco",
+        "d3proc": "./d3proc",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
         "AdjStatePerStudy": "../../../AdjStatePerStudy",
@@ -1040,6 +1042,101 @@ class Dataset:
         optional BART layout.
         """
         return self.to_kspace()
+
+    @property
+    def frame_group_values(self):
+        """Metadata values reshaped onto their declared frame-group axes.
+
+        Keys are Visu parameter names without angle brackets.  The leading
+        axes of each returned array align with :attr:`data`; trailing axes
+        retain parameter payload, for example the nine B-matrix elements.
+        """
+        if self.type != "2dseq":
+            return {}
+
+        dependencies = self._parameter_value("VisuGroupDepVals", [])
+        descriptors = self._parameter_value("VisuFGOrderDesc", [])
+        if dependencies is None or descriptors is None:
+            return {}
+        if dependencies and isinstance(dependencies[0], str):
+            dependencies = [dependencies]
+        if descriptors and not isinstance(descriptors[0], (list, tuple, np.ndarray)):
+            descriptors = [descriptors]
+
+        grouped = {}
+        for dependency in dependencies:
+            if len(dependency) < 2:
+                continue
+            name = str(dependency[0]).strip("<>")
+            try:
+                descriptor_index = int(dependency[1])
+                group_name = str(descriptors[descriptor_index][1]).strip("<>")
+                axis = next(
+                    axis
+                    for axis, dim_type in enumerate(self.dim_type)
+                    if str(dim_type).strip("<>") == group_name
+                )
+            except (IndexError, KeyError, StopIteration, TypeError, ValueError):
+                continue
+            grouped.setdefault(name, []).append(axis)
+
+        values = {}
+        data_shape = self._data.shape
+        for name, axes in grouped.items():
+            if name not in self:
+                continue
+            parameter = np.asarray(self[name].value)
+            parameter_axes = axes
+            if len(parameter_axes) == 1 and parameter.ndim and parameter.shape[0] != data_shape[parameter_axes[0]]:
+                matches = [axis for axis in range(self.encoded_dim, self._data.ndim) if data_shape[axis] == parameter.shape[0]]
+                if len(matches) == 1:
+                    parameter_axes = matches
+            axis_sizes = tuple(data_shape[axis] for axis in parameter_axes)
+            leading_size = int(np.prod(axis_sizes, dtype=int))
+            if parameter.size == 0 or parameter.size % leading_size:
+                continue
+            payload_shape = parameter.shape[len(parameter_axes) :]
+            if parameter.ndim < len(parameter_axes) or parameter.shape[: len(parameter_axes)] != axis_sizes:
+                payload_shape = (parameter.size // leading_size,)
+            aligned = np.reshape(parameter, axis_sizes + payload_shape, order="F")
+
+            payload_axes = tuple(range(self._data.ndim, self._data.ndim + len(payload_shape)))
+            source_positions = tuple(parameter_axes) + payload_axes
+            aligned = np.transpose(aligned, np.argsort(source_positions))
+            target_shape = []
+            source_axis = 0
+            for axis in range(self._data.ndim + len(payload_shape)):
+                if axis in source_positions:
+                    target_shape.append(aligned.shape[source_axis])
+                    source_axis += 1
+                else:
+                    target_shape.append(1)
+            values[name] = np.reshape(aligned, target_shape)
+        return values
+
+    @property
+    def metadata(self):
+        """Grouped Visu and SUBJECT metadata with snake-case field names."""
+        groups = {
+            "visu_subject": ("VisuSubject",),
+            "visu_study": ("VisuStudy",),
+            "visu_series": ("VisuSeries",),
+            "visu_equipment": ("VisuEquipment",),
+            "visu_acq": ("VisuAcq",),
+            "subject": ("SUBJECT_",),
+        }
+        metadata = {group: {} for group in groups}
+        for parameter_file in self._parameters.values():
+            for name in parameter_file.get_parameters():
+                for group, prefixes in groups.items():
+                    prefix = next((prefix for prefix in prefixes if name.startswith(prefix)), None)
+                    if prefix is None:
+                        continue
+                    field = name.removeprefix(prefix)
+                    field = re.sub(r"(?<!^)(?=[A-Z])", "_", field).lower()
+                    metadata[group][field] = parameter_file[name].value
+                    break
+        return {group: values for group, values in metadata.items() if values}
 
     @property
     def slice_packages(self):
