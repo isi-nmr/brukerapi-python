@@ -2,7 +2,6 @@ import contextlib
 import datetime
 import json
 import re
-import warnings
 import zipfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -838,25 +837,34 @@ def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
     assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
 
 
-def test_2dseq_nonzero_transposition_warns_about_unapplied_axis_change():
-    dataset = Dataset.__new__(Dataset)
-    dataset.type = "2dseq"
-    dataset.path = Path("transposed/2dseq")
-    dataset._parameter_value = lambda name, default=None: [0, 1] if name == "VisuCoreTransposition" else default
+def test_2dseq_transposition_swaps_xy_for_selected_frames_and_is_involutory():
+    dataset = SimpleNamespace(
+        path=Path("transposed/2dseq"),
+        encoded_dim=2,
+        _parameter_value=lambda name, default=None: [0, 1] if name == "VisuCoreTransposition" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    data = np.arange(18).reshape((3, 3, 2), order="F")
 
-    with pytest.warns(RuntimeWarning, match="VisuCoreTransposition is non-zero.*not applied"):
-        dataset._warn_unapplied_transposition()
+    transposed = schema._apply_transposition(data)
+
+    assert np.array_equal(transposed[:, :, 0], data[:, :, 0])
+    assert np.array_equal(transposed[:, :, 1], data[:, :, 1].T)
+    assert np.array_equal(schema._apply_transposition(transposed), data)
 
 
-def test_2dseq_zero_transposition_does_not_warn():
-    dataset = Dataset.__new__(Dataset)
-    dataset.type = "2dseq"
-    dataset.path = Path("untransposed/2dseq")
-    dataset._parameter_value = lambda name, default=None: 0
+def test_2dseq_transposition_falls_back_to_reco_metadata():
+    dataset = SimpleNamespace(
+        path=Path("legacy-transposed/2dseq"),
+        encoded_dim=2,
+        _parameter_value=lambda name, default=None: 1 if name == "RECO_transposition" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    data = np.arange(6).reshape((2, 3), order="F")
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("error")
-        dataset._warn_unapplied_transposition()
+    assert np.array_equal(schema._apply_transposition(data), data.T)
 
 
 def test_2dseq_serialization_clips_rounding_error_to_integer_dtype_limits():
@@ -978,24 +986,30 @@ def test_properties(test_properties):
 def test_dim_type_matches_loaded_data_rank(test_data):
     dataset = Dataset(test_data[0])
 
-    assert len(dataset.dim_type) == dataset.data.ndim
+    data = dataset.raw if dataset.type == "rawdata" else dataset.data
+    assert len(dataset.dim_type) == data.ndim
 
 
 def test_data_load(test_data):
     dataset = Dataset(test_data[0])
     reference_path = Path(str(dataset.path) + ".npz")
+    data = dataset.raw if dataset.type == "rawdata" else dataset.data
 
-    assert isinstance(dataset.data, np.ndarray)
-    assert dataset.data.size > 0
-    assert np.all(np.isfinite(dataset.data))
+    assert isinstance(data, np.ndarray)
+    assert data.size > 0
+    assert np.all(np.isfinite(data))
 
     if not reference_path.exists() or not zipfile.is_zipfile(reference_path):
         return
 
-    with np.load(reference_path) as data:
-        assert "data" in data
-        actual = np.squeeze(dataset.data)
-        reference = data["data"]
+    with np.load(reference_path) as archive:
+        assert "data" in archive
+        actual = np.squeeze(data)
+        reference = archive["data"]
+        if dataset.type == "rawdata":
+            reference = np.transpose(reference, (0, 2, 1))
+        elif dataset.type == "2dseq":
+            reference = dataset._schema._apply_transposition(reference)
 
         if dataset.type == "2dseq" and np.iscomplexobj(actual) and not np.iscomplexobj(reference):
             complex_axis = next(
@@ -1051,11 +1065,13 @@ def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):
     d_ref.write(path_out)
     d_test = Dataset(path_out)
 
-    diff = d_ref.data - d_test.data
+    reference_data = d_ref.raw if d_ref.type == "rawdata" else d_ref.data
+    written_data = d_test.raw if d_test.type == "rawdata" else d_test.data
+    diff = reference_data - written_data
     max_error = np.max(np.abs(diff))
 
     with contextlib.suppress(AssertionError):
-        assert np.array_equal(d_ref.data, d_test.data)
+        assert np.array_equal(reference_data, written_data)
 
     if max_error > 0.0:
         try:

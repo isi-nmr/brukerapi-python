@@ -33,7 +33,7 @@ include-package-data = true
 zip-safe = false
 
 [project.optional-dependencies]
-dev = ["pytest", "zenodo_get", "ruff", "pytest-cov"]
+dev = ["pytest", "zenodo_get", "ruff==0.16.0", "pytest-cov"]
 
 
 [tool.ruff.lint]
@@ -75,6 +75,7 @@ ignore = [
 
 
 [tool.ruff]
+required-version = "==0.16.0"
 line-length = 180
 target-version = "py313"
 

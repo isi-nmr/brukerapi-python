@@ -86,14 +86,14 @@ class Splitter:
         VisuCoreDataSlope.size = (int(np.prod(value.shape)),)
         VisuCoreDataSlope.value = value.flatten(order="F")
 
-    def _split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_index):
+    def _split_VisuCoreTransposition(self, dataset, visu_pars, index, fg_rel_index):
         try:
             VisuCoreTransposition = visu_pars["VisuCoreTransposition"]
         except KeyError:
             return
 
         value = np.reshape(VisuCoreTransposition.value, dataset.shape_final[dataset.encoded_dim :], order="F")
-        value = value[index_to_slice(index, value.shape, fg_index - dataset.encoded_dim)]
+        value = value[index_to_slice(index, value.shape, fg_rel_index)]
         VisuCoreTransposition.size = (int(np.prod(value.shape)),)
         VisuCoreTransposition.value = value.flatten(order="F")
 
