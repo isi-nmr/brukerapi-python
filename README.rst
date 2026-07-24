@@ -32,6 +32,51 @@ Load any **data set**:
     dataset.data                         # access data array
     dataset.get_value('VisuCoreSize')    # get a parameter value
 
+Raw acquisitions and k-space
+==============================
+
+Raw Bruker acquisitions have format-dependent historical ``.data`` semantics.
+For explicit code, use the representation that matches the task:
+
+.. code-block:: python
+
+    fid = Dataset('{path}/fid')
+    fid.raw                 # decoded (sample, shot, receiver) acquisitions
+    fid.kspace              # ordered FID k-space
+
+    job = Dataset('{path}/rawdata.job0')
+    job.raw                 # decoded (sample, shot, receiver) acquisitions
+    job.kspace              # ordered Cartesian PV360 k-space, when metadata proves the layout
+    job.to_kspace(bart=True)  # optional 16-axis BART layout
+
+``Dataset.data`` remains backward compatible: FIDs expose their historical
+ordered k-space view, whereas PV360 ``rawdata.jobN`` exposes its historical
+decoded stream and emits a ``FutureWarning``. ``.kspace`` is not a
+reconstruction API; EPI and non-Cartesian jobs require acquisition-specific
+handling.
+
+Frame-group metadata
+====================
+
+For 2dseq data, ``frame_group_values`` aligns values named by
+``VisuGroupDepVals`` to the corresponding array axes. Returned arrays use
+singleton dimensions where needed and therefore broadcast directly against
+``dataset.data``:
+
+.. code-block:: python
+
+    echoes = dataset.frame_group_values['VisuAcqEchoTime']
+    b_matrices = dataset.frame_group_values['VisuAcqDiffusionBMatrix']
+
+``metadata`` provides normalized, grouped access to parsed subject, study,
+series, equipment, and acquisition fields:
+
+.. code-block:: python
+
+    dataset.metadata['visu_study']['uid']
+    dataset.metadata['visu_acq']['sequence_name']
+    dataset.metadata['subject']['id']
+
 Load an entire **study**:
 
 .. code-block:: python

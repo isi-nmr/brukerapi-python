@@ -312,7 +312,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 3,
@@ -2523,7 +2524,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -2645,7 +2647,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -2766,7 +2769,8 @@
         "dim_type": [
             "spectroscopic",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 6.240000000000001e-05,
         "encoded_dim": 3,
@@ -2855,7 +2859,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -3195,7 +3200,8 @@
         "dim_type": [
             "spatial",
             "spectroscopic",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 2.5000000000000044e-06,
         "encoded_dim": 3,
@@ -3366,7 +3372,8 @@
         ],
         "date": "2020-06-12 09:46:25.256000+02:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": 6.240000000000001e-05,
         "encoded_dim": 1,
@@ -3447,7 +3454,8 @@
         ],
         "date": "2020-06-12 09:46:25.256000+02:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": 6.240000000000001e-05,
         "encoded_dim": 1,
@@ -3647,7 +3655,8 @@
         ],
         "date": "2020-06-12 09:46:25.256000+02:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -7026,7 +7035,8 @@
             "k_space_encode_step_1",
             "slice",
             "repetition",
-            "channel"
+            "channel",
+            "k_space_encode_step_2"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -7637,7 +7647,8 @@
         "date": "2020-06-12 12:38:12.350000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -7674,7 +7685,8 @@
         "date": "2020-06-12 12:40:13.577000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -7715,7 +7727,8 @@
             "k_space_encode_step_1",
             "slice",
             "repetition",
-            "channel"
+            "channel",
+            "k_space_encode_step_2"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
@@ -7762,7 +7775,8 @@
         "date": "2020-06-12 12:45:49.984000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -7800,7 +7814,8 @@
         "date": "2020-06-12 12:50:25.880000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -7837,7 +7852,8 @@
         "date": "2020-06-12 12:52:57.018000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -7874,7 +7890,8 @@
         "date": "2020-06-12 12:58:01.847000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 2e-05,
         "encoded_dim": 1,
@@ -7912,7 +7929,8 @@
         "date": "2020-06-12 12:58:45.903000+02:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 1,
@@ -8293,7 +8311,8 @@
             "k_space_encode_step_1",
             "slice",
             "repetition",
-            "channel"
+            "channel",
+            "k_space_encode_step_2"
         ],
         "dwell_s": 1.5000000000000013e-06,
         "encoded_dim": 3,
@@ -8595,6 +8614,11 @@
             4096,
             1,
             427
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_33_lego_phantom_3_2": {
@@ -8616,6 +8640,11 @@
             4096,
             1,
             24
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_35_lego_phantom_3_2": {
@@ -8638,6 +8667,11 @@
             4096,
             1,
             128
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_36_lego_phantom_3_2": {
@@ -8660,6 +8694,11 @@
             4096,
             1,
             64
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_37_lego_phantom_3_2": {
@@ -8681,6 +8720,11 @@
             4096,
             1,
             128
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_5_lego_phantom_3_2": {
@@ -8703,6 +8747,11 @@
             512,
             1,
             81920
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job1_5_lego_phantom_3_2": {
@@ -8725,6 +8774,11 @@
             64,
             1,
             81920
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     }
 }

@@ -8,6 +8,28 @@ from .exceptions import ConditionNotMet, InvalidDataset, MissingProperty, Unknow
 
 config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
+# BART's ``enum mri_dims`` indices.  Keeping these local avoids making BART a
+# runtime dependency while allowing callers to request arrays in its layout.
+BART_DIMS = 16
+BART_READ_DIM = 0
+BART_PHS1_DIM = 1
+BART_PHS2_DIM = 2
+BART_COIL_DIM = 3
+BART_TIME_DIM = 9
+BART_TIME2_DIM = 10
+BART_SLICE_DIM = 13
+BART_AVG_DIM = 14
+BART_BATCH_DIM = 15
+BART_DIM_BY_TYPE = {
+    "k_space_encode_step_0": BART_READ_DIM,
+    "k_space_encode_step_1": BART_PHS1_DIM,
+    "k_space_encode_step_2": BART_PHS2_DIM,
+    "channel": BART_COIL_DIM,
+    "repetition": BART_TIME_DIM,
+    "slice": BART_SLICE_DIM,
+    "average": BART_AVG_DIM,
+}
+
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
     "fid": ["numpy_dtype", "channels", "block_size", "acq_length", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
@@ -110,6 +132,15 @@ class Schema:
             k_space_offset.append(start)
         return tuple(k_space), np.array(k_space_offset)
 
+    @staticmethod
+    def _as_bart(data, axes):
+        """Place a compact k-space array into BART's 16-dimensional layout."""
+        if data.ndim != len(axes) or len(set(axes)) != len(axes):
+            raise ValueError("BART axis mapping must assign each compact axis exactly once")
+        source_to_bart = tuple(axes) + tuple(axis for axis in range(BART_DIMS) if axis not in axes)
+        padded = np.reshape(data, data.shape + (1,) * (BART_DIMS - data.ndim))
+        return np.transpose(padded, np.argsort(source_to_bart))
+
 
 class SchemaFid(Schema):
     """Raw ordered FID/k-space schema.
@@ -170,10 +201,7 @@ class SchemaFid(Schema):
         return layouts
 
     def deserialize(self, data, layouts):
-        data = self._acquisition_trim(data, layouts)
-
-        if self.acquisition_factor == 2:
-            data = data[0::2, ...] + 1j * data[1::2, ...]
+        data = self._decode_raw_stream(data, layouts)
 
         # Form encoding space
         data = self._acquisitions_to_encode(data, layouts)
@@ -194,9 +222,50 @@ class SchemaFid(Schema):
 
         return data
 
+    def raw(self):
+        """Return decoded FID acquisitions as ``(sample, shot, receiver)``.
+
+        This representation retains acquisition order.  It deliberately does
+        not apply encoding-space reshaping, phase-line sorting, EPI mirroring,
+        or object-order correction.
+        """
+        stored = self._dataset._read_binary_file(
+            self._dataset.path,
+            self._dataset.numpy_dtype,
+            self._dataset.shape_storage,
+        )
+        data = self._decode_raw_stream(stored, self.layouts)
+        receivers = int(self._dataset.channels)
+        if data.shape[0] % receivers:
+            raise InvalidDataset(
+                f"decoded FID sample count {data.shape[0]} is not divisible by "
+                f"the receiver count {receivers} for {self._dataset.path}"
+            )
+        samples = data.shape[0] // receivers
+        return np.transpose(
+            np.reshape(data, (samples, receivers, data.shape[1]), order="F"),
+            (0, 2, 1),
+        )
+
+    def to_kspace(self, data=None, *, bart=False):
+        """Return the decoded FID k-space, optionally in BART's layout."""
+        if data is None:
+            data = self._dataset.data
+        if not bart:
+            return data
+
+        try:
+            axes = tuple(BART_DIM_BY_TYPE[label] for label in self._dataset.dim_type)
+        except KeyError as error:
+            raise UnknownAcqSchemeException(
+                f"cannot map FID axis {error.args[0]!r} to BART for {self._dataset.path}"
+            ) from error
+        return self._as_bart(data, axes)
+
     def _reorder_objects(self, data, dir="FW"):
         """Map the stored acquisition-object order onto the labelled slice axis."""
-        if "slice" not in self._dataset.dim_type:
+        dim_type = getattr(self._dataset, "dim_type", ())
+        if "slice" not in dim_type:
             return data
 
         try:
@@ -204,7 +273,7 @@ class SchemaFid(Schema):
         except KeyError:
             return data
 
-        axis = self._dataset.dim_type.index("slice")
+        axis = dim_type.index("slice")
         if object_order.size != data.shape[axis] or np.array_equal(object_order, np.arange(object_order.size)):
             return data
 
@@ -234,6 +303,13 @@ class SchemaFid(Schema):
                     stacklevel=2,
                 )
             return data[0:acquisition_length, :]
+        return data
+
+    def _decode_raw_stream(self, data, layouts):
+        """Trim storage padding and decode interleaved complex samples."""
+        data = self._acquisition_trim(data, layouts)
+        if self.acquisition_factor == 2:
+            return data[0::2, ...] + 1j * data[1::2, ...]
         return data
 
     def _acquisitions_to_encode(self, data, layouts):
@@ -537,6 +613,13 @@ class SchemaTraj(Schema):
 
 
 class SchemaRawdata(Schema):
+    """PV-360 rawdata.jobN schema.
+
+    The on-disk job records describe a complex sample stream, not its
+    acquisition-space layout.  ``to_kspace`` deliberately supports only the
+    Cartesian subset for which the method metadata proves that layout.
+    """
+
     @property
     def layouts(self):
         layouts = {}
@@ -548,6 +631,10 @@ class SchemaRawdata(Schema):
     def deserialize(self, data, layouts):
         return data[0::2, ...] + 1j * data[1::2, ...]
 
+    def raw(self):
+        """Return decoded PV-360 acquisitions as ``(sample, shot, receiver)``."""
+        return np.transpose(self._dataset._data, (0, 2, 1))
+
     def serialize(self, data, layouts):
         # storage array
         data_ = np.zeros(layouts["shape_storage"], dtype=self._dataset.numpy_dtype, order="F")
@@ -557,6 +644,145 @@ class SchemaRawdata(Schema):
         data_[1::2, ...] = data.imag
 
         return data_
+
+    def to_kspace(self, data=None, *, bart=False):
+        """Return a Cartesian PV-360 raw-data job in k-space order.
+
+        The returned axes are ``(readout, phase[, partition], object,
+        repetition, channel)`` for 2-D and ``(readout, phase, partition,
+        repetition, channel)`` for 3-D.  Retrospectively self-gated 2-D
+        acquisitions retain their ``NI`` and ``NR`` axes and add an
+        ``acquisition_cycle`` axis before the channel axis.  The method
+        intentionally does not reconstruct EPI or non-Cartesian acquisitions.
+        With ``bart=True``, the same data is returned in the 16-axis BART
+        layout.
+        """
+        if data is None:
+            data = self._dataset._data
+
+        scheme_id = self._dataset._infer_scheme_id()
+        if scheme_id is not None:
+            raise UnknownAcqSchemeException(
+                f"rawdata-to-k-space is currently supported only for Cartesian PV-360 jobs, "
+                f"but {self._dataset.path} is {scheme_id}; use its acquisition-specific reader"
+            )
+
+        encoded_dim = self._dataset._parameter_value("ACQ_dim")
+        matrix = np.atleast_1d(self._dataset._parameter_value("PVM_EncMatrix", []))
+        if encoded_dim not in (2, 3) or matrix.size < encoded_dim:
+            raise UnknownAcqSchemeException(
+                f"cannot establish a Cartesian rawdata layout for {self._dataset.path}; "
+                "pass data through an acquisition-specific reader"
+            )
+
+        matrix = tuple(int(value) for value in matrix[:encoded_dim])
+        receivers = int(self._dataset.channels)
+        objects = int(self._dataset._parameter_value("NI", 1))
+        repetitions = int(self._dataset._parameter_value("NR", 1))
+        readout, phase = matrix[:2]
+
+        if encoded_dim == 2 and self._dataset._parameter_value("SelfGating") == "Yes":
+            k_space = self._self_gated_k_space(
+                data,
+                readout,
+                phase,
+                receivers=receivers,
+                objects=objects,
+                repetitions=repetitions,
+            )
+            axes = (BART_READ_DIM, BART_PHS1_DIM, BART_TIME_DIM, BART_TIME2_DIM, BART_BATCH_DIM, BART_COIL_DIM)
+            return self._as_bart(k_space, axes) if bart else k_space
+
+        if encoded_dim == 2:
+            encoding_space = (readout, receivers, phase, objects, repetitions)
+            permute = (0, 2, 3, 4, 1)
+        else:
+            if objects != 1:
+                raise UnknownAcqSchemeException(
+                    f"cannot establish a 3-D Cartesian rawdata layout with NI={objects} for "
+                    f"{self._dataset.path}"
+                )
+            encoding_space = (readout, receivers, phase, matrix[2], repetitions)
+            permute = (0, 2, 3, 4, 1)
+
+        if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers:
+            raise InvalidDataset(
+                f"rawdata sample layout {data.shape} does not match Cartesian metadata "
+                f"(readout={readout}, receivers={receivers}) for {self._dataset.path}"
+            )
+        if data.size != int(np.prod(encoding_space)):
+            raise InvalidDataset(
+                f"rawdata contains {data.size} complex samples but Cartesian layout {encoding_space} "
+                f"requires {int(np.prod(encoding_space))} for {self._dataset.path}"
+            )
+
+        k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
+        k_space = self._reorder_phase_lines(k_space)
+        k_space = self._reorder_objects(k_space)
+        axes = (
+            (BART_READ_DIM, BART_PHS1_DIM, BART_SLICE_DIM, BART_TIME_DIM, BART_COIL_DIM)
+            if encoded_dim == 2
+            else (BART_READ_DIM, BART_PHS1_DIM, BART_PHS2_DIM, BART_TIME_DIM, BART_COIL_DIM)
+        )
+        return self._as_bart(k_space, axes) if bart else k_space
+
+    def _self_gated_k_space(self, data, readout, phase, *, receivers, objects, repetitions):
+        """Arrange retrospectively gated Cartesian data before cine binning."""
+        steps = np.atleast_1d(self._dataset._parameter_value("PVM_EncGenSteps1", []))
+        if steps.size == 0 or steps.size % phase:
+            raise InvalidDataset(
+                f"self-gated phase-encode sequence has {steps.size} steps, which is incompatible "
+                f"with phase size {phase} for {self._dataset.path}"
+            )
+        acquired_frames = steps.size // phase
+        output_frames = int(self._dataset._parameter_value("PVM_NMovieFrames", objects))
+        if output_frames != objects or acquired_frames % (objects * repetitions):
+            raise InvalidDataset(
+                f"self-gated dimensions (NI={objects}, NR={repetitions}, PVM_NMovieFrames={output_frames}) "
+                f"do not describe {acquired_frames} acquired frames for {self._dataset.path}"
+            )
+        acquisition_cycles = acquired_frames // (objects * repetitions)
+        layout = (readout, receivers, phase, acquired_frames)
+        if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers or data.size != int(np.prod(layout)):
+            raise InvalidDataset(
+                f"rawdata sample layout {data.shape} does not match self-gated Cartesian layout "
+                f"{layout} for {self._dataset.path}"
+            )
+
+        k_space = np.transpose(np.reshape(data, layout, order="F"), (0, 2, 3, 1))
+        order = np.argsort(np.reshape(steps, (phase, acquired_frames), order="F"), axis=0)
+        k_space = np.take_along_axis(k_space, order[None, :, :, None], axis=1)
+        return np.reshape(
+            k_space,
+            (readout, phase, objects, acquisition_cycles, repetitions, receivers),
+            order="F",
+        )
+
+    def _reorder_phase_lines(self, data):
+        steps = self._dataset._parameter_value("PVM_EncSteps1")
+        if steps is None:
+            return data
+        indices = np.argsort(np.atleast_1d(steps))
+        if indices.size != data.shape[1]:
+            raise InvalidDataset(
+                f"phase-encode reorder length {indices.size} does not match k-space axis length "
+                f"{data.shape[1]} for {self._dataset.path}"
+            )
+        return np.take(data, indices, axis=1)
+
+    def _reorder_objects(self, data):
+        if self._dataset._parameter_value("ACQ_dim") != 2 or data.ndim != 5:
+            return data
+        order = self._dataset._parameter_value("ACQ_obj_order")
+        if order is None:
+            return data
+        indices = np.argsort(np.atleast_1d(order).astype(int))
+        if indices.size != data.shape[2]:
+            raise InvalidDataset(
+                f"object-order length {indices.size} does not match k-space axis length "
+                f"{data.shape[2]} for {self._dataset.path}"
+            )
+        return np.take(data, indices, axis=2)
 
 class Schema2dseq(Schema):
     """
@@ -585,11 +811,15 @@ class Schema2dseq(Schema):
             raise KeyError(f"Framegroup {fg_type} not found in dim_type") from ValueError
 
     def scale(self):
-        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_storage, order="F")
-        self._dataset.data = self._scale_frames(self._dataset.data, self.layouts, "FW")
-        self._dataset.data = np.reshape(self._dataset.data, self._dataset.shape_final, order="F")
-        self._dataset.data = self._apply_disk_slice_order(self._dataset.data)
-        self._dataset.data = self._combine_complex_frames(self._dataset.data)
+        data = self._split_complex_frames(self._dataset._data, self.layouts)
+        data = self._apply_disk_slice_order(data)
+        data = self._apply_transposition(data)
+        data = np.reshape(data, self._dataset.shape_storage, order="F")
+        data = self._scale_frames(data, self.layouts, "FW")
+        data = np.reshape(data, self._dataset.shape_final, order="F")
+        data = self._apply_transposition(data)
+        data = self._apply_disk_slice_order(data)
+        self._dataset.data = self._combine_complex_frames(data)
 
     def deserialize(self, data, layouts):
         # scale
@@ -599,8 +829,89 @@ class Schema2dseq(Schema):
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
         data = self._apply_disk_slice_order(data)
+        data = self._apply_transposition(data, layouts.get("mask"))
 
         return self._combine_complex_frames(data)
+
+    def _transposition_values(self, data, frame_mask=None):
+        """Return one XY-transposition flag for each frame, if present."""
+        visu_value = self._dataset._parameter_value("VisuCoreTransposition")
+        reco_value = self._dataset._parameter_value("RECO_transposition")
+        value = visu_value if visu_value is not None else reco_value
+        if value is None:
+            return None
+
+        try:
+            values = np.asarray(value, dtype=int).ravel()
+        except (TypeError, ValueError):
+            warnings.warn(
+                f"invalid transposition metadata for {self._dataset.path}; leaving axes unchanged",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return None
+        if not np.any(values):
+            return None
+
+        encoded_dim = int(self._dataset.encoded_dim)
+        frame_shape = data.shape[encoded_dim:]
+        metadata_shape = frame_mask.shape if frame_mask is not None else frame_shape
+        metadata_count = int(np.prod(metadata_shape, dtype=int))
+        if values.size == 1:
+            return np.full(frame_shape, bool(values[0]), dtype=bool)
+        if values.size != metadata_count:
+            warnings.warn(
+                f"transposition metadata has {values.size} values but {metadata_count} frames for "
+                f"{self._dataset.path}; leaving axes unchanged",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return None
+        flags = np.reshape(values.astype(bool), metadata_shape, order="F")
+        if frame_mask is None:
+            return flags
+
+        selected = flags.ravel(order="F")[frame_mask.ravel(order="F")]
+        if selected.size != int(np.prod(frame_shape, dtype=int)):
+            warnings.warn(
+                f"selected transposition metadata does not describe the requested frames for "
+                f"{self._dataset.path}; leaving axes unchanged",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return None
+        return np.reshape(selected, frame_shape, order="F")
+
+    def _apply_transposition(self, data, frame_mask=None):
+        """Apply ParaVision's per-frame XY/YX transposition metadata.
+
+        ``RECO_transposition`` is the legacy source; ``VisuCoreTransposition``
+        is preferred where present.  A transpose is an involution, so this
+        method is also used on the serialization path.
+        """
+        if data.ndim < 2:
+            return data
+        flags = self._transposition_values(data, frame_mask)
+        if flags is None or not np.any(flags):
+            return data
+        if np.all(flags):
+            return np.swapaxes(data, 0, 1)
+        if data.shape[0] != data.shape[1]:
+            warnings.warn(
+                f"per-frame XY transposition for non-square frames cannot be represented "
+                f"in one array for {self._dataset.path}; leaving axes unchanged",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return data
+
+        result = data.copy()
+        encoded_prefix = (slice(None),) * int(self._dataset.encoded_dim)
+        for index in np.ndindex(flags.shape):
+            if flags[index]:
+                frame = encoded_prefix + index
+                result[frame] = np.swapaxes(data[frame], 0, 1)
+        return result
 
     def _frame_group_axis(self, name):
         normalized_name = name.strip("<>").upper()
@@ -724,6 +1035,7 @@ class Schema2dseq(Schema):
     def serialize(self, data, layout):
         data = self._split_complex_frames(data, layout)
         data = self._apply_disk_slice_order(data)
+        data = self._apply_transposition(data)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
         return data

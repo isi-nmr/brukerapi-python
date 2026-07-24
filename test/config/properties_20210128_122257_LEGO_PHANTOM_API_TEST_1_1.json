@@ -664,7 +664,8 @@
         "dim_type": [
             "spatial",
             "spectroscopic",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 2.5000000000000044e-06,
         "encoded_dim": 3,
@@ -1671,7 +1672,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -1929,7 +1931,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 3,
@@ -2400,7 +2403,8 @@
         ],
         "date": "2021-01-28 12:22:57.085000+01:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -3166,7 +3170,8 @@
         ],
         "date": "2021-01-28 12:22:57.085000+01:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -3248,7 +3253,8 @@
         ],
         "date": "2021-01-28 12:22:57.085000+01:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -3455,7 +3461,8 @@
         ],
         "date": "2021-01-28 12:22:57.085000+01:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": 6.240000000000001e-05,
         "encoded_dim": 1,
@@ -4437,7 +4444,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -4559,7 +4567,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 3,
@@ -5088,7 +5097,8 @@
         "dim_type": [
             "spectroscopic",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 6.240000000000001e-05,
         "encoded_dim": 3,
@@ -5392,7 +5402,8 @@
             "k_space_encode_step_1",
             "slice",
             "repetition",
-            "channel"
+            "channel",
+            "k_space_encode_step_2"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -5632,7 +5643,8 @@
             "k_space_encode_step_1",
             "slice",
             "repetition",
-            "channel"
+            "channel",
+            "k_space_encode_step_2"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
@@ -6163,7 +6175,8 @@
         "date": "2021-01-28 14:14:41.056000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -6201,7 +6214,8 @@
         "date": "2021-01-28 14:15:30.037000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -6385,7 +6399,8 @@
         "date": "2021-01-28 14:23:25.316000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 1,
@@ -6422,7 +6437,8 @@
         "date": "2021-01-28 14:23:49.210000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -6507,7 +6523,8 @@
         "date": "2021-01-28 14:25:55.493000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -6978,7 +6995,8 @@
         "date": "2021-01-28 12:55:47.297000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition"
+            "repetition",
+            "average"
         ],
         "dwell_s": 2e-05,
         "encoded_dim": 1,
@@ -7114,6 +7132,11 @@
             256,
             1,
             10240
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_28_LEGO_PHANTOM_1": {
@@ -7135,6 +7158,11 @@
             4096,
             1,
             1
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_30_LEGO_PHANTOM_1": {
@@ -7157,6 +7185,11 @@
             4096,
             1,
             4
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_37_LEGO_PHANTOM_1": {
@@ -7179,6 +7212,11 @@
             4096,
             1,
             1
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_38_LEGO_PHANTOM_1": {
@@ -7200,6 +7238,11 @@
             256,
             1,
             128
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job0_8_LEGO_PHANTOM_1": {
@@ -7222,6 +7265,11 @@
             4096,
             1,
             1024
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job1_24_LEGO_PHANTOM_1": {
@@ -7244,6 +7292,11 @@
             64,
             1,
             10240
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     },
     "RawData_job1_8_LEGO_PHANTOM_1": {
@@ -7266,6 +7319,11 @@
             272,
             1,
             1024
+        ],
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
         ]
     }
 }

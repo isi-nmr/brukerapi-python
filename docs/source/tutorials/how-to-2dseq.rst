@@ -1,7 +1,8 @@
 How to load a 2dseq file?
 ===============================
 
-The ``Dataset`` constructor accepts both a path to directory containing a fid file, or a path to the 2dseq file.
+The ``Dataset`` constructor accepts both a path to a directory containing a
+``2dseq`` file, or a path to the ``2dseq`` file itself.
 
 .. code-block:: python
 
@@ -39,6 +40,21 @@ by default, and reversed on-disk slice order is normalized:
        combine_complex=False,
    ).data
 
+Frame-group-dependent metadata is available in data-axis order. For example,
+per-echo times and diffusion B matrices can be broadcast with the image:
+
+.. code-block:: python
+
+   echo_times = dataset.frame_group_values['VisuAcqEchoTime']
+   b_matrices = dataset.frame_group_values['VisuAcqDiffusionBMatrix']
+
+Normalized study and acquisition metadata is grouped under ``metadata``:
+
+.. code-block:: python
+
+   study_uid = dataset.metadata['visu_study']['uid']
+   sequence_name = dataset.metadata['visu_acq']['sequence_name']
+
 Multiple slice packages may have unequal depths. Access package-specific
 in-memory datasets, including their own geometry, with:
 
@@ -65,8 +81,10 @@ It is possible to directly access some of the most wanted measurement parameters
    >> dataset.flip_angle
    >> 10.0
 
-The ``visu_pars`` file is used to construct a 2dseq dataset. Any parameter
-stored in that file can also be accessed directly.
+The ``visu_pars`` file is used to construct a 2dseq dataset. ``reco`` and
+``d3proc`` are optional compatibility sources for legacy/minimal instances;
+they supply reconstruction word type and image-size metadata only when Visu
+metadata is absent. Any loaded parameter can be accessed directly.
 
 .. code-block:: python
 

@@ -1969,7 +1969,8 @@
         ],
         "date": "2024-07-25 09:02:12.259000+02:00",
         "dim_type": [
-            "spectroscopic"
+            "spectroscopic",
+            "frame"
         ],
         "dwell_s": 6.25e-07,
         "encoded_dim": 1,
@@ -2188,7 +2189,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 2.5e-05,
         "encoded_dim": 3,
@@ -3993,7 +3995,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial"
+            "spatial",
+            "frame"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
@@ -4086,6 +4089,11 @@
         "TE": 16.5,
         "TR": 2500,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_Navigator_PRESS_1H__",
         "job_desc": [
             272,
@@ -4109,6 +4117,11 @@
         "TE": 0.7168,
         "TR": 2000,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_DTI_EPI_seg_30dir_sat__",
         "job_desc": [
             5808,
@@ -4132,6 +4145,11 @@
         "TE": 0.7168,
         "TR": 2000,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_DTI_EPI_seg_30dir_sat_multi__",
         "job_desc": [
             5808,
@@ -4155,6 +4173,11 @@
         "TE": 16.5,
         "TR": 2500,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_PRESS_1H__",
         "job_desc": [
             4096,
@@ -4178,6 +4201,11 @@
         "TE": 8,
         "TR": 50,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T1_FLASH_3D_iso__",
         "job_desc": [
             320,
@@ -4201,6 +4229,11 @@
         "TE": 4,
         "TR": 200,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T1_FLASH__",
         "job_desc": [
             400,
@@ -4224,6 +4257,11 @@
         "TE": 7.5,
         "TR": 800,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T1_RARE__",
         "job_desc": [
             512,
@@ -4247,6 +4285,11 @@
         "TE": 8.25,
         "TR": 2500,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2_TurboRARE__",
         "job_desc": [
             512,
@@ -4270,6 +4313,11 @@
         "TE": 8,
         "TR": 2200,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2map_MSME__",
         "job_desc": [
             384,
@@ -4293,6 +4341,11 @@
         "TE": 0.6144,
         "TR": 2000,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2star_FID_EPI__",
         "job_desc": [
             20480,
@@ -4316,6 +4369,11 @@
         "TE": 4.5,
         "TR": 800,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2star_map_MGE__",
         "job_desc": [
             512,
@@ -4339,6 +4397,11 @@
         "TE": 3.5,
         "TR": 800,
         "channels": 1,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2star_map_MGE_mod_all__",
         "job_desc": [
             512,
@@ -4362,6 +4425,11 @@
         "TE": 3.5,
         "TR": 800,
         "channels": 1,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_T2star_map_MGE_mod_pos__",
         "job_desc": [
             512,
@@ -4385,6 +4453,11 @@
         "TE": 0.006883333333333333,
         "TR": 2.3,
         "channels": 4,
+        "dim_type": [
+            "sample",
+            "channel",
+            "scan"
+        ],
         "id": "RawData_job0_UTE3D__",
         "job_desc": [
             148,

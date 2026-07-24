@@ -29,6 +29,10 @@ RARE/EPI line ordering is applied, while ramp-sampling regridding remains a
 downstream reconstruction step. Real-only ``AQ_mod=qf`` data stays real;
 quadrature acquisition modes are returned as complex arrays.
 
+Use the explicit views in new code: ``dataset.raw`` is the decoded acquisition
+stream with axes ``(sample, shot, receiver)``; ``dataset.kspace`` is the same
+ordered k-space exposed through ``data`` for compatibility.
+
 For custom pulse-program names the scheme is inferred from acquisition
 metadata. An explicit override is available when inference is ambiguous:
 
@@ -36,12 +40,8 @@ metadata. An explicit override is available when inference is ambiguous:
 
    dataset = Dataset('path/to/fid', scheme_id='RADIAL')
 
-Use ``mmap=True`` for random-access slices:
-
-.. code-block:: python
-
-   dataset = Dataset('path/to/fid', mmap=True)
-   first_repetition = dataset.data[:, :, 0]
+Random-access ``mmap=True`` is currently supported for ``2dseq`` only. Load a
+FID normally, then select the desired k-space array slice.
 
 Known ``fid.spiral``, ``fid.navFid``, and ``fid.orig`` companions are loaded
 under ``dataset.fid_companions``. They are auxiliary subdatasets rather than

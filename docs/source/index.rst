@@ -16,6 +16,7 @@ Bruker API documentation.
    tutorials/how-to-study
    tutorials/how-to-2dseq
    tutorials/how-to-fid
+   tutorials/how-to-rawdata
    tutorials/how-to-jcampdx
    tutorials/how-to-use-filter
    cli

@@ -49,7 +49,9 @@ Data contract and limitations
   Ramp-sampling regridding and ``RECO_qopts`` corrections are not full
   reconstruction steps and remain the caller's responsibility.
 * Rawdata jobs are returned as complex ordered samples in their stored job
-  layout; they are not reconstructed into image-space or generalized k-space.
+  layout through ``data``. Prefer ``raw`` for the normalized
+  ``(sample, shot, receiver)`` acquisition stream and ``kspace`` for validated
+  Cartesian PV360 layout conversion.
 * 2dseq values are scaled as ``stored * slope + offset``. Visu slopes/offsets
   take precedence, with RECO values as fallback.
 * PV7/PV360 2dseq geometry uses the version-independent Visu geometry fields.
@@ -57,3 +59,11 @@ Data contract and limitations
 * ``COMPLEX_IMAGE``/``FG_COMPLEX`` reconstructions are returned as complex
   arrays by default. Use ``combine_complex=False`` to retain the real frame
   axis.
+* ``RECO_transposition``/``VisuCoreTransposition`` is applied on read and
+  inverted on write. FID ``ACQ_obj_order`` is likewise normalized to slice
+  order on read.
+* d3proc is an optional compatibility source for legacy/minimal 2dseq word
+  type and image-size metadata after Visu and RECO metadata have been tried.
+* Patient/scanner-space affine and orientation output is not yet a supported
+  geometry API. Consumers requiring physical-space placement must validate
+  their own transform until asymmetric reference data is available.
