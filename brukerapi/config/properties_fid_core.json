@@ -824,10 +824,23 @@
         "'k_space_encode_step_1'",
         "'slice'",
         "'repetition'",
+        "'channel'",
+        "'k_space_encode_step_2'"
+      ],
+      "conditions": [
+        "@scheme_id=='dEPI'"
+      ]
+    },
+    {
+      "cmd": [
+        "'k_space_encode_step_0'",
+        "'k_space_encode_step_1'",
+        "'slice'",
+        "'repetition'",
         "'channel'"
       ],
       "conditions": [
-        ["@scheme_id",["CART_2D","RADIAL","EPI","dEPI","SPIRAL","ZTE"]]
+        ["@scheme_id",["CART_2D","RADIAL","EPI","SPIRAL","ZTE"]]
       ]
     },
     {
@@ -845,7 +858,8 @@
     {
       "cmd": [
         "'k_space_encode_step_0'",
-        "'repetition'"
+        "'repetition'",
+        "'average'"
       ],
       "conditions": [
         "@scheme_id=='SPECTROSCOPY'"

@@ -13,7 +13,7 @@ import pytest
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
-from brukerapi.schemas import Schema2dseq, SchemaFid
+from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -429,6 +429,7 @@ def test_2dseq_complex_frame_group_assembly_is_reversible(combine_complex, expec
 
     assert np.array_equal(decoded, expected)
     assert np.array_equal(serialized, stored)
+    assert dataset.dim_type == (["spatial"] if combine_complex else ["spatial", "FG_COMPLEX"])
 
 
 def test_2dseq_reco_complex_image_falls_back_to_last_frame_axis():
@@ -874,6 +875,21 @@ def test_2dseq_serialization_clips_rounding_error_to_integer_dtype_limits():
     assert serialized[0, 0] == np.iinfo(np.int32).max
 
 
+def test_schema_warns_when_dim_type_does_not_describe_layout_rank():
+    dataset = SimpleNamespace(
+        type="rawdata",
+        numpy_dtype=np.dtype("int32"),
+        job_desc=[1, 1, 1, 1, 1, 1, 1, 1],
+        channels=1,
+        shape_storage=(2, 1, 3),
+        dim_type=["sample"],
+        path=Path("mismatched/rawdata.job0"),
+    )
+
+    with pytest.warns(RuntimeWarning, match="dim_type .* does not describe shape"):
+        SchemaRawdata(dataset)
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)
@@ -896,6 +912,12 @@ def test_properties(test_properties):
 
     assert reference, f"Property reference for {dataset.path} must not be empty"
     assert dataset.to_dict() == reference
+
+
+def test_dim_type_matches_loaded_data_rank(test_data):
+    dataset = Dataset(test_data[0])
+
+    assert len(dataset.dim_type) == dataset.data.ndim
 
 
 def test_data_load(test_data):
