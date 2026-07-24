@@ -965,6 +965,8 @@ def test_data_load(test_data):
                 ),
                 None,
             )
+            if complex_axis is None:
+                complex_axis = getattr(dataset, "_combined_complex_axis", None)
             if complex_axis is not None and reference.shape[complex_axis] == 2:
                 reference = np.take(reference, 0, axis=complex_axis) + 1j * np.take(reference, 1, axis=complex_axis)
 

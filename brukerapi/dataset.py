@@ -932,7 +932,7 @@ class Dataset:
             "type",
             "subtype",
         }
-        props = [prop for prop in props if prop not in reserved]
+        props = [prop for prop in props if prop not in reserved and not prop.startswith("_")]
 
         properties = {}
 
