@@ -431,6 +431,49 @@ def test_2dseq_disk_slice_order_is_applied_and_reversible(disk_order, reverse):
     assert np.array_equal(serialized, stored)
 
 
+def test_2dseq_disk_slice_order_uses_third_encoded_axis_for_3d_volume():
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": False},
+        encoded_dim=3,
+        dim_type=["spatial", "spatial", "spatial", "<FG_ECHO>"],
+        path="3d-volume/2dseq",
+        _parameter_value=lambda name, default=None: "disk_reverse_slice_order" if name == "VisuCoreDiskSliceOrder" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    layouts = {
+        "shape_storage": (2, 3, 4, 2),
+        "shape_final": (2, 3, 4, 2),
+        "shape_fg": (2,),
+    }
+    stored = np.arange(48).reshape(layouts["shape_storage"], order="F")
+
+    decoded = schema.deserialize(stored, layouts)
+    serialized = schema.serialize(decoded, layouts)
+
+    assert np.array_equal(decoded, np.flip(stored, axis=2))
+    assert np.array_equal(serialized, stored)
+
+
+def test_2dseq_disk_slice_order_without_slice_axis_warns_and_leaves_data_unchanged():
+    dataset = SimpleNamespace(
+        _state={"scale": False, "combine_complex": False},
+        encoded_dim=2,
+        dim_type=["spatial", "spatial", "<FG_ECHO>"],
+        path="no-slice-axis/2dseq",
+        _parameter_value=lambda name, default=None: "disk_reverse_slice_order" if name == "VisuCoreDiskSliceOrder" else default,
+    )
+    schema = Schema2dseq.__new__(Schema2dseq)
+    schema._dataset = dataset
+    stored = np.arange(12).reshape((2, 3, 2), order="F")
+    layouts = {"shape_storage": stored.shape, "shape_final": stored.shape, "shape_fg": (2,)}
+
+    with pytest.warns(RuntimeWarning, match="no slice axis is identifiable"):
+        decoded = schema.deserialize(stored, layouts)
+
+    assert np.array_equal(decoded, stored)
+
+
 @pytest.mark.parametrize(
     ("aq_mod", "encoding_space", "expected"),
     [
