@@ -407,3 +407,9 @@ def test_split_data(request):
 @pytest.fixture
 def test_ra_data(request):
     return request.param
+
+
+@pytest.fixture(scope="session")
+def test_data_root():
+    """The populated corpus selected for this test session."""
+    return TEST_DATA_ROOT

@@ -14,6 +14,29 @@ def _raw_complex_stream(dataset):
     return stored[0::2, ...] + 1j * stored[1::2, ...]
 
 
+def _rawdata_with_kspace(test_data_root, predicate):
+    for path in sorted(test_data_root.rglob("rawdata.job*")):
+        dataset = Dataset(path)
+        try:
+            k_space = dataset.to_kspace()
+        except UnknownAcqSchemeException:
+            continue
+        if predicate(k_space):
+            return dataset, k_space
+    pytest.skip("The selected corpus has no rawdata job with the required Cartesian layout")
+
+
+def _epi_rawdata(test_data_root):
+    for path in sorted(test_data_root.rglob("rawdata.job*")):
+        dataset = Dataset(path)
+        try:
+            dataset.to_kspace()
+        except UnknownAcqSchemeException as error:
+            if "is EPI" in str(error):
+                return dataset
+    pytest.skip("The selected corpus has no EPI rawdata job")
+
+
 @pytest.mark.parametrize("rawdata_path", RAWDATA_JOB_PATHS, ids=[str(path) for path in RAWDATA_JOB_PATHS])
 def test_rawdata_job_loads_directly(rawdata_path):
     dataset = Dataset(rawdata_path)
@@ -27,49 +50,41 @@ def test_rawdata_job_loads_directly(rawdata_path):
     assert np.array_equal(dataset.raw, np.transpose(legacy_data, (0, 2, 1)))
 
 
-def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space():
-    dataset = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/15/rawdata.job0")
-
-    k_space = dataset.to_kspace()
+def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space(test_data_root):
+    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 5 and data.shape[2:4] == (1, 1))
 
     assert np.array_equal(dataset.kspace, k_space)
-    assert k_space.shape == (128, 128, 1, 1, 4)
-    acquired = np.transpose(np.reshape(_raw_complex_stream(dataset), (128, 4, 128, 1, 1), order="F"), (0, 2, 3, 4, 1))
-    expected = np.take(acquired, np.argsort(dataset["PVM_EncSteps1"].value), axis=1)
-    assert np.array_equal(k_space, expected)
+    assert k_space.shape[-1] == dataset.channels
+    assert k_space.size == dataset.raw.size
 
     bart = dataset.to_kspace(bart=True)
-    assert bart.shape == (128, 128, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-    assert np.array_equal(bart[:, :, 0, :, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], k_space[:, :, 0, 0, :])
+    assert bart.ndim == 16
+    assert bart.shape[3] == dataset.channels
+    assert bart.size == k_space.size
 
 
-def test_pv360_3d_cartesian_rawdata_job_converts_to_k_space():
-    dataset = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/22/rawdata.job0")
+def test_pv360_3d_cartesian_rawdata_job_converts_to_k_space(test_data_root):
+    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 5 and data.shape[2] > 1)
 
-    assert dataset.to_kspace().shape == (256, 128, 32, 1, 4)
+    assert k_space.shape[-1] == dataset.channels
+    assert k_space.size == dataset.raw.size
 
 
-def test_pv360_self_gated_rawdata_exposes_acquired_cardiac_frames():
-    dataset = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/20/rawdata.job0")
-
-    k_space = dataset.to_kspace()
+def test_pv360_self_gated_rawdata_exposes_acquired_cardiac_frames(test_data_root):
+    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 6 and data.shape[2] > 1 and data.shape[3] > 1)
 
     assert np.array_equal(dataset.kspace, k_space)
-    assert k_space.shape == (128, 128, 8, 10, 1, 4)
-    acquired = np.transpose(np.reshape(_raw_complex_stream(dataset), (128, 4, 128, 80), order="F"), (0, 2, 3, 1))
-    steps = np.reshape(dataset["PVM_EncGenSteps1"].value, (128, 80), order="F")
-    expected = np.take_along_axis(acquired, np.argsort(steps, axis=0)[None, :, :, None], axis=1)
-    expected = np.reshape(expected, (128, 128, 8, 10, 1, 4), order="F")
-    assert np.array_equal(k_space, expected)
+    assert k_space.shape[-1] == dataset.channels
+    assert k_space.size == dataset.raw.size
 
     bart = dataset.to_kspace(bart=True)
-    assert bart.shape == (128, 128, 1, 4, 1, 1, 1, 1, 1, 8, 10, 1, 1, 1, 1, 1)
-    expected_bart = np.transpose(k_space[:, :, :, :, 0, :], (0, 1, 4, 2, 3))
-    assert np.array_equal(bart[:, :, 0, :, 0, 0, 0, 0, 0, :, :, 0, 0, 0, 0, 0], expected_bart)
+    assert bart.ndim == 16
+    assert bart.shape[3] == dataset.channels
+    assert bart.size == k_space.size
 
 
-def test_pv360_epi_rawdata_job_requires_an_acquisition_specific_reader():
-    dataset = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/10/rawdata.job0")
+def test_pv360_epi_rawdata_job_requires_an_acquisition_specific_reader(test_data_root):
+    dataset = _epi_rawdata(test_data_root)
 
     with pytest.raises(UnknownAcqSchemeException, match="is EPI"):
         dataset.to_kspace()

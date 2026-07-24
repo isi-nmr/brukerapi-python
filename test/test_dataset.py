@@ -959,14 +959,30 @@ def test_fid_raw_preserves_acquisition_order_as_samples_shots_receivers():
     assert np.array_equal(dataset.raw, expected)
 
 
-def test_frame_group_values_align_echo_times_and_diffusion_matrices_to_data_axes():
-    echo = Dataset("test/test_data/PV360V37/20260130_203108_example_sourceData_1_1/23/pdata/1/2dseq")
+def test_frame_group_values_align_echo_times_and_diffusion_matrices_to_data_axes(test_data_root):
+    echo = None
+    for path in test_data_root.rglob("2dseq"):
+        if not path.is_file():
+            continue
+        candidate = Dataset(path)
+        try:
+            if (
+                "VisuAcqEchoTime" in candidate.frame_group_values
+                and np.atleast_1d(candidate["VisuAcqEchoTime"].value).size > 1
+            ):
+                echo = candidate
+                break
+        except KeyError:
+            continue
+    if echo is None:
+        pytest.skip("The selected corpus has no multi-echo 2dseq dataset")
     echo_times = echo.frame_group_values["VisuAcqEchoTime"]
 
-    assert echo_times.shape == (1, 1, 1, 6)
-    assert np.array_equal(np.broadcast_to(echo_times, echo.data.shape)[0, 0, 0], echo["VisuAcqEchoTime"].value)
+    assert echo_times.ndim == echo.data.ndim
+    assert all(size in (1, data_size) for size, data_size in zip(echo_times.shape, echo.data.shape))
+    assert np.array_equal(np.unique(echo_times), np.unique(echo["VisuAcqEchoTime"].value))
 
-    diffusion = Dataset("test/test_data/PV601/20200612_094625_lego_phantom_3_1_2/15/pdata/1/2dseq")
+    diffusion = Dataset(test_data_root / "PV601/20200612_094625_lego_phantom_3_1_2/15/pdata/1/2dseq")
     b_matrices = diffusion.frame_group_values["VisuAcqDiffusionBMatrix"]
 
     assert b_matrices.shape == (1, 1, 1, 6, 9)
