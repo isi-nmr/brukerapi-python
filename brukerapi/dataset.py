@@ -552,15 +552,14 @@ class Dataset:
             return "dEPI"
         if "EPI" in family:
             return "EPI"
-        if "RADIAL" in family or "UTE" in family:
-            return "RADIAL"
-
         dim = self._parameter_value("ACQ_dim")
         descriptions = np.atleast_1d(self._parameter_value("ACQ_dim_desc", [])).tolist()
         if descriptions and descriptions[0] == "Spectroscopic":
             return "SPECTROSCOPY" if int(dim) == 1 else "CSI"
 
-        if n_projections is not None and int(n_projections) > 0:
+        if n_projections is not None and int(n_projections) > 0 and (
+            (self.path.parent / "traj").exists() or "RADIAL" in family or "UTE" in family
+        ):
             return "RADIAL"
 
         acq_size = np.atleast_1d(self._parameter_value("ACQ_size", []))

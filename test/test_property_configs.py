@@ -152,3 +152,25 @@ def test_zte_scheme_is_not_shadowed_by_radial():
     assert any(branch["cmd"] == "'ZTE'" for branch in traj["scheme_id"])
     zte_encoding = next(branch for branch in fid["encoding_space"] if branch["conditions"] == ["@scheme_id=='ZTE'"])
     assert zte_encoding["cmd"][4] == "#NPro // #ACQ_phase_factor"
+
+
+def test_fid_3d_radial_layout_includes_the_partition_axis():
+    fid = _load_config("properties_fid_core.json")
+    conditions = [
+        "@scheme_id=='RADIAL'",
+        "#ACQ_dim==3",
+        "np.atleast_1d(#PVM_EncMatrix).size>2",
+        "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]",
+    ]
+
+    block_count = next(branch for branch in fid["block_count"] if branch["conditions"] == conditions)
+    encoding = next(branch for branch in fid["encoding_space"] if branch["conditions"] == conditions)
+    permute = next(branch for branch in fid["permute"] if branch["conditions"] == conditions)
+    k_space = next(branch for branch in fid["k_space"] if branch["conditions"] == conditions)
+    dim_type = next(branch for branch in fid["dim_type"] if branch["conditions"] == conditions)
+
+    assert block_count["cmd"] == "#NPro*#PVM_EncMatrix[2]*#NI*#NR"
+    assert encoding["cmd"][-2] == "#PVM_EncMatrix[2]"
+    assert permute["cmd"] == [0, 2, 4, 3, 5, 6, 1]
+    assert k_space["cmd"][2] == "#PVM_EncMatrix[2]"
+    assert len(dim_type["cmd"]) == 5

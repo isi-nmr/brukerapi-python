@@ -209,6 +209,50 @@ def test_custom_radial_pulse_program_is_inferred_from_projection_metadata():
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
+def test_3d_radial_stack_of_stars_uses_partition_axis():
+    dataset = Dataset(PV51_STUDY_PATH / "21" / "fid", load=LOAD_STAGES["parameters"])
+    dataset["PULPROG"].val_str = "<mac_CS_new3DSymGr.ppg>"
+    dataset["ACQ_dim"].val_str = "3"
+    dataset["ACQ_size"].size = (3,)
+    dataset["ACQ_size"].val_str = "366 31000 1"
+    dataset["PVM_EncMatrix"].size = (3,)
+    dataset["PVM_EncMatrix"].val_str = "128 128 10"
+    dataset["NPro"].val_str = "3100"
+
+    dataset.load_properties()
+
+    assert dataset.block_count == dataset["NPro"].value * dataset["PVM_EncMatrix"].value[2] * dataset["NI"].value * dataset["NR"].value
+    assert dataset.encoding_space[-2] == 10
+    assert dataset.permute == [0, 2, 4, 3, 5, 6, 1]
+    assert dataset.k_space[2] == 10
+    assert dataset.dim_type == [
+        "k_space_encode_step_0",
+        "k_space_encode_step_1",
+        "k_space_encode_step_2",
+        "repetition",
+        "channel",
+    ]
+
+
+def test_projection_metadata_without_radial_evidence_is_not_inferred_as_radial(tmp_path):
+    values = {
+        "PULPROG": "<customResearchSequence.ppg>",
+        "Method": "<CustomMethod>",
+        "NPro": 3100,
+        "ACQ_dim": 3,
+        "ACQ_size": [366, 31000, 1],
+        "PVM_EncMatrix": [128, 128, 10],
+    }
+    dataset = SimpleNamespace(
+        type="fid",
+        path=tmp_path / "study" / "1" / "fid",
+        _parameter_value=lambda name, default=None: values.get(name, default),
+    )
+
+    assert Dataset._infer_scheme_id(dataset) is None
+
+
+@pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_unknown_cartesian_program_is_inferred_from_encoding_metadata():
     dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
     dataset["PULPROG"].val_str = "<customResearchSequence.ppg>"
