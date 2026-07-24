@@ -69,12 +69,7 @@ TEST_DATA_ROOT = _available_test_data_root() or LEGACY_TEST_DATA_ROOT
 
 
 def pytest_sessionstart(session):
-    global TEST_DATA_ROOT
-
-    if session.config.getoption("download_test_data"):
-        # Downloads always use the legacy writable location, even when the
-        # repository ships a read-only corpus under resources/testdata.
-        TEST_DATA_ROOT = LEGACY_TEST_DATA_ROOT
+    if session.config.getoption("download_test_data") and TEST_DATA_ROOT == LEGACY_TEST_DATA_ROOT:
         for dataset in _requested_dataset_names(session.config.getoption("test_data")):
             if dataset in ZENODO_FILES:
                 _ensure_test_data(dataset)
@@ -87,8 +82,6 @@ def pytest_sessionstart(session):
             "or run pytest with --download_test_data.",
             returncode=1,
         )
-
-    TEST_DATA_ROOT = _available_test_data_root()
 
 
 # -------------------------------
