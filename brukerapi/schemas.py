@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from .exceptions import ConditionNotMet, InvalidDataset, MissingProperty, UnknownAcqSchemeException
+from .paths import read_array
 
 config_paths = {"core": Path(__file__).parents[0] / "config", "custom": Path(__file__).parents[0] / "config"}
 
@@ -423,7 +424,7 @@ class SchemaFid(Schema):
         random access
         """
         array_ra = np.zeros(layouts_ra["storage"], dtype=self._dataset.numpy_dtype)
-        fp = np.memmap(self._dataset.path, dtype=self._dataset.numpy_dtype, mode="r", shape=layouts["storage"], order="F")
+        fp = read_array(self._dataset.path, self._dataset.numpy_dtype, layouts["storage"])
 
         for index_ra in np.ndindex(layouts_ra["k_space"][1:]):
             # index of line in the original k_space
@@ -1065,7 +1066,7 @@ class Schema2dseq(Schema):
 
         array_ra = np.zeros(layouts_ra["shape_storage"], dtype=self._dataset.numpy_dtype)
 
-        fp = np.memmap(self._dataset.path, dtype=self._dataset.numpy_dtype, mode="r", shape=layouts["shape_storage"], order="F")
+        fp = read_array(self._dataset.path, self._dataset.numpy_dtype, layouts["shape_storage"])
 
         for slice_ra, slice_full in self._generate_ra_indices(layouts_ra, layouts):
             array_ra[slice_ra] = np.array(fp[slice_full])
