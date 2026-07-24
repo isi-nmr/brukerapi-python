@@ -811,6 +811,8 @@ class JCAMPDX:
 
     @classmethod
     def verify_version(cls, version):
+        if isinstance(version, str):
+            version = version.strip()
         if version not in SUPPORTED_VERSIONS:
             raise JcampdxVersionError(version)
 
@@ -820,7 +822,7 @@ class JCAMPDX:
             if index >= 10:
                 break
             if line.startswith(("##JCAMPDX=", "##JCAMP-DX=")):
-                return line.strip().split("=", 1)[1]
+                return line.split("=", 1)[1].strip()
         return None
 
     @classmethod
