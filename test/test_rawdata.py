@@ -9,14 +9,22 @@ from brukerapi.exceptions import UnknownAcqSchemeException
 RAWDATA_JOB_PATHS = sorted(Path("test/test_data").rglob("rawdata.job*"))
 
 
+def _raw_complex_stream(dataset):
+    stored = dataset._read_binary_file(dataset.path, dataset.numpy_dtype, dataset.shape_storage)
+    return stored[0::2, ...] + 1j * stored[1::2, ...]
+
+
 @pytest.mark.parametrize("rawdata_path", RAWDATA_JOB_PATHS, ids=[str(path) for path in RAWDATA_JOB_PATHS])
 def test_rawdata_job_loads_directly(rawdata_path):
     dataset = Dataset(rawdata_path)
+    with pytest.warns(FutureWarning, match="format-dependent legacy semantics"):
+        legacy_data = dataset.data
 
     assert dataset.type == "rawdata"
     assert dataset.subtype == rawdata_path.suffix.removeprefix(".")
-    assert dataset.data.shape == dataset._schema.layouts["raw"]
-    assert dataset.data.size > 0
+    assert legacy_data.shape == dataset._schema.layouts["raw"]
+    assert legacy_data.size > 0
+    assert np.array_equal(dataset.raw, np.transpose(legacy_data, (0, 2, 1)))
 
 
 def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space():
@@ -24,8 +32,9 @@ def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space():
 
     k_space = dataset.to_kspace()
 
+    assert np.array_equal(dataset.kspace, k_space)
     assert k_space.shape == (128, 128, 1, 1, 4)
-    acquired = np.transpose(np.reshape(dataset.data, (128, 4, 128, 1, 1), order="F"), (0, 2, 3, 4, 1))
+    acquired = np.transpose(np.reshape(_raw_complex_stream(dataset), (128, 4, 128, 1, 1), order="F"), (0, 2, 3, 4, 1))
     expected = np.take(acquired, np.argsort(dataset["PVM_EncSteps1"].value), axis=1)
     assert np.array_equal(k_space, expected)
 
@@ -45,8 +54,9 @@ def test_pv360_self_gated_rawdata_exposes_acquired_cardiac_frames():
 
     k_space = dataset.to_kspace()
 
+    assert np.array_equal(dataset.kspace, k_space)
     assert k_space.shape == (128, 128, 8, 10, 1, 4)
-    acquired = np.transpose(np.reshape(dataset.data, (128, 4, 128, 80), order="F"), (0, 2, 3, 1))
+    acquired = np.transpose(np.reshape(_raw_complex_stream(dataset), (128, 4, 128, 80), order="F"), (0, 2, 3, 1))
     steps = np.reshape(dataset["PVM_EncGenSteps1"].value, (128, 80), order="F")
     expected = np.take_along_axis(acquired, np.argsort(steps, axis=0)[None, :, :, None], axis=1)
     expected = np.reshape(expected, (128, 128, 8, 10, 1, 4), order="F")

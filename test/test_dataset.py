@@ -910,6 +910,47 @@ def test_fid_object_order_reorders_slice_axis_and_is_reversible():
     assert np.array_equal(schema._reorder_objects(ordered, dir="BW"), stored)
 
 
+def test_fid_to_kspace_matches_decoded_data_and_supports_bart_layout():
+    dataset = Dataset("test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/fid")
+
+    k_space = dataset.to_kspace()
+    bart = dataset.to_kspace(bart=True)
+
+    assert np.array_equal(k_space, dataset.data)
+    assert np.array_equal(dataset.kspace, k_space)
+    mapping = {
+        "k_space_encode_step_0": 0,
+        "k_space_encode_step_1": 1,
+        "k_space_encode_step_2": 2,
+        "channel": 3,
+        "repetition": 9,
+        "slice": 13,
+        "average": 14,
+    }
+    source_to_bart = [mapping[label] for label in dataset.dim_type]
+    source_to_bart.extend(axis for axis in range(16) if axis not in source_to_bart)
+    expected = np.transpose(
+        np.reshape(k_space, k_space.shape + (1,) * (16 - k_space.ndim)),
+        np.argsort(source_to_bart),
+    )
+    assert np.array_equal(bart, expected)
+
+
+def test_fid_raw_preserves_acquisition_order_as_samples_shots_receivers():
+    dataset = Dataset("test/test_data/PV700/20210128_122257_LEGO_PHANTOM_API_TEST_1_1/10/fid")
+
+    stored = dataset._read_binary_file(dataset.path, dataset.numpy_dtype, dataset.shape_storage)
+    trimmed = dataset._schema._acquisition_trim(stored, dataset._schema.layouts)
+    decoded = trimmed[0::2, ...] + 1j * trimmed[1::2, ...]
+    expected = np.transpose(
+        np.reshape(decoded, (decoded.shape[0] // dataset.channels, dataset.channels, decoded.shape[1]), order="F"),
+        (0, 2, 1),
+    )
+
+    assert dataset.raw.shape == (1536, 28, 1)
+    assert np.array_equal(dataset.raw, expected)
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)

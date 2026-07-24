@@ -987,11 +987,26 @@ class Dataset:
 
     @property
     def data(self):
-        """Data array.
+        """Legacy primary data array.
+
+        FID datasets use this view for reordered k-space, while PV-360
+        ``rawdata.jobN`` datasets expose their decoded acquisition stream.
+        Prefer :attr:`raw` or :attr:`kspace` when the representation matters.
 
         :type: *numpy.ndarray*
         """
         if self._data is not None:
+            if self.type == "rawdata" and not getattr(self, "_warned_legacy_rawdata_data", False):
+                warnings.warn(
+                    "Dataset.data has format-dependent legacy semantics: FID "
+                    "datasets expose reordered k-space, but PV-360 rawdata.jobN "
+                    "datasets expose a decoded acquisition stream. Use "
+                    "Dataset.raw for (sample, shot, receiver) acquisitions or "
+                    "Dataset.kspace for ordered k-space.",
+                    FutureWarning,
+                    stacklevel=2,
+                )
+                self._warned_legacy_rawdata_data = True
             return self._data
         raise DataNotLoaded
 
@@ -1019,15 +1034,37 @@ class Dataset:
     def to_kspace(self, *, bart=False):
         """Return a supported raw acquisition in k-space order.
 
-        At present this converts validated Cartesian ParaVision 360
-        ``rawdata.jobN`` streams.  Set ``bart=True`` for BART's 16-axis array
-        layout. It is intentionally not a reconstruction
+        FIDs are already decoded into k-space; validated Cartesian ParaVision
+        360 ``rawdata.jobN`` streams are reshaped on demand. Set ``bart=True``
+        for BART's 16-axis array layout. It is intentionally not a reconstruction
         API: EPI and non-Cartesian raw data require acquisition-specific
         handling.
         """
-        if self.type != "rawdata":
-            raise UnsupportedDatasetType(f"k-space conversion is only available for rawdata jobs, not {self.type}")
+        if self.type not in {"fid", "fid_proc", "rawdata"}:
+            raise UnsupportedDatasetType(f"k-space conversion is not available for {self.type} datasets")
         return self._schema.to_kspace(bart=bart)
+
+    @property
+    def raw(self):
+        """Decoded acquisition stream as ``(sample, shot, receiver)``.
+
+        The stream preserves on-disk acquisition order.  Use :attr:`kspace`
+        when phase lines, objects, and other supported acquisition dimensions
+        must be put into k-space order.
+        """
+        if self.type not in {"fid", "rawdata"}:
+            raise UnsupportedDatasetType(f"raw acquisition data is not available for {self.type} datasets")
+        return self._schema.raw()
+
+    @property
+    def kspace(self):
+        """Derived k-space representation of a raw acquisition.
+
+        Unlike :attr:`data`, this may reshape PV-360 ``rawdata.jobN`` streams
+        using validated acquisition metadata. Use :meth:`to_kspace` for the
+        optional BART layout.
+        """
+        return self.to_kspace()
 
     @property
     def slice_packages(self):

@@ -20,6 +20,15 @@ BART_TIME2_DIM = 10
 BART_SLICE_DIM = 13
 BART_AVG_DIM = 14
 BART_BATCH_DIM = 15
+BART_DIM_BY_TYPE = {
+    "k_space_encode_step_0": BART_READ_DIM,
+    "k_space_encode_step_1": BART_PHS1_DIM,
+    "k_space_encode_step_2": BART_PHS2_DIM,
+    "channel": BART_COIL_DIM,
+    "repetition": BART_TIME_DIM,
+    "slice": BART_SLICE_DIM,
+    "average": BART_AVG_DIM,
+}
 
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
@@ -123,6 +132,15 @@ class Schema:
             k_space_offset.append(start)
         return tuple(k_space), np.array(k_space_offset)
 
+    @staticmethod
+    def _as_bart(data, axes):
+        """Place a compact k-space array into BART's 16-dimensional layout."""
+        if data.ndim != len(axes) or len(set(axes)) != len(axes):
+            raise ValueError("BART axis mapping must assign each compact axis exactly once")
+        source_to_bart = tuple(axes) + tuple(axis for axis in range(BART_DIMS) if axis not in axes)
+        padded = np.reshape(data, data.shape + (1,) * (BART_DIMS - data.ndim))
+        return np.transpose(padded, np.argsort(source_to_bart))
+
 
 class SchemaFid(Schema):
     """Raw ordered FID/k-space schema.
@@ -183,10 +201,7 @@ class SchemaFid(Schema):
         return layouts
 
     def deserialize(self, data, layouts):
-        data = self._acquisition_trim(data, layouts)
-
-        if self.acquisition_factor == 2:
-            data = data[0::2, ...] + 1j * data[1::2, ...]
+        data = self._decode_raw_stream(data, layouts)
 
         # Form encoding space
         data = self._acquisitions_to_encode(data, layouts)
@@ -206,6 +221,46 @@ class SchemaFid(Schema):
         data = self._reorder_objects(data, dir="FW")
 
         return data
+
+    def raw(self):
+        """Return decoded FID acquisitions as ``(sample, shot, receiver)``.
+
+        This representation retains acquisition order.  It deliberately does
+        not apply encoding-space reshaping, phase-line sorting, EPI mirroring,
+        or object-order correction.
+        """
+        stored = self._dataset._read_binary_file(
+            self._dataset.path,
+            self._dataset.numpy_dtype,
+            self._dataset.shape_storage,
+        )
+        data = self._decode_raw_stream(stored, self.layouts)
+        receivers = int(self._dataset.channels)
+        if data.shape[0] % receivers:
+            raise InvalidDataset(
+                f"decoded FID sample count {data.shape[0]} is not divisible by "
+                f"the receiver count {receivers} for {self._dataset.path}"
+            )
+        samples = data.shape[0] // receivers
+        return np.transpose(
+            np.reshape(data, (samples, receivers, data.shape[1]), order="F"),
+            (0, 2, 1),
+        )
+
+    def to_kspace(self, data=None, *, bart=False):
+        """Return the decoded FID k-space, optionally in BART's layout."""
+        if data is None:
+            data = self._dataset.data
+        if not bart:
+            return data
+
+        try:
+            axes = tuple(BART_DIM_BY_TYPE[label] for label in self._dataset.dim_type)
+        except KeyError as error:
+            raise UnknownAcqSchemeException(
+                f"cannot map FID axis {error.args[0]!r} to BART for {self._dataset.path}"
+            ) from error
+        return self._as_bart(data, axes)
 
     def _reorder_objects(self, data, dir="FW"):
         """Map the stored acquisition-object order onto the labelled slice axis."""
@@ -248,6 +303,13 @@ class SchemaFid(Schema):
                     stacklevel=2,
                 )
             return data[0:acquisition_length, :]
+        return data
+
+    def _decode_raw_stream(self, data, layouts):
+        """Trim storage padding and decode interleaved complex samples."""
+        data = self._acquisition_trim(data, layouts)
+        if self.acquisition_factor == 2:
+            return data[0::2, ...] + 1j * data[1::2, ...]
         return data
 
     def _acquisitions_to_encode(self, data, layouts):
@@ -569,6 +631,10 @@ class SchemaRawdata(Schema):
     def deserialize(self, data, layouts):
         return data[0::2, ...] + 1j * data[1::2, ...]
 
+    def raw(self):
+        """Return decoded PV-360 acquisitions as ``(sample, shot, receiver)``."""
+        return np.transpose(self._dataset._data, (0, 2, 1))
+
     def serialize(self, data, layouts):
         # storage array
         data_ = np.zeros(layouts["shape_storage"], dtype=self._dataset.numpy_dtype, order="F")
@@ -592,7 +658,7 @@ class SchemaRawdata(Schema):
         layout.
         """
         if data is None:
-            data = self._dataset.data
+            data = self._dataset._data
 
         scheme_id = self._dataset._infer_scheme_id()
         if scheme_id is not None:
@@ -646,23 +712,12 @@ class SchemaRawdata(Schema):
         k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
         k_space = self._reorder_phase_lines(k_space)
         k_space = self._reorder_objects(k_space)
-        if not bart:
-            return k_space
         axes = (
             (BART_READ_DIM, BART_PHS1_DIM, BART_SLICE_DIM, BART_TIME_DIM, BART_COIL_DIM)
             if encoded_dim == 2
             else (BART_READ_DIM, BART_PHS1_DIM, BART_PHS2_DIM, BART_TIME_DIM, BART_COIL_DIM)
         )
-        return self._as_bart(k_space, axes)
-
-    @staticmethod
-    def _as_bart(data, axes):
-        """Place a compact k-space array into BART's 16-dimensional layout."""
-        if data.ndim != len(axes) or len(set(axes)) != len(axes):
-            raise ValueError("BART axis mapping must assign each compact axis exactly once")
-        source_to_bart = tuple(axes) + tuple(axis for axis in range(BART_DIMS) if axis not in axes)
-        padded = np.reshape(data, data.shape + (1,) * (BART_DIMS - data.ndim))
-        return np.transpose(padded, np.argsort(source_to_bart))
+        return self._as_bart(k_space, axes) if bart else k_space
 
     def _self_gated_k_space(self, data, readout, phase, receivers, objects, repetitions):
         """Arrange retrospectively gated Cartesian data before cine binning."""
