@@ -10,7 +10,7 @@ from .exceptions import InvalidJcampdxFile, JcampdxFileError, JcampdxVersionErro
 SUPPORTED_VERSIONS = ["4.24", "5.0", "5.00 Bruker JCAMP library", "5.00 BRUKER JCAMP library", "5.01"]
 GRAMMAR = {
     "COMMENT_LINE": r"\$\$[^\n]*\n",
-    "PARAMETER": "##",
+    "PARAMETER": r"^##",
     "USER_DEFINED": r"\$",
     "TRAILING_EOL": r"\n$",
     "DATA_LABEL": r"\(XY..XY\)",
@@ -41,7 +41,7 @@ _PARALLEL_BRACKET_RE = _COMPILED_GRAMMAR["PARALLEL_BRACKET"]
 _GEO_OBJ_RE = _COMPILED_GRAMMAR["GEO_OBJ"]
 _HEADER_RE = _COMPILED_GRAMMAR["HEADER"]
 _VERSION_TITLE_RE = _COMPILED_GRAMMAR["VERSION_TITLE"]
-_PARAMETER_RE = _COMPILED_GRAMMAR["PARAMETER"]
+_PARAMETER_RE = re.compile(GRAMMAR["PARAMETER"], re.MULTILINE)
 
 
 class Parameter:
@@ -917,6 +917,8 @@ class JCAMPDX:
         # ASSUMPTION the first occurrence of = in jcampdx line divides key and value pair
         # example:
         match = re.search(GRAMMAR["EQUAL_SIGN"], line)
+        if match is None:
+            raise InvalidJcampdxFile(f"JCAMP-DX record without '=': {line[:60]!r}")
         key = line[0 : match.start()]
         val_str = line[match.end() :].lstrip()
         return key, val_str

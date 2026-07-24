@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from brukerapi.exceptions import InvalidJcampdxFile
 from brukerapi.jcampdx import (
     JCAMPDX,
     DataParameter,
@@ -285,6 +286,23 @@ def test_jcampdx_detects_whitespace_padded_supported_versions(tmp_path, header, 
     path.write_text(f"##TITLE=Version Test\n{header}\n##END=\n")
 
     assert JCAMPDX(path).version == expected_version
+
+
+def test_jcampdx_keeps_double_hash_inside_bracketed_value(tmp_path):
+    path = tmp_path / "configscan"
+    path.write_text(
+        "##TITLE=Config Scan\n"
+        "##JCAMPDX= 5.0\n"
+        "##$PULPROG=<HpMode,On##$EndBis,04,FA#>\n"
+        "##END=\n"
+    )
+
+    assert JCAMPDX(path).get_value("PULPROG") == "<HpMode,On##$EndBis,04,FA#>"
+
+
+def test_jcampdx_record_without_assignment_raises_typed_error():
+    with pytest.raises(InvalidJcampdxFile, match="record without '='"):
+        JCAMPDX.split_key_value_pair("##$BROKEN")
 
 
 def test_load_parameter_allows_hash_and_dollar_in_value(tmp_path):
