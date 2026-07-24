@@ -202,10 +202,16 @@ class Dataset:
         # directory constructor
         if self.path.is_dir():
             content = os.listdir(self.path)
+            rawdata_jobs = sorted(
+                (name for name in content if re.fullmatch(r"rawdata\.job\d+", name)),
+                key=lambda name: int(name.rsplit("job", 1)[1]),
+            )
             if "fid" in content:
                 self.path = self.path / "fid"
             elif "2dseq" in content:
                 self.path = self.path / "2dseq"
+            elif rawdata_jobs:
+                self.path = self.path / rawdata_jobs[0]
             elif state.get("load") is LOAD_STAGES["empty"] and self.path.stem in DEFAULT_STATES:
                 pass
             else:

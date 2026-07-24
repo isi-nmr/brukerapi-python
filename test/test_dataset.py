@@ -179,6 +179,19 @@ def test_directory_constructor_uses_default_load(path, dataset_type):
     assert dataset.data.size > 0
 
 
+def test_directory_constructor_selects_lowest_numbered_rawdata_job(tmp_path):
+    experiment = tmp_path / "experiment"
+    experiment.mkdir()
+    (experiment / "rawdata.job10").touch()
+    (experiment / "rawdata.job2").touch()
+
+    dataset = Dataset(experiment, load=LOAD_STAGES["empty"])
+
+    assert dataset.path == experiment / "rawdata.job2"
+    assert dataset.type == "rawdata"
+    assert dataset.subtype == "job2"
+
+
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_custom_csi_pulse_program_uses_family_scheme_fallback():
     dataset = Dataset(PV51_STUDY_PATH / "10" / "fid", load=LOAD_STAGES["parameters"])
