@@ -890,6 +890,26 @@ def test_schema_warns_when_dim_type_does_not_describe_layout_rank():
         SchemaRawdata(dataset)
 
 
+def test_fid_object_order_reorders_slice_axis_and_is_reversible():
+    class ObjectOrderDataset:
+        dim_type = ["k_space_encode_step_0", "slice"]
+
+        def __init__(self):
+            self.parameters = {"ACQ_obj_order": SimpleNamespace(value=np.array([0, 2, 4, 1, 3]))}
+
+        def __getitem__(self, key):
+            return self.parameters[key]
+
+    schema = SchemaFid.__new__(SchemaFid)
+    schema._dataset = ObjectOrderDataset()
+    stored = np.arange(5).reshape((1, 5))
+
+    ordered = schema._reorder_objects(stored, dir="FW")
+
+    assert np.array_equal(ordered, np.array([[0, 3, 1, 4, 2]]))
+    assert np.array_equal(schema._reorder_objects(ordered, dir="BW"), stored)
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)
