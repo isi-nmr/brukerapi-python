@@ -53,18 +53,35 @@ PROPERTY_REFERENCE_FILES = {
 
 TEST_DIR = Path(__file__).parent
 ZENODO_ZIP_DIR = TEST_DIR / "zenodo_zips"
-TEST_DATA_ROOT = TEST_DIR / "test_data"
+LEGACY_TEST_DATA_ROOT = TEST_DIR / "test_data"
+CORPUS_TEST_DATA_ROOT = Path(__file__).parents[1] / "resources" / "testdata"
+
+
+def _available_test_data_root():
+    """Return the first populated local test-data corpus, if any."""
+    for path in (LEGACY_TEST_DATA_ROOT, CORPUS_TEST_DATA_ROOT):
+        if path.is_dir() and any(path.iterdir()):
+            return path
+    return None
+
+
+TEST_DATA_ROOT = _available_test_data_root() or LEGACY_TEST_DATA_ROOT
 
 
 def pytest_sessionstart(session):
-    if not session.config.getoption("download_test_data"):
-        return
+    if session.config.getoption("download_test_data") and TEST_DATA_ROOT == LEGACY_TEST_DATA_ROOT:
+        for dataset in _requested_dataset_names(session.config.getoption("test_data")):
+            if dataset in ZENODO_FILES:
+                _ensure_test_data(dataset)
+            elif dataset in GITHUB_DATASETS:
+                _ensure_github_test_data(dataset)
 
-    for dataset in _requested_dataset_names(session.config.getoption("test_data")):
-        if dataset in ZENODO_FILES:
-            _ensure_test_data(dataset)
-        elif dataset in GITHUB_DATASETS:
-            _ensure_github_test_data(dataset)
+    if _available_test_data_root() is None:
+        pytest.exit(
+            "No Bruker test-data corpus is available. Provide test/test_data or resources/testdata, "
+            "or run pytest with --download_test_data.",
+            returncode=1,
+        )
 
 
 # -------------------------------
