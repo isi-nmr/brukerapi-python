@@ -120,7 +120,7 @@ def test_fid_companion_files_are_not_loaded_as_primary_datasets(path):
     if not Path(path).is_file():
         pytest.skip(f"{path} is not available")
 
-    with pytest.raises(UnsupportedDatasetType, match=rf"Dataset type: {re.escape(Path(path).name)} is not supported"):
+    with pytest.raises(UnsupportedDatasetType, match=rf"{re.escape(Path(path).name)} is a fid companion.*fid_companions"):
         Dataset(path)
 
 
@@ -141,9 +141,11 @@ def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
     for subtype, companion in dataset.fid_companions.items():
         assert isinstance(companion, Dataset)
         assert companion.path == Path(fid_path).with_suffix(f".{subtype}")
-        assert companion.data.ndim == 1
+        assert companion.data.ndim == (dataset.data.ndim if subtype == "orig" else 1)
         assert np.iscomplexobj(companion.data)
         assert companion.data.size * 2 * companion.numpy_dtype.itemsize == companion.path.stat().st_size
+        if subtype == "orig":
+            assert companion.data.shape == dataset.data.shape
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")

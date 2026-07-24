@@ -459,19 +459,26 @@ class SchemaFid(Schema):
 
 
 class SchemaFidCompanion:
-    """One-dimensional complex view of an auxiliary ``fid.<subtype>`` file."""
+    """Decoder for auxiliary ``fid.<subtype>`` files."""
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, primary_schema=None):
         self._dataset = dataset
+        self._primary_schema = primary_schema
 
     @property
     def layouts(self):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.layouts
         return {"storage": self._dataset.shape_storage}
 
     def deserialize(self, data, layouts):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.deserialize(data, layouts)
         return data[0::2] + 1j * data[1::2]
 
     def serialize(self, data, layouts):
+        if self._dataset.subtype == "orig" and self._primary_schema is not None:
+            return self._primary_schema.serialize(data, layouts)
         serialized = np.empty(data.size * 2, dtype=self._dataset.numpy_dtype)
         serialized[0::2] = np.real(data)
         serialized[1::2] = np.imag(data)

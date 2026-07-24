@@ -219,6 +219,11 @@ class Dataset:
 
         if self.type not in DEFAULT_STATES:
             raise UnsupportedDatasetType(self.type)
+        if self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES and not state.get("_auxiliary"):
+            raise UnsupportedDatasetType(
+                f"{self.path.name} is a fid companion (spec §3.5); load it as "
+                f"Dataset({self.path.with_suffix('')!s}).fid_companions[{self.subtype!r}]"
+            )
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
             raise UnsupportedDatasetType(self.path.name)
 
@@ -771,9 +776,13 @@ class Dataset:
             companion = Dataset(path, load=LOAD_STAGES["empty"], _auxiliary=True)
             companion._parameters = self.parameters
             companion.numpy_dtype = self.numpy_dtype
-            companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
-            companion.dim_type = ["sample"]
-            companion._schema = SchemaFidCompanion(companion)
+            if subtype == "orig":
+                companion.shape_storage = self.shape_storage
+                companion.dim_type = self.dim_type
+            else:
+                companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
+                companion.dim_type = ["sample"]
+            companion._schema = SchemaFidCompanion(companion, primary_schema=self._schema)
             companion.load_data()
             self._fid_companions[subtype] = companion
 
