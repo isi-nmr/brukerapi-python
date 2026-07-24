@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from brukerapi.dataset import Dataset
-from brukerapi.exceptions import UnknownAcqSchemeException
+from brukerapi.exceptions import InvalidDataset, UnknownAcqSchemeException
 
 RAWDATA_JOB_PATHS = sorted(Path("test/test_data").rglob("rawdata.job*"))
 
@@ -16,24 +16,30 @@ def _raw_complex_stream(dataset):
 
 def _rawdata_with_kspace(test_data_root, predicate):
     for path in sorted(test_data_root.rglob("rawdata.job*")):
+        if not any(part.startswith("PV360") for part in path.parts):
+            continue
         dataset = Dataset(path)
         try:
             k_space = dataset.to_kspace()
-        except UnknownAcqSchemeException:
+        except (InvalidDataset, UnknownAcqSchemeException):
             continue
-        if predicate(k_space):
+        if predicate(dataset, k_space):
             return dataset, k_space
     pytest.skip("The selected corpus has no rawdata job with the required Cartesian layout")
 
 
 def _epi_rawdata(test_data_root):
     for path in sorted(test_data_root.rglob("rawdata.job*")):
+        if not any(part.startswith("PV360") for part in path.parts):
+            continue
         dataset = Dataset(path)
         try:
             dataset.to_kspace()
         except UnknownAcqSchemeException as error:
             if "is EPI" in str(error):
                 return dataset
+        except InvalidDataset:
+            continue
     pytest.skip("The selected corpus has no EPI rawdata job")
 
 
@@ -51,7 +57,7 @@ def test_rawdata_job_loads_directly(rawdata_path):
 
 
 def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space(test_data_root):
-    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 5 and data.shape[2:4] == (1, 1))
+    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda _dataset, data: data.ndim == 5)
 
     assert np.array_equal(dataset.kspace, k_space)
     assert k_space.shape[-1] == dataset.channels
@@ -64,14 +70,20 @@ def test_pv360_cartesian_rawdata_job_converts_to_ordered_k_space(test_data_root)
 
 
 def test_pv360_3d_cartesian_rawdata_job_converts_to_k_space(test_data_root):
-    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 5 and data.shape[2] > 1)
+    dataset, k_space = _rawdata_with_kspace(
+        test_data_root,
+        lambda dataset, data: data.ndim == 5 and dataset._parameter_value("ACQ_dim") == 3,
+    )
 
     assert k_space.shape[-1] == dataset.channels
     assert k_space.size == dataset.raw.size
 
 
 def test_pv360_self_gated_rawdata_exposes_acquired_cardiac_frames(test_data_root):
-    dataset, k_space = _rawdata_with_kspace(test_data_root, lambda data: data.ndim == 6 and data.shape[2] > 1 and data.shape[3] > 1)
+    dataset, k_space = _rawdata_with_kspace(
+        test_data_root,
+        lambda _dataset, data: data.ndim == 6 and data.shape[2] > 1 and data.shape[3] > 1,
+    )
 
     assert np.array_equal(dataset.kspace, k_space)
     assert k_space.shape[-1] == dataset.channels
