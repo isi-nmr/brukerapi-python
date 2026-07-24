@@ -803,6 +803,18 @@ def test_chained_dataset_configuration_merges_onto_current_state(tmp_path):
     assert first_config == {"mmap": True, "parameter_files": ["method"]}
 
 
+def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
+    dataset = Dataset.__new__(Dataset)
+    dataset.path = tmp_path / "study" / "23" / "traj"
+    dataset.type = "traj"
+    reported_paths = []
+    dataset.to_json = lambda path, props=None: reported_paths.append((path, props))
+
+    dataset.report(tmp_path, props=["scheme_id"])
+
+    assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
+
+
 @pytest.mark.skip(reason="in progress")
 def test_parameters(test_parameters):
     dataset = Dataset(test_parameters[0], load=False)

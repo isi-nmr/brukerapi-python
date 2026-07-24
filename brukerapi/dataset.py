@@ -819,12 +819,13 @@ class Dataset:
         :param names: *list* names of properties to be exported
         """
 
+        report_id = getattr(self, "id", f"{self.path.parent.name}_{self.type}")
         if path is None:
-            path = self.path.parent / f"{self.id}.json"
+            path = self.path.parent / f"{report_id}.json"
         else:
             path = Path(path)
             if path.is_dir():
-                path /= f"{self.id}.json"
+                path /= f"{report_id}.json"
 
         if verbose:
             print(f"bruker report: {self.path!s} -> {path!s}")
