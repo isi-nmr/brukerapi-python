@@ -61,6 +61,16 @@ def test_parse_value_preserves_delimiters_inside_angle_brackets():
     assert GenericParameter.parse_value(struct) == [7, "<label, with comma) and parenthesis>", 9]
 
 
+def test_parse_value_of_an_empty_parameter():
+    """A parameter can be written with no value at all: `##$ACQ_operator= `.
+
+    Real ParaVision exports do this for unset text fields. Reading one raised
+    IndexError, which took down every consumer of the whole file.
+    """
+    assert GenericParameter.parse_value("") == ""
+    assert GenericParameter.parse_value(" ") == ""
+
+
 def test_parallel_lists_preserve_delimiters_inside_angle_brackets():
     value = "(first, <Display, One>) (second, <Display) Two, value>)"
 
