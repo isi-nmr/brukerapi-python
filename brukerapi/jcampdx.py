@@ -389,6 +389,9 @@ class GenericParameter(Parameter):
                 pass
 
             return np.array(val_strs)
+        if not val_strs:
+            # a parameter written with no value at all, e.g. `##$ACQ_operator= `
+            return ""
         return val_strs[0]
 
     @staticmethod
