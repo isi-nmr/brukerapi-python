@@ -814,11 +814,9 @@ class Schema2dseq(Schema):
     def scale(self):
         data = self._split_complex_frames(self._dataset._data, self.layouts)
         data = self._apply_disk_slice_order(data)
-        data = self._apply_transposition(data)
         data = np.reshape(data, self._dataset.shape_storage, order="F")
         data = self._scale_frames(data, self.layouts, "FW")
         data = np.reshape(data, self._dataset.shape_final, order="F")
-        data = self._apply_transposition(data)
         data = self._apply_disk_slice_order(data)
         self._dataset.data = self._combine_complex_frames(data)
 
@@ -830,89 +828,8 @@ class Schema2dseq(Schema):
         # frames -> frame_groups
         data = self._frames_to_framegroups(data, layouts)
         data = self._apply_disk_slice_order(data)
-        data = self._apply_transposition(data, layouts.get("mask"))
 
         return self._combine_complex_frames(data)
-
-    def _transposition_values(self, data, frame_mask=None):
-        """Return one XY-transposition flag for each frame, if present."""
-        visu_value = self._dataset._parameter_value("VisuCoreTransposition")
-        reco_value = self._dataset._parameter_value("RECO_transposition")
-        value = visu_value if visu_value is not None else reco_value
-        if value is None:
-            return None
-
-        try:
-            values = np.asarray(value, dtype=int).ravel()
-        except (TypeError, ValueError):
-            warnings.warn(
-                f"invalid transposition metadata for {self._dataset.path}; leaving axes unchanged",
-                RuntimeWarning,
-                stacklevel=2,
-            )
-            return None
-        if not np.any(values):
-            return None
-
-        encoded_dim = int(self._dataset.encoded_dim)
-        frame_shape = data.shape[encoded_dim:]
-        metadata_shape = frame_mask.shape if frame_mask is not None else frame_shape
-        metadata_count = int(np.prod(metadata_shape, dtype=int))
-        if values.size == 1:
-            return np.full(frame_shape, bool(values[0]), dtype=bool)
-        if values.size != metadata_count:
-            warnings.warn(
-                f"transposition metadata has {values.size} values but {metadata_count} frames for "
-                f"{self._dataset.path}; leaving axes unchanged",
-                RuntimeWarning,
-                stacklevel=2,
-            )
-            return None
-        flags = np.reshape(values.astype(bool), metadata_shape, order="F")
-        if frame_mask is None:
-            return flags
-
-        selected = flags.ravel(order="F")[frame_mask.ravel(order="F")]
-        if selected.size != int(np.prod(frame_shape, dtype=int)):
-            warnings.warn(
-                f"selected transposition metadata does not describe the requested frames for "
-                f"{self._dataset.path}; leaving axes unchanged",
-                RuntimeWarning,
-                stacklevel=2,
-            )
-            return None
-        return np.reshape(selected, frame_shape, order="F")
-
-    def _apply_transposition(self, data, frame_mask=None):
-        """Apply ParaVision's per-frame XY/YX transposition metadata.
-
-        ``RECO_transposition`` is the legacy source; ``VisuCoreTransposition``
-        is preferred where present.  A transpose is an involution, so this
-        method is also used on the serialization path.
-        """
-        if data.ndim < 2:
-            return data
-        flags = self._transposition_values(data, frame_mask)
-        if flags is None or not np.any(flags):
-            return data
-        if np.all(flags):
-            return np.swapaxes(data, 0, 1)
-        if data.shape[0] != data.shape[1]:
-            warnings.warn(
-                f"per-frame XY transposition for non-square frames cannot be represented "
-                f"in one array for {self._dataset.path}; leaving axes unchanged",
-                RuntimeWarning,
-                stacklevel=2,
-            )
-            return data
-
-        result = data.copy()
-        encoded_prefix = (slice(None),) * int(self._dataset.encoded_dim)
-        for index in np.ndindex(flags.shape):
-            if flags[index]:
-                frame = encoded_prefix + index
-                result[frame] = np.swapaxes(data[frame], 0, 1)
-        return result
 
     def _frame_group_axis(self, name):
         normalized_name = name.strip("<>").upper()
@@ -1036,7 +953,6 @@ class Schema2dseq(Schema):
     def serialize(self, data, layout):
         data = self._split_complex_frames(data, layout)
         data = self._apply_disk_slice_order(data)
-        data = self._apply_transposition(data)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
         return data

@@ -837,34 +837,29 @@ def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
     assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
 
 
-def test_2dseq_transposition_swaps_xy_for_selected_frames_and_is_involutory():
+@pytest.mark.parametrize("parameter", ["RECO_transposition", "VisuCoreTransposition"])
+def test_2dseq_transposition_metadata_does_not_change_stored_data(parameter):
     dataset = SimpleNamespace(
         path=Path("transposed/2dseq"),
         encoded_dim=2,
-        _parameter_value=lambda name, default=None: [0, 1] if name == "VisuCoreTransposition" else default,
+        shape_block=(2, 3),
+        shape_fg=(2,),
+        shape_frames=(2,),
+        shape_storage=(2, 3, 2),
+        shape_final=(2, 3, 2),
+        _state={"scale": False, "combine_complex": False},
+        dim_type=["spatial", "spatial", "<FG_ECHO>"],
+        _parameter_value=lambda name, default=None: 1 if name == parameter else default,
     )
     schema = Schema2dseq.__new__(Schema2dseq)
     schema._dataset = dataset
-    data = np.arange(18).reshape((3, 3, 2), order="F")
+    stored = np.arange(12).reshape(dataset.shape_storage, order="F")
 
-    transposed = schema._apply_transposition(data)
+    decoded = schema.deserialize(stored, schema.layouts)
 
-    assert np.array_equal(transposed[:, :, 0], data[:, :, 0])
-    assert np.array_equal(transposed[:, :, 1], data[:, :, 1].T)
-    assert np.array_equal(schema._apply_transposition(transposed), data)
-
-
-def test_2dseq_transposition_falls_back_to_reco_metadata():
-    dataset = SimpleNamespace(
-        path=Path("legacy-transposed/2dseq"),
-        encoded_dim=2,
-        _parameter_value=lambda name, default=None: 1 if name == "RECO_transposition" else default,
-    )
-    schema = Schema2dseq.__new__(Schema2dseq)
-    schema._dataset = dataset
-    data = np.arange(6).reshape((2, 3), order="F")
-
-    assert np.array_equal(schema._apply_transposition(data), data.T)
+    assert decoded.shape == dataset.shape_final
+    assert np.array_equal(decoded, stored)
+    assert np.array_equal(schema.serialize(decoded, schema.layouts), stored)
 
 
 def test_2dseq_serialization_clips_rounding_error_to_integer_dtype_limits():
@@ -1049,9 +1044,6 @@ def test_data_load(test_data):
         reference = archive["data"]
         if dataset.type == "rawdata":
             reference = np.transpose(reference, (0, 2, 1))
-        elif dataset.type == "2dseq":
-            reference = dataset._schema._apply_transposition(reference)
-
         if dataset.type == "2dseq" and np.iscomplexobj(actual) and not np.iscomplexobj(reference):
             complex_axis = next(
                 (
