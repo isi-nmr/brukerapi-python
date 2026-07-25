@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from .exceptions import InvalidJcampdxFile, JcampdxFileError, JcampdxVersionError, ParameterNotFound
+from .paths import as_path
 
 SUPPORTED_VERSIONS = ["4.24", "5.0", "5.00 Bruker JCAMP library", "5.00 BRUKER JCAMP library", "5.01"]
 GRAMMAR = {
@@ -606,7 +607,7 @@ class JCAMPDX:
             load = True
 
         # If path is directory
-        self.path = Path(path)
+        self.path = as_path(path)
         self._version = None
 
         if self.path.is_dir():
@@ -732,8 +733,15 @@ class JCAMPDX:
     def set_parameter(self, key, value):
         self.params[key] = value
 
-    def get_value(self, key):
-        return self.params[key].value
+    def get_value(self, key, default=None):
+        """Value of parameter `key`, or `default` when it is absent.
+
+        Which parameters a file carries is ParaVision-version dependent, so a
+        caller that tolerates an absent key would otherwise have to wrap every
+        read in ``try``/``except KeyError``.
+        """
+        parameter = self.params.get(key)
+        return default if parameter is None else parameter.value
 
     def get_list(self, key):
         """Idea is to ensure, that a parameter will be a list even if parameter only contains one entry"""
@@ -852,7 +860,7 @@ class JCAMPDX:
 
     @classmethod
     def read_jcampdx(cls, path):
-        path = Path(path)
+        path = as_path(path)
 
         params = {}
 

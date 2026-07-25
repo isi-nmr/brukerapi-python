@@ -18,6 +18,7 @@ from .exceptions import (
     UnsupportedDatasetType,
 )
 from .jcampdx import JCAMPDX
+from .paths import as_path
 
 DEFAULT_DATASET_STATE = {"parameter_files": [], "property_files": [], "load": 3}
 
@@ -48,7 +49,7 @@ class Folder:
         if dataset_index is None:
             dataset_index = ["fid", "2dseq", "rawdata"]
 
-        self.path = Path(path)
+        self.path = as_path(path)
 
         self.validate()
 
@@ -244,7 +245,7 @@ class Folder:
     @staticmethod
     def contains(path: str | Path, required: list) -> bool:
         """Checks whether folder specified by path contains all required files."""
-        path = Path(path)
+        path = as_path(path)
         required_set = set(required)
         existing_files = {f.name for f in path.iterdir()}
         return required_set.issubset(existing_files)
@@ -334,7 +335,7 @@ class Study(Folder):
         if dataset_index is None:
             dataset_index = ["fid", "2dseq", "rawdata"]
 
-        self.path = Path(path)
+        self.path = as_path(path)
         self.validate()
         super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index, dataset_state=dataset_state)
 
@@ -404,7 +405,7 @@ class Experiment(Folder):
         if dataset_index is None:
             dataset_index = ["fid", "rawdata"]
 
-        self.path = Path(path)
+        self.path = as_path(path)
         self.validate()
         super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index, dataset_state=dataset_state)
 
@@ -447,7 +448,7 @@ class Processing(Folder):
         if dataset_index is None:
             dataset_index = ["2dseq"]
 
-        self.path = Path(path)
+        self.path = as_path(path)
         self.validate()
         super().__init__(path, parent=parent, recursive=recursive, dataset_index=dataset_index, dataset_state=dataset_state)
 

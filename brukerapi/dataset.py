@@ -26,6 +26,7 @@ from .exceptions import (
     UnsupportedDatasetType,
 )
 from .jcampdx import JCAMPDX
+from .paths import as_path, file_size, listdir, read_array, traverse, with_suffix
 from .schemas import Schema2dseq, SchemaFid, SchemaFidCompanion, SchemaRawdata, SchemaTraj
 
 LOAD_STAGES = {
@@ -196,14 +197,14 @@ class Dataset:
         :raise: :IncompleteDataset: If any of the JCAMP-DX files, necessary to create a Dataset instance is missing
 
         """
-        self.path = Path(path)
+        self.path = as_path(path)
 
         if not self.path.exists() and state.get("load") is not LOAD_STAGES["empty"]:
             raise FileNotFoundError(self.path)
 
         # directory constructor
         if self.path.is_dir():
-            content = os.listdir(self.path)
+            content = listdir(self.path)
             rawdata_jobs = sorted(
                 (name for name in content if re.fullmatch(r"rawdata\.job\d+", name)),
                 key=lambda name: int(name.rsplit("job", 1)[1]),
@@ -230,7 +231,7 @@ class Dataset:
         if self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES and not state.get("_auxiliary"):
             raise UnsupportedDatasetType(
                 f"{self.path.name} is a fid companion (spec §3.5); load it as "
-                f"Dataset({self.path.with_suffix('')!s}).fid_companions[{self.subtype!r}]"
+                f"Dataset({with_suffix(self.path, '')!s}).fid_companions[{self.subtype!r}]"
             )
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
             raise UnsupportedDatasetType(self.path.name)
@@ -250,7 +251,7 @@ class Dataset:
     @staticmethod
     def is_supported_path(path, dataset_types=None):
         """Return whether a filename denotes a supported primary dataset binary."""
-        path = Path(path)
+        path = as_path(path)
         dataset_type = path.stem
         subtype = path.suffix.removeprefix(".")
         if dataset_type not in SUPPORTED_SUBTYPES:
@@ -322,13 +323,13 @@ class Dataset:
         # Check whether all necessary JCAMP-DX files are present
         if self._state.get("load") >= LOAD_STAGES["parameters"]:
             for i in DEFAULT_STATES[self.type]["parameter_files"]:
-                param_path = self.path.parent / RELATIVE_PATHS[self.type][i]
-                if i not in set(os.listdir(str(param_path.parent))):
+                param_path = traverse(self.path.parent, RELATIVE_PATHS[self.type][i])
+                if i not in set(listdir(param_path.parent)):
                     raise IncompleteDataset(f"missing required parameter file: {i} ({param_path})")
 
             if self.type == "2dseq":
-                visu_path = self.path.parent / RELATIVE_PATHS[self.type]["visu_pars"]
-                empty_components = [path for path in (self.path, visu_path) if path.is_file() and path.stat().st_size == 0]
+                visu_path = traverse(self.path.parent, RELATIVE_PATHS[self.type]["visu_pars"])
+                empty_components = [path for path in (self.path, visu_path) if path.is_file() and file_size(path) == 0]
                 if empty_components:
                     components = ", ".join(f"{path.name} ({path})" for path in empty_components)
                     raise InvalidDataset(f"Invalid dataset, empty or incomplete reconstruction: empty {components}")
@@ -409,7 +410,7 @@ class Dataset:
             dataset["PVM_DwDir"].value
 
         """
-        path = self.path.parent / RELATIVE_PATHS[self.type][file]
+        path = traverse(self.path.parent, RELATIVE_PATHS[self.type][file])
 
         if not hasattr(self, "_parameters") or self._parameters is None:
             self._parameters = {path.name: JCAMPDX(path)}
@@ -711,10 +712,10 @@ class Dataset:
         1D ndarray containing the full data vector
         """
 
-        actual_bytes = os.stat(path).st_size
+        actual_bytes = file_size(path)
         expected_bytes = int(np.prod(shape) * dtype.itemsize)
         if actual_bytes != expected_bytes:
-            with Path(path).open("rb") as binary:
+            with path.open("rb") as binary:
                 signature = binary.read(42)
 
             if signature == b"version https://git-lfs.github.com/spec/v1":
@@ -735,7 +736,7 @@ class Dataset:
                 f"Invalid dataset size at {path}: expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}, got {actual_bytes} bytes"
             )
 
-        return np.array(np.memmap(path, dtype=dtype, shape=shape, order="F")[:])
+        return read_array(path, dtype, shape)
 
     def _write_data(self, path):
         data = self._data.copy()
@@ -751,7 +752,7 @@ class Dataset:
     """
 
     def load_traj(self, **kwargs):
-        if Path(self.path.parent / "traj").exists() and self.type != "traj":
+        if (self.path.parent / "traj").exists() and self.type != "traj":
             self._traj = Dataset(
                 self.path.parent / "traj",
                 load=LOAD_STAGES["empty"],
@@ -777,7 +778,7 @@ class Dataset:
             return
 
         for subtype in sorted(FID_COMPANION_SUBTYPES):
-            path = self.path.with_suffix(f".{subtype}")
+            path = with_suffix(self.path, f".{subtype}")
             if not path.exists():
                 continue
 
@@ -788,7 +789,7 @@ class Dataset:
                 companion.shape_storage = self.shape_storage
                 companion.dim_type = self.dim_type
             else:
-                companion.shape_storage = (path.stat().st_size // self.numpy_dtype.itemsize,)
+                companion.shape_storage = (file_size(path) // self.numpy_dtype.itemsize,)
                 companion.dim_type = ["sample"]
             companion._schema = SchemaFidCompanion(companion, primary_schema=self._schema)
             companion.load_data()
