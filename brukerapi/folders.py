@@ -1,5 +1,6 @@
 import copy
 import json
+import re
 import warnings
 from copy import deepcopy
 from pathlib import Path
@@ -369,7 +370,18 @@ class Study(Folder):
         exp = self._get_exp(exp_id)
         if proc_id is not None:
             return exp._get_proc(proc_id)["2dseq"]
-        return exp["fid"]
+        try:
+            return exp["fid"]
+        except KeyError:
+            # ParaVision 360 writes no file named `fid`; raw data lives in
+            # rawdata.jobN (spec 13.1).
+            jobs = sorted(
+                (child for child in exp.children if isinstance(child, Dataset) and re.fullmatch(r"rawdata\.job\d+", child.path.name)),
+                key=lambda child: int(child.path.name.rsplit("job", 1)[1]),
+            )
+            if jobs:
+                return jobs[0]
+            raise
 
     def _get_exp(self, exp_id):
         for exp in self.get_experiment_list():

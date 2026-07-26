@@ -40,6 +40,9 @@ RECIPE_EVAL_NAMESPACE = {
     "__builtins__": {"__import__": __import__},
     "abs": abs,
     "datetime": datetime,
+    # A recipe must size a file through this rather than os.stat: an archive
+    # member has no filesystem path (see brukerapi.paths).
+    "file_size": file_size,
     "int": int,
     "len": len,
     "np": np,

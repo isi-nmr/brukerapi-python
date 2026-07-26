@@ -76,7 +76,7 @@
   ],
   "shape_storage": [
     {
-      "cmd": "(#ACQ_dim, int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #NPro), #NPro)",
+      "cmd": "(#ACQ_dim, int(file_size(self.path) // @numpy_dtype.itemsize // #ACQ_dim // #NPro), #NPro)",
       "conditions": [
         [
           "@scheme_id",
@@ -88,7 +88,7 @@
       ]
     },
     {
-      "cmd": "(#ACQ_dim, int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves), #PVM_SpiralNbOfInterleaves)",
+      "cmd": "(#ACQ_dim, int(file_size(self.path) // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves), #PVM_SpiralNbOfInterleaves)",
       "conditions": [
         [
           "@scheme_id",
@@ -122,7 +122,7 @@
     {
       "cmd": [
         "#ACQ_dim",
-        "int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #NPro)",
+        "int(file_size(self.path) // @numpy_dtype.itemsize // #ACQ_dim // #NPro)",
         "#NPro"
       ],
       "conditions": [
@@ -138,7 +138,7 @@
     {
       "cmd": [
         "#ACQ_dim",
-        "int(os.stat(self.path).st_size // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves)",
+        "int(file_size(self.path) // @numpy_dtype.itemsize // #ACQ_dim // #PVM_SpiralNbOfInterleaves)",
         "#PVM_SpiralNbOfInterleaves"
       ],
       "conditions": [

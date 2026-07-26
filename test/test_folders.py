@@ -2,10 +2,12 @@ import copy
 import pickle
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from brukerapi.dataset import Dataset
 from brukerapi.folders import DEFAULT_DATASET_STATE, Folder, Processing, Study, TypeFilter
+from test.synthetic import Verbatim, write_binary, write_jcampdx
 
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
 
@@ -146,3 +148,40 @@ def test_study_get_dataset_returns_fid_and_2dseq():
     with fid, reconstructed:
         assert fid.data.size > 0
         assert reconstructed.data.size > 0
+
+
+def test_study_get_dataset_falls_back_to_rawdata_when_there_is_no_fid(tmp_path):
+    """Spec 13.1: ParaVision 360 writes no file named `fid`.
+
+    Raw data lives in rawdata.jobN, so an unconditional exp["fid"] makes
+    Study.get_dataset unusable for every PV360 study.
+    """
+    study = tmp_path / "20250814_100419_std_PV360_1_1"
+    write_jcampdx(study / "subject", {"SUBJECT_id": ["<phantom>"], "SUBJECT_study_nr": 1})
+    experiment = study / "26"
+    write_jcampdx(
+        experiment / "acqp",
+        {
+            "ACQ_word_size": "_32_BIT",
+            "ACQ_sw_version": "<PV-360.3.7>",
+            "BYTORDA": "little",
+            "ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 4, 101, 178571.4, 4, 1, <job0>)"),
+        },
+    )
+    write_jcampdx(experiment / "method", {"Method": "<Bruker:FLASH>", "PVM_EncNReceivers": 1})
+    write_binary(experiment / "rawdata.job0", np.arange(8 * 1 * 4, dtype="<i4"), np.dtype("<i4"))
+
+    dataset = Study(study).get_dataset("26")
+
+    assert dataset.path.name == "rawdata.job0"
+    assert dataset.type == "rawdata"
+    assert dataset.shape_storage == (8, 1, 4)
+
+
+def test_study_get_dataset_still_raises_when_an_experiment_has_no_raw_data(tmp_path):
+    study = tmp_path / "20250814_100419_std_PV360_1_1"
+    write_jcampdx(study / "subject", {"SUBJECT_id": ["<phantom>"], "SUBJECT_study_nr": 1})
+    write_jcampdx(study / "26" / "acqp", {"ACQ_scan_name": ["<empty>"]})
+
+    with pytest.raises(KeyError, match="fid"):
+        Study(study).get_dataset("26")
