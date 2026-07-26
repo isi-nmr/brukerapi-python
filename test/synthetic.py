@@ -126,7 +126,7 @@ def visu_pars_records(
     extra=None,
 ):
     """Records of a `visu_pars` describing one reconstructed image series."""
-    frame_count = int(np.prod([length for _, length in frame_groups])) if frame_groups else 1
+    frame_count = int(np.prod([group[1] for group in frame_groups])) if frame_groups else 1
     positions = np.atleast_2d(np.asarray(positions if positions is not None else stacked_positions((-20.0, -20.0, -3.0), (0.0, 0.0, frame_thickness), frame_count), dtype=float))
     orientations = np.atleast_2d(np.asarray(orientations if orientations is not None else axial_orientation(positions.shape[0]), dtype=float))
 

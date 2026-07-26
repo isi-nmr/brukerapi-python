@@ -1201,21 +1201,23 @@ class Dataset:
             descriptors = [descriptors]
 
         grouped = {}
-        for dependency in dependencies:
-            if len(dependency) < 2:
-                continue
-            name = str(dependency[0]).strip("<>")
+        # Spec 7.4: ownership runs from the frame-group descriptor, whose
+        # (valsStart, valsCnt) is a window into VisuGroupDepVals.
+        # VisuGroupDepVals[k][1] is that entry's start index in the *dependent
+        # parameter* array, not an index into VisuFGOrderDesc -- and it is
+        # almost always 0, which used to put every dependent parameter on frame
+        # group 0.
+        for descriptor in descriptors:
             try:
-                descriptor_index = int(dependency[1])
-                group_name = str(descriptors[descriptor_index][1]).strip("<>")
-                axis = next(
-                    axis
-                    for axis, dim_type in enumerate(self.dim_type)
-                    if str(dim_type).strip("<>") == group_name
-                )
-            except (IndexError, KeyError, StopIteration, TypeError, ValueError):
+                vals_start, vals_count = int(descriptor[3]), int(descriptor[4])
+                group_name = str(descriptor[1]).strip("<>")
+                axis = next(axis for axis, dim_type in enumerate(self.dim_type) if str(dim_type).strip("<>") == group_name)
+            except (IndexError, StopIteration, TypeError, ValueError):
                 continue
-            grouped.setdefault(name, []).append(axis)
+            for index in range(vals_start, vals_start + vals_count):
+                if not (0 <= index < len(dependencies)) or len(dependencies[index]) < 2:
+                    continue
+                grouped.setdefault(str(dependencies[index][0]).strip("<>"), []).append(axis)
 
         values = {}
         data_shape = self._data.shape
