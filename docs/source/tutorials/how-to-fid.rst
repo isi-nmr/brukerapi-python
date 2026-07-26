@@ -22,7 +22,7 @@ Data is typically and n-dimensional array, the physical meaning of individual di
 .. code-block:: python
 
    >> dataset.dim_type
-   >> ['kspace_encode_step_0', 'kspace_encode_step_1', 'slice', 'repetition', 'channel']
+   >> ['k_space_encode_step_0', 'k_space_encode_step_1', 'object', 'repetition', 'channel']
 
 ``Dataset.data`` contains ordered raw k-space, not a reconstructed image.
 RARE/EPI line ordering is applied, while ramp-sampling regridding remains a

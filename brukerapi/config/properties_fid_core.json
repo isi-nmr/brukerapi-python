@@ -1,4 +1,15 @@
 {
+  "pv_version": [
+    {
+      "cmd": "#ACQ_sw_version[1:-1].replace('PV-','').replace('PV ','').strip()",
+      "conditions": [],
+      "comment": "spec 7.1/13: version gates compare on this parsed version, so an unlisted point release is not silently unsupported"
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
   "numpy_dtype": [
     {
         "cmd": "np.dtype('int32').newbyteorder('<')",
@@ -47,7 +58,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='little'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -55,7 +66,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='big'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -63,7 +74,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='little'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -71,7 +82,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='big'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     }
   ],
@@ -112,11 +123,7 @@
     {
       "cmd": "#ACQ_jobs[0][0]",
       "conditions": [
-        ["#ACQ_sw_version",
-          [
-            "<PV-360.1.1>"
-          ]
-        ]
+        "@pv_version.split('.')[0]=='360'"
       ]
     }
   ],
@@ -125,7 +132,7 @@
       "cmd": "#ACQ_size.tuple[0] * @channels",
       "conditions": [
         ["#PULPROG", ["<SPIRAL.ppg>","<DtiSpiral.ppg>"]],
-        "#ACQ_sw_version=='<PV 5.1>'"
+        "@pv_version.split('.')[0]=='5'"
       ]
     },
     {
@@ -144,11 +151,7 @@
     {
       "cmd": "#ACQ_jobs[0][0]",
       "conditions": [
-        ["#ACQ_sw_version",
-          [
-            "<PV-360.1.1>"
-          ]
-        ]
+        "@pv_version.split('.')[0]=='360'"
       ]
     }
   ],
@@ -281,8 +284,7 @@
             "SPIRAL.ppg",
             "DtiSpiral.ppg"
           ]
-        ],
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        ]
       ]
     },
     {
@@ -319,7 +321,7 @@
       ]
     },
     {
-      "cmd": "#PVM_EncMatrix[1]*#PVM_EncMatrix[2]*#PVM_NEchoImages",
+      "cmd": "#PVM_EncMatrix[1]*#PVM_EncMatrix[2]*#PVM_NEchoImages*#NR",
       "conditions": [
         "@scheme_id=='FIELD_MAP'"
       ]
@@ -359,32 +361,28 @@
       "cmd": "#ACQ_size[1] * #ACQ_size[2]",
       "conditions": [
         "@scheme_id=='CSI'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='360'"
       ]
     },
     {
       "cmd": "#ACQ_spatial_size_0 * #ACQ_spatial_size_1",
       "conditions": [
         "@scheme_id=='CSI'",
-        ["#ACQ_sw_version",
-          [
-            "<PV-360.1.1>"
-          ]
-        ]
+        "@pv_version.split('.')[0]=='360'"
       ]
     },
     {
       "cmd": "#PVM_SpiralNbOfInterleaves*#NI*#NR",
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='5'"
         ]
     },
     {
       "cmd": "#ACQ_size[1]*#NI*#NR",
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 5.1>'"
+        "@pv_version.split('.')[0]=='5'"
       ]
     },
     {
@@ -444,7 +442,8 @@
         "#PVM_EncNReceivers",
         "#PVM_NEchoImages",
         "#PVM_EncMatrix[1]",
-        "#PVM_EncMatrix[2]"
+        "#PVM_EncMatrix[2]",
+        "#NR"
       ],
       "conditions": [
         "@scheme_id=='FIELD_MAP'"
@@ -519,7 +518,7 @@
       ],
       "conditions": [
         "@scheme_id=='CSI'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='360'"
       ]
     },
     {
@@ -530,11 +529,7 @@
       ],
       "conditions": [
         "@scheme_id=='CSI'",
-        ["#ACQ_sw_version",
-          [
-            "<PV-360.1.1>"
-          ]
-        ]
+        "@pv_version.split('.')[0]=='360'"
       ]
     },
     {
@@ -547,7 +542,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='5'"
       ]
     },
     {
@@ -560,7 +555,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 5.1>'"
+        "@pv_version.split('.')[0]=='5'"
       ]
     },
     {
@@ -600,7 +595,7 @@
       ]
     },
     {
-      "cmd": [0,3,4,2,1],
+      "cmd": [0,3,4,2,5,1],
       "conditions": [
         "@scheme_id in ['FIELD_MAP']"
       ]
@@ -691,6 +686,7 @@
         "#PVM_EncMatrix[1]",
         "#PVM_EncMatrix[2]",
         "#PVM_NEchoImages",
+        "#NR",
         "#PVM_EncNReceivers"
       ],
       "conditions": [
@@ -765,7 +761,7 @@
       ],
       "conditions": [
         "@scheme_id=='CSI'",
-        "#ACQ_sw_version in ['<PV 5.1>', '<PV 6.0>', '<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='360'"
       ]
     },
     {
@@ -776,11 +772,7 @@
       ],
       "conditions": [
         "@scheme_id=='CSI'",
-        ["#ACQ_sw_version",
-          [
-            "<PV-360.1.1>"
-          ]
-        ]
+        "@pv_version.split('.')[0]=='360'"
       ]
     },
     {
@@ -793,7 +785,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version in ['<PV 6.0.1>', '<PV-7.0.0>']"
+        "@pv_version.split('.')[0]!='5'"
       ]
     },
     {
@@ -806,7 +798,7 @@
       ],
       "conditions": [
         "@scheme_id=='SPIRAL'",
-        "#ACQ_sw_version=='<PV 5.1>'"
+        "@pv_version.split('.')[0]=='5'"
       ]
     },
     {
@@ -894,11 +886,25 @@
         "'k_space_encode_step_0'",
         "'k_space_encode_step_1'",
         "'k_space_encode_step_2'",
+        "'echo'",
         "'repetition'",
         "'channel'"
       ],
       "conditions": [
-        ["@scheme_id",["CART_3D","FIELD_MAP"]]
+        "@scheme_id=='FIELD_MAP'"
+      ],
+      "comment": "spec 5.2: a field map's fourth axis counts echo images, and NR is a stored axis of its own"
+    },
+    {
+      "cmd": [
+        "'k_space_encode_step_0'",
+        "'k_space_encode_step_1'",
+        "'k_space_encode_step_2'",
+        "'repetition'",
+        "'channel'"
+      ],
+      "conditions": [
+        ["@scheme_id",["CART_3D"]]
       ]
     },
     {

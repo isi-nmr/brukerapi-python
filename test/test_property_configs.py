@@ -31,30 +31,35 @@ def test_fid_dtype_and_block_layout_are_not_version_gated():
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_acq_length_branches)
 
 
-def test_fid_common_scheme_detection_is_not_version_gated():
+def test_fid_scheme_detection_is_not_version_gated():
     config = _load_config("properties_fid_core.json")
 
     for branch in config["scheme_id"]:
-        if branch["cmd"] == "'SPIRAL'":
-            continue
         assert not _contains_sw_version_gate(branch["conditions"])
+        assert "pv_version" not in " ".join(str(condition) for condition in branch["conditions"])
 
 
-def test_rawdata_standard_dtype_is_not_version_gated_but_pv360_v1_branch_remains():
+def test_rawdata_standard_dtype_is_not_version_gated_but_pv360_branch_remains():
     config = _load_config("properties_rawdata_core.json")
 
     standard_dtype_branches = config["numpy_dtype"][:6]
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_dtype_branches)
-    assert _contains_sw_version_gate(config["numpy_dtype"][6]["conditions"])
+    assert "@pv_version.split('.')[0]=='360'" in config["numpy_dtype"][6]["conditions"]
 
 
-def test_rawdata_pv360_v3_uses_prefix_matching():
+def test_rawdata_pv360_branches_match_on_the_parsed_major_version():
+    """Spec 7.1/13: an exact ACQ_sw_version string misses unlisted point releases.
+
+    Matching `<PV-360.1.1>` or a `<PV-360.3.` prefix leaves PV-360.2.x and
+    PV-360.4.x falling through every branch.
+    """
     config = _load_config("properties_rawdata_core.json")
 
     for branch in config["numpy_dtype"][6:10]:
-        assert "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')" in branch["conditions"]
+        assert "@pv_version.split('.')[0]=='360'" in branch["conditions"]
 
     assert all("ACQ_sw_version" not in " ".join(branch["conditions"]) for branch in config["job_desc"])
+    assert config["pv_version"][0]["cmd"].startswith("#ACQ_sw_version[1:-1]")
 
 
 def test_rawdata_job_layout_is_selected_by_record_arity():

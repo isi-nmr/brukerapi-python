@@ -7,7 +7,7 @@ of real acquisitions, shrunk so the whole binary fits in a few hundred words.
 import numpy as np
 
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from test.synthetic import Verbatim, write_fid
+from test.synthetic import Verbatim, write_binary, write_fid
 
 # pv6 EPSI, shrunk: 6 read points, 4 phase steps, 2 segments, 4 spectral points
 # per read line -- the real scan is 96 x 64 x 4 x 64.
@@ -165,3 +165,86 @@ def test_spectroscopy_labels_objects_and_repetitions(tmp_path):
     assert dataset.dim_type == ["k_space_encode_step_0", "object", "repetition"]
     assert dataset.data.shape == (4, objects, repetitions)
     assert [(axis, size) for axis, size in enumerate(bart.shape) if size > 1] == [(0, 4), (9, repetitions), (13, objects)]
+
+
+def test_field_map_labels_echoes_and_counts_repetitions(tmp_path):
+    """Spec 5.2: PVM_NEchoImages is an echo axis and NR a stored repetition axis.
+
+    The echo axis was labelled `repetition` (so BART received echoes on its
+    time dimension), and block_count carried no NR factor at all -- masked by
+    every corpus field map having NR = 1.
+    """
+    echoes, phase, partitions, repetitions = 2, 3, 2, 2
+    path = kblock_fid(
+        tmp_path / "31",
+        acqp={
+            "GO_block_size": "Standard_KBlock_Format",
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+            "ACQ_dim": 3,
+            "ACQ_dim_desc": Verbatim("( 3 )\nSpatial Spatial Spatial"),
+            "ACQ_size": np.array([8, phase, partitions]),
+            "ACQ_phase_factor": 1,
+            "PULPROG": "<FieldMap.ppg>",
+            "NI": echoes,
+            "NR": repetitions,
+        },
+        method={
+            "Method": "<Bruker:FieldMap>",
+            "PVM_EncMatrix": np.array([4, phase, partitions]),
+            "PVM_NEchoImages": echoes,
+            "PVM_EncNReceivers": 1,
+        },
+        blocks=phase * partitions * echoes * repetitions,
+        samples_per_block=8,
+    )
+
+    dataset = Dataset(path)
+
+    assert dataset.dim_type == [
+        "k_space_encode_step_0",
+        "k_space_encode_step_1",
+        "k_space_encode_step_2",
+        "echo",
+        "repetition",
+        "channel",
+    ]
+    assert dataset.data.shape == (4, phase, partitions, echoes, repetitions, 1)
+    assert [(axis, size) for axis, size in enumerate(dataset.to_kspace(bart=True).shape) if size > 1] == [
+        (0, 4),
+        (1, phase),
+        (2, partitions),
+        (9, repetitions),
+        (10, echoes),
+    ]
+
+
+def test_a_fid_companion_is_shaped_into_acquisitions(tmp_path):
+    """Spec 3.5: fid.spiral / fid.navFid hold whole acquisitions of PVM_DigNp
+    complex points; returning a flat vector makes the caller rediscover that."""
+    digitized, acquisitions, phase = 4, 3, 2
+    experiment = tmp_path / "35"
+    path = kblock_fid(
+        experiment,
+        acqp={
+            "GO_block_size": "Standard_KBlock_Format",
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+            "ACQ_dim": 2,
+            "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+            "ACQ_size": np.array([2 * digitized, phase]),
+            "ACQ_phase_factor": 1,
+            "PULPROG": "<FLASH.ppg>",
+            "NI": 1,
+            "NR": 1,
+        },
+        method={"Method": "<Bruker:FLASH>", "PVM_DigNp": digitized, "PVM_EncMatrix": np.array([digitized, phase]), "PVM_EncNReceivers": 1},
+        blocks=phase,
+        samples_per_block=2 * digitized,
+    )
+    write_binary(experiment / "fid.navFid", np.arange(1, 2 * digitized * acquisitions + 1, dtype="<i4"), np.dtype("<i4"))
+
+    companion = Dataset(path).fid_companions["navFid"]
+
+    assert companion.dim_type == ["sample", "acquisition"]
+    assert companion.data.shape == (digitized, acquisitions)

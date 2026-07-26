@@ -600,3 +600,47 @@ def test_a_trailing_backslash_in_a_string_is_content_not_an_escape(tmp_path):
     )
 
     assert JCAMPDX(path)["VisuStudyDescription"].value == "<\\>"
+
+
+def test_the_last_parameter_survives_a_file_without_an_end_marker(tmp_path):
+    """Spec 2.1 shows ##END= but warns the file may not end there.
+
+    The record stream was split and the last chunk dropped unconditionally, so
+    a truncated or third-party-written file lost its final parameter with no
+    exception and no warning.
+    """
+    path = tmp_path / "visu_pars"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$VisuCoreDim=2\n"
+        "##$VisuRespSynchUsed=No\n"
+    )
+
+    parameters = JCAMPDX(path)
+
+    assert parameters["VisuRespSynchUsed"].value == "No"
+    assert parameters["VisuCoreDim"].value == 2
+
+
+def test_a_malformed_record_raises_a_typed_error(tmp_path):
+    """Spec 2.3: an element count that does not fill the declared size is a
+    diagnosable condition, not a raw numpy ValueError."""
+    path = tmp_path / "acqp"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$SHORT=( 3, 3 )\n"
+        "1 2 3 4\n"
+        "##$BADSIZE=( a )\n"
+        "1 2\n"
+        "##END=\n"
+    )
+    parameters = JCAMPDX(path)
+
+    with pytest.raises(InvalidJcampdxFile, match="do not fill the declared size"):
+        _ = parameters["SHORT"].value
+    with pytest.raises(InvalidJcampdxFile, match="is not an integer"):
+        _ = parameters["BADSIZE"].size

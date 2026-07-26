@@ -1,4 +1,15 @@
 {
+  "pv_version": [
+    {
+      "cmd": "#ACQ_sw_version[1:-1].replace('PV-','').replace('PV ','').strip()",
+      "conditions": [],
+      "comment": "spec 7.1/13: version gates compare on this parsed version, so an unlisted point release is not silently unsupported"
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
   "numpy_dtype": [
     {
         "cmd": "np.dtype('int32').newbyteorder('<')",
@@ -47,7 +58,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='little'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -55,7 +66,7 @@
         "conditions": [
           "#ACQ_word_size=='_32_BIT'",
           "#BYTORDA=='big'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -63,7 +74,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='little'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     },
     {
@@ -71,7 +82,7 @@
         "conditions": [
           "#ACQ_word_size=='_16_BIT'",
           "#BYTORDA=='big'",
-          "#ACQ_sw_version=='<PV-360.1.1>' or #ACQ_sw_version.value.startswith('<PV-360.3.')"
+          "@pv_version.split('.')[0]=='360'"
         ]
     }
   ],

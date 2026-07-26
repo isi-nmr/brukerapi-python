@@ -27,6 +27,7 @@ BART_DIM_BY_TYPE = {
     "k_space_encode_step_2": BART_PHS2_DIM,
     "channel": BART_COIL_DIM,
     "repetition": BART_TIME_DIM,
+    "echo": BART_TIME2_DIM,
     # spec 5.2: the NI axis counts acquisition objects (slices x echoes x movie
     # frames), which is what BART calls its slice dimension for a plain
     # multi-slice scan.
@@ -585,11 +586,14 @@ class SchemaFidCompanion:
     def deserialize(self, data, layouts):
         if self._dataset.subtype == "orig" and self._primary_schema is not None:
             return self._primary_schema.deserialize(data, layouts)
-        return data[0::2] + 1j * data[1::2]
+        decoded = data[0::2] + 1j * data[1::2]
+        shape = getattr(self._dataset, "shape_final", None)
+        return decoded if shape is None else np.reshape(decoded, shape, order="F")
 
     def serialize(self, data, layouts):
         if self._dataset.subtype == "orig" and self._primary_schema is not None:
             return self._primary_schema.serialize(data, layouts)
+        data = np.reshape(np.asarray(data), (-1,), order="F")
         serialized = np.empty(data.size * 2, dtype=self._dataset.numpy_dtype)
         serialized[0::2] = np.real(data)
         serialized[1::2] = np.imag(data)
@@ -926,6 +930,10 @@ class Schema2dseq(Schema):
                     return None
                 axis = data.ndim - 1
 
+        if data.shape[axis] == 1:
+            # a random-access selection of only the real or only the imaginary
+            # component: there is nothing to combine, keep the axis as it is
+            return None
         if data.shape[axis] != 2:
             raise InvalidDataset(
                 f"complex 2dseq requires a two-element real/imag frame-group axis, got shape {data.shape} on axis {axis}"

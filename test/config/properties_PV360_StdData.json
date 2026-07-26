@@ -2668,7 +2668,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>"
         ],
         "dwell_s": 6.4e-06,
@@ -2878,7 +2878,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>"
         ],
         "dwell_s": 6.7e-06,
@@ -3088,7 +3088,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>"
         ],
         "dwell_s": 6.7e-06,
@@ -3362,6 +3362,7 @@
             "<Navigator>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             272,
             4,
@@ -3390,6 +3391,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             5808,
             4,
@@ -3418,6 +3420,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             5808,
             4,
@@ -3446,6 +3449,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             4096,
             4,
@@ -3474,6 +3478,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             320,
             4,
@@ -3502,6 +3507,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             400,
             4,
@@ -3530,6 +3536,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             512,
             4,
@@ -3558,6 +3565,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             512,
             4,
@@ -3586,6 +3594,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             384,
             4,
@@ -3614,6 +3623,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             20480,
             4,
@@ -3642,6 +3652,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             512,
             4,
@@ -3670,6 +3681,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             512,
             1,
@@ -3698,6 +3710,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             512,
             1,
@@ -3726,6 +3739,7 @@
             "<job0>"
         ],
         "numpy_dtype": "int32",
+        "pv_version": "360.3.6",
         "shape_storage": [
             148,
             4,

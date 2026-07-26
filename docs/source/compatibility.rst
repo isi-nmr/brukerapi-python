@@ -59,11 +59,22 @@ Data contract and limitations
 * ``COMPLEX_IMAGE``/``FG_COMPLEX`` reconstructions are returned as complex
   arrays by default. Use ``combine_complex=False`` to retain the real frame
   axis.
-* ``RECO_transposition``/``VisuCoreTransposition`` is applied on read and
-  inverted on write. FID ``ACQ_obj_order`` is likewise normalized to slice
-  order on read.
+* ``RECO_transposition`` records what the reconstruction already did and is
+  not re-applied. Per-frame ``VisuCoreTransposition`` describes how a frame is
+  stored, so a frame whose two exchanged dimensions differ in length is read in
+  its stored shape and swapped back on read, and restored on write. FID
+  ``ACQ_obj_order`` is normalized on read; the axis it orders is labelled
+  ``object``, because ``NI`` counts acquisition objects (slices x echoes x
+  movie frames), not slices.
 * d3proc is an optional compatibility source for legacy/minimal 2dseq word
   type and image-size metadata after Visu and RECO metadata have been tried.
+* ``Dataset.metadata`` groups the Visu parameters the way the format defines
+  them -- administration, subject, study, series, equipment and acquisition --
+  and the ``SUBJECT_*`` parameters of the study file, which ``subject`` in
+  ``add_parameters=`` loads.
+* Version-dependent behaviour is selected on a parsed ``pv_version``
+  (``5.1``, ``6.0.1``, ``7.0.0``, ``360.3.7``, ...) rather than on an exact
+  version string, so an unlisted point release is not silently unsupported.
 * ``Dataset.affine`` is a voxel-index to patient-coordinate transform derived
   from ``VisuCorePosition``/``VisuCoreOrientation``: index ``(0, 0, 0)`` maps
   onto the centre of the first voxel transferred, and the slice column carries

@@ -148,11 +148,15 @@ def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
     for subtype, companion in dataset.fid_companions.items():
         assert isinstance(companion, Dataset)
         assert companion.path == Path(fid_path).with_suffix(f".{subtype}")
-        assert companion.data.ndim == (dataset.data.ndim if subtype == "orig" else 1)
         assert np.iscomplexobj(companion.data)
         assert companion.data.size * 2 * companion.numpy_dtype.itemsize == companion.path.stat().st_size
         if subtype == "orig":
+            assert companion.data.ndim == dataset.data.ndim
             assert companion.data.shape == dataset.data.shape
+        else:
+            # spec 3.5: a stream of acquisitions of PVM_DigNp complex points
+            assert companion.dim_type == ["sample", "acquisition"]
+            assert companion.data.shape[0] == dataset["PVM_DigNp"].value
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
