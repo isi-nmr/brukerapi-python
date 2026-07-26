@@ -21,7 +21,6 @@ GRAMMAR = {
     "EQUAL_SIGN": "=",
     "SINGLE_NUMBER": r"-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?",
     "PARALLEL_BRACKET": r"\) ",
-    "GEO_OBJ": r"\(\(\([\s\S]*\)[\s\S]*\)[\s\S]*\)",
     "HEADER": "TITLE|JCAMPDX|JCAMP-DX|DATA TYPE|DATATYPE|ORIGIN|OWNER",
     "VERSION_TITLE": "JCAMPDX|JCAMP-DX",
 }
@@ -39,10 +38,15 @@ _DATA_LABEL_RE = _COMPILED_GRAMMAR["DATA_LABEL"]
 _SIZE_BRACKET_RE = _COMPILED_GRAMMAR["SIZE_BRACKET"]
 _SINGLE_NUMBER_RE = _COMPILED_GRAMMAR["SINGLE_NUMBER"]
 _PARALLEL_BRACKET_RE = _COMPILED_GRAMMAR["PARALLEL_BRACKET"]
-_GEO_OBJ_RE = _COMPILED_GRAMMAR["GEO_OBJ"]
 _HEADER_RE = _COMPILED_GRAMMAR["HEADER"]
 _VERSION_TITLE_RE = _COMPILED_GRAMMAR["VERSION_TITLE"]
 _PARAMETER_RE = re.compile(GRAMMAR["PARAMETER"], re.MULTILINE)
+# Spec 2.2/10.1: the text inside <...> is free-form, and ParaVision writes
+# escaped delimiters (\< and \>) in the reco filter-graph descriptors. A
+# backslash is not always an escape though -- an empty study description is
+# written as `<\>` -- so the escaped reading is tried first and a string that
+# never terminates under it is re-read with the backslash as content.
+_STRING_RE = re.compile(r"<(?:\\.|[^<>\\])*>|<[^<>]*>")
 
 
 class Parameter:
@@ -318,23 +322,44 @@ class GenericParameter(Parameter):
         self.size_str = size_str
 
     @classmethod
-    def _split_outside_angle_brackets(cls, value, delimiter):
+    def _split_outside_angle_brackets(cls, value, delimiter, *, respect_parens=False, escapes=True):
+        """Split on `delimiter`, ignoring occurrences inside `<...>` strings.
+
+        With ``respect_parens`` the split also ignores anything inside a nested
+        ``(...)`` group, which is what keeps a struct array's elements intact
+        (spec 2.3). A backslash escapes the character after it, so ``\\>`` does
+        not close a string (spec 2.2/10.1) -- unless reading it that way leaves a
+        string open, in which case the backslash was content and the split is
+        redone without escapes.
+        """
         parts = []
         start = 0
         angle_depth = 0
+        paren_depth = 0
         index = 0
 
         while index < len(value):
-            if value[index] == "<":
+            char = value[index]
+            if escapes and char == "\\" and index + 1 < len(value):
+                index += 2
+                continue
+            if char == "<":
                 angle_depth += 1
-            elif value[index] == ">" and angle_depth:
+            elif char == ">" and angle_depth:
                 angle_depth -= 1
-            elif angle_depth == 0 and value.startswith(delimiter, index):
+            elif angle_depth == 0 and respect_parens and char == "(":
+                paren_depth += 1
+            elif angle_depth == 0 and respect_parens and char == ")" and paren_depth:
+                paren_depth -= 1
+            elif angle_depth == 0 and paren_depth == 0 and value.startswith(delimiter, index):
                 parts.append(value[start:index])
                 index += len(delimiter)
                 start = index
                 continue
             index += 1
+
+        if escapes and angle_depth:
+            return cls._split_outside_angle_brackets(value, delimiter, respect_parens=respect_parens, escapes=False)
 
         parts.append(value[start:])
         return parts
@@ -345,7 +370,7 @@ class GenericParameter(Parameter):
 
         # sharp string
         if val_str.startswith("<") and val_str.endswith(">"):
-            val_strs = re.findall("<[^<>]*>", val_str)
+            val_strs = _STRING_RE.findall(val_str)
 
             if len(val_strs) == 1:
                 return val_strs[0]
@@ -367,7 +392,7 @@ class GenericParameter(Parameter):
 
         # list
         if val_str.startswith("(") and val_str.endswith(")"):
-            val_strs = cls._split_outside_angle_brackets(val_str[1:-1], ", ")
+            val_strs = cls._split_outside_angle_brackets(val_str[1:-1], ", ", respect_parens=True)
             value = []
 
             for val_str in val_strs:
@@ -520,43 +545,6 @@ class HeaderParameter(Parameter):
     @property
     def size(self):
         return None
-
-
-class GeometryParameter(Parameter):
-    def __init__(self, key_str, size_str, val_str, version):
-        super().__init__(key_str, size_str, val_str, version)
-
-    @property
-    def value(self):
-        return None
-
-    @value.setter
-    def value(self, value):
-        self.val_str = value
-
-    # @property
-    # def affine(self):
-    #     """
-    #
-    #     :return: 4x4 3D Affine Transformation Matrix
-    #     """
-    #     # TODO support for multiple slice packages
-    #     match = re.match(r'\(\(\([^\)]*\)', self.val_str)
-    #     affine_str = self.val_str[match.start() + 3: match.end() - 1]
-    #     orient, shift = affine_str.split(', ')
-    #
-    #     orient = GenericParameter.parse_value(orient)
-    #     shift = GenericParameter.parse_value(shift)
-    #     affine = np.zeros(shape=(4,4))
-    #     affine[0:3, 0:3] = np.reshape(orient, (3,3))
-    #     affine[0:3, 3] = shift
-    #
-    #     return affine
-
-    def to_dict(self):
-        # result = {'affine': self._encode_parameter(self.affine)}
-        result = {}
-        return result
 
 
 class DataParameter(Parameter):
@@ -931,9 +919,7 @@ class JCAMPDX:
     def handle_jcampdx_line(cls, line, version):
         key_str, size_str, val_str = cls.divide_jcampdx_line(line)
 
-        if _GEO_OBJ_RE.search(line) is not None:
-            parameter = GeometryParameter(key_str, size_str, val_str, version)
-        elif _DATA_LABEL_RE.search(line):
+        if _DATA_LABEL_RE.search(line):
             parameter = DataParameter(key_str, size_str, val_str, version)
         elif _HEADER_RE.search(key_str):
             parameter = HeaderParameter(key_str, size_str, val_str, version)

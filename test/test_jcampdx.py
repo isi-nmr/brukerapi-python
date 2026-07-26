@@ -2,12 +2,7 @@ import numpy as np
 import pytest
 
 from brukerapi.exceptions import InvalidJcampdxFile
-from brukerapi.jcampdx import (
-    JCAMPDX,
-    DataParameter,
-    GenericParameter,
-    GeometryParameter,
-)
+from brukerapi.jcampdx import JCAMPDX, DataParameter, GenericParameter
 
 
 # @pytest.mark.skip(reason="in progress")
@@ -184,13 +179,36 @@ def test_jcampdx_data_parameter_setter_round_trip(tmp_path):
     assert np.array_equal(JCAMPDX(output).get_value("POINTS"), expected)
 
 
-def test_geometry_parameter_setter_stores_raw_value():
-    parameter = GeometryParameter("##$GEOMETRY", "", "old", "4.24")
+def test_a_geometry_object_is_an_ordinary_nested_struct(tmp_path):
+    """Spec 2.2/2.3 give `(((...)...)...)` records no special status.
 
-    parameter.value = "(((1, 0, 0), (0, 1, 0), (0, 0, 1)), (1, 2, 3))"
+    Routing them to a parameter class whose value is None hid the rotation
+    matrix, offset and axis labels that 5.4/12 make load-bearing, and turned
+    `get_array` into an AttributeError.
+    """
+    path = tmp_path / "method"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$PVM_SliceGeo=( 2 )\n"
+        "(((1 0 0 0 -1 0 0 0 -1, 0 0 0), 25 25 9, <+R;read> <+P;phase> <+S;slice>, 0), \n"
+        "5, 1, 256, 1, 0, No) (((0 -1 0 0 0 -1 1 0 0, 0 0 0), 25 25 9, <+P;phase> \n"
+        "<+R;read> <+S;slice>, 1), 5, 1, 256, 1, 0, No)\n"
+        "##END=\n"
+    )
 
-    assert parameter.val_str == "(((1, 0, 0), (0, 1, 0), (0, 0, 1)), (1, 2, 3))"
-    assert str(parameter).endswith(parameter.val_str)
+    parameter = JCAMPDX(path)["PVM_SliceGeo"]
+    first, second = parameter.value
+    rotation, offset = first[0][0]
+
+    assert parameter.size == (2,)
+    assert np.array_equal(rotation, [1, 0, 0, 0, -1, 0, 0, 0, -1])
+    assert np.array_equal(offset, [0, 0, 0])
+    assert np.array_equal(first[0][1], [25, 25, 9])
+    assert np.array_equal(first[0][2], ["<+R;read>", "<+P;phase>", "<+S;slice>"])
+    assert first[1:] == [5, 1, 256, 1, 0, "No"]
+    assert np.array_equal(second[0][0][0], [0, -1, 0, 0, 0, -1, 1, 0, 0])
 
 
 def test_generic_parameter_from_values_preserves_constructor_fields():
@@ -515,3 +533,70 @@ def test_write_keeps_the_comments_around_the_end_marker(tmp_path):
         "##END=",
         "$$ File finished by PARX at 2020-06-12 10:46:05.429 +0200",
     ]
+
+
+def test_escaped_delimiters_inside_a_string_are_not_delimiters(tmp_path):
+    """Spec 2.2: `\\<` and `\\>` are escaped characters, not string delimiters.
+
+    ParaVision writes them in the reco filter-graph descriptors. Matching
+    `<[^<>]*>` and keeping only what matched cut every descriptor short and
+    threw the rest of the record away.
+    """
+    path = tmp_path / "reco"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$RecoStageEdges=( 2 )\n"
+        "(<input>, 0, <Q-\\>S>) (<compute>, 0, <Q0-\\>CAST0>)\n"
+        "##$RecoStageNodes=( 1 )\n"
+        "(<input>, 0, <RecoFileSource Q{numChan=1;byteOrder=\\<BYTORDA\\>;}>)\n"
+        "##END=\n"
+    )
+
+    parameters = JCAMPDX(path)
+
+    assert parameters["RecoStageEdges"].value == [
+        ["<input>", 0, "<Q-\\>S>"],
+        ["<compute>", 0, "<Q0-\\>CAST0>"],
+    ]
+    assert parameters["RecoStageNodes"].value[2] == "<RecoFileSource Q{numChan=1;byteOrder=\\<BYTORDA\\>;}>"
+
+
+def test_a_nested_struct_keeps_its_inner_tuple(tmp_path):
+    """Spec 2.3: struct arrays nest, so the splitter has to track parentheses."""
+    path = tmp_path / "configscan"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$AdjKnownList=( 1 )\n"
+        "((EMPTY, <NO_ADJUSTMENT>, <>, on_demand, HANDLE_ACQUISITION), No, No)\n"
+        "##END=\n"
+    )
+
+    assert JCAMPDX(path)["AdjKnownList"].value == [
+        ["EMPTY", "<NO_ADJUSTMENT>", "<>", "on_demand", "HANDLE_ACQUISITION"],
+        "No",
+        "No",
+    ]
+
+
+def test_a_trailing_backslash_in_a_string_is_content_not_an_escape(tmp_path):
+    """`<\\>` is how ParaVision writes an empty study description.
+
+    Reading the backslash as an escape leaves the string unterminated, which
+    would drop the record.
+    """
+    path = tmp_path / "visu_pars"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$VisuStudyDescription=( 2048 )\n"
+        "<\\\n"
+        ">\n"
+        "##END=\n"
+    )
+
+    assert JCAMPDX(path)["VisuStudyDescription"].value == "<\\>"
