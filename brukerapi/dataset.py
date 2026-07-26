@@ -261,6 +261,7 @@ class Dataset:
         if self.subtype:
             self.subtype = self.subtype[1:]  # remove the dot from the suffix
         self._properties = []
+        self._declared_properties = set()
 
         if self.type not in DEFAULT_STATES:
             raise UnsupportedDatasetType(self.type)
@@ -531,11 +532,39 @@ class Dataset:
             if hasattr(self, property):
                 delattr(self, property)
         self._properties = []
+        self._declared_properties = set()
         self._state["load_properties"] = False
 
     def reload_properties(self):
         self.unload_properties()
         self.load_properties()
+
+    def get(self, name, default=None):
+        """Value of property `name`, or `default` where it does not resolve.
+
+        Which properties a dataset carries is ParaVision-version dependent: a
+        recipe whose conditions do not match, or whose parameters the files do
+        not contain, leaves its property unset. Attribute access reports that as
+        an :class:`AttributeError`, which a caller can only handle by wrapping
+        every read in ``try``/``except`` -- and that swallows misspellings and
+        genuine errors from a recipe along with it.
+
+        A name no configuration declares still raises, so a typo does not
+        quietly become `default`::
+
+            dataset.get("TE")           # 4.0, or None where there is no echo time
+            dataset.get("TE", "n/a")    # 4.0, or "n/a"
+            dataset.get("TEE")          # AttributeError
+
+        Parameters are a separate layer, read with ``dataset[key]`` or
+        ``dataset.parameters``.
+        """
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            if name in self._declared_properties:
+                return default
+            raise
 
     def add_property_file(self, path):
         with open(path) as f:
@@ -553,6 +582,10 @@ class Dataset:
 
         :param property: tuple containing the name of the property and a list of possible commands to create it
         """
+        # Declared whether or not a recipe resolves, so that `get` can tell an
+        # unresolved property from a name that was never a property at all.
+        self._declared_properties.add(property[0])
+
         if property[0] == "scheme_id" and self._state.get("scheme_id") is not None:
             scheme_id = self._state["scheme_id"]
             if scheme_id not in {"CART_2D", "CART_3D", "FIELD_MAP", "RADIAL", "EPI", "dEPI", "SPECTROSCOPY", "CSI", "SPIRAL", "ZTE"}:

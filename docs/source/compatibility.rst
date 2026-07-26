@@ -77,6 +77,12 @@ Data contract and limitations
   movie frames), not slices.
 * d3proc is an optional compatibility source for legacy/minimal 2dseq word
   type and image-size metadata after Visu and RECO metadata have been tried.
+* Which derived properties a dataset carries is version dependent, so a recipe
+  whose conditions do not match, or whose parameters the files do not contain,
+  leaves its property unset. ``Dataset.get(name, default=None)`` reads one with
+  a default; a name no configuration declares still raises ``AttributeError``,
+  and a property that fails for a reason of its own -- ``affine`` on a scan
+  with no image geometry -- still raises that reason.
 * ``Dataset.metadata`` groups the Visu parameters the way the format defines
   them -- administration, subject, study, series, equipment and acquisition --
   and the ``SUBJECT_*`` parameters of the study file, which ``subject`` in

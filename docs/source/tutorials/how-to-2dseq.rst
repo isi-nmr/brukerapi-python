@@ -87,6 +87,20 @@ It is possible to directly access some of the most wanted measurement parameters
    >> dataset.flip_angle
    >> 10.0
 
+Which of these a dataset carries is ParaVision-version dependent, so a property
+whose recipe does not resolve is simply not set. ``get`` reads one with a
+default instead of an ``AttributeError``; a name that is not a property at all
+still raises, so a misspelling does not quietly become the default.
+
+.. code-block:: python
+
+   >> dataset.get('TE')
+   >> 3.0
+   >> dataset.get('TE', 'n/a')      # where the scan records no echo time
+   >> 'n/a'
+   >> dataset.get('TEE')
+   AttributeError: 'Dataset' object has no attribute 'TEE'
+
 The ``visu_pars`` file is used to construct a 2dseq dataset. ``reco`` and
 ``d3proc`` are optional compatibility sources for legacy/minimal instances;
 they supply reconstruction word type and image-size metadata only when Visu
