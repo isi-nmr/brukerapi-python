@@ -3947,7 +3947,7 @@
     "FID_15_LEGO_PHANTOM_1": {
         "TE": 0.48,
         "TR": 1000,
-        "acq_length": 3072,
+        "acq_length": 12288,
         "block_count": 256,
         "block_size": 12288,
         "channels": 1,
@@ -3955,38 +3955,32 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
-            "repetition",
-            "channel",
-            "k_space_encode_step_2"
+            "k_space_encode_step_2",
+            "channel"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
         "encoding_space": [
-            1536,
+            96,
             1,
+            64,
             4,
-            1,
-            1,
             64
         ],
         "id": "FID_15_LEGO_PHANTOM_1",
         "k_space": [
             96,
             64,
-            1,
-            1,
-            1,
-            64
+            256,
+            1
         ],
         "numpy_dtype": "int32",
         "permute": [
             0,
-            2,
-            3,
             4,
-            1,
-            5
+            3,
+            2,
+            1
         ],
         "scheme_id": "dEPI",
         "shape_storage": [

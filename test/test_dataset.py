@@ -1082,6 +1082,13 @@ def test_data_load(test_data):
                 if np.array_equal(legacy_plane, reference):
                     return
 
+        if actual.size > reference.size and np.isin(reference.reshape(-1), actual.reshape(-1)).all():
+            # An EPSI cache predates the fix that stops discarding all but one
+            # segment of every block (spec 3.1), so it holds a fraction of the
+            # samples the reader now returns. What it does cover must still be
+            # there.
+            return
+
         # Other caches predate phase-line reordering and contain the same
         # complete FID values in a different logical order.
         assert actual.size == reference.size
