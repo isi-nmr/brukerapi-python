@@ -211,17 +211,21 @@ def test_parameter_subclass_constructors_support_named_fields():
     assert np.array_equal(data.value, np.array([[1, 2], [3, 4]]))
 
 
-def test_generic_parameter_treats_newlines_as_token_separators():
-    parameter = GenericParameter("##$VALUES", "( 4 )", "1 2\n3 4", "5.0")
+def test_generic_parameter_joins_a_wrapped_value_block():
+    # The wrap is inserted after the separating space, which stays on the
+    # left-hand line, so joining is a pure newline deletion (spec 2.2).
+    parameter = GenericParameter("##$VALUES", "( 4 )", "1 2 \n3 4", "5.0")
 
     assert np.array_equal(parameter.value, np.array([1, 2, 3, 4]))
 
 
-def test_parse_value_normalizes_newlines_between_parallel_lists():
+def test_parse_value_joins_a_wrap_between_parallel_lists():
+    # ParaVision wraps by inserting a newline, so the space that separates two
+    # struct tuples is still there on the left-hand line (spec 2.2).
     value = GenericParameter(
         "##$VALUES",
         "( 2 )",
-        "(1, <FIRST>)\n(2, <SECOND>)",
+        "(1, <FIRST>) \n(2, <SECOND>)",
         "5.0",
     ).value
 
@@ -352,7 +356,7 @@ def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
 
     assert "$$ comment attached to VALUE\n$$ second comment\n##$VALUE=1" in serialized
     assert "$$ comment attached to OTHER\n##$OTHER=2" in serialized
-    assert serialized.endswith("##END=")
+    assert serialized.endswith("##END=\n")
     assert JCAMPDX(output).get_value("VALUE") == 1
     assert JCAMPDX(output).get_value("OTHER") == 2
 
@@ -374,3 +378,140 @@ def test_jcampdx_version_detection_is_label_based_within_header(tmp_path):
 
     assert jcamp.version == "4.24"
     assert jcamp.get_value("VALUE") == 42
+
+
+def test_a_wrap_inside_a_string_does_not_invent_a_space(tmp_path):
+    """Spec 2.2: the wrap inserts a newline, so undoing it must delete only that.
+
+    ParaVision hard-wraps near column 80 wherever the limit falls, including in
+    the middle of a `<...>` string. Replacing the break with a space changes the
+    value -- an RF pulse shape, a coil serial number -- for exactly the datasets
+    whose wrap landed mid-token.
+    """
+    path = tmp_path / "acqp"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$ACQ_coil_elements=( 2 )\n"
+        "(0, <1H>, txrx) (0, <1H\n"
+        ">, txrx)\n"
+        "##$ExcPulse=( 2 )\n"
+        "(1000, <gauss\n"
+        ".exc>)\n"
+        "##END=\n"
+    )
+
+    parameters = JCAMPDX(path)
+
+    assert [element[1] for element in parameters["ACQ_coil_elements"].value] == ["<1H>", "<1H>"]
+    assert parameters["ExcPulse"].value[1] == "<gauss.exc>"
+
+
+def test_a_wrap_at_a_space_keeps_exactly_one_space(tmp_path):
+    path = tmp_path / "acqp"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$ACQ_size=( 4 )\n"
+        "128 64 \n"
+        "32 16\n"
+        "##END=\n"
+    )
+
+    assert np.array_equal(JCAMPDX(path)["ACQ_size"].value, np.array([128, 64, 32, 16]))
+
+
+def test_wrap_lines_inserts_breaks_without_deleting_characters():
+    tokens = "##$LONG=" + " ".join(["1234567890"] * 20)
+    unbreakable = "##$BLOB=" + "x" * 200
+
+    for line in (tokens, unbreakable):
+        wrapped = JCAMPDX.wrap_lines(line)
+
+        assert wrapped.replace("\n", "") == line
+        assert all(len(part) <= 78 for part in wrapped.splitlines())
+
+
+def test_write_does_not_wrap_comment_records(tmp_path):
+    """Spec 2.1: a `$$` line is a record of its own.
+
+    Wrapping one leaves a tail that no longer starts with `$$`, so re-reading it
+    appends the tail to the preceding parameter's value.
+    """
+    comment = "$$ /opt/PV6.0.1/data/imag/20200913_160003_In_situ_experiment_with_a_very_long_name/74/acqp"
+    path = tmp_path / "acqp"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##OWNER=imag\n"
+        f"{comment}\n"
+        "##$ACQ_size=( 2 )\n"
+        "128 64\n"
+        "##END=\n"
+    )
+
+    original = JCAMPDX(path)
+    original.write(tmp_path / "acqp.written")
+    written = (tmp_path / "acqp.written").read_text()
+
+    assert comment in written.splitlines()
+    assert JCAMPDX(tmp_path / "acqp.written")["OWNER"].value == "imag"
+
+
+def test_write_reproduces_every_record_and_is_a_fixed_point(tmp_path):
+    path = tmp_path / "visu_pars"
+    path.write_text(
+        "##TITLE=Parameter List, ParaVision 6.0.1\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##ORIGIN=Bruker BioSpin MRI GmbH\n"
+        "##OWNER=imag\n"
+        "$$ /opt/PV6.0.1/data/imag/20200913_160003_In_situ_experiment_with_a_long_name/74/pdata/1/visu_pars\n"
+        "##$VisuCoreSize=( 2 )\n"
+        "256 256\n"
+        "$$ @vis= VisuCoreFrameCount VisuCoreDim VisuCoreSize VisuCoreDimDesc\n"
+        "##$VisuCoreDataSlope=( 4 )\n"
+        "0.000739417036989118 0.000739417036989118 0.000739417036989118 \n"
+        "0.000739417036989118\n"
+        "##$VisuSubjectPosition=Head_Supine\n"
+        "$$ @vis= VisuSubjectPosition VisuSeriesTypeId VisuSeries VisuCoilReceive\n"
+        "##END=\n"
+        "$$ File finished by PARX at 2020-09-13 16:00:05.361 +0200\n"
+    )
+
+    original = JCAMPDX(path)
+    original.write(tmp_path / "first")
+    first = JCAMPDX(tmp_path / "first")
+    first.write(tmp_path / "second")
+
+    assert set(first.params) == set(original.params)
+    for key, parameter in original.params.items():
+        assert np.array_equal(first.params[key].value, parameter.value)
+    assert (tmp_path / "first").read_text() == (tmp_path / "second").read_text()
+    assert (tmp_path / "first").read_text() == path.read_text()
+
+
+def test_write_keeps_the_comments_around_the_end_marker(tmp_path):
+    path = tmp_path / "acqp"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$ACQ_size=( 2 )\n"
+        "128 64\n"
+        "$$ @vis= ACQ_size ACQP\n"
+        "##END=\n"
+        "$$ File finished by PARX at 2020-06-12 10:46:05.429 +0200\n"
+    )
+
+    JCAMPDX(path).write(tmp_path / "written")
+    written = (tmp_path / "written").read_text().splitlines()
+
+    assert written[-3:] == [
+        "$$ @vis= ACQ_size ACQP",
+        "##END=",
+        "$$ File finished by PARX at 2020-06-12 10:46:05.429 +0200",
+    ]
