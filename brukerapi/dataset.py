@@ -135,6 +135,10 @@ RELATIVE_PATHS = {
     },
 }
 
+# Properties derived on access rather than stored on the instance, which a
+# default report should still carry.
+COMPUTED_REPORT_PROPERTIES = ("affine",)
+
 SUPPORTED_SUBTYPES = {
     "fid": {""},
     "fid_proc": {"64"},
@@ -891,6 +895,7 @@ class Dataset:
 
         if not props:
             props = list(vars(self).keys())
+            props += [name for name in COMPUTED_REPORT_PROPERTIES if name not in props]
 
         # list of Dataset properties to be excluded from the export
         reserved = {
@@ -915,7 +920,16 @@ class Dataset:
         properties = {}
 
         for var in props:
-            properties[var] = self._encode_property(self.__getattribute__(var))
+            if var in COMPUTED_REPORT_PROPERTIES:
+                # Computed rather than stored, and not available for every dataset:
+                # a report of a whole folder must not fail on a spectroscopy scan.
+                try:
+                    value = getattr(self, var)
+                except (AttributeError, IndexError, KeyError, UnsupportedDatasetType):
+                    continue
+            else:
+                value = self.__getattribute__(var)
+            properties[var] = self._encode_property(value)
 
         return properties
 
@@ -991,6 +1005,123 @@ class Dataset:
     @data.setter
     def data(self, value):
         self._data = value
+
+    def _frame_geometry(self):
+        """Per-frame ``(position, orientation)`` in the order the data array is in.
+
+        ``VisuCoreDiskSliceOrder = disk_reverse_slice_order`` reverses the stored
+        frame order, and :class:`~brukerapi.schemas.Schema2dseq` flips the data
+        accordingly, so the geometry of a 2-D stack has to be reversed with it
+        (spec 7.2/7.3).  For a 3-D volume ``VisuCorePosition`` already refers to
+        the first voxel of the *last* stored frame, which is where the flip puts
+        index 0, so nothing moves.
+        """
+        position = self._parameter_value("VisuCorePosition")
+        orientation = self._parameter_value("VisuCoreOrientation")
+        if position is None or orientation is None:
+            raise UnsupportedDatasetType(f"an image affine for {self.path}, which carries no VisuCorePosition/VisuCoreOrientation (spec 7.2),")
+
+        position = np.atleast_2d(np.asarray(position, dtype=float))
+        orientation = np.atleast_2d(np.asarray(orientation, dtype=float))
+        if orientation.shape[1] != 9 or position.shape[1] != 3:
+            raise UnsupportedDatasetType(f"an image affine for {self.path}, whose frames carry no 3x3 orientation and 3-vector position (spec 7.2),")
+
+        disk_order = str(self._parameter_value("VisuCoreDiskSliceOrder", "")).strip("<>").lower()
+        if disk_order == "disk_reverse_slice_order" and int(self._parameter_value("VisuCoreDim", 2)) < 3 and position.shape[0] > 1:
+            position = position[::-1]
+            if orientation.shape[0] == position.shape[0]:
+                orientation = orientation[::-1]
+
+        return position, orientation
+
+    def slice_packages_index(self):
+        """``[(first_frame, n_slices)]`` per slice package -- spec 7.10.
+
+        Packages may have different slice counts, so each package carries its own
+        count.  PV5.1 writes no slice-package parameters at all; there, frames
+        sharing one orientation are grouped instead.
+        """
+        packs = self._parameter_value("VisuCoreSlicePacksSlices")
+        if packs is not None:
+            return [(int(first), int(count)) for first, count in np.atleast_2d(np.asarray(packs, dtype=int))]
+
+        position, orientation = self._frame_geometry()
+        count = position.shape[0]
+        if orientation.shape[0] < count:
+            return [(0, count)]
+
+        packages, start = [], 0
+        for index in range(1, count + 1):
+            if index == count or not np.allclose(orientation[index], orientation[start], atol=1e-9):
+                packages.append((start, index - start))
+                start = index
+        return packages
+
+    def affine_of_package(self, package=0):
+        """4x4 voxel-index -> patient-coordinate transform of one slice package.
+
+        Built straight from the parameters that define the geometry (spec 7.2,
+        7.10, 12): ``VisuCoreOrientation`` maps patient to image coordinates
+        (``i = M.p``), so its transpose maps image to patient, and
+        ``VisuCorePosition`` is the centre of the first voxel transferred, which
+        is the translation.
+
+        The result is in the Visu/DICOM patient frame (R->L, A->P, F->H).  A
+        NIfTI writer converts with ``np.diag([-1, -1, 1, 1]) @ affine``; the
+        ParaVision user-interface frame needs both ends transformed, per spec 12.
+        """
+        dimension = int(self._parameter_value("VisuCoreDim", 2))
+        size = np.atleast_1d(np.asarray(self._parameter_value("VisuCoreSize"), dtype=float))
+        extent = np.atleast_1d(np.asarray(self._parameter_value("VisuCoreExtent"), dtype=float))
+        position, orientation = self._frame_geometry()
+
+        first, count = self.slice_packages_index()[package]
+        rotation = orientation[first if orientation.shape[0] > first else 0].reshape(3, 3).T
+        origin = position[first if position.shape[0] > first else 0]
+
+        columns = [
+            rotation[:, 0] * (extent[0] / size[0]),
+            rotation[:, 1] * (extent[1] / size[1] if dimension >= 2 else 1.0),
+        ]
+        if dimension >= 3:
+            columns.append(rotation[:, 2] * (extent[2] / size[2]))
+        elif count > 1 and position.shape[0] > first + 1 and not np.allclose(position[first + 1], origin):
+            # The step between two measured slice centres carries direction *and*
+            # spacing; VisuCoreSlicePacksSliceDist gives only an unsigned distance.
+            columns.append(position[first + 1] - origin)
+        else:
+            distance = self._parameter_value("VisuCoreSlicePacksSliceDist")
+            if distance is not None:
+                distances = np.atleast_1d(np.asarray(distance, dtype=float))
+                step = float(distances[package if distances.size > package else 0])
+            else:
+                step = float(np.atleast_1d(np.asarray(self._parameter_value("VisuCoreFrameThickness", 1.0), dtype=float))[0])
+            columns.append(rotation[:, 2] * step)
+
+        affine = np.eye(4)
+        affine[:3, :3] = np.column_stack(columns)
+        affine[:3, 3] = origin
+        return affine
+
+    @property
+    def affine(self):
+        """4x4 voxel-index -> patient-coordinate transform of the first slice package.
+
+        :raise: :UnsupportedDatasetType: if the frames are not purely spatial, or
+            carry no geometry at all
+        """
+        descriptors = np.atleast_1d(np.asarray(self._parameter_value("VisuCoreDimDesc", []))).astype(str)
+        if descriptors.size and any(descriptor != "spatial" for descriptor in descriptors):
+            raise UnsupportedDatasetType(
+                f"an image affine for {self.path}, whose frames are {sorted(set(descriptors))} rather than purely spatial (spec 7.2),"
+            )
+        if len(self.slice_packages_index()) > 1:
+            warnings.warn(
+                f"{self.path} has multiple slice packages; a single affine cannot describe them -- use get_slice_packages() / affine_of_package(i)",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        return self.affine_of_package(0)
 
     def get_slice_packages(self):
         """Return one in-memory 2dseq dataset per slice package.

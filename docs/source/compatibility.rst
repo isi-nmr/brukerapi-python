@@ -64,6 +64,15 @@ Data contract and limitations
   order on read.
 * d3proc is an optional compatibility source for legacy/minimal 2dseq word
   type and image-size metadata after Visu and RECO metadata have been tried.
-* Patient/scanner-space affine and orientation output is not yet a supported
-  geometry API. Consumers requiring physical-space placement must validate
-  their own transform until asymmetric reference data is available.
+* ``Dataset.affine`` is a voxel-index to patient-coordinate transform derived
+  from ``VisuCorePosition``/``VisuCoreOrientation``: index ``(0, 0, 0)`` maps
+  onto the centre of the first voxel transferred, and the slice column carries
+  the measured direction and spacing between slice centres. It is expressed in
+  the Visu/DICOM patient frame (R->L, A->P, F->H); a NIfTI writer converts with
+  ``np.diag([-1, -1, 1, 1]) @ affine``, and the ParaVision user-interface frame
+  needs both ends transformed. Frames that are not purely spatial
+  (spectroscopy, CSI) have no image geometry and raise
+  ``UnsupportedDatasetType`` rather than returning an identity matrix. A
+  dataset with several slice packages cannot be described by one affine; it
+  warns, and ``affine_of_package(i)`` or ``slice_packages`` gives the
+  per-package transform.
