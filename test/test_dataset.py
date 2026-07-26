@@ -691,7 +691,8 @@ def test_monotonic_phase_encode_steps_skip_reordering():
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_epi_standard_kblock_trims_trailing_padding():
-    dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
+    with pytest.warns(RuntimeWarning, match="RECO_inp_order=.*disagrees with scheme_id"):
+        dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 256
     dataset.acq_length = 200
@@ -706,7 +707,8 @@ def test_epi_standard_kblock_trims_trailing_padding():
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 def test_epi_standard_kblock_warns_on_nonzero_discarded_samples():
-    dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
+    with pytest.warns(RuntimeWarning, match="RECO_inp_order=.*disagrees with scheme_id"):
+        dataset = Dataset(PV51_STUDY_PATH / "13" / "fid")
     dataset["GO_block_size"].val_str = "Standard_KBlock_Format"
     dataset.block_size = 8
     dataset.acq_length = 6
