@@ -129,12 +129,12 @@ def report(args):
     if input.is_dir():
         # folder in-place
         if output is None:
-            Folder(input).report(format_=args.format, props=args.props, verbose=args.verbose)
+            Folder(str(input)).report(format_=args.format, props=args.props, verbose=args.verbose)
         else:
             # folder to folder -- an output folder that does not exist yet is
             # created rather than silently matching no branch and exiting 0
             output.mkdir(parents=True, exist_ok=True)
-            Folder(input).report(path_out=output, format_=args.format, props=args.props, verbose=args.verbose)
+            Folder(str(input)).report(path_out=output, format_=args.format, props=args.props, verbose=args.verbose)
     # dataset in-place
     elif output is None:
         Dataset(input, add_parameters=["subject"]).report(props=args.props, verbose=args.verbose, format_=args.format)

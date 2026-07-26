@@ -14,10 +14,9 @@ maintainers = [{ name = "Jiri Vitous", email = "vitous@isibrno.cz" }]
 
 license = { text = "MIT" }
 readme = "README.rst"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
-    "numpy<2; python_version<'3.9'",
-    "numpy>=1.26.0; python_version>='3.9'",
+    "numpy>=2.1; python_version>='3.10'",
     "pyyaml",
 ]
 
@@ -33,7 +32,7 @@ include-package-data = true
 zip-safe = false
 
 [project.optional-dependencies]
-dev = ["pytest", "zenodo_get", "ruff==0.16.0", "pytest-cov"]
+dev = ["pytest", "zenodo_get", "ruff==0.16.0", "pytest-cov","pyrefly"]
 
 
 [tool.ruff.lint]
@@ -83,3 +82,8 @@ target-version = "py313"
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
+
+[tool.pyrefly]
+project-includes = [
+    "brukerapi/**/*.py",
+]

@@ -59,6 +59,8 @@ def simple_measurement(dataset):
         axes = (0, 1)
     elif dataset.encoded_dim == 3:
         axes = (0, 1, 2)
+    else:
+        raise ValueError("Simple measurement supports one to three encoded dimensions")
 
     return np.fft.fftshift(np.fft.fft2(dataset.data, axes=axes), axes=axes)
 
@@ -74,6 +76,8 @@ def simple_reconstruction(dataset, **kwargs):
         axes = (0, 1)
     elif dataset.encoded_dim == 3:
         axes = (0, 1, 2)
+    else:
+        raise ValueError("Simple reconstruction supports one to three encoded dimensions")
 
     data = np.fft.fftshift(np.fft.ifft2(dataset.data, axes=axes), axes=axes)
 

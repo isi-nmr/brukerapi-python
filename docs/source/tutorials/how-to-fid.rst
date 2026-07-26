@@ -33,6 +33,24 @@ Use the explicit views in new code: ``dataset.raw`` is the decoded acquisition
 stream with axes ``(sample, shot, receiver)``; ``dataset.kspace`` is the same
 ordered k-space exposed through ``data`` for compatibility.
 
+When an experiment has a reconstruction, its ``reco`` declaration is used to
+determine EPI continuous-train handling and odd-line reversal
+(``RECO_inp_order=REV_ALT_ROWS``). The conventional first reconstruction is
+used by default. Select another reconstruction explicitly when its input-order
+metadata is the one that corresponds to the data being read:
+
+.. code-block:: python
+
+   dataset = Dataset(
+       'path/to/fid',
+       reco_path='path/to/pdata/2/reco',
+   )
+
+For a FID without a reconstruction, the reader falls back to the acquisition
+declaration and, where necessary, the pulse-program scheme inference. A
+``RuntimeWarning`` is emitted if the selected ``reco`` and scheme inference
+disagree; the declared reconstruction value is used.
+
 For custom pulse-program names the scheme is inferred from acquisition
 metadata. An explicit override is available when inference is ambiguous:
 

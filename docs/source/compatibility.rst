@@ -45,13 +45,22 @@ Data contract and limitations
 
 * FID data is returned as ordered raw k-space. ``AQ_mod=qf`` remains real;
   quadrature modes are assembled as complex data.
-* RARE/EPI phase-line ordering and EPI odd-line mirroring are applied.
-  Ramp-sampling regridding and ``RECO_qopts`` corrections are not full
-  reconstruction steps and remain the caller's responsibility.
+* RARE/EPI phase-line ordering and EPI odd-line mirroring are applied. The
+  reader uses ``ACQ_scan_size`` and the selected reconstruction's
+  ``RECO_inp_order`` when available; pulse-program scheme inference is the
+  fallback for a FID without a reconstruction. The default reconstruction is
+  the conventional first one, and ``reco_path=`` selects a different ``reco``
+  file. A disagreement between explicit metadata and the fallback inference
+  emits ``RuntimeWarning``. Ramp-sampling regridding and ``RECO_qopts``
+  corrections are not full reconstruction steps and remain the caller's
+  responsibility.
 * Rawdata jobs are returned as complex ordered samples in their stored job
   layout through ``data``. Prefer ``raw`` for the normalized
   ``(sample, shot, receiver)`` acquisition stream and ``kspace`` for validated
-  Cartesian PV360 layout conversion.
+  Cartesian PV360 layout conversion. ``STORE_discard`` jobs are omitted from
+  folder discovery because no binary exists. When both records are present,
+  ``ACQ_ScanPipeJobSettings.nStoredScans`` determines the stored shape and is
+  checked against ``ACQ_jobs``; the per-job receiver selection is also read.
 * 2dseq values are scaled as ``stored * slope + offset``. Visu slopes/offsets
   take precedence, with RECO values as fallback.
 * PV7/PV360 2dseq geometry uses the version-independent Visu geometry fields.
@@ -86,4 +95,7 @@ Data contract and limitations
   ``UnsupportedDatasetType`` rather than returning an identity matrix. A
   dataset with several slice packages cannot be described by one affine; it
   warns, and ``affine_of_package(i)`` or ``slice_packages`` gives the
-  per-package transform.
+  per-package transform. If optional slice-package metadata is absent (notably
+  in PV5.1), contiguous frames with a common orientation are treated as one
+  package. Consequently two adjacent inferred packages with the same
+  orientation cannot be distinguished.
