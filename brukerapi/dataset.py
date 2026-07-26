@@ -4,6 +4,7 @@ import os
 import os.path
 import re
 import warnings
+from contextlib import suppress
 from copy import deepcopy
 from pathlib import Path
 
@@ -445,7 +446,10 @@ class Dataset:
             dataset["PVM_DwDir"].value
 
         """
-        path = traverse(self.path.parent, RELATIVE_PATHS[self.type][file])
+        if file in RELATIVE_PATHS[self.type]:
+            path = traverse(self.path.parent, RELATIVE_PATHS[self.type][file])
+        else:
+            path = as_path(file)
 
         if not hasattr(self, "_parameters") or self._parameters is None:
             self._parameters = {path.name: JCAMPDX(path)}
@@ -473,6 +477,16 @@ class Dataset:
                     raise e
                 # if jcampdx file is not found, but not required, pass
                 pass
+
+        # The vendor's first reconstruction is the conventional default. A
+        # fid can have several reconstructions, however, so callers can select
+        # the one whose input-order declaration applies with ``reco_path=``.
+        reco_path = self._state.get("reco_path")
+        if reco_path is not None:
+            self.add_parameter_file(reco_path)
+        elif self.type in {"fid", "fid_proc"}:
+            with suppress(FileNotFoundError):
+                self.add_parameter_file("reco")
 
     def _write_parameters(self, parent):
         for type_, jcampdx in self._parameters.items():

@@ -162,6 +162,45 @@ class SchemaFid(Schema):
         """Number of stored scalar samples per logical sample."""
         return 1 if str(self._dataset._parameter_value("AQ_mod", "")).lower() == "qf" else 2
 
+    def _declared_or_inferred(self, parameter, declared_value, inferred, warning_flag):
+        """Prefer a loaded format declaration, retaining scheme inference."""
+        if declared_value is None:
+            return inferred
+        if declared_value != inferred and not getattr(self._dataset, warning_flag, False):
+            warnings.warn(
+                f"{parameter}={self._dataset._parameter_value(parameter)!r} disagrees with "
+                f"scheme_id={self._dataset.scheme_id!r} for {self._dataset.path}; "
+                f"using the declared value",
+                RuntimeWarning,
+                stacklevel=3,
+            )
+            setattr(self._dataset, warning_flag, True)
+        return declared_value
+
+    @property
+    def continuous_train(self):
+        """Whether §5.3 declares a phase-factor continuous acquisition train."""
+        value = self._dataset._parameter_value("ACQ_scan_size")
+        declared = None if value is None else str(value).strip("<>").casefold() == "acq_phase_factor_scans"
+        return self._declared_or_inferred(
+            "ACQ_scan_size",
+            declared,
+            "EPI" in self._dataset.scheme_id,
+            "_warned_scan_size_disagreement",
+        )
+
+    @property
+    def mirror_odd_lines(self):
+        """Whether a selected reconstruction requests §6.2 odd-line reversal."""
+        value = self._dataset._parameter_value("RECO_inp_order")
+        declared = None if value is None else str(value).strip("<>").upper() == "REV_ALT_ROWS"
+        return self._declared_or_inferred(
+            "RECO_inp_order",
+            declared,
+            "EPI" in self._dataset.scheme_id,
+            "_warned_reco_input_order_disagreement",
+        )
+
     @property
     def layouts(self):
         """Dictionary of possible logical layouts of data
@@ -193,7 +232,7 @@ class SchemaFid(Schema):
 
         layouts["encoding_permuted"] = tuple(np.array(layouts["encoding_space"])[np.array(layouts["permute"])])
 
-        if "EPI" in self._dataset.scheme_id:
+        if self.continuous_train:
             discarded = self._dataset.block_size - self._dataset.acq_length
             block_format = self._dataset._parameter_value("GO_block_size")
             scan_shift = self._dataset._parameter_value("ACQ_scan_shift", 0)
@@ -221,7 +260,7 @@ class SchemaFid(Schema):
         # Typically for RARE, or EPI
         data = self._reorder_fid_lines(data, dir="FW")
 
-        if "EPI" in self._dataset.scheme_id:
+        if self.mirror_odd_lines:
             data = self._mirror_odd_lines(data)
 
         data = self._reorder_objects(data, dir="FW")
@@ -385,7 +424,7 @@ class SchemaFid(Schema):
     def serialize(self, data, layouts):
         data = self._reorder_objects(data, dir="BW")
 
-        if "EPI" in self._dataset.scheme_id:
+        if self.mirror_odd_lines:
             data = self._mirror_odd_lines(data)
 
         data = self._reorder_fid_lines(data, dir="BW")

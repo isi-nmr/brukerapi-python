@@ -5,9 +5,10 @@ of real acquisitions, shrunk so the whole binary fits in a few hundred words.
 """
 
 import numpy as np
+import pytest
 
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from test.synthetic import Verbatim, write_binary, write_fid
+from test.synthetic import Verbatim, write_binary, write_fid, write_jcampdx
 
 # pv6 EPSI, shrunk: 6 read points, 4 phase steps, 2 segments, 4 spectral points
 # per read line -- the real scan is 96 x 64 x 4 x 64.
@@ -82,6 +83,48 @@ def test_epsi_keeps_every_stored_complex_sample(tmp_path):
 
     assert dataset.data.size == expected.size
     assert np.array_equal(np.sort_complex(dataset.data.reshape(-1)), np.sort_complex(expected))
+
+
+def test_fid_uses_pdata_one_reco_unless_a_different_one_is_selected(tmp_path):
+    """`pdata/1` is conventional; `reco_path` selects another reconstruction."""
+    path = write_fid(
+        tmp_path / "30",
+        acqp={
+            "GO_block_size": "continuous",
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+            "ACQ_dim": 2,
+            "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+            "ACQ_size": np.array([8, 2]),
+            "ACQ_phase_factor": 1,
+            "ACQ_scan_size": "ACQ_phase_factor_scans",
+            "PULPROG": "<FLASH.ppg>",
+            "NI": 1,
+            "NR": 1,
+        },
+        method={"Method": "<Bruker:FLASH>", "PVM_DigNp": 4, "PVM_EncMatrix": np.array([4, 2]), "PVM_EncNReceivers": 1},
+        blocks=2,
+    )
+    write_jcampdx(path.parent / "pdata" / "1" / "reco", {"RECO_inp_order": "NO_REORDERING"})
+    reco = write_jcampdx(path.parent / "pdata" / "2" / "reco", {"RECO_inp_order": "REV_ALT_ROWS"})
+
+    default = Dataset(path, load=LOAD_STAGES["properties"])
+    default.load_schema()
+    assert "reco" in default.parameters
+    assert default["RECO_inp_order"].value == "NO_REORDERING"
+    assert not default._schema.mirror_odd_lines
+
+    dataset = Dataset(path, reco_path=reco, load=LOAD_STAGES["properties"])
+    dataset.load_schema()
+    assert "reco" in dataset.parameters
+    with pytest.warns(RuntimeWarning, match="ACQ_scan_size=.*disagrees with scheme_id"):
+        assert dataset._schema.continuous_train
+    with pytest.warns(RuntimeWarning, match="RECO_inp_order=.*disagrees with scheme_id"):
+        assert dataset._schema.mirror_odd_lines
+
+    lines = np.arange(8).reshape((4, 2), order="F")
+    expected = np.column_stack((lines[:, 0], lines[::-1, 1]))
+    assert np.array_equal(dataset._schema._mirror_odd_lines(lines), expected)
 
 
 def kblock_fid(tmp_path, acqp, method, *, blocks, samples_per_block):
