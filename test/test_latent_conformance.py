@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 
 from brukerapi.dataset import LOAD_STAGES, Dataset
+from brukerapi.folders import Experiment
 from brukerapi.jcampdx import JCAMPDX
 from brukerapi.utils import transposed_size
 from test.synthetic import Verbatim, write_2dseq, write_binary, write_jcampdx
@@ -159,6 +160,59 @@ def test_a_64_bit_float_job_is_read_as_float64(tmp_path):
     dataset = Dataset(path, load=LOAD_STAGES["properties"])
 
     assert dataset.numpy_dtype == np.dtype("<f8")
+
+
+def test_rawdata_settings_control_stored_scans_receivers_and_discarded_jobs(tmp_path):
+    """Specs 3.3/13.1: settings describe the physical rawdata file."""
+    experiment = tmp_path / "27"
+    settings = (
+        "STORE_processed, STORE_32bit_signed, DISPLAY_none, LOG_none, ACCUM_average, "
+        "0, 0, 0, 0, 3, 3, NORMALIZE_none, PIPELINE_processed, 0, STREAMING_none, "
+        "DISPLAY_CoilsSideBySide, 1"
+    )
+    write_jcampdx(
+        experiment / "acqp",
+        {
+            "ACQ_word_size": "_32_BIT",
+            "ACQ_sw_version": "<PV-360.3.7>",
+            "BYTORDA": "little",
+            "ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 2, 101, 1, 2, 1, <job0>)"),
+            "ACQ_ScanPipeJobSettings": Verbatim(f"( 1 )\n({settings})"),
+            "ACQ_ReceiverSelectPerChan": ["Yes", "Yes"],
+        },
+    )
+    write_jcampdx(experiment / "method", {"Method": "<Bruker:FLASH>", "PVM_EncNReceivers": 2})
+    write_binary(experiment / "rawdata.job0", np.arange(8 * 2 * 3, dtype="<i4"), np.dtype("<i4"))
+
+    with pytest.warns(RuntimeWarning, match="nStoredScans=3 disagrees"):
+        dataset = Dataset(experiment / "rawdata.job0", load=LOAD_STAGES["properties"])
+
+    assert dataset.channels == 2
+    assert dataset.shape_storage == (8, 2, 3)
+
+    discard = tmp_path / "28"
+    discard_settings = (
+        "STORE_discard, STORE_32bit_signed, DISPLAY_none, LOG_none, ACCUM_average, "
+        "0, 0, 0, 0, 1, 1, NORMALIZE_none, PIPELINE_processed, 0, STREAMING_none, "
+        "DISPLAY_CoilsSideBySide, 1"
+    )
+    write_jcampdx(
+        discard / "acqp",
+        {
+            "ACQ_word_size": "_32_BIT",
+            "ACQ_sw_version": "<PV-360.3.7>",
+            "BYTORDA": "little",
+            "ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 1, 101, 1, 1, 1, <job0>)"),
+            "ACQ_ScanPipeJobSettings": Verbatim(f"( 1 )\n({discard_settings})"),
+        },
+    )
+    write_jcampdx(discard / "method", {"Method": "<Bruker:FLASH>", "PVM_EncNReceivers": 1})
+    write_binary(discard / "rawdata.job0", np.array([], dtype="<i4"), np.dtype("<i4"))
+
+    with pytest.warns(RuntimeWarning, match="nStoredScans=3 disagrees"):
+        discovered = Experiment(experiment).get_dataset_list()
+    assert [job.path.name for job in discovered] == ["rawdata.job0"]
+    assert Experiment(discard).get_dataset_list() == []
 
 
 def test_a_dollar_comment_inside_a_string_is_data(tmp_path):

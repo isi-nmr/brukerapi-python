@@ -28,7 +28,7 @@
     {
         "cmd": "np.dtype('f8').newbyteorder('<' if #BYTORDA=='little' else '>')",
         "conditions": [
-          "#ACQ_ScanPipeJobSettings.nested[#ACQ_jobs.nested.index(@job_desc)][1]=='STORE_64bit_float'"
+          "@rawdata_job_settings is not None and @rawdata_job_settings[1]=='STORE_64bit_float'"
         ],
         "comment": "spec 13.1: storageDataType is STORE_32bit_signed (default) or STORE_64bit_float"
     },
@@ -109,7 +109,7 @@
   ],
   "channels": [
     {
-      "cmd": "#PVM_EncNReceivers",
+      "cmd": "@rawdata_channels",
       "conditions": [
       ]
     }
@@ -122,9 +122,9 @@
   ],
   "shape_storage": [
     {
-      "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[-1],)",
+      "cmd": "(@job_desc[0], @rawdata_channels, @rawdata_stored_scans)",
       "conditions": [],
-      "comment": "spec 3.3: do not read the scan count from [3], which is nTotalScans -- the number acquired, NAE times the number written. nStoredScans is the last element of the 8-field form and [6] of the 9-field form"
+      "comment": "spec 3.3/13.1: settings nStoredScans defines the raw file size; ACQ_jobs is cross-checked as a fallback"
     }
   ]
 }

@@ -80,8 +80,8 @@ def test_rawdata_job_layout_is_selected_by_record_arity():
             "conditions": ["len(#ACQ_jobs.nested[0])==8"],
         },
     ]
-    # spec 3.3: [3] is nTotalScans, which is NAE times the number written
-    assert config["shape_storage"][0]["cmd"] == "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[-1],)"
+    # Specs 3.3/13.1: settings nStoredScans defines the physical file size.
+    assert config["shape_storage"][0]["cmd"] == "(@job_desc[0], @rawdata_channels, @rawdata_stored_scans)"
 
 
 def test_fid_pv360_word_size_branches_match_rawdata():

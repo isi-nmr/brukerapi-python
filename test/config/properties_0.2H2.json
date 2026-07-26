@@ -1184,7 +1184,7 @@
         "id": "2DSEQ_1_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
-        "num_slice_packages": 1,
+        "num_slice_packages": 3,
         "numpy_dtype": "int16",
         "offset": [
             0,
