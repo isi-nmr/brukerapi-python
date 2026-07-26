@@ -28,6 +28,7 @@ from .exceptions import (
 from .jcampdx import JCAMPDX
 from .paths import as_path, file_size, listdir, read_array, traverse, with_suffix
 from .schemas import Schema2dseq, SchemaFid, SchemaFidCompanion, SchemaRawdata, SchemaTraj
+from .utils import DATTYPE_WORD_TYPES, transposed_size
 
 LOAD_STAGES = {
     "empty": 0,
@@ -40,6 +41,8 @@ RECIPE_EVAL_NAMESPACE = {
     "__builtins__": {"__import__": __import__},
     "abs": abs,
     "datetime": datetime,
+    "DATTYPE_WORD_TYPES": DATTYPE_WORD_TYPES,
+    "transposed_size": transposed_size,
     # A recipe must size a file through this rather than os.stat: an archive
     # member has no filesystem path (see brukerapi.paths).
     "file_size": file_size,

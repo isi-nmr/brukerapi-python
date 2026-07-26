@@ -39,12 +39,17 @@ def test_fid_scheme_detection_is_not_version_gated():
         assert "pv_version" not in " ".join(str(condition) for condition in branch["conditions"])
 
 
+def _branches(config, name, needle):
+    return [branch for branch in config[name] if needle in " ".join(str(condition) for condition in branch["conditions"])]
+
+
 def test_rawdata_standard_dtype_is_not_version_gated_but_pv360_branch_remains():
     config = _load_config("properties_rawdata_core.json")
 
-    standard_dtype_branches = config["numpy_dtype"][:6]
+    standard_dtype_branches = _branches(config, "numpy_dtype", "GO_raw_data_format")
+    assert len(standard_dtype_branches) == 6
     assert all(not _contains_sw_version_gate(branch["conditions"]) for branch in standard_dtype_branches)
-    assert "@pv_version.split('.')[0]=='360'" in config["numpy_dtype"][6]["conditions"]
+    assert len(_branches(config, "numpy_dtype", "@pv_version.split('.')[0]=='360'")) == 4
 
 
 def test_rawdata_pv360_branches_match_on_the_parsed_major_version():
@@ -55,7 +60,7 @@ def test_rawdata_pv360_branches_match_on_the_parsed_major_version():
     """
     config = _load_config("properties_rawdata_core.json")
 
-    for branch in config["numpy_dtype"][6:10]:
+    for branch in _branches(config, "numpy_dtype", "ACQ_word_size"):
         assert "@pv_version.split('.')[0]=='360'" in branch["conditions"]
 
     assert all("ACQ_sw_version" not in " ".join(branch["conditions"]) for branch in config["job_desc"])
@@ -75,19 +80,15 @@ def test_rawdata_job_layout_is_selected_by_record_arity():
             "conditions": ["len(#ACQ_jobs.nested[0])==8"],
         },
     ]
-    assert config["shape_storage"] == [
-        {
-            "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[3],)",
-            "conditions": [],
-        }
-    ]
+    # spec 3.3: [3] is nTotalScans, which is NAE times the number written
+    assert config["shape_storage"][0]["cmd"] == "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[-1],)"
 
 
 def test_fid_pv360_word_size_branches_match_rawdata():
     fid = _load_config("properties_fid_core.json")
     rawdata = _load_config("properties_rawdata_core.json")
 
-    assert fid["numpy_dtype"][6:10] == rawdata["numpy_dtype"][6:10]
+    assert _branches(fid, "numpy_dtype", "ACQ_word_size") == _branches(rawdata, "numpy_dtype", "ACQ_word_size")
 
 
 def test_fid_dtype_configuration_has_no_topspin_dtypa_fallbacks():
@@ -134,9 +135,10 @@ def test_epi_layout_uses_actual_digitized_sample_count():
 def test_2dseq_scaling_prefers_visu_and_falls_back_to_reco():
     config = _load_config("properties_2dseq_core.json")
 
+    # spec 3.4: the RECO map is the inverse of the Visu one
     assert [branch["cmd"] for branch in config["slope"]] == [
         "#VisuCoreDataSlope.array",
-        "#RECO_map_slope.array",
+        "1.0 / #RECO_map_slope.array",
     ]
     assert [branch["cmd"] for branch in config["offset"]] == [
         "#VisuCoreDataOffs.array",

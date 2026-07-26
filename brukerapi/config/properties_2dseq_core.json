@@ -68,8 +68,12 @@
         "conditions": ["#RECO_wordtype in ['_32BIT_SGN_INT','_16BIT_SGN_INT','_32BIT_FLOAT','_8BIT_UNSGN_INT']", "#RECO_byte_order in ['littleEndian','bigEndian']"]
     },
     {
-        "cmd": "np.dtype({'ip_int':'int32','ip_short':'int16','ip_float':'float32'}[#DATTYPE]).newbyteorder('<')",
-        "conditions": ["#DATTYPE in ['ip_int','ip_short','ip_float']"]
+        "cmd": "np.dtype(DATTYPE_WORD_TYPES[str(#DATTYPE)]).newbyteorder('>' if int(np.atleast_1d(#PR_STA)[15]) else '<')",
+        "conditions": ["str(#DATTYPE) in DATTYPE_WORD_TYPES", "len(np.atleast_1d(#PR_STA))>15"]
+    },
+    {
+        "cmd": "np.dtype(DATTYPE_WORD_TYPES[str(#DATTYPE)]).newbyteorder('<')",
+        "conditions": ["str(#DATTYPE) in DATTYPE_WORD_TYPES"]
     }
   ],
   "shape_frames": [
@@ -119,11 +123,17 @@
         "conditions": []
       },
       {
-        "cmd": "#RECO_size.tuple",
-        "conditions": []
+        "cmd": "(int(#IM_SIX), int(#IM_SIY))",
+        "conditions": [],
+        "comment": "spec 8: IM_SIX/IM_SIY are the in-plane matrix written after transposition; IM_SIZ is the number of frames, which shape_frames already counts"
       },
       {
-        "cmd": "tuple(size for size in (int(#IM_SIX), int(#IM_SIY), int(#IM_SIZ)) if size > 1)",
+        "cmd": "transposed_size(#RECO_size.tuple, #RECO_transposition)",
+        "conditions": [],
+        "comment": "spec 6.9: RECO_size still refers to the non-transposed ordering, so the stored frame shape is RECO_size with the recorded exchange applied"
+      },
+      {
+        "cmd": "#RECO_size.tuple",
         "conditions": []
       }
   ],
@@ -166,8 +176,9 @@
       "conditions": []
     },
     {
-      "cmd": "#RECO_map_slope.array",
-      "conditions": []
+      "cmd": "1.0 / #RECO_map_slope.array",
+      "conditions": [],
+      "comment": "spec 3.4: real = pixel / RECO_map_slope + RECO_map_offset, so VisuCoreDataSlope = 1 / RECO_map_slope. Multiplying instead of dividing makes values slope^2 too small"
     }
   ],
   "offset": [

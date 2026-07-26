@@ -16,7 +16,7 @@ GRAMMAR = {
     "TRAILING_EOL": r"\n$",
     "DATA_LABEL": r"\(XY..XY\)",
     "DATA_DELIMETERS": r", |\n",
-    "SIZE_BRACKET": r"^\([^\(\)<>]*\)(?!$)",
+    "SIZE_BRACKET": r"^\([^\(\)<>]*\)(?!\s*$)",
     "LIST_DELIMETER": ", ",
     "EQUAL_SIGN": "=",
     "SINGLE_NUMBER": r"-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?",
@@ -433,13 +433,16 @@ class GenericParameter(Parameter):
 
     @staticmethod
     def _normalize_line_breaks(value):
+        # A value block ends where the next ## record begins, so blanks at its
+        # very end are layout, not content -- unlike blanks inside it, which the
+        # wrap does not touch.
         # Spec 2.2: ParaVision hard-wraps a value near column 80 by INSERTING a
         # newline; no character of the value is removed, and the wrap can fall
         # inside a <...> string or a struct tuple. Undoing it therefore means
         # deleting the newline and nothing else -- substituting a space invents
         # one that was never on disk, and stripping the blanks around it deletes
         # data (leading blanks on a continuation line belong to the value).
-        return re.sub(r"\r?\n", "", value)
+        return re.sub(r"\r?\n", "", value).rstrip()
 
     @classmethod
     def serialize_value(cls, value, version):
@@ -890,8 +893,9 @@ class JCAMPDX:
         trailing_comments = []
         content_without_comments = []
         seen_end = False
+        angle_depth = 0
         for line in content.splitlines(keepends=True):
-            if line.lstrip().startswith("$$"):
+            if line.lstrip().startswith("$$") and not angle_depth:
                 # Spec 2.1: a $$ line is a comment record of its own. The ones
                 # around ##END= -- the last @vis block and the "File finished by
                 # PARX" trailer -- belong to no parameter, so they are kept
@@ -905,6 +909,10 @@ class JCAMPDX:
                 else:
                     comments_by_parameter.append(pending_comments)
                 pending_comments = []
+            # spec 2.2: the text inside <...> is free-form and may start a line
+            # with `$$`, which is then data rather than a comment
+            angle_depth += line.count("<") - line.count(">")
+            angle_depth = max(angle_depth, 0)
             content_without_comments.append(line)
         content = "".join(content_without_comments)
 
