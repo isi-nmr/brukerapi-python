@@ -424,8 +424,7 @@ class SlicePackageSplitter(Splitter):
 
     def _split_VisuCoreSlicePacksSliceDist(self, dataset, visu_pars, sp_index):
         if "VisuCoreSlicePacksSliceDist" not in visu_pars:
-            distance = float(np.linalg.norm(dataset.affine_of_package(sp_index)[:3, 2]))
-            self._synthesise_parameter(visu_pars, "VisuCoreSlicePacksSliceDist", str(distance))
+            self._synthesise_parameter(visu_pars, "VisuCoreSlicePacksSliceDist", str(dataset.slice_distance[sp_index]))
             return
         VisuCoreSlicePacksSliceDist = visu_pars["VisuCoreSlicePacksSliceDist"]
         # spec 7.10: the inter-slice distance is a double, and truncating it

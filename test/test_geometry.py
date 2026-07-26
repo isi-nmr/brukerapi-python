@@ -13,7 +13,7 @@ import pytest
 
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import UnsupportedDatasetType
-from test.synthetic import axial_orientation, stacked_positions, write_2dseq
+from test.synthetic import axial_orientation, stacked_positions, visu_pars_records, write_2dseq, write_binary, write_jcampdx
 
 SAGITTAL_ORIENTATION = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0])
 PV360_NIFTI_ROOT = Path("test/test_data/PV360_StdData")
@@ -281,3 +281,92 @@ def test_geometry_follows_the_data_when_frames_are_stored_in_reverse(tmp_path):
     # the data array is the last frame on disk (spec 7.2/7.3).
     assert np.allclose(dataset.affine[:3, 3], positions[-1])
     assert np.allclose(dataset.affine[:3, 2], [0.0, 0.0, -1.5])
+
+
+def test_slice_distance_is_the_step_the_affine_is_built_from(tmp_path):
+    """A gapped stack: the spacing is not the slice thickness (spec 7.10).
+
+    `VisuCoreFrameThickness` stays the source for the thickness; nothing
+    reported the spacing, so a consumer had to re-derive it.
+    """
+    dataset = load(
+        tmp_path,
+        frame_groups=(("FG_SLICE", 4),),
+        positions=stacked_positions((-20.0, -20.0, -7.5), (0.0, 0.0, 5.0), 4),
+        frame_thickness=2.0,
+    )
+
+    assert dataset.slice_distance == [5.0]
+    assert np.isclose(dataset["VisuCoreFrameThickness"].array[0], 2.0)
+
+
+def test_slice_distance_of_a_3d_volume_is_the_plane_step_not_the_slab(tmp_path):
+    """`VisuCoreFrameThickness` of a 3-D acquisition is the whole slab.
+
+    Reporting it as a slice step overstates the spacing by the partition count
+    -- 16 mm instead of 2 mm here.
+    """
+    dataset = load(
+        tmp_path,
+        dim=3,
+        dim_desc=("spatial", "spatial", "spatial"),
+        size=(4, 4, 8),
+        extent=(40.0, 40.0, 16.0),
+        frame_groups=(),
+        positions=np.array([[-20.0, -20.0, -8.0]]),
+        orientations=axial_orientation(1),
+        frame_thickness=16.0,
+    )
+
+    assert dataset.slice_distance == [2.0]
+
+
+def test_slice_distance_is_reported_per_package(tmp_path):
+    """Packages can be spaced differently, and a single number cannot say so.
+
+    `resolution[2]` measures across the whole stack, so for two packages that
+    do not share an orientation it returns the diagonal between them rather
+    than either spacing.
+    """
+    positions = np.vstack(
+        [
+            stacked_positions((-20.0, -20.0, -3.0), (0.0, 0.0, 1.5), 5),
+            stacked_positions((0.0, -20.0, -20.0), (-1.0, 0.0, 0.0), 3),
+        ]
+    )
+    orientations = np.vstack([axial_orientation(5), np.tile(SAGITTAL_ORIENTATION, (3, 1))])
+    dataset = load(
+        tmp_path,
+        frame_groups=(("FG_SLICE", 8),),
+        positions=positions,
+        orientations=orientations,
+        slice_packs=(0, [(0, 5), (5, 3)]),
+        slice_pack_distance=[1.5, 1.0],
+    )
+
+    assert dataset.slice_distance == [1.5, 1.0]
+
+
+def test_slice_distance_needs_geometry_and_nothing_else(tmp_path):
+    """Availability is that of `affine_of_package`: geometry, not spatial frames.
+
+    A parametric map whose third axis is a frame group still has a real slice
+    spacing, and it is reported; a reconstruction with no VisuCorePosition has
+    none, and says so.
+    """
+    parametric = load(
+        tmp_path / "isa",
+        frame_groups=(("FG_ISA", 2),),
+        positions=stacked_positions((-20.0, -20.0, 0.0), (0.0, 0.0, 0.0), 2),
+        frame_thickness=0.8,
+        slice_packs=(0, [(0, 2)]),
+        slice_pack_distance=0.8,
+    )
+    assert parametric.slice_distance == [0.8]
+
+    flat = tmp_path / "flat" / "9" / "pdata" / "1"
+    write_jcampdx(flat / "visu_pars", {key: value for key, value in visu_pars_records().items() if not key.startswith(("VisuCorePosition", "VisuCoreOrientation"))})
+    write_binary(flat / "2dseq", np.zeros(4 * 4 * 3), np.dtype("<i2"))
+    without_geometry = Dataset(flat / "2dseq", load=LOAD_STAGES["properties"])
+    with pytest.raises(UnsupportedDatasetType, match="carries no VisuCorePosition"):
+        _ = without_geometry.slice_distance
