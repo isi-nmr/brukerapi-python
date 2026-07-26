@@ -1,7 +1,7 @@
 {
   "pv_version": [
     {
-      "cmd": "#ACQ_sw_version[1:-1].replace('PV-','').replace('PV ','').strip()",
+      "cmd": "(#ACQ_sw_version).replace('PV-','').replace('PV ','').strip()",
       "conditions": [],
       "comment": "spec 7.1/13: version gates compare on this parsed version, so an unlisted point release is not silently unsupported"
     },
@@ -12,7 +12,7 @@
   ],
   "job_desc": [
     {
-      "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+      "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == @subtype][0]",
       "conditions": [
         "len(#ACQ_jobs.nested[0])==9"
       ]

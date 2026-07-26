@@ -1,7 +1,7 @@
 {
   "subj_id": [
       {
-        "cmd": "#VisuSubjectName[1:-1]",
+        "cmd": "#VisuSubjectName",
         "conditions": [
         ]
       },
@@ -158,13 +158,13 @@
   ],
   "date": [
       {
-        "cmd": "datetime.datetime.strptime(#VisuStudyDate[1:-1], '%X %d %b %Y')",
+        "cmd": "datetime.datetime.strptime(#VisuStudyDate, '%X %d %b %Y')",
         "conditions": [
           "'T' not in #VisuStudyDate"
         ]
       },
       {
-        "cmd": "datetime.datetime.strptime(#VisuStudyDate[1:-1], '%Y-%m-%dT%X,%f%z')",
+        "cmd": "datetime.datetime.strptime(#VisuStudyDate, '%Y-%m-%dT%X,%f%z')",
         "conditions": [
           "'T' in #VisuStudyDate"
         ]

@@ -35,7 +35,7 @@ The following is the content of the resulting `report.json` file located in the 
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "encoded_dim": 2,
         "shape_final": [
@@ -159,7 +159,7 @@ The `filter` sub-command provides an option to make various queries on folders c
 
 **List all data sets measured using the EPI pulse sequence**::
 
-    bruker filter -i ${DATA_PATH}/20200612_094625_lego_phantom_3_1_2 -q "#PULPROG=='<EPI.ppg>'"
+    bruker filter -i ${DATA_PATH}/20200612_094625_lego_phantom_3_1_2 -q "#PULPROG=='EPI.ppg'"
 
 
 pipelines
@@ -169,4 +169,4 @@ It is possible to assemble pipelines using the Bruker API and xargs. Let us see 
 
 Using filter and report subcommands to only report datasets measured by the MGE sequence::
 
-    bruker filter -i /home/tomas/data/20200612_094625_lego_phantom_3_1_2/ -q "#PULPROG=='<MGE.ppg>'" | xargs -I {} bruker report -i {} -o /home/tomas/data/reports
+    bruker filter -i /home/tomas/data/20200612_094625_lego_phantom_3_1_2/ -q "#PULPROG=='MGE.ppg'" | xargs -I {} bruker report -i {} -o /home/tomas/data/reports

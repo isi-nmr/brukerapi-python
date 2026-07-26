@@ -45,8 +45,40 @@ _PARAMETER_RE = re.compile(GRAMMAR["PARAMETER"], re.MULTILINE)
 # escaped delimiters (\< and \>) in the reco filter-graph descriptors. A
 # backslash is not always an escape though -- an empty study description is
 # written as `<\>` -- so the escaped reading is tried first and a string that
-# never terminates under it is re-read with the backslash as content.
-_STRING_RE = re.compile(r"<(?:\\.|[^<>\\])*>|<[^<>]*>")
+# never terminates under it is re-read with the backslash as content. The
+# inside is captured, because the angle brackets delimit the value, they are
+# not part of it.
+_STRING_RE = re.compile(r"<((?:\\.|[^<>\\])*)>|<([^<>]*)>")
+
+
+def unquote_string(val_str):
+    """Return the value of a ``<...>`` string, without its delimiters.
+
+    Spec 2.2: the angle brackets are the string delimiter, so `<abc>` is the
+    string `abc` and `<>` is the empty string. Anything that is not a delimited
+    string -- an enum symbol, a number -- is returned unchanged. The text
+    between the delimiters is kept verbatim, escapes included, so that
+    :func:`quote_string` restores the value exactly as it was written.
+    """
+    match = _STRING_RE.fullmatch(val_str)
+    if match is None:
+        return val_str
+    return match.group(1) if match.group(1) is not None else match.group(2)
+
+
+def quote_string(value):
+    """Put string values of ``value`` back inside their ``<...>`` delimiters.
+
+    The inverse of :func:`unquote_string`, applied to every string in a scalar,
+    list, nested list or array value, and preserving its container.
+    """
+    if isinstance(value, str):
+        return f"<{value}>"
+    if isinstance(value, list):
+        return [quote_string(item) for item in value]
+    if isinstance(value, np.ndarray) and value.dtype.kind in "US":
+        return np.array([f"<{item}>" for item in value.flat]).reshape(value.shape)
+    return value
 
 
 class Parameter:
@@ -242,6 +274,13 @@ class GenericParameter(Parameter):
     def value(self, value):
         size = self.size
 
+        # Spec 2.2: a string is written inside <...>, an enum symbol is written
+        # bare, and nothing about the Python value tells the two apart. Which
+        # one this parameter holds is read from how it is already written, so
+        # that a value taken from `value` and put back is written as it came.
+        if _STRING_RE.search(self.val_str):
+            value = quote_string(value)
+
         if isinstance(value, float):
             val_str = self.serialize_float(value, self.version)
         elif isinstance(value, int):
@@ -381,11 +420,16 @@ class GenericParameter(Parameter):
 
         # sharp string
         if val_str.startswith("<") and val_str.endswith(">"):
-            val_strs = _STRING_RE.findall(val_str)
+            val_strs = [value for value in cls._split_outside_angle_brackets(val_str, " ") if value]
 
-            if len(val_strs) == 1:
-                return val_strs[0]
-            return np.array(val_strs)
+            # `<1> <2>` is a list of the strings "1" and "2", never of numbers,
+            # so an all-string value skips the numeric casts made below.
+            if val_strs and all(_STRING_RE.fullmatch(value) for value in val_strs):
+                val_strs = [unquote_string(value) for value in val_strs]
+
+                if len(val_strs) == 1:
+                    return val_strs[0]
+                return np.array(val_strs)
 
         # int/float
         if _SINGLE_NUMBER_RE.fullmatch(val_str):
@@ -425,7 +469,7 @@ class GenericParameter(Parameter):
             except ValueError:
                 pass
 
-            return np.array(val_strs)
+            return np.array([unquote_string(value) for value in val_strs])
         if not val_strs:
             # a parameter written with no value at all, e.g. `##$ACQ_operator= `
             return ""

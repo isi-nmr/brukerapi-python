@@ -117,7 +117,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_FLOW>"
+            "FG_FLOW"
         ],
         "dwell_s": 6.666666666666667e-06,
         "encoded_dim": 2,
@@ -201,8 +201,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -310,7 +310,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -397,8 +397,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>",
-            "<FG_IRMODE>"
+            "FG_MOVIE",
+            "FG_IRMODE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -500,8 +500,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 4.1999999999999945e-06,
         "encoded_dim": 2,
@@ -636,7 +636,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>"
+            "FG_MOVIE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -757,8 +757,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -1084,7 +1084,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -1172,7 +1172,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 3.799999999999998e-06,
         "encoded_dim": 2,
@@ -1280,7 +1280,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -1585,7 +1585,7 @@
             "spatial",
             "spatial",
             "spatial",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
@@ -1643,7 +1643,7 @@
         "date": "2020-06-16 15:13:18",
         "dim_type": [
             "spectroscopic",
-            "<FG_CYCLE>"
+            "FG_CYCLE"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -1792,7 +1792,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -1890,8 +1890,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>",
-            "<FG_MOVIE>"
+            "FG_ECHO",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -2040,8 +2040,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>",
-            "<FG_MOVIE>"
+            "FG_ISA",
+            "FG_MOVIE"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -2188,8 +2188,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>",
-            "<FG_ECHO>"
+            "FG_ISA",
+            "FG_ECHO"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -2320,8 +2320,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1.5312499999999972e-06,
         "encoded_dim": 2,
@@ -3449,8 +3449,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_DTI>",
-            "<FG_SLICE>"
+            "FG_DTI",
+            "FG_SLICE"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -4207,7 +4207,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 8.4e-06,
         "encoded_dim": 2,
@@ -4318,7 +4318,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -4406,7 +4406,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -4496,8 +4496,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>",
-            "<FG_CARDIAC_MOVIE>"
+            "FG_ECHO",
+            "FG_CARDIAC_MOVIE"
         ],
         "dwell_s": 3.3333333333333333e-06,
         "encoded_dim": 2,
@@ -4609,8 +4609,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 6.4e-06,
         "encoded_dim": 2,
@@ -4837,8 +4837,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -4937,9 +4937,9 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>",
-            "<FG_CYCLE>"
+            "FG_ECHO",
+            "FG_SLICE",
+            "FG_CYCLE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -5058,9 +5058,9 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>",
-            "<FG_IRMODE>",
-            "<FG_CYCLE>"
+            "FG_MOVIE",
+            "FG_IRMODE",
+            "FG_CYCLE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -5189,9 +5189,9 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_ECHO",
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -5314,7 +5314,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_CYCLE>"
+            "FG_CYCLE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,

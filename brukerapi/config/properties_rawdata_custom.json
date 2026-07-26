@@ -1,7 +1,7 @@
 {
   "subj_id": [
     {
-      "cmd": "#SUBJECT_id[1:-1]",
+      "cmd": "#SUBJECT_id",
       "conditions": [
 
       ]

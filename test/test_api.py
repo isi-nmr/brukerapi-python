@@ -53,19 +53,32 @@ def test_metadata_groups_follow_the_specification(tmp_path):
     metadata = dataset.metadata
 
     assert metadata["visu_equipment"] == {
-        "manufacturer": "<Bruker BioSpin MRI GmbH>",
-        "acq_software_version": "<PV-360.3.7>",
-        "institution": "<Institute>",
-        "station": "<System C1>",
+        "manufacturer": "Bruker BioSpin MRI GmbH",
+        "acq_software_version": "PV-360.3.7",
+        "institution": "Institute",
+        "station": "System C1",
     }
-    assert metadata["visu_instance"]["uid"] == "<2.16.756.5.5.100.1>"
+    assert metadata["visu_instance"]["uid"] == "2.16.756.5.5.100.1"
     assert metadata["visu_instance"]["type"] == "STANDARD_INSTANCE"
-    assert metadata["visu_instance"]["creator_version"] == "<6.0.1>"
+    assert metadata["visu_instance"]["creator_version"] == "6.0.1"
     assert metadata["visu_series"]["experiment_number"] == 8
     assert metadata["visu_series"]["processing_number"] == 1
-    assert metadata["visu_acq"]["protocol"] == "<T1_FLASH>"
+    assert metadata["visu_acq"]["protocol"] == "T1_FLASH"
     assert metadata["visu_acq"]["echo_time"] == 3.5
     assert "uisition_protocol" not in metadata["visu_acq"]
+
+
+def test_metadata_reports_the_same_string_as_the_property_that_reads_it(tmp_path):
+    """`subj_id` and `metadata` read VisuSubjectName; they must agree.
+
+    `subj_id` stripped the `<...>` delimiters in its recipe, `metadata` -- the
+    newer surface -- did not, so the two APIs reported different values for one
+    parameter for every string-valued field of every group.
+    """
+    dataset = Dataset(study(tmp_path), load=LOAD_STAGES["properties"])
+
+    assert dataset.metadata["visu_subject"]["name"] == "synthetic"
+    assert dataset.subj_id == dataset.metadata["visu_subject"]["name"]
 
 
 def test_metadata_can_be_exported(tmp_path):
@@ -74,7 +87,7 @@ def test_metadata_can_be_exported(tmp_path):
     exported = dataset.to_dict(props=["metadata"])
 
     # arrays inside the grouped dict used to make json.dump fail outright
-    assert json.loads(json.dumps(exported))["metadata"]["visu_equipment"]["station"] == "<System C1>"
+    assert json.loads(json.dumps(exported))["metadata"]["visu_equipment"]["station"] == "System C1"
 
 
 def test_report_honours_the_requested_format(tmp_path):
@@ -175,7 +188,7 @@ def test_single_slice_datasets_do_not_claim_a_third_spatial_axis(tmp_path):
     dataset = Dataset(path)
 
     assert dataset.is_single_slice
-    assert dataset.dim_type == ["spatial", "spatial", "frame", "<FG_MOVIE>"]
+    assert dataset.dim_type == ["spatial", "spatial", "frame", "FG_MOVIE"]
     assert len(dataset.dim_type) == dataset.data.ndim
 
 
