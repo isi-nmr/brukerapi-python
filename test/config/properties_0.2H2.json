@@ -116,7 +116,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_FLOW>"
         ],
         "dwell_s": 6.666666666666667e-06,
@@ -396,7 +396,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_MOVIE>",
             "<FG_IRMODE>"
         ],
@@ -635,7 +635,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_MOVIE>"
         ],
         "dwell_s": 2.5e-06,
@@ -1083,7 +1083,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>"
         ],
         "dwell_s": 2.5e-06,
@@ -1889,7 +1889,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>",
             "<FG_MOVIE>"
         ],
@@ -2039,7 +2039,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ISA>",
             "<FG_MOVIE>"
         ],
@@ -2086,7 +2086,7 @@
             0,
             0
         ],
-        "pv_version": "5.1;5.1",
+        "pv_version": "5.1",
         "resolution": [
             0.390625,
             0.390625,
@@ -2187,7 +2187,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ISA>",
             "<FG_ECHO>"
         ],
@@ -2229,7 +2229,7 @@
             0,
             0
         ],
-        "pv_version": "5.1;5.1",
+        "pv_version": "5.1",
         "resolution": [
             0.390625,
             0.390625,
@@ -3795,7 +3795,7 @@
             0,
             0
         ],
-        "pv_version": "5.1;5.1",
+        "pv_version": "5.1",
         "resolution": [
             0.3125,
             0.3125,
@@ -4206,7 +4206,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>"
         ],
         "dwell_s": 8.4e-06,
@@ -4317,7 +4317,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ISA>"
         ],
         "dwell_s": null,
@@ -4338,7 +4338,7 @@
             0,
             0
         ],
-        "pv_version": "5.1;5.1",
+        "pv_version": "5.1",
         "resolution": [
             0.390625,
             0.390625,
@@ -4405,7 +4405,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ISA>"
         ],
         "dwell_s": null,
@@ -4426,7 +4426,7 @@
             0,
             0
         ],
-        "pv_version": "5.1;5.1",
+        "pv_version": "5.1",
         "resolution": [
             0.390625,
             0.390625,
@@ -4495,7 +4495,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_ECHO>",
             "<FG_CARDIAC_MOVIE>"
         ],
@@ -5057,7 +5057,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_MOVIE>",
             "<FG_IRMODE>",
             "<FG_CYCLE>"
@@ -5313,7 +5313,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "spatial",
+            "frame",
             "<FG_CYCLE>"
         ],
         "dwell_s": 5e-06,
@@ -5491,6 +5491,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_3D",
         "shape_storage": [
             256,
@@ -5540,6 +5541,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             1024,
@@ -5589,6 +5591,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -5636,6 +5639,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "EPI",
         "shape_storage": [
             2690,
@@ -5683,6 +5687,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "EPI",
         "shape_storage": [
             2562,
@@ -5734,6 +5739,7 @@
             1,
             5
         ],
+        "pv_version": "5.1",
         "scheme_id": "dEPI",
         "shape_storage": [
             1536,
@@ -5781,6 +5787,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "EPI",
         "shape_storage": [
             16384,
@@ -5828,6 +5835,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "EPI",
         "shape_storage": [
             32768,
@@ -5875,6 +5883,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "EPI",
         "shape_storage": [
             8192,
@@ -5922,6 +5931,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "SPIRAL",
         "shape_storage": [
             1024,
@@ -5971,6 +5981,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6018,6 +6029,7 @@
             4,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "SPIRAL",
         "shape_storage": [
             512,
@@ -6067,6 +6079,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "RADIAL",
         "shape_storage": [
             256,
@@ -6116,6 +6129,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "RADIAL",
         "shape_storage": [
             256,
@@ -6164,6 +6178,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "ZTE",
         "shape_storage": [
             1024,
@@ -6203,6 +6218,7 @@
             1,
             2
         ],
+        "pv_version": "5.1",
         "scheme_id": "CSI",
         "shape_storage": [
             4096,
@@ -6222,6 +6238,7 @@
             "k_space_encode_step_0",
             "k_space_encode_step_1",
             "k_space_encode_step_2",
+            "echo",
             "repetition",
             "channel"
         ],
@@ -6232,7 +6249,8 @@
             1,
             2,
             128,
-            128
+            128,
+            1
         ],
         "id": "FID_25_0_2",
         "k_space": [
@@ -6240,6 +6258,7 @@
             128,
             128,
             2,
+            1,
             1
         ],
         "numpy_dtype": "int32",
@@ -6248,8 +6267,10 @@
             3,
             4,
             2,
+            5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "FIELD_MAP",
         "shape_storage": [
             256,
@@ -6288,6 +6309,7 @@
             1,
             2
         ],
+        "pv_version": "5.1",
         "scheme_id": "SPECTROSCOPY",
         "shape_storage": [
             2048,
@@ -6327,6 +6349,7 @@
             1,
             2
         ],
+        "pv_version": "5.1",
         "scheme_id": "SPECTROSCOPY",
         "shape_storage": [
             4096,
@@ -6366,6 +6389,7 @@
             1,
             2
         ],
+        "pv_version": "5.1",
         "scheme_id": "SPECTROSCOPY",
         "shape_storage": [
             4096,
@@ -6415,6 +6439,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             512,
@@ -6463,6 +6488,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6514,6 +6540,7 @@
             1,
             5
         ],
+        "pv_version": "5.1",
         "scheme_id": "dEPI",
         "shape_storage": [
             4974,
@@ -6563,6 +6590,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6612,6 +6640,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6661,6 +6690,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             512,
@@ -6710,6 +6740,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             512,
@@ -6759,6 +6790,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             512,
@@ -6808,6 +6840,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6856,6 +6889,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             256,
@@ -6905,6 +6939,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_2D",
         "shape_storage": [
             512,
@@ -6954,6 +6989,7 @@
             5,
             1
         ],
+        "pv_version": "5.1",
         "scheme_id": "CART_3D",
         "shape_storage": [
             512,

@@ -228,7 +228,13 @@ class GenericParameter(Parameter):
 
         if isinstance(value, np.ndarray) and self.size:
             if "str" not in value.dtype.name:
-                return np.reshape(value, self.size, order="C")
+                try:
+                    return np.reshape(value, self.size, order="C")
+                except ValueError as error:
+                    # spec 2.3: the element count has to match the product of the
+                    # declared dimensions, and a mismatch is a diagnosable
+                    # condition, not an internal error
+                    raise InvalidJcampdxFile(f"{self.key}: {value.size} values do not fill the declared size {self.size}") from error
             return value
         return value
 
@@ -292,10 +298,15 @@ class GenericParameter(Parameter):
                 size = match.group(1).strip()
 
         elif "," in size_str:
-            size_str = size_str.split(",")
-            size = tuple(np.array(size_str, dtype="int32"))
+            try:
+                size = tuple(np.array(size_str.split(","), dtype="int32"))
+            except ValueError as error:
+                raise InvalidJcampdxFile(f"{self.key}: size bracket {self.size_str.strip()!r} is not a list of integers") from error
         else:
-            size = (int(size_str),)
+            try:
+                size = (int(size_str),)
+            except ValueError as error:
+                raise InvalidJcampdxFile(f"{self.key}: size bracket {self.size_str.strip()!r} is not an integer") from error
 
         return size
 
@@ -863,11 +874,15 @@ class JCAMPDX:
 
         params = {}
 
-        with path.open() as f:
-            try:
+        try:
+            with path.open() as f:
                 content = f.read()
-            except (UnicodeDecodeError, OSError) as e:
-                raise JcampdxFileError(f"file {path} is not a text file") from e
+        except FileNotFoundError:
+            # a caller distinguishes "not there" from "not readable": an optional
+            # parameter file is allowed to be absent
+            raise
+        except (UnicodeDecodeError, OSError) as e:
+            raise JcampdxFileError(f"file {path} is not a text file") from e
 
         comments_by_parameter = []
         pending_comments = []
@@ -893,8 +908,12 @@ class JCAMPDX:
             content_without_comments.append(line)
         content = "".join(content_without_comments)
 
-        # split into individual entries
-        content = _PARAMETER_RE.split(content)[1:-1]
+        # split into individual entries; spec 2.1 warns that a file may not end
+        # at ##END=, and dropping the last chunk unconditionally then loses a
+        # real parameter without a word
+        content = _PARAMETER_RE.split(content)[1:]
+        if content and content[-1].startswith("END="):
+            content = content[:-1]
 
         # strip trailing EOL
         content = [_TRAILING_EOL_RE.sub("", x) for x in content]

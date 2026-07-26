@@ -275,13 +275,21 @@ class Folder:
             else:
                 print("{} {} [{}]".format("  " + prefix, child.path.name, child.__class__.__name__))
 
-    def to_json(self, path=None):
+    def to_dict(self, props=None):
+        """Properties of every dataset in the folder, keyed by dataset id."""
+        out = {}
+        for dataset in self.get_dataset_list_rec():
+            with dataset(add_parameters=["subject"]) as loaded:
+                out[loaded.id] = loaded.to_dict(props=props)
+        return out
+
+    def to_json(self, path=None, props=None):
+        # `json.dumps(self.to_json())` called itself forever
         if path:
             with open(path, "w") as json_file:
-                json.dump(self.to_json(), json_file, sort_keys=True, indent=4)
-        else:
-            return json.dumps(self.to_json(), sort_keys=True, indent=4)
-        return None
+                json.dump(self.to_dict(props=props), json_file, sort_keys=True, indent=4)
+            return None
+        return json.dumps(self.to_dict(props=props), sort_keys=True, indent=4)
 
     def report(self, path_out=None, format_=None, write=None, props=None, verbose=None):
         if write is None:
@@ -296,11 +304,12 @@ class Folder:
             with dataset(add_parameters=["subject"]) as d:
                 if write:
                     if path_out:
-                        d.report(path=path_out / f"{d.id}.{format_}", props=props, verbose=verbose)
+                        d.report(path=path_out / f"{d.id}.{format_}", props=props, verbose=verbose, format_=format_)
                     else:
-                        d.report(path=d.path.parent / f"{d.id}.{format_}", props=props, verbose=verbose)
+                        d.report(path=d.path.parent / f"{d.id}.{format_}", props=props, verbose=verbose, format_=format_)
                 else:
-                    out[d.id] = d.to_json(props=props)
+                    # to_json returns a string; a report of reports is a dict
+                    out[d.id] = d.to_dict(props=props)
 
         if not write:
             return out

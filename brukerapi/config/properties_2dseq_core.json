@@ -1,8 +1,9 @@
 {
   "pv_version": [
       {
-        "cmd": "#VisuCreatorVersion[1:-1]",
-        "conditions": []
+        "cmd": "#VisuCreatorVersion[1:-1].split(';')[0]",
+        "conditions": [],
+        "comment": "spec 7.1: VisuCreator/VisuCreatorVersion are semicolon-separated lists; the first creator is the one that wrote the dataset"
       }
   ],
   "numpy_dtype": [
@@ -181,11 +182,11 @@
   ],
   "dim_type": [
     {
-      "cmd": "#VisuCoreDimDesc.list + ['spatial',] + #VisuFGOrderDesc.sub_list(1)",
+      "cmd": "#VisuCoreDimDesc.list + ['frame',] + #VisuFGOrderDesc.sub_list(1)",
       "conditions": ["@is_single_slice==True"]
     },
     {
-      "cmd": "#VisuCoreDimDesc.list + ['spatial',]",
+      "cmd": "#VisuCoreDimDesc.list + ['frame',]",
       "conditions": ["@is_single_slice==True"]
     },
     {

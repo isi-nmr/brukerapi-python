@@ -112,9 +112,9 @@ def split(args):
     dataset = Dataset(args.path_in)
 
     if args.slice_package:
-        SlicePackageSplitter().split(dataset, write=True)
+        SlicePackageSplitter().split(dataset, write=True, path_out=args.path_out)
     elif args.frame_group:
-        FrameGroupSplitter(args.frame_group).split(dataset, write=True)
+        FrameGroupSplitter(args.frame_group).split(dataset, write=True, path_out=args.path_out)
 
 
 def report(args):
@@ -124,25 +124,25 @@ def report(args):
     :return:
     """
     input = Path(args.input)
-
-    if args.output is None:
-        output = None
-    else:
-        output = Path(args.output)
+    output = None if args.output is None else Path(args.output)
 
     if input.is_dir():
         # folder in-place
         if output is None:
             Folder(input).report(format_=args.format, props=args.props, verbose=args.verbose)
-        elif output.is_dir():
-            # folder to folder
+        else:
+            # folder to folder -- an output folder that does not exist yet is
+            # created rather than silently matching no branch and exiting 0
+            output.mkdir(parents=True, exist_ok=True)
             Folder(input).report(path_out=output, format_=args.format, props=args.props, verbose=args.verbose)
     # dataset in-place
     elif output is None:
-        Dataset(input, add_parameters=["subject"]).report(props=args.props, verbose=args.verbose)
+        Dataset(input, add_parameters=["subject"]).report(props=args.props, verbose=args.verbose, format_=args.format)
     # dataset to folder, or dataset to file
     else:
-        Dataset(input, add_parameters=["subject"]).report(path=output, props=args.props, verbose=args.verbose)
+        if not output.suffix:
+            output.mkdir(parents=True, exist_ok=True)
+        Dataset(input, add_parameters=["subject"]).report(path=output, props=args.props, verbose=args.verbose, format_=args.format)
 
 
 def filter(args):

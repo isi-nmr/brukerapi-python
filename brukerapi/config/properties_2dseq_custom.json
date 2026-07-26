@@ -58,7 +58,7 @@
     {
       "cmd": "np.array([#PVM_VoxArrSize[0,0] * #VisuAcqSize[1], #PVM_VoxArrSize[0,1] * #VisuAcqSize[2], #VisuCoreFrameThickness])",
       "conditions": [
-        "#VisuCreatorVersion in ['<5.1>']",
+        "@pv_version.split('.')[0]=='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]
@@ -66,7 +66,7 @@
     {
       "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], #PVM_VoxArrSize[0,2]])",
       "conditions": [
-        "#VisuCreatorVersion in ['<6.0.1>']",
+        "@pv_version.split('.')[0]!='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]
@@ -97,7 +97,7 @@
     {
       "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], #VisuCoreFrameThickness])",
       "conditions": [
-        "#VisuCreatorVersion in ['<5.1>']",
+        "@pv_version.split('.')[0]=='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]
@@ -105,7 +105,7 @@
     {
       "cmd": "np.array([#PVM_VoxArrSize[0,0] / #VisuCoreSize[1], #PVM_VoxArrSize[0,1] / #VisuCoreSize[2], #PVM_VoxArrSize[0,2]])",
       "conditions": [
-        "#VisuCreatorVersion in ['<6.0.1>']",
+        "@pv_version.split('.')[0]!='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]

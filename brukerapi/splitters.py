@@ -11,6 +11,14 @@ SUPPORTED_FG = ["FG_ISA", "FG_IRMODE", "FG_ECHO"]
 
 
 class Splitter:
+    @staticmethod
+    def _inherited_state(dataset):
+        """State of `dataset` to give a split part, without loading anything."""
+        state = {key: value for key, value in dataset._state.items() if key not in {"load", "mmap", "parameter_files", "property_files"}}
+        state["property_files"] = []
+        state["load"] = 0
+        return state
+
     def write(self, datasets, path_out=None):
         for dataset in datasets:
             target = Path(path_out) / dataset.path.parents[0].name / dataset.path.name if path_out else Path(dataset.path)
@@ -161,7 +169,7 @@ class FrameGroupSplitter(Splitter):
             # put a *directory* where the 2dseq file belongs, which made every
             # write fail with IsADirectoryError and gave the in-memory split a
             # filesystem side effect.
-            dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
+            dataset_ = Dataset(dataset.path.parents[1] / name, **self._inherited_state(dataset))
 
             dataset_.parameters = self._split_params(dataset, select_, fg_abs_index, fg_rel_index, fg_size)
 
@@ -306,8 +314,10 @@ class SlicePackageSplitter(Splitter):
             # name of the data set created by the split
             name = f"{dataset.path.parents[0].name}_sp_{sp_index}/2dseq"
 
-            # construct a new Dataset, without loading data, the data will be supplied later
-            dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
+            # construct a new Dataset, without loading data, the data will be supplied later.
+            # The parent's state (property_files, scale, combine_complex, ...) is
+            # carried over so a package is read the same way its source was.
+            dataset_ = Dataset(dataset.path.parents[1] / name, **self._inherited_state(dataset))
 
             # SPLIT parameters
             dataset_.parameters = self._split_parameters(

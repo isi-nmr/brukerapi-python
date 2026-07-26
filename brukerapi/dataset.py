@@ -94,6 +94,8 @@ RELATIVE_PATHS = {
         "acqp": "./acqp",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
+        "methreco": "./pdata/1/methreco",
+        "pvmeta": "./pdata/1/pvmeta",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
         "AdjStatePerStudy": "../AdjStatePerStudy",
@@ -103,6 +105,8 @@ RELATIVE_PATHS = {
         "acqp": "../../acqp",
         "subject": "../../../subject",
         "reco": "./reco",
+        "methreco": "./methreco",
+        "pvmeta": "./pvmeta",
         "d3proc": "./d3proc",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
@@ -113,6 +117,8 @@ RELATIVE_PATHS = {
         "acqp": "../../acqp",
         "subject": "../../../subject",
         "reco": "./reco",
+        "methreco": "./methreco",
+        "pvmeta": "./pvmeta",
         "d3proc": "./d3proc",
         "visu_pars": "./visu_pars",
         "AdjStatePerScan": "../../AdjStatePerScan",
@@ -123,6 +129,8 @@ RELATIVE_PATHS = {
         "acqp": "./acqp",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
+        "methreco": "./pdata/1/methreco",
+        "pvmeta": "./pdata/1/pvmeta",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
         "AdjStatePerStudy": "../AdjStatePerStudy",
@@ -132,6 +140,8 @@ RELATIVE_PATHS = {
         "acqp": "./acqp",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
+        "methreco": "./pdata/1/methreco",
+        "pvmeta": "./pdata/1/pvmeta",
         "visu_pars": "./pdata/1/visu_pars",
         "AdjStatePerScan": "./AdjStatePerScan",
         "AdjStatePerStudy": "../AdjStatePerStudy",
@@ -141,6 +151,21 @@ RELATIVE_PATHS = {
 # Properties derived on access rather than stored on the instance, which a
 # default report should still carry.
 COMPUTED_REPORT_PROPERTIES = ("affine",)
+
+SUPPORTED_REPORT_FORMATS = frozenset({"json", "yml"})
+
+# Metadata groups of the specification, as (name prefixes, explicit names).
+# Explicit names win over prefixes: VisuAcqSoftwareVersion belongs to the 7.8
+# equipment group, not to 7.9 acquisition.
+METADATA_GROUPS = {
+    "visu_instance": (("VisuInstance",), ("VisuVersion", "VisuUid", "VisuCreator", "VisuCreatorVersion", "VisuCreationDate")),
+    "visu_subject": (("VisuSubject",), ()),
+    "visu_study": (("VisuStudy",), ()),
+    "visu_series": (("VisuSeries",), ("VisuExperimentNumber", "VisuProcessingNumber")),
+    "visu_equipment": ((), ("VisuManufacturer", "VisuAcqSoftwareVersion", "VisuInstitution", "VisuStation")),
+    "visu_acq": (("VisuAcq", "VisuAcquisition"), ()),
+    "subject": (("SUBJECT_",), ()),
+}
 
 SUPPORTED_SUBTYPES = {
     "fid": {""},
@@ -801,8 +826,20 @@ class Dataset:
                 companion.shape_storage = self.shape_storage
                 companion.dim_type = self.dim_type
             else:
-                companion.shape_storage = (file_size(path) // self.numpy_dtype.itemsize,)
-                companion.dim_type = ["sample"]
+                words = file_size(path) // self.numpy_dtype.itemsize
+                companion.shape_storage = (words,)
+                # Spec 3.5: a fid.spiral / fid.navFid is a stream of acquisitions
+                # of PVM_DigNp complex points each. Where that divides the file
+                # exactly, hand the caller the acquisitions rather than a vector
+                # it has to re-derive the shape of.
+                digitized = self._parameter_value("PVM_DigNp")
+                samples = 2 * int(digitized) if digitized is not None else 0
+                if samples and words % samples == 0:
+                    companion.shape_final = (samples // 2, words // samples)
+                    companion.dim_type = ["sample", "acquisition"]
+                else:
+                    companion.shape_final = (words // 2,)
+                    companion.dim_type = ["sample"]
             companion._schema = SchemaFidCompanion(companion, primary_schema=self._schema)
             companion.load_data()
             self._fid_companions[subtype] = companion
@@ -837,25 +874,29 @@ class Dataset:
         self._write_parameters(parent)
         self._write_data(path)
 
-    def report(self, path=None, props=None, verbose=None):
+    def report(self, path=None, props=None, verbose=None, format_=None):
         """
         Save properties to JSON, or YAML file.
 
-        if path is None then save report in-place as path / self.id + '.json'
-        if path is a path path to a folder then save report to path / self.id + '.json'
+        if path is None then save report in-place as path / self.id + '.' + format_
+        if path is a path to a folder then save report to path / self.id + '.' + format_
         if path is a json, or yml file save report to path
 
         :param path: *str* path to a resulting report file
-        :param names: *list* names of properties to be exported
+        :param props: *list* names of properties to be exported
+        :param format_: *str* `json` or `yml`, used when the file name is derived
         """
+        format_ = (format_ or "json").lstrip(".")
+        if format_ not in SUPPORTED_REPORT_FORMATS:
+            raise ValueError(f"unsupported report format {format_!r}, expected one of {sorted(SUPPORTED_REPORT_FORMATS)}")
 
         report_id = getattr(self, "id", f"{self.path.parent.name}_{self.type}")
         if path is None:
-            path = self.path.parent / f"{report_id}.json"
+            path = self.path.parent / f"{report_id}.{format_}"
         else:
             path = Path(path)
             if path.is_dir():
-                path /= f"{report_id}.json"
+                path /= f"{report_id}.{format_}"
 
         if verbose:
             print(f"bruker report: {self.path!s} -> {path!s}")
@@ -864,6 +905,8 @@ class Dataset:
             self.to_json(path, props=props)
         elif path.suffix == ".yml":
             self.to_yaml(path, props=props)
+        else:
+            raise ValueError(f"unsupported report file name {path.name!r}, expected a .json or .yml suffix")
 
     def to_json(self, path=None, props=None):
         """
@@ -961,6 +1004,9 @@ class Dataset:
             return [self._encode_property(var_) for var_ in var]
         if isinstance(var, tuple):
             return self._encode_property(list(var))
+        if isinstance(var, dict):
+            # grouped metadata is a dict of dicts of parameter values
+            return {key: self._encode_property(value) for key, value in var.items()}
         if isinstance(var, (datetime.datetime, str)):
             return str(var)
         return var
@@ -1256,26 +1302,41 @@ class Dataset:
             values[name] = np.reshape(aligned, target_shape)
         return values
 
+    @staticmethod
+    def _metadata_field(name, prefix):
+        """Snake-case `name` with `prefix` removed, if it ends on a word boundary.
+
+        ``VisuAcq`` is a prefix of ``VisuAcquisitionProtocol`` without being its
+        group prefix, and stripping it blindly yields `uisition_protocol`.
+        """
+        field = name.removeprefix(prefix)
+        boundary = not prefix or prefix.endswith("_") or not field or field[0].isupper() or field[0] == "_"
+        if not boundary:
+            return None
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", field.lstrip("_")).lower()
+
     @property
     def metadata(self):
-        """Grouped Visu and SUBJECT metadata with snake-case field names."""
-        groups = {
-            "visu_subject": ("VisuSubject",),
-            "visu_study": ("VisuStudy",),
-            "visu_series": ("VisuSeries",),
-            "visu_equipment": ("VisuEquipment",),
-            "visu_acq": ("VisuAcq",),
-            "subject": ("SUBJECT_",),
-        }
-        metadata = {group: {} for group in groups}
+        """Grouped Visu and SUBJECT metadata with snake-case field names.
+
+        The groups are the ones the specification defines (7.1, 7.5-7.9, 9).
+        Several of them cannot be recognised from a name prefix -- no parameter
+        is called ``VisuEquipment*``, and the 7.1 administration group is spelled
+        ``VisuUid``/``VisuCreator``/... -- so those members are listed by name.
+        """
+        metadata = {group: {} for group in METADATA_GROUPS}
         for parameter_file in self._parameters.values():
             for name in parameter_file.get_parameters():
-                for group, prefixes in groups.items():
-                    prefix = next((prefix for prefix in prefixes if name.startswith(prefix)), None)
-                    if prefix is None:
+                for group, (prefixes, names) in METADATA_GROUPS.items():
+                    if name in names:
+                        field = self._metadata_field(name, "Visu")
+                    else:
+                        # longest prefix first, so VisuAcquisitionProtocol is not
+                        # cut at the shorter VisuAcq
+                        candidates = sorted((prefix for prefix in prefixes if name.startswith(prefix)), key=len, reverse=True)
+                        field = next((field for field in (self._metadata_field(name, prefix) for prefix in candidates) if field is not None), None)
+                    if field is None:
                         continue
-                    field = name.removeprefix(prefix)
-                    field = re.sub(r"(?<!^)(?=[A-Z])", "_", field).lower()
                     metadata[group][field] = parameter_file[name].value
                     break
         return {group: values for group, values in metadata.items() if values}
