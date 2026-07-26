@@ -10,7 +10,28 @@
       "conditions": []
     }
   ],
+  "job_desc": [
+    {
+      "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+      "conditions": [
+        "len(#ACQ_jobs.nested[0])==9"
+      ]
+    },
+    {
+      "cmd": "#ACQ_jobs.nested[int(@subtype[3:])]",
+      "conditions": [
+        "len(#ACQ_jobs.nested[0])==8"
+      ]
+    }
+  ],
   "numpy_dtype": [
+    {
+        "cmd": "np.dtype('f8').newbyteorder('<' if #BYTORDA=='little' else '>')",
+        "conditions": [
+          "#ACQ_ScanPipeJobSettings.nested[#ACQ_jobs.nested.index(@job_desc)][1]=='STORE_64bit_float'"
+        ],
+        "comment": "spec 13.1: storageDataType is STORE_32bit_signed (default) or STORE_64bit_float"
+    },
     {
         "cmd": "np.dtype('int32').newbyteorder('<')",
         "conditions": [
@@ -86,20 +107,6 @@
         ]
     }
   ],
-  "job_desc": [
-    {
-      "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
-      "conditions": [
-        "len(#ACQ_jobs.nested[0])==9"
-      ]
-    },
-    {
-      "cmd": "#ACQ_jobs.nested[int(@subtype[3:])]",
-      "conditions": [
-        "len(#ACQ_jobs.nested[0])==8"
-      ]
-    }
-  ],
   "channels": [
     {
       "cmd": "#PVM_EncNReceivers",
@@ -115,8 +122,9 @@
   ],
   "shape_storage": [
     {
-      "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[3],)",
-      "conditions": []
+      "cmd": "(@job_desc[0],) + (#PVM_EncNReceivers,) + (@job_desc[6] if len(@job_desc)==9 else @job_desc[-1],)",
+      "conditions": [],
+      "comment": "spec 3.3: do not read the scan count from [3], which is nTotalScans -- the number acquired, NAE times the number written. nStoredScans is the last element of the 8-field form and [6] of the 9-field form"
     }
   ]
 }

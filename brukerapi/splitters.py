@@ -297,10 +297,19 @@ class SlicePackageSplitter(Splitter):
         # range of frames of given slice package
         frame_range = range(0, 0)
 
-        # absolute index of FG_SLICE among dimensions of the dataset
-        fg_rel_index = dataset["VisuFGOrderDesc"].sub_list(1).index("<FG_SLICE>")
+        # Which frame group holds the slices. Spec 7.10: VisuCoreSlicePacksDef is
+        # (fg_index, num_packages), and an fg_index of -1 is a documented sentinel
+        # meaning there is no slices frame group and every frame belongs to the
+        # packages -- it must not be used as an index.
+        packs_def = np.atleast_1d(dataset._parameter_value("VisuCoreSlicePacksDef", []))
+        group_index = int(packs_def[0]) if packs_def.size else -1
+        if group_index >= 0:
+            fg_rel_index = group_index
+        else:
+            groups = dataset["VisuFGOrderDesc"].sub_list(1)
+            fg_rel_index = groups.index("<FG_SLICE>") if "<FG_SLICE>" in groups else 0
 
-        # index of FG_SLICE among frame group dimensions of the dataset
+        # index of the slice axis among the dimensions of the dataset
         fg_abs_index = fg_rel_index + dataset.encoded_dim
 
         # slice package split loop

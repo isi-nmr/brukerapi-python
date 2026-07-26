@@ -1,5 +1,41 @@
 import numpy as np
 
+# Spec 8: DATTYPE is the legacy d3proc word type, written as the symbol rather
+# than the ordinal. `#define ip_float ip_int` means it cannot express float
+# data, so RECO_wordtype/VisuCoreWordType are always preferable.
+DATTYPE_WORD_TYPES = {
+    "ip_byte": "int8",
+    "1": "int8",
+    "ip_u_byte": "uint8",
+    "2": "uint8",
+    "ip_short": "int16",
+    "3": "int16",
+    "ip_u_short": "uint16",
+    "4": "uint16",
+    "ip_int": "int32",
+    "5": "int32",
+    "ip_u_int": "uint32",
+    "6": "uint32",
+}
+
+
+def transposed_size(size, transposition):
+    """`size` with the exchange recorded by a transposition parameter applied.
+
+    Spec 6.9: the values are 1-based direction numbers, so `v` exchanges axes
+    `v-1` and `v`, and `v == len(size)` exchanges the first and the last. For
+    two dimensions both `1` and `2` therefore mean the same exchange.
+    """
+    size = tuple(int(length) for length in np.atleast_1d(size))
+    value = int(np.atleast_1d(transposition).reshape(-1)[0])
+    if not value or len(size) < 2:
+        return size
+
+    first, second = (0, len(size) - 1) if value >= len(size) else (value - 1, value)
+    swapped = list(size)
+    swapped[first], swapped[second] = swapped[second], swapped[first]
+    return tuple(swapped)
+
 
 def index_to_slice(index, data_shape, dim_index):
     out = []

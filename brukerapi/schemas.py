@@ -985,6 +985,12 @@ class Schema2dseq(Schema):
         slope = self._dataset.slope if "mask" not in layouts else self._dataset.slope[layouts["mask"].flatten(order="F")]
         offset = self._dataset.offset if "mask" not in layouts else self._dataset.offset[layouts["mask"].flatten(order="F")]
 
+        # spec 7.4: a parameter that is not frame-group dependent may carry a
+        # single value, which then applies to every frame
+        frames = data.shape[-1]
+        slope = np.broadcast_to(np.atleast_1d(slope), (frames,)) if np.atleast_1d(slope).size == 1 else slope
+        offset = np.broadcast_to(np.atleast_1d(offset), (frames,)) if np.atleast_1d(offset).size == 1 else offset
+
         for frame in range(data.shape[-1]):
             if dir == "FW":
                 data[..., frame] *= float(slope[frame])

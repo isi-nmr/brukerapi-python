@@ -375,24 +375,31 @@ def test_2dseq_loaded_values_apply_per_frame_slope_and_offset():
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
 @pytest.mark.parametrize(
-    ("missing_visu_parameter", "property_name", "reco_parameter"),
+    ("missing_visu_parameter", "property_name", "reco_parameter", "expected"),
     [
-        ("VisuCoreDataSlope", "slope", "RECO_map_slope"),
-        ("VisuCoreDataOffs", "offset", "RECO_map_offset"),
+        ("VisuCoreDataSlope", "slope", "RECO_map_slope", lambda value: 1.0 / value),
+        ("VisuCoreDataOffs", "offset", "RECO_map_offset", lambda value: value),
     ],
 )
 def test_2dseq_scaling_uses_reco_when_visu_parameter_is_missing(
     missing_visu_parameter,
     property_name,
     reco_parameter,
+    expected,
 ):
+    """Spec 3.4: the RECO map is the *inverse* of the Visu one.
+
+    `real = pixel / RECO_map_slope + RECO_map_offset`, so the Visu-equivalent
+    slope is `1 / RECO_map_slope` -- multiplying by it makes values slope^2 too
+    small. The offset carries over unchanged.
+    """
     dataset = Dataset(PV51_STUDY_PATH / "10" / "pdata" / "1" / "2dseq", load=LOAD_STAGES["parameters"])
 
     assert "reco" in dataset._parameters
     del dataset._parameters["visu_pars"].params[missing_visu_parameter]
     dataset.load_properties()
 
-    assert np.array_equal(getattr(dataset, property_name), dataset[reco_parameter].array)
+    assert np.allclose(getattr(dataset, property_name), expected(dataset[reco_parameter].array))
 
 
 def test_2dseq_deserialize_serialize_preserves_stored_values():
