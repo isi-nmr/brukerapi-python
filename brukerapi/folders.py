@@ -540,7 +540,7 @@ class Filter:
 
     def filter_eval(self, node):
         if isinstance(node, Dataset):
-            with node(add_properties=["subject"]) as n:
+            with node(add_parameters=["subject"]) as n:
                 n.query(self.query)
         else:
             raise FilterEvalFalse

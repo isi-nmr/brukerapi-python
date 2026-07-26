@@ -1,5 +1,4 @@
 import copy
-import os
 from pathlib import Path
 
 import numpy as np
@@ -14,10 +13,9 @@ SUPPORTED_FG = ["FG_ISA", "FG_IRMODE", "FG_ECHO"]
 class Splitter:
     def write(self, datasets, path_out=None):
         for dataset in datasets:
-            if path_out:
-                dataset.write(f"{Path(path_out)}/{dataset.path.parents[0].name}/{dataset.path.name}")
-            else:
-                dataset.write(dataset.path)
+            target = Path(path_out) / dataset.path.parents[0].name / dataset.path.name if path_out else Path(dataset.path)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            dataset.write(target)
 
     def _split_data(self, dataset, range, fg_abs_index):
         """
@@ -157,13 +155,12 @@ class FrameGroupSplitter(Splitter):
         datasets = []
 
         for select_ in select:
-            # construct a new Dataset, without loading data, the data will be supplied later
             name = f"{dataset.path.parents[0].name}_{self.fg}_{select_}/2dseq"
 
-            dset_path = dataset.path.parents[1] / name
-            os.makedirs(dset_path, exist_ok=True)
-
-            # construct a new Dataset, without loading data, the data will be supplied later
+            # A load=0 Dataset does not need its path to exist. Creating it here
+            # put a *directory* where the 2dseq file belongs, which made every
+            # write fail with IsADirectoryError and gave the in-memory split a
+            # filesystem side effect.
             dataset_ = Dataset(dataset.path.parents[1] / name, load=0)
 
             dataset_.parameters = self._split_params(dataset, select_, fg_abs_index, fg_rel_index, fg_size)

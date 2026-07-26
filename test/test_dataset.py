@@ -13,6 +13,7 @@ from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
 from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
+from test.synthetic import write_2dseq, write_jcampdx
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -1117,3 +1118,27 @@ def test_data_save(test_data, tmp_path, WRITE_TOLERANCE):
     # TODO since the id property of the 2dseq dataset type relies on the name of the experiment folder,
     # which is a problem when the dataset is writen to the test folder, solution might be to delete the id key here
     # assert d_test.to_dict() == test_data[1]
+
+
+def test_add_parameters_loads_the_named_parameter_file(tmp_path):
+    """`add_parameters=` is the documented way to pull in the study `subject`.
+
+    It used to be stored as an inert state key, so nothing was loaded and no
+    report carried subject identity (spec 9 / 7.5).
+    """
+    study = tmp_path / "20200612_094625_study_1_1"
+    write_jcampdx(
+        study / "subject",
+        {
+            "SUBJECT_id": ["<lego_phantom_3>"],
+            "SUBJECT_study_nr": 2,
+            "SUBJECT_name_string": ["<Lego Phantom>"],
+        },
+    )
+    path = write_2dseq(study / "8" / "pdata" / "1")
+
+    dataset = Dataset(path, add_parameters=["subject"], load=LOAD_STAGES["properties"])
+
+    assert "subject" in dataset.parameters
+    assert dataset["SUBJECT_id"].value == "<lego_phantom_3>"
+    assert dataset.metadata["subject"]["id"] == "<lego_phantom_3>"
