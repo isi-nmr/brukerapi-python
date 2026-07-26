@@ -63,6 +63,12 @@ in-memory datasets, including their own geometry, with:
    for package in dataset.slice_packages:
        print(package.data.shape, package.affine, package.resolution)
 
+This also works for older PV5.1 datasets that do not have the optional
+``VisuCoreSlicePacks*`` parameters. In that case packages are inferred from
+contiguous frames with the same orientation. This inference cannot distinguish
+two immediately adjacent packages that share an orientation; PV6 and later
+datasets use the explicit package descriptors when available.
+
 Use memory-mapped random access when only a sub-array is needed:
 
 .. code-block:: python
