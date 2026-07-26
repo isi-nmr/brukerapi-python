@@ -111,35 +111,20 @@
         "#VisuCoreDimDesc.list[2]=='spatial'"]
     },
     {
-      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness + #VisuCoreSlicePacksSliceDist.list[0]])",
-      "conditions": [
-        "#VisuCreatorVersion in ['<6.0.1>']",
-        "#VisuCoreDim==2"]
-    },
-    {
-      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], abs(#VisuCorePosition[0,2] - #VisuCorePosition[1,2])])",
-      "conditions": [
-        "#VisuCreatorVersion in ['<5.1>']",
-        "#VisuCorePosition.size[0]>1",
-        "#VisuCoreDim==2"]
-    },
-    {
-      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness])",
-      "conditions": [
-        "#VisuCreatorVersion in ['<5.1>']",
-        "#VisuCorePosition.size[0]==1",
-        "#VisuCoreDim==2"]
-    },
-    {
       "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], np.linalg.norm(#VisuCorePosition[1,:] - #VisuCorePosition[0,:])])",
       "conditions": [
         "#VisuCorePosition.size[0]>1",
+        "#VisuCoreDim==2"],
+      "comment": "spec 7.10: the distance between two measured slice centres. VisuCoreSlicePacksSliceDist is already centre-to-centre, so it must not be added to VisuCoreFrameThickness"
+    },
+    {
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreSlicePacksSliceDist.list[0]])",
+      "conditions": [
         "#VisuCoreDim==2"]
     },
     {
       "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness])",
       "conditions": [
-        "#VisuCorePosition.size[0]==1",
         "#VisuCoreDim==2"]
     },
     {
@@ -149,96 +134,6 @@
         "#VisuCoreDimDesc.list[1]=='spatial'",
         "#VisuCoreDimDesc.list[2]=='spatial'"]
     }
-  ],
-  "position_matrix": [
-      {
-        "cmd": "np.array([[np.cos(np.pi), -np.sin(np.pi), 0], [np.sin(np.pi), np.cos(np.pi), 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition=='Head_Supine'"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition=='Head_Prone'"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[np.cos(np.pi/2), -np.sin(np.pi/2), 0], [np.sin(np.pi/2), np.cos(np.pi/2), 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition=='Head_Left'"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[np.cos(-np.pi/2), -np.sin(-np.pi/2), 0], [np.sin(-np.pi/2), np.cos(-np.pi/2), 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition=='Head_Right'"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[1, 0, 0], [0, np.cos(np.pi), -np.sin(np.pi)], [0, np.sin(np.pi), np.cos(np.pi)]]).astype('float')",
-        "conditions": [
-          "#VisuSubjectPosition in ['Foot_Supine', 'Tail_Supine']"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[np.cos(np.pi), 0, np.sin(np.pi)], [0, 1, 0], [-np.sin(np.pi), 0, np.cos(np.pi)]]).astype('float')",
-        "conditions": [
-          "#VisuSubjectPosition in ['Foot_Prone', 'Tail_Prone']"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[np.cos(np.pi/2), -np.sin(np.pi/2), 0], [np.sin(np.pi/2), np.cos(np.pi/2), 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition in ['Foot_Left', 'Tail_Left']"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      },
-      {
-        "cmd": "np.array([[np.cos(-np.pi/2), -np.sin(-np.pi/2), 0], [np.sin(-np.pi/2), np.cos(-np.pi/2), 0], [0, 0, 1]])",
-        "conditions": [
-          "#VisuSubjectPosition in ['Foot_Right', 'Tail_Right']"
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      }
-  ],
-  "rotation": [
-      {
-        "cmd": "np.dot(@position_matrix, np.reshape(#VisuCoreOrientation[0,:],(3,3)).T.dot(np.diag(@resolution)))",
-        "conditions": [
-        ],
-        "reference": "This recipe was taken from the version BrkRaw repository (https://github.com/BrkRaw/bruker) version 0.3.4 (10.5281/zenodo.3907018)"
-      }
-  ],
-  "position": [
-    {
-      "cmd": "#PVM_VoxArrPosition[0,:].astype(np.float64)",
-      "conditions": [
-        "#VisuCoreDimDesc.list[0]=='spectroscopic'",
-        "#VisuCoreDimDesc.list[1]=='spatial'",
-        "#VisuCoreDimDesc.list[2]=='spatial'"]
-    },
-    {
-      "cmd": "np.array([#VisuCorePosition[0,0] + @extent[0], #VisuCorePosition[0,1] + @extent[1], #VisuCorePosition[0,2]])",
-      "conditions": []
-    }
-  ],
-  "affine": [
-      {
-        "cmd": "np.array([[@rotation[0,0], @rotation[0,1], @rotation[0,2], @position[0]],[@rotation[1,0], @rotation[1,1], @rotation[1,2], @position[1]],[@rotation[2,0], @rotation[2,1], @rotation[2,2], @position[2]],[0, 0, 0, 1]])",
-        "conditions": []
-      },
-      {
-        "cmd": "np.identity(4)",
-        "conditions": [],
-        "comment": "default value"
-      }
   ],
   "TE": [
       {
