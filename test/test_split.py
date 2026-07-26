@@ -4,7 +4,7 @@ import numpy as np
 
 from brukerapi.dataset import Dataset
 from brukerapi.splitters import FrameGroupSplitter, SlicePackageSplitter, Splitter
-from test.synthetic import stacked_positions, write_2dseq
+from test.synthetic import axial_orientation, stacked_positions, write_2dseq
 
 
 def test_split_transposition_is_noop_when_parameter_is_absent():
@@ -49,6 +49,35 @@ def test_splitSlicePkg(test_split_data, tmp_path):
     datasets = SlicePackageSplitter().split(dataset, write=True, path_out=tmp_path)
 
     assert len(datasets) == dataset["VisuCoreSlicePacksSlices"].size[0]
+
+
+def test_slice_package_splitter_infers_and_synthesises_pv51_packages(tmp_path):
+    """PV5.1 has no §7.10 package parameters; orientation delimits packages."""
+    sagittal = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0])
+    positions = np.vstack(
+        [
+            stacked_positions((-20.0, -20.0, -3.0), (0.0, 0.0, 1.5), 2),
+            stacked_positions((0.0, -20.0, -20.0), (-1.0, 0.0, 0.0), 3),
+        ]
+    )
+    orientations = np.vstack([axial_orientation(2), np.tile(sagittal, (3, 1))])
+    path = write_2dseq(
+        tmp_path / "9" / "pdata" / "1",
+        creator_version="5.1",
+        frame_groups=(("FG_SLICE", 5),),
+        positions=positions,
+        orientations=orientations,
+    )
+
+    dataset = Dataset(path)
+    packages = SlicePackageSplitter().split(dataset, write=True)
+
+    assert dataset.num_slice_packages == 2
+    assert [package.data.shape[2] for package in packages] == [2, 3]
+    assert all(package.num_slice_packages == 1 for package in packages)
+    assert [package["VisuCoreSlicePacksSlices"].nested for package in packages] == [[[0, 2]], [[0, 3]]]
+    assert [package["VisuCoreSlicePacksDef"].value for package in packages] == [[0, 1], [0, 1]]
+    assert [Dataset(package.path).num_slice_packages for package in packages] == [1, 1]
 
 
 def _echo_dataset(tmp_path, echoes=2, slices=3):

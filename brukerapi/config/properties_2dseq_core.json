@@ -161,14 +161,9 @@
   ],
   "num_slice_packages": [
       {
-        "cmd": "len(#VisuCoreSlicePacksSlices.nested)",
-        "conditions": []
-      },
-      {
-        "cmd": "1",
+        "cmd": "len(@slice_packages_index())",
         "conditions": []
       }
-
   ],
   "slope": [
     {
