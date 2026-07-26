@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 
 from .dataset import Dataset
-from .exceptions import MissingProperty
+from .jcampdx import JCAMPDX
 from .utils import index_to_slice
 
 SUPPORTED_FG = ["FG_ISA", "FG_IRMODE", "FG_ECHO"]
@@ -286,16 +286,10 @@ class SlicePackageSplitter(Splitter):
         if write is None:
             write = False
 
-        try:
-            VisuCoreSlicePacksSlices = dataset["VisuCoreSlicePacksSlices"].nested
-        except KeyError:
-            raise MissingProperty("Parameter VisuCoreSlicePacksSlices not found") from KeyError
+        packages = dataset.slice_packages_index()
 
         # list of split data sets
         datasets = []
-
-        # range of frames of given slice package
-        frame_range = range(0, 0)
 
         # Which frame group holds the slices. Spec 7.10: VisuCoreSlicePacksDef is
         # (fg_index, num_packages), and an fg_index of -1 is a documented sentinel
@@ -313,12 +307,8 @@ class SlicePackageSplitter(Splitter):
         fg_abs_index = fg_rel_index + dataset.encoded_dim
 
         # slice package split loop
-        for sp_index in range(len(VisuCoreSlicePacksSlices)):
-            # set range
-            frame_range = range(frame_range.stop, frame_range.stop + VisuCoreSlicePacksSlices[sp_index][1])
-
-            # number of frames contained in given slice package
-            frame_count = frame_range.stop - frame_range.start
+        for sp_index, (first_frame, frame_count) in enumerate(packages):
+            frame_range = range(first_frame, first_frame + frame_count)
 
             # name of the data set created by the split
             name = f"{dataset.path.parents[0].name}_sp_{sp_index}/2dseq"
@@ -373,9 +363,9 @@ class SlicePackageSplitter(Splitter):
             self._split_VisuCoreTransposition(dataset, visu_pars_, frame_range, fg_rel_index)
         self._split_VisuCoreFrameCount(dataset, visu_pars_, frame_count, fg_abs_index)
         self._split_VisuFGOrderDesc(visu_pars_, fg_rel_index, frame_count)
-        self._split_VisuCoreSlicePacksDef(visu_pars_)
-        self._split_VisuCoreSlicePacksSlices(visu_pars_, sp_index)
-        self._split_VisuCoreSlicePacksSliceDist(visu_pars_, sp_index)
+        self._split_VisuCoreSlicePacksDef(visu_pars_, fg_rel_index)
+        self._split_VisuCoreSlicePacksSlices(visu_pars_, frame_count)
+        self._split_VisuCoreSlicePacksSliceDist(dataset, visu_pars_, sp_index)
 
         return {"visu_pars": visu_pars_}
 
@@ -410,18 +400,34 @@ class SlicePackageSplitter(Splitter):
 
         VisuFGOrderDesc.value = value
 
-    def _split_VisuCoreSlicePacksDef(self, visu_pars):
+    @staticmethod
+    def _synthesise_parameter(visu_pars, key, value):
+        _, parameter = JCAMPDX.handle_jcampdx_line(f"##${key}={value}", visu_pars.version)
+        visu_pars.set_parameter(key, parameter)
+
+    def _split_VisuCoreSlicePacksDef(self, visu_pars, fg_rel_index):
+        if "VisuCoreSlicePacksDef" not in visu_pars:
+            self._synthesise_parameter(visu_pars, "VisuCoreSlicePacksDef", f"({fg_rel_index}, 1)")
+            return
         VisuCoreSlicePacksDef = visu_pars["VisuCoreSlicePacksDef"]
         value = VisuCoreSlicePacksDef.value
         value[1] = 1
         VisuCoreSlicePacksDef.value = value
 
-    def _split_VisuCoreSlicePacksSlices(self, visu_pars_, sp_index):
-        VisuCoreSlicePacksSlices = visu_pars_["VisuCoreSlicePacksSlices"]
-        VisuCoreSlicePacksSlices.value = [VisuCoreSlicePacksSlices.value[sp_index]]
+    def _split_VisuCoreSlicePacksSlices(self, visu_pars, frame_count):
+        if "VisuCoreSlicePacksSlices" not in visu_pars:
+            self._synthesise_parameter(visu_pars, "VisuCoreSlicePacksSlices", f"( 1 )\n(0, {frame_count})")
+            return
+        VisuCoreSlicePacksSlices = visu_pars["VisuCoreSlicePacksSlices"]
+        VisuCoreSlicePacksSlices.value = [[0, frame_count]]
+        VisuCoreSlicePacksSlices.size = (1,)
 
-    def _split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
-        VisuCoreSlicePacksSliceDist = visu_pars_["VisuCoreSlicePacksSliceDist"]
+    def _split_VisuCoreSlicePacksSliceDist(self, dataset, visu_pars, sp_index):
+        if "VisuCoreSlicePacksSliceDist" not in visu_pars:
+            distance = float(np.linalg.norm(dataset.affine_of_package(sp_index)[:3, 2]))
+            self._synthesise_parameter(visu_pars, "VisuCoreSlicePacksSliceDist", str(distance))
+            return
+        VisuCoreSlicePacksSliceDist = visu_pars["VisuCoreSlicePacksSliceDist"]
         # spec 7.10: the inter-slice distance is a double, and truncating it
         # loses the fractional millimetres of every non-integer slice spacing
         value = float(VisuCoreSlicePacksSliceDist.array[sp_index])

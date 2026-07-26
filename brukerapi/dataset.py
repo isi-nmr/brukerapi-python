@@ -1204,7 +1204,7 @@ class Dataset:
         """
         if self.type != "2dseq":
             raise UnsupportedDatasetType(f"slice packages are only available for 2dseq, not {self.type}")
-        if self.num_slice_packages <= 1:
+        if len(self.slice_packages_index()) <= 1:
             return [self]
 
         from .splitters import SlicePackageSplitter
