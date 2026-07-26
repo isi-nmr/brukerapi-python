@@ -427,7 +427,12 @@ class Dataset:
 
         :return:
         """
-        parameter_files = self._state["parameter_files"] + self._state.get("optional_parameter_files", [])
+        # `add_parameters` is the documented way to pull in a non-essential
+        # JCAMP-DX file (the study-level `subject`, spec 9/7.5). It used to be
+        # stored as an inert state key, so every caller that asked for the
+        # subject silently got a dataset without it -- and an `id` degenerate
+        # enough that reporting two studies into one directory overwrote.
+        parameter_files = self._state["parameter_files"] + self._state.get("optional_parameter_files", []) + self._state.get("add_parameters", [])
         for file in parameter_files:
             try:
                 self.add_parameter_file(file)
