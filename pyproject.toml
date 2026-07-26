@@ -85,6 +85,5 @@ docstring-code-format = true
 
 [tool.pyrefly]
 project-includes = [
-    "**/*.py*",
-    "**/*.ipynb",
+    "brukerapi/**/*.py",
 ]

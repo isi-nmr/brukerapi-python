@@ -29,8 +29,8 @@ class Folder:
 
     def __init__(
         self,
-        path: str,
-        parent: "Folder" = None,
+        path: str | Path,
+        parent: "Folder | None" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
         dataset_state: dict | None = None,
@@ -147,8 +147,9 @@ class Folder:
 
         self.clean(node=self)
 
-    def query_pass(self, query: str, node: "Folder" = None):
-        children_out = []
+    def query_pass(self, query: str, node: "Folder | None" = None):
+        node = self if node is None else node
+        children_out: list[Folder | Dataset | JCAMPDX] = []
         for child in node.children:
             if isinstance(child, Folder):
                 children_out.append(self.query_pass(query, node=child))
@@ -164,7 +165,7 @@ class Folder:
         node.children = children_out
         return node
 
-    def clean(self, node: "Folder" = None) -> "Folder":
+    def clean(self, node: "Folder | None" = None) -> "Folder":
         """Remove empty folders from the tree
 
         :param node:
@@ -208,9 +209,9 @@ class Folder:
         """List of :obj:`.Study` instances contained in folder and its sub-folders"""
         return TypeFilter(Study).list(self)
 
-    def make_tree(self, *, recursive: bool = True) -> list:
+    def make_tree(self, *, recursive: bool = True) -> list["Folder | Dataset | JCAMPDX"]:
         """Build a folder tree with optimized traversal."""
-        children = []
+        children: list[Folder | Dataset | JCAMPDX] = []
         entries = list(self.path.iterdir())
 
         for path in entries:
@@ -334,8 +335,8 @@ class Study(Folder):
 
     def __init__(
         self,
-        path: str,
-        parent: "Folder" = None,
+        path: str | Path,
+        parent: "Folder | None" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
         dataset_state: dict | None = None,
@@ -415,8 +416,8 @@ class Experiment(Folder):
 
     def __init__(
         self,
-        path: str,
-        parent: "Folder" = None,
+        path: str | Path,
+        parent: "Folder | None" = None,
         recursive: bool | None = None,  # noqa: FBT001
         dataset_index: list | None = None,
         dataset_state: dict | None = None,
@@ -463,7 +464,14 @@ class Experiment(Folder):
 
 
 class Processing(Folder):
-    def __init__(self, path, parent=None, recursive=None, dataset_index=None, dataset_state: dict | None = None):
+    def __init__(
+        self,
+        path: str | Path,
+        parent: "Folder | None" = None,
+        recursive: bool | None = None,  # noqa: FBT001
+        dataset_index: list | None = None,
+        dataset_state: dict | None = None,
+    ):
         """The constructor for Processing class.
 
         :param path: path to a folder

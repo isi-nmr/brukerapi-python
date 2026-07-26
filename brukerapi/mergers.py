@@ -47,8 +47,8 @@ class FrameGroupMerger:
         :param fg_abs_index: index of dimension of the data array to be merged
         :return:
         """
-        slc_re = [slice(None, None, None) for _ in range(dataset.data.ndim)]
-        slc_im = [slice(None, None, None) for _ in range(dataset.data.ndim)]
+        slc_re: list[slice | int] = [slice(None, None, None) for _ in range(dataset.data.ndim)]
+        slc_im: list[slice | int] = [slice(None, None, None) for _ in range(dataset.data.ndim)]
         slc_re[fg_abs_index] = 0
         slc_im[fg_abs_index] = 1
 
