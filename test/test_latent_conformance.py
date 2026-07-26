@@ -142,7 +142,8 @@ def test_an_eight_field_job_is_sized_from_the_scans_that_were_written(tmp_path):
     dataset = Dataset(path, load=LOAD_STAGES["properties"])
 
     assert dataset.shape_storage == (8, 1, 4)
-    assert Dataset(path).data.shape == (4, 1, 4)
+    with pytest.warns(FutureWarning, match="format-dependent legacy semantics"):
+        assert Dataset(path).data.shape == (4, 1, 4)
 
 
 def test_a_64_bit_float_job_is_read_as_float64(tmp_path):

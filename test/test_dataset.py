@@ -1044,7 +1044,12 @@ def test_properties(test_properties):
     reference.pop("subtype", None)
 
     assert reference, f"Property reference for {dataset.path} must not be empty"
-    assert dataset.to_dict() == reference
+    if "affine" in reference and len(dataset.slice_packages_index()) > 1:
+        with pytest.warns(RuntimeWarning, match="multiple slice packages"):
+            properties = dataset.to_dict()
+    else:
+        properties = dataset.to_dict()
+    assert properties == reference
 
 
 def test_dim_type_matches_loaded_data_rank(test_data):
