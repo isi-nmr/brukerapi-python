@@ -17,10 +17,20 @@ from test.synthetic import axial_orientation, stacked_positions, write_2dseq
 
 SAGITTAL_ORIENTATION = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0])
 PV360_NIFTI_ROOT = Path("test/test_data/PV360_StdData")
+# Every reconstruction that ships a NIfTI export, rather than a fixed list, so
+# a dataset added to the corpus is checked without editing this file.
+PV360_NIFTI_EXPORTS = sorted(
+    directory.parent.relative_to(PV360_NIFTI_ROOT).as_posix() for directory in PV360_NIFTI_ROOT.glob("*/pdata/*/nifti") if any(directory.glob("*.nii"))
+)
 
 
-def nifti_sform(path):
-    """Read the NIfTI-1 sform without making nibabel a test dependency."""
+def nifti_affine(path):
+    """Read the NIfTI-1 image affine without making nibabel a test dependency.
+
+    The standard stores it two independent ways, and a file need only carry one.
+    ParaVision writes the quaternion (`qform_code > 0`) and leaves the sform
+    zeroed, so a reader that consults the sform alone finds nothing at all.
+    """
     header = path.read_bytes()[:348]
     if header.startswith(b"version https://git-lfs.github.com/spec/"):
         pytest.skip("ParaVision NIfTI exports are Git LFS pointers; fetch the LFS assets to validate their affines")
@@ -34,10 +44,37 @@ def nifti_sform(path):
     else:
         pytest.fail(f"{path} is not a NIfTI-1 image")
 
-    sform_code = struct.unpack_from(f"{byte_order}h", header, 254)[0]
-    assert sform_code > 0, f"{path} has no sform"
-    sform = np.asarray(struct.unpack_from(f"{byte_order}12f", header, 280)).reshape(3, 4)
-    return np.vstack((sform, (0.0, 0.0, 0.0, 1.0)))
+    qform_code, sform_code = struct.unpack_from(f"{byte_order}2h", header, 252)
+    if sform_code > 0:
+        sform = np.asarray(struct.unpack_from(f"{byte_order}12f", header, 280)).reshape(3, 4)
+        return np.vstack((sform, (0.0, 0.0, 0.0, 1.0)))
+    if qform_code > 0:
+        return nifti_qform_affine(header, byte_order)
+    pytest.fail(f"{path} declares neither an sform nor a qform")
+
+
+def nifti_qform_affine(header, byte_order):
+    """NIfTI-1 "method 2": the affine as a rotation quaternion and a scaling.
+
+    Only the vector part of the unit quaternion is stored; `pixdim[0]` is the
+    handedness factor applied to the third column.
+    """
+    pixdim = struct.unpack_from(f"{byte_order}8f", header, 76)
+    handedness = pixdim[0] if pixdim[0] else 1.0
+    b, c, d, *origin = struct.unpack_from(f"{byte_order}6f", header, 256)
+    a = np.sqrt(max(0.0, 1.0 - (b * b + c * c + d * d)))
+    rotation = np.array(
+        [
+            [a * a + b * b - c * c - d * d, 2 * (b * c - a * d), 2 * (b * d + a * c)],
+            [2 * (b * c + a * d), a * a + c * c - b * b - d * d, 2 * (c * d - a * b)],
+            [2 * (b * d - a * c), 2 * (c * d + a * b), a * a + d * d - b * b - c * c],
+        ]
+    )
+
+    affine = np.eye(4)
+    affine[:3, :3] = rotation @ np.diag((pixdim[1], pixdim[2], handedness * pixdim[3]))
+    affine[:3, 3] = origin
+    return affine
 
 
 def load(tmp_path, **kwargs):
@@ -135,29 +172,24 @@ def test_report_carries_the_affine_and_omits_it_for_spectroscopy(tmp_path):
     assert "affine" not in spectroscopy.to_dict()
 
 
-@pytest.mark.parametrize(
-    "relative_path",
-    [
-        "T1_FLASH/pdata/1",
-        "T1_FLASH_3D_iso/pdata/1",
-        "T1_RARE/pdata/1",
-        "T2_TurboRARE/pdata/1",
-        "UTE3D/pdata/1",
-    ],
-)
-def test_affine_agrees_with_the_paravision_nifti_sform(relative_path):
+@pytest.mark.parametrize("relative_path", PV360_NIFTI_EXPORTS)
+def test_affine_agrees_with_the_paravision_nifti_export(relative_path):
     """PV's NIfTI export is an independent geometry oracle.
 
-    VisuCore geometry is in the DICOM patient frame, whereas NIfTI sforms are
+    VisuCore geometry is in the DICOM patient frame, whereas a NIfTI affine is
     in RAS.  Therefore the equivalent NIfTI affine negates the patient x/y
     axes (spec 12).
+
+    Every volume of an export shares one geometry -- a diffusion series writes
+    one file per direction -- so all of them are checked, which also pins the
+    export as internally consistent.
     """
     reconstruction = PV360_NIFTI_ROOT / relative_path
-    nifti_path = next((reconstruction / "nifti").glob("*.nii"))
     dataset = Dataset(reconstruction / "2dseq", load=LOAD_STAGES["properties"])
 
-    expected_sform = np.diag((-1.0, -1.0, 1.0, 1.0)) @ dataset.affine
-    assert np.allclose(nifti_sform(nifti_path), expected_sform, atol=1e-5)
+    expected = np.diag((-1.0, -1.0, 1.0, 1.0)) @ dataset.affine
+    for nifti_path in sorted((reconstruction / "nifti").glob("*.nii")):
+        assert np.allclose(nifti_affine(nifti_path), expected, atol=1e-5), nifti_path.name
 
 
 def test_slice_spacing_is_centre_to_centre_not_thickness_plus_distance(tmp_path):

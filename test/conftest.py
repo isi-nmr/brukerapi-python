@@ -98,7 +98,10 @@ def _resolve_requested_datasets(opt: str | None):
 
 
 def _is_required_github_data_file(path: Path):
-    return path.name in {"2dseq", "traj"} or path.name.startswith("rawdata.job")
+    # The NIfTI exports are the independent geometry oracle of test_geometry.py.
+    # Leaving them as LFS pointers made that check skip itself in CI, so it was
+    # green whatever it would have found.
+    return path.name in {"2dseq", "traj"} or path.name.startswith("rawdata.job") or path.suffix == ".nii"
 
 
 def _is_git_lfs_pointer(path: Path):

@@ -78,7 +78,10 @@ jobs:
       uses: actions/cache@v5
       with:
         path: test/test_data/PV360_StdData
-        key: pv360-stddata-6f1b67e5dbc3d7b3646a6315959ccf6d4bd02237
+        # The suffix tracks which LFS media conftest smudges. Bumping it when
+        # that set grows rebuilds the cache once, instead of re-downloading the
+        # newly required files on every run, because a cache hit is not re-saved.
+        key: pv360-stddata-6f1b67e5dbc3d7b3646a6315959ccf6d4bd02237-nifti
 
     - name: Run all dataset tests
       run: |
