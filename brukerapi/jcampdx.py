@@ -397,7 +397,13 @@ class GenericParameter(Parameter):
 
     @staticmethod
     def _normalize_line_breaks(value):
-        return re.sub(r"[ \t]*\r?\n[ \t]*", " ", value)
+        # Spec 2.2: ParaVision hard-wraps a value near column 80 by INSERTING a
+        # newline; no character of the value is removed, and the wrap can fall
+        # inside a <...> string or a struct tuple. Undoing it therefore means
+        # deleting the newline and nothing else -- substituting a space invents
+        # one that was never on disk, and stripping the blanks around it deletes
+        # data (leading blanks on a continuation line belong to the value).
+        return re.sub(r"\r?\n", "", value)
 
     @classmethod
     def serialize_value(cls, value, version):
@@ -633,14 +639,10 @@ class JCAMPDX:
         jcampdx_serial = ""
 
         for param in self.params.values():
-            param_str = str(param)
+            jcampdx_serial += f"{JCAMPDX.wrap_lines(str(param))}\n"
 
-            if len(param_str) > 78:
-                param_str = JCAMPDX.wrap_lines(param_str)
-
-            jcampdx_serial += f"{param_str}\n"
-
-        return jcampdx_serial[0:-1] + "\n##END="
+        tail = [*getattr(self, "_end_comments", []), "##END=", *getattr(self, "_trailing_comments", [])]
+        return jcampdx_serial + "\n".join(tail)
 
     def __enter__(self):
         self.load()
@@ -666,10 +668,12 @@ class JCAMPDX:
         self.load_parameters()
 
     def load_parameters(self):
-        self.params = JCAMPDX.read_jcampdx(self.path)
+        self.params, self._end_comments, self._trailing_comments = JCAMPDX.read_jcampdx(self.path, with_comments=True)
 
     def unload(self):
         self.params = {}
+        self._end_comments = []
+        self._trailing_comments = []
 
     def to_dict(self):
         parameters = {}
@@ -859,7 +863,14 @@ class JCAMPDX:
         return key, parameter
 
     @classmethod
-    def read_jcampdx(cls, path):
+    def read_jcampdx(cls, path, *, with_comments=False):
+        """Parse `path` into a dict of parameters.
+
+        With ``with_comments=True`` the comment records that belong to no
+        parameter are returned as well, as
+        ``(params, comments_before_end, comments_after_end)``, so that writing
+        the file back reproduces them.
+        """
         path = as_path(path)
 
         params = {}
@@ -872,13 +883,24 @@ class JCAMPDX:
 
         comments_by_parameter = []
         pending_comments = []
+        end_comments = []
+        trailing_comments = []
         content_without_comments = []
+        seen_end = False
         for line in content.splitlines(keepends=True):
             if line.lstrip().startswith("$$"):
-                pending_comments.append(line.rstrip("\r\n"))
+                # Spec 2.1: a $$ line is a comment record of its own. The ones
+                # around ##END= -- the last @vis block and the "File finished by
+                # PARX" trailer -- belong to no parameter, so they are kept
+                # separately rather than dropped.
+                (trailing_comments if seen_end else pending_comments).append(line.rstrip("\r\n"))
                 continue
             if line.startswith("##"):
-                comments_by_parameter.append(pending_comments)
+                if line.startswith("##END="):
+                    seen_end = True
+                    end_comments = pending_comments
+                else:
+                    comments_by_parameter.append(pending_comments)
                 pending_comments = []
             content_without_comments.append(line)
         content = "".join(content_without_comments)
@@ -900,6 +922,9 @@ class JCAMPDX:
             key, parameter = JCAMPDX.handle_jcampdx_line(f"##{line}", version)
             parameter.comments_before = comments_by_parameter[index]
             params[key] = parameter
+
+        if with_comments:
+            return params, end_comments, trailing_comments
         return params
 
     @classmethod
@@ -957,31 +982,30 @@ class JCAMPDX:
 
     @classmethod
     def wrap_lines(cls, line):
+        """Hard-wrap a record the way ParaVision does: by inserting newlines.
+
+        Splitting on whitespace and rebuilding, as this used to do, deletes the
+        character it breaks at and collapses runs of blanks, so the value read
+        back differs from the one written (spec 2.2). Wrapping a ``$$`` line is
+        worse still: its tail no longer starts with ``$$``, so on re-read it is
+        parsed as value data of the preceding parameter (spec 2.1).
+        """
         line_wraps = []
 
         for physical_line in line.split("\n"):
-            if len(physical_line) <= MAX_LINE_LEN:
+            if physical_line.lstrip().startswith("$$"):
                 line_wraps.append(physical_line)
                 continue
 
-            words = physical_line.split()
-            if not words:
-                line_wraps.append(physical_line)
-                continue
-
-            wrapped = []
-            current = words[0]
-
-            for word in words[1:]:
-                candidate = f"{current} {word}"
-                if len(candidate) > MAX_LINE_LEN:
-                    wrapped.append(current)
-                    current = f" {word}"
-                else:
-                    current = candidate
-
-            wrapped.append(current)
-            line_wraps.extend(wrapped)
+            rest = physical_line
+            while len(rest) > MAX_LINE_LEN:
+                cut = rest.rfind(" ", 1, MAX_LINE_LEN)
+                # Keep the space on the left-hand line: the wrap inserts a
+                # newline, it does not consume the character it breaks at.
+                cut = MAX_LINE_LEN if cut <= 0 else cut + 1
+                line_wraps.append(rest[:cut])
+                rest = rest[cut:]
+            line_wraps.append(rest)
 
         return "\n".join(line_wraps)
 
@@ -992,4 +1016,4 @@ class JCAMPDX:
         :return:
         """
         with Path(path).open("w") as f:
-            f.write(str(self))
+            f.write(f"{self!s}\n")
