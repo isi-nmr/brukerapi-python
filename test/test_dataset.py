@@ -154,9 +154,16 @@ def test_fid_companions_load_as_auxiliary_subdatasets(fid_path, subtypes):
             assert companion.data.ndim == dataset.data.ndim
             assert companion.data.shape == dataset.data.shape
         else:
-            # spec 3.5: a stream of acquisitions of PVM_DigNp complex points
-            assert companion.dim_type == ["sample", "acquisition"]
-            assert companion.data.shape[0] == dataset["PVM_DigNp"].value
+            # Spec 3.5 defines a stream of acquisitions of PVM_DigNp complex
+            # points.  Keep a nonconforming file lossless as a flat vector:
+            # PV51/19's fid.spiral has 1,048,576 points, which is not divisible
+            # by its PVM_DigNp value of 6,898.
+            digitized = dataset["PVM_DigNp"].value
+            if companion.data.size % digitized == 0:
+                assert companion.dim_type == ["sample", "acquisition"]
+                assert companion.data.shape[0] == digitized
+            else:
+                assert companion.dim_type == ["sample"]
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")
