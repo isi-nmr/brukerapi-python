@@ -174,6 +174,32 @@ def visu_pars_records(
     return records
 
 
+FID_DTYPES = {
+    "GO_32BIT_SGN_INT": np.dtype("int32"),
+    "GO_16BIT_SGN_INT": np.dtype("int16"),
+    "GO_32BIT_FLOAT": np.dtype("float32"),
+}
+
+
+def write_fid(directory, acqp, method, *, blocks=1, data=None):
+    """Write an experiment folder (`acqp`, `method`, `fid`) and return the fid path.
+
+    Without `data` the binary is sized from the records themselves --
+    ``ACQ_size[0]`` words per block for ``GO_block_size = continuous`` -- and
+    filled with distinct values, so a test can tell which samples were used.
+    """
+    directory.mkdir(parents=True, exist_ok=True)
+    write_jcampdx(directory / "acqp", acqp)
+    write_jcampdx(directory / "method", method)
+
+    dtype = FID_DTYPES[str(acqp["GO_raw_data_format"])].newbyteorder("<" if str(acqp["BYTORDA"]) == "little" else ">")
+    if data is None:
+        block_size = int(np.atleast_1d(acqp["ACQ_size"])[0]) * int(method["PVM_EncNReceivers"])
+        data = np.arange(1, block_size * blocks + 1, dtype=dtype)
+    write_binary(directory / "fid", data, dtype)
+    return directory / "fid"
+
+
 WORD_TYPES = {
     "_8BIT_UNSGN_INT": np.dtype("uint8"),
     "_16BIT_SGN_INT": np.dtype("int16"),

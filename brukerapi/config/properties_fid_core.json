@@ -135,18 +135,11 @@
       ]
     },
     {
-      "cmd": "int(2 * #PVM_DigNp * @channels // #NSegments)",
-      "conditions": [
-        "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
-      ]
-    },
-    {
       "cmd": "int(2 * #PVM_DigNp * @channels)",
       "conditions": [
-        "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]!='EPSI.ppg'"
-      ]
+        "#GO_block_size!='Standard_KBlock_Format'"
+      ],
+      "comment": "spec 3.1: for GO_block_size=continuous the whole block is digitized data. Dividing by NSegments here dropped every segment but the last, because block_count already counts segments"
     },
     {
       "cmd": "#ACQ_jobs[0][0]",
@@ -344,6 +337,13 @@
       ]
     },
     {
+      "cmd": "#NSegments*#ACQ_size[2]*#NI*#NR",
+      "conditions": [
+        "#GO_block_size!='Standard_KBlock_Format'",
+        "#PULPROG[1:-1]=='EPSI.ppg'"
+      ]
+    },
+    {
       "cmd": "#NSegments*#NI*#NR*(#ACQ_size[2] if len(#ACQ_size)>2 else 1)",
       "conditions": [
         "@scheme_id=='dEPI'"
@@ -477,6 +477,19 @@
     },
     {
       "cmd": [
+        "#PVM_EncMatrix[0]",
+        "#PVM_EncNReceivers",
+        "#PVM_DigNp // #PVM_EncMatrix[0]",
+        "#NSegments",
+        "#ACQ_size[2]"
+      ],
+      "conditions": [
+        "#GO_block_size!='Standard_KBlock_Format'",
+        "#PULPROG[1:-1]=='EPSI.ppg'"
+      ]
+    },
+    {
+      "cmd": [
         "#PVM_EncMatrix[0] * #PVM_EncMatrix[1] // #NSegments",
         "#PVM_EncNReceivers",
         "#NSegments",
@@ -605,6 +618,13 @@
       ]
     },
     {
+      "cmd": [0,4,3,2,1],
+      "conditions": [
+        "#GO_block_size!='Standard_KBlock_Format'",
+        "#PULPROG[1:-1]=='EPSI.ppg'"
+      ]
+    },
+    {
       "cmd": [0,2,3,4,1,5],
       "conditions": [
         "@scheme_id in ['dEPI']"
@@ -700,6 +720,19 @@
       "conditions": [
         "@scheme_id=='EPI'"
       ]
+    },
+    {
+      "cmd": [
+        "#PVM_EncMatrix[0]",
+        "#ACQ_size[2]",
+        "#NSegments * (#PVM_DigNp // #PVM_EncMatrix[0])",
+        "#PVM_EncNReceivers"
+      ],
+      "conditions": [
+        "#GO_block_size!='Standard_KBlock_Format'",
+        "#PULPROG[1:-1]=='EPSI.ppg'"
+      ],
+      "comment": "spec 6.3: matches RECO_inp_size -- read x phase x spectral points x receivers"
     },
     {
       "cmd": [
@@ -816,6 +849,18 @@
         "#ACQ_dim==3",
         "np.atleast_1d(#PVM_EncMatrix).size>2",
         "#ACQ_size[1]==#NPro*#PVM_EncMatrix[2]"
+      ]
+    },
+    {
+      "cmd": [
+        "'k_space_encode_step_0'",
+        "'k_space_encode_step_1'",
+        "'k_space_encode_step_2'",
+        "'channel'"
+      ],
+      "conditions": [
+        "#GO_block_size!='Standard_KBlock_Format'",
+        "#PULPROG[1:-1]=='EPSI.ppg'"
       ]
     },
     {
