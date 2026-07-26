@@ -838,8 +838,13 @@ def test_report_uses_path_and_type_fallback_when_dataset_has_no_id(tmp_path):
     assert reported_paths == [(tmp_path / "23_traj.json", ["scheme_id"])]
 
 
-@pytest.mark.parametrize("parameter", ["RECO_transposition", "VisuCoreTransposition"])
+@pytest.mark.parametrize("parameter", ["RECO_transposition"])
 def test_2dseq_transposition_metadata_does_not_change_stored_data(parameter):
+    """RECO_transposition records what the reconstruction already did (spec 6.9).
+
+    VisuCoreTransposition is the other kind: it describes how each frame is
+    *stored*, so it does have to be undone -- see test_frames.py.
+    """
     dataset = SimpleNamespace(
         path=Path("transposed/2dseq"),
         encoded_dim=2,

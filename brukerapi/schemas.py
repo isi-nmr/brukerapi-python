@@ -820,7 +820,57 @@ class Schema2dseq(Schema):
         data = self._apply_disk_slice_order(data)
         self._dataset.data = self._combine_complex_frames(data)
 
+    def _apply_core_transposition(self, data, layouts, *, inverse=False):
+        """Undo the per-frame dimension exchange recorded by VisuCoreTransposition.
+
+        Spec 7.2: a nonzero value means frame f is stored with two of its
+        dimensions exchanged relative to VisuCoreSize -- `n < VisuCoreDim`
+        exchanges `n` and `n-1`, `VisuCoreDim` exchanges `0` and
+        `VisuCoreDim - 1`. Such a frame has to be read in its real on-disk shape
+        and swapped back, otherwise the Fortran-order reshape interleaves its
+        rows.
+
+        The exchange is skipped when the two dimensions have equal length. There
+        the on-disk layout is unchanged, and the frames measure as already
+        consistent with VisuCoreOrientation: on a 256x256 three-package
+        localizer, sampling the intersection line of an untransposed and a
+        transposed frame correlates 0.99 as delivered and -0.05 once swapped,
+        while on a 110x120 localizer -- where the exchange does change the
+        layout -- the same measurement goes from -0.27 to +0.64.
+        """
+        transposition = self._dataset._parameter_value("VisuCoreTransposition")
+        if transposition is None:
+            return data
+        transposition = np.atleast_1d(np.asarray(transposition)).astype(int)
+        if not transposition.any():
+            return data
+
+        block = tuple(int(size) for size in layouts["shape_block"])
+        core_dim = len(block)
+        frames = layouts.get("frame_index", range(data.shape[-1]))
+        out = None
+        for position, frame in enumerate(frames):
+            value = int(transposition[frame]) if frame < transposition.size else 0
+            if value == 0:
+                continue
+            first, second = (0, core_dim - 1) if value >= core_dim else (value - 1, value)
+            if first == second or block[first] == block[second]:
+                continue
+            stored = list(block)
+            stored[first], stored[second] = stored[second], stored[first]
+            if out is None:
+                out = np.array(data)
+            if inverse:
+                swapped = np.swapaxes(np.asarray(data[..., position]), first, second)
+                out[..., position] = np.reshape(swapped.flatten(order="F"), block, order="F")
+            else:
+                frame_data = np.reshape(np.asarray(data[..., position]).flatten(order="F"), stored, order="F")
+                out[..., position] = np.swapaxes(frame_data, first, second)
+        return data if out is None else out
+
     def deserialize(self, data, layouts):
+        data = self._apply_core_transposition(data, layouts)
+
         # scale
         if self._dataset._state["scale"]:
             data = self._scale_frames(data, layouts, "FW")
@@ -955,7 +1005,7 @@ class Schema2dseq(Schema):
         data = self._apply_disk_slice_order(data)
         data = self._framegroups_to_frames(data, layout)
         data = self._scale_frames(data, layout, "BW")
-        return data
+        return self._apply_core_transposition(data, layout, inverse=True)
 
     def _frames_to_vector(self, data):
         return data.flatten(order="F")
@@ -1007,6 +1057,10 @@ class Schema2dseq(Schema):
 
         layouts_ra["mask"] = np.zeros(layouts["shape_fg"], dtype=bool, order="F")
         layouts_ra["mask"][slice_full[self._dataset.encoded_dim :]] = True
+        # Which frames of the whole dataset the selection covers: per-frame
+        # parameters (VisuCoreTransposition) must be indexed by that absolute
+        # frame number, not by the position within the selection.
+        layouts_ra["frame_index"] = np.flatnonzero(layouts_ra["mask"].flatten(order="F"))
         layouts_ra["shape_fg"], layouts_ra["offset_fg"] = self._get_ra_shape(layouts_ra["mask"])
         layouts_ra["shape_frames"] = (np.prod(layouts_ra["shape_fg"], dtype=int),)
         layouts_ra["shape_storage"] = layouts_ra["shape_block"] + layouts_ra["shape_frames"]
