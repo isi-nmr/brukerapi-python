@@ -596,6 +596,81 @@ class Dataset:
         except KeyError:
             return default
 
+    def _rawdata_job_index(self):
+        """Index of this PV360 rawdata job in ``ACQ_jobs`` (spec 13.1)."""
+        if self.type != "rawdata":
+            return None
+        try:
+            jobs = self["ACQ_jobs"].nested
+        except KeyError:
+            jobs = []
+        if not jobs:
+            return None
+        if len(jobs[0]) == 9:
+            title = f"<{self.subtype}>"
+            return next((index for index, job in enumerate(jobs) if job[-1] == title), None)
+        try:
+            return int(self.subtype.removeprefix("job"))
+        except ValueError:
+            return None
+
+    @property
+    def rawdata_job_settings(self):
+        """The §13.1 settings record paired with this rawdata job, if present."""
+        index = self._rawdata_job_index()
+        try:
+            settings = self["ACQ_ScanPipeJobSettings"].nested
+        except KeyError:
+            settings = []
+        return settings[index] if index is not None and index < len(settings) else None
+
+    @property
+    def rawdata_job_discarded(self):
+        """Whether §13.1 says this job's data is intentionally not written."""
+        settings = self.rawdata_job_settings
+        return bool(settings and str(settings[0]).strip("<>") == "STORE_discard")
+
+    @property
+    def rawdata_stored_scans(self):
+        """Number of scans physically written for this rawdata job (spec 3.3)."""
+        index = self._rawdata_job_index()
+        try:
+            jobs = self["ACQ_jobs"].nested
+        except KeyError:
+            jobs = []
+        if index is None or index >= len(jobs):
+            return None
+        job = jobs[index]
+        job_stored = int(job[6] if len(job) == 9 else job[-1])
+        settings = self.rawdata_job_settings
+        if settings is None or len(settings) <= 9:
+            return job_stored
+        settings_stored = int(settings[9])
+        if settings_stored != job_stored and not getattr(self, "_warned_rawdata_stored_scans", False):
+            warnings.warn(
+                f"ACQ_ScanPipeJobSettings nStoredScans={settings_stored} disagrees with "
+                f"ACQ_jobs nStoredScans={job_stored} for {self.path}; using the settings value",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            self._warned_rawdata_stored_scans = True
+        return settings_stored
+
+    @property
+    def rawdata_channels(self):
+        """Number of receivers recorded for this job (spec 3.3)."""
+        selected = self._parameter_value("ACQ_ReceiverSelectPerChan")
+        fallback = int(self._parameter_value("PVM_EncNReceivers", 1))
+        if selected is not None:
+            values = np.atleast_1d(selected)
+            channels = sum(str(value).strip("<>").casefold() in {"yes", "on", "1"} for value in values)
+            # Some systems expose more physical receiver paths than the job
+            # writes. Only promote the per-channel declaration when it agrees
+            # with the method's logical receiver count.
+            if channels == fallback:
+                return channels
+        return fallback
+
     def _infer_scheme_id(self):
         # Source of truth for format inference:
         # https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md
@@ -1115,6 +1190,12 @@ class Dataset:
         packs = self._parameter_value("VisuCoreSlicePacksSlices")
         if packs is not None:
             return [(int(first), int(count)) for first, count in np.atleast_2d(np.asarray(packs, dtype=int))]
+
+        if self._parameter_value("VisuCorePosition") is None or self._parameter_value("VisuCoreOrientation") is None:
+            # Without geometry there is no evidence for a package boundary.
+            # Keep the dataset loadable (and let affine access report the
+            # missing geometry) rather than treating it as a malformed split.
+            return [(0, int(self._parameter_value("VisuCoreFrameCount", 1)))]
 
         position, orientation = self._frame_geometry()
         count = position.shape[0]

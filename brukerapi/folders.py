@@ -5,7 +5,7 @@ import warnings
 from copy import deepcopy
 from pathlib import Path
 
-from .dataset import Dataset
+from .dataset import LOAD_STAGES, Dataset
 from .exceptions import (
     FilterEvalFalse,
     IncompleteDataset,
@@ -229,7 +229,16 @@ class Folder:
 
             if Dataset.is_supported_path(path, self._dataset_index):
                 try:
-                    children.append(Dataset(path, **self._dataset_state))
+                    if path.stem == "rawdata" and self._dataset_state["load"] >= LOAD_STAGES["parameters"]:
+                        discovery_state = {**self._dataset_state, "load": LOAD_STAGES["parameters"]}
+                        dataset = Dataset(path, **discovery_state)
+                        if dataset.rawdata_job_discarded:
+                            continue
+                        if self._dataset_state["load"] > LOAD_STAGES["parameters"]:
+                            dataset = Dataset(path, **self._dataset_state)
+                    else:
+                        dataset = Dataset(path, **self._dataset_state)
+                    children.append(dataset)
                 except InvalidDataset as error:
                     warnings.warn(f"Skipping invalid dataset {path}: {error}", RuntimeWarning, stacklevel=2)
                     continue
