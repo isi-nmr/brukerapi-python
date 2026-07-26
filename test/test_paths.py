@@ -15,6 +15,7 @@ from brukerapi.dataset import Dataset
 from brukerapi.folders import Experiment, Folder
 from brukerapi.jcampdx import JCAMPDX
 from brukerapi.paths import as_path, file_size, listdir, traverse, with_suffix
+from test.synthetic import write_binary, write_jcampdx
 
 VISU_PARS = """##TITLE=Parameter List, ParaVision 6.0.1
 ##JCAMPDX=4.24
@@ -119,3 +120,48 @@ def test_path_helpers_work_for_both_kinds(study_dir, study_zip):
         assert traverse(proc, "../../acqp").name == "acqp"
         assert traverse(proc, "../../acqp").exists()
         assert with_suffix(proc / "2dseq", ".job0").name == "2dseq.job0"
+
+
+TRAJ_PROJECTIONS = 4
+TRAJ_SAMPLES = 5
+TRAJ = np.arange(2 * TRAJ_SAMPLES * TRAJ_PROJECTIONS, dtype="f8").reshape((2, TRAJ_SAMPLES, TRAJ_PROJECTIONS), order="F")
+
+
+@pytest.fixture
+def radial_zip(tmp_path):
+    """A radial experiment -- acqp, method and traj -- inside an archive."""
+    experiment = tmp_path / "radial" / "23"
+    write_jcampdx(
+        experiment / "acqp",
+        {
+            "ACQ_dim": 2,
+            "PULPROG": "<UTE.ppg>",
+            "NPro": TRAJ_PROJECTIONS,
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+        },
+    )
+    write_jcampdx(experiment / "method", {"Method": "<Bruker:UTE>", "PVM_EncNReceivers": 1})
+    write_binary(experiment / "traj", TRAJ, np.dtype("f8"))
+
+    archive = tmp_path / "radial.zip"
+    with zipfile.ZipFile(archive, "w") as zf:
+        for path in sorted((tmp_path / "radial").rglob("*")):
+            if path.is_file():
+                zf.write(path, str(path.relative_to(tmp_path / "radial")))
+    return zipfile.Path(zipfile.ZipFile(archive))
+
+
+def test_traj_reads_from_an_archive(radial_zip, tmp_path):
+    """A traj sized itself with os.stat, which an archive member cannot answer.
+
+    The failure was a bare TypeError, and a radial fid read from an archive
+    silently lost its trajectory: the error was downgraded to a warning and
+    dataset.traj then raised TrajNotLoaded as if none existed.
+    """
+    from_zip = Dataset(radial_zip / "23" / "traj")
+    from_dir = Dataset(tmp_path / "radial" / "23" / "traj")
+
+    assert from_zip.data.shape == (2, TRAJ_SAMPLES, TRAJ_PROJECTIONS)
+    assert np.array_equal(from_zip.data, from_dir.data)
+    assert np.array_equal(from_zip.data, TRAJ)
