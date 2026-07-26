@@ -173,4 +173,7 @@ def test_fid_3d_radial_layout_includes_the_partition_axis():
     assert encoding["cmd"][-2] == "#PVM_EncMatrix[2]"
     assert permute["cmd"] == [0, 2, 4, 3, 5, 6, 1]
     assert k_space["cmd"][2] == "#PVM_EncMatrix[2]"
-    assert len(dim_type["cmd"]) == 5
+    # one label per stored axis: read, projection, partition, object (NI),
+    # repetition (NR), channel
+    assert len(dim_type["cmd"]) == 6
+    assert dim_type["cmd"][3] == "'object'"

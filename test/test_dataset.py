@@ -251,9 +251,11 @@ def test_3d_radial_stack_of_stars_uses_partition_axis():
         "k_space_encode_step_0",
         "k_space_encode_step_1",
         "k_space_encode_step_2",
+        "object",
         "repetition",
         "channel",
     ]
+    assert len(dataset.dim_type) == len(dataset.k_space)
 
 
 def test_projection_metadata_without_radial_evidence_is_not_inferred_as_radial(tmp_path):
@@ -899,9 +901,9 @@ def test_schema_warns_when_dim_type_does_not_describe_layout_rank():
         SchemaRawdata(dataset)
 
 
-def test_fid_object_order_reorders_slice_axis_and_is_reversible():
+def test_fid_object_order_reorders_the_object_axis_and_is_reversible():
     class ObjectOrderDataset:
-        dim_type = ["k_space_encode_step_0", "slice"]
+        dim_type = ["k_space_encode_step_0", "object"]
 
         def __init__(self):
             self.parameters = {"ACQ_obj_order": SimpleNamespace(value=np.array([0, 2, 4, 1, 3]))}
@@ -933,6 +935,8 @@ def test_fid_to_kspace_matches_decoded_data_and_supports_bart_layout():
         "k_space_encode_step_2": 2,
         "channel": 3,
         "repetition": 9,
+        "echo": 10,
+        "object": 13,
         "slice": 13,
         "average": 14,
     }

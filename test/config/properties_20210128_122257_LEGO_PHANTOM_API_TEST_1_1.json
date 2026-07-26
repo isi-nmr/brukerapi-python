@@ -3714,7 +3714,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel",
             "k_space_encode_step_2"
@@ -3765,7 +3765,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -3812,7 +3812,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -3861,7 +3861,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -3908,7 +3908,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4000,7 +4000,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4047,7 +4047,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4096,7 +4096,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4145,7 +4145,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4194,7 +4194,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4243,7 +4243,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4387,7 +4387,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4436,7 +4436,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4483,8 +4483,8 @@
         "date": "2021-01-28 14:14:41.056000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -4522,8 +4522,8 @@
         "date": "2021-01-28 14:15:30.037000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -4562,7 +4562,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4610,7 +4610,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4659,7 +4659,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4707,8 +4707,8 @@
         "date": "2021-01-28 14:23:25.316000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 1,
@@ -4745,8 +4745,8 @@
         "date": "2021-01-28 14:23:49.210000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -4785,7 +4785,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4831,8 +4831,8 @@
         "date": "2021-01-28 14:25:55.493000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 6.240000000000003e-05,
         "encoded_dim": 1,
@@ -4871,7 +4871,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4918,7 +4918,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -4965,7 +4965,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5012,7 +5012,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5061,7 +5061,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5109,7 +5109,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5158,7 +5158,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5207,7 +5207,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5256,7 +5256,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],
@@ -5303,8 +5303,8 @@
         "date": "2021-01-28 12:55:47.297000+01:00",
         "dim_type": [
             "k_space_encode_step_0",
-            "repetition",
-            "average"
+            "object",
+            "repetition"
         ],
         "dwell_s": 2e-05,
         "encoded_dim": 1,
@@ -5382,7 +5382,7 @@
         "dim_type": [
             "k_space_encode_step_0",
             "k_space_encode_step_1",
-            "slice",
+            "object",
             "repetition",
             "channel"
         ],

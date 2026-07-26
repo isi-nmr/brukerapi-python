@@ -403,6 +403,8 @@ class SlicePackageSplitter(Splitter):
 
     def _split_VisuCoreSlicePacksSliceDist(self, visu_pars_, sp_index):
         VisuCoreSlicePacksSliceDist = visu_pars_["VisuCoreSlicePacksSliceDist"]
-        value = int(VisuCoreSlicePacksSliceDist.array[sp_index])
+        # spec 7.10: the inter-slice distance is a double, and truncating it
+        # loses the fractional millimetres of every non-integer slice spacing
+        value = float(VisuCoreSlicePacksSliceDist.array[sp_index])
         VisuCoreSlicePacksSliceDist.value = value
-        VisuCoreSlicePacksSliceDist.size = 1
+        VisuCoreSlicePacksSliceDist.size = (1,)

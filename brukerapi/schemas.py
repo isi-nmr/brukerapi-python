@@ -27,6 +27,10 @@ BART_DIM_BY_TYPE = {
     "k_space_encode_step_2": BART_PHS2_DIM,
     "channel": BART_COIL_DIM,
     "repetition": BART_TIME_DIM,
+    # spec 5.2: the NI axis counts acquisition objects (slices x echoes x movie
+    # frames), which is what BART calls its slice dimension for a plain
+    # multi-slice scan.
+    "object": BART_SLICE_DIM,
     "slice": BART_SLICE_DIM,
     "average": BART_AVG_DIM,
 }
@@ -264,9 +268,10 @@ class SchemaFid(Schema):
         return self._as_bart(data, axes)
 
     def _reorder_objects(self, data, dir="FW"):
-        """Map the stored acquisition-object order onto the labelled slice axis."""
+        """Apply ACQ_obj_order to the axis that counts acquisition objects (spec 5.2)."""
         dim_type = getattr(self._dataset, "dim_type", ())
-        if "slice" not in dim_type:
+        axis_label = next((label for label in ("object", "slice") if label in dim_type), None)
+        if axis_label is None:
             return data
 
         try:
@@ -274,7 +279,7 @@ class SchemaFid(Schema):
         except KeyError:
             return data
 
-        axis = dim_type.index("slice")
+        axis = dim_type.index(axis_label)
         if object_order.size != data.shape[axis] or np.array_equal(object_order, np.arange(object_order.size)):
             return data
 

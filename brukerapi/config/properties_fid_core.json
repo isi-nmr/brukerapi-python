@@ -841,6 +841,7 @@
         "'k_space_encode_step_0'",
         "'k_space_encode_step_1'",
         "'k_space_encode_step_2'",
+        "'object'",
         "'repetition'",
         "'channel'"
       ],
@@ -867,7 +868,7 @@
       "cmd": [
         "'k_space_encode_step_0'",
         "'k_space_encode_step_1'",
-        "'slice'",
+        "'object'",
         "'repetition'",
         "'channel'",
         "'k_space_encode_step_2'"
@@ -880,7 +881,7 @@
       "cmd": [
         "'k_space_encode_step_0'",
         "'k_space_encode_step_1'",
-        "'slice'",
+        "'object'",
         "'repetition'",
         "'channel'"
       ],
@@ -903,8 +904,8 @@
     {
       "cmd": [
         "'k_space_encode_step_0'",
-        "'repetition'",
-        "'average'"
+        "'object'",
+        "'repetition'"
       ],
       "conditions": [
         "@scheme_id=='SPECTROSCOPY'"

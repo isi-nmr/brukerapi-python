@@ -95,3 +95,26 @@ def test_frame_group_split_honours_the_output_folder(tmp_path):
     written = sorted(path.relative_to(out).as_posix() for path in out.rglob("2dseq"))
     assert written == ["1_FG_ECHO_0/2dseq", "1_FG_ECHO_1/2dseq"]
     assert all(not part.path.exists() for part in parts)
+
+
+def test_slice_package_split_keeps_a_fractional_slice_distance(tmp_path):
+    """Spec 7.10: VisuCoreSlicePacksSliceDist is a double[].
+
+    Casting it to int truncated 0.7 mm to 0 and 1.5 mm to 1 for every split
+    package, which then reports a slice spacing the data does not have.
+    """
+    path = write_2dseq(
+        tmp_path / "4" / "pdata" / "1",
+        frame_groups=(("FG_SLICE", 4),),
+        positions=stacked_positions((-20.0, -20.0, -1.05), (0.0, 0.0, 0.7), 4),
+        frame_thickness=0.7,
+        slice_packs=(0, [(0, 2), (2, 2)]),
+        slice_pack_distance=[0.7, 0.7],
+    )
+    dataset = Dataset(path)
+
+    packages = SlicePackageSplitter().split(dataset, write=False)
+
+    for package in packages:
+        assert package["VisuCoreSlicePacksSliceDist"].value == 0.7
+        assert np.isclose(package.resolution[2], 0.7)

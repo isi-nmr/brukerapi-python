@@ -82,3 +82,86 @@ def test_epsi_keeps_every_stored_complex_sample(tmp_path):
 
     assert dataset.data.size == expected.size
     assert np.array_equal(np.sort_complex(dataset.data.reshape(-1)), np.sort_complex(expected))
+
+
+def kblock_fid(tmp_path, acqp, method, *, blocks, samples_per_block):
+    """A Standard_KBlock_Format fid: real samples first, then zero padding."""
+    block_size = int(np.ceil(int(np.atleast_1d(acqp["ACQ_size"])[0]) * int(method["PVM_EncNReceivers"]) * 4 / 1024.0) * 1024 // 4)
+    stored = np.zeros((block_size, blocks), dtype="<i4")
+    stored[:samples_per_block, :] = np.arange(1, samples_per_block * blocks + 1, dtype="<i4").reshape((samples_per_block, blocks), order="F")
+    return write_fid(tmp_path, acqp, method, data=stored.flatten(order="F"))
+
+
+def test_3d_radial_labels_every_stored_axis(tmp_path):
+    """Spec 5.2: NI counts objects and NR repetitions, and both are stored axes.
+
+    The 3-D radial layout declared a six-axis k-space but only five labels, so
+    NI was labelled `repetition`, NR was labelled `channel`, the receiver axis
+    was unlabelled, and to_kspace(bart=True) refused the array outright.
+    """
+    projections, partitions = 3, 2
+    path = kblock_fid(
+        tmp_path / "3",
+        acqp={
+            "GO_block_size": "Standard_KBlock_Format",
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+            "ACQ_dim": 3,
+            "ACQ_dim_desc": Verbatim("( 3 )\nSpatial Spatial Spatial"),
+            "ACQ_size": np.array([8, projections * partitions, 1]),
+            "ACQ_phase_factor": 1,
+            "PULPROG": "<UTE3D.ppg>",
+            "NPro": projections,
+            "NI": 1,
+            "NR": 1,
+        },
+        method={"Method": "<Bruker:UTE3D>", "PVM_EncMatrix": np.array([4, 4, partitions]), "PVM_EncNReceivers": 1},
+        blocks=projections * partitions,
+        samples_per_block=8,
+    )
+
+    dataset = Dataset(path)
+
+    assert dataset.dim_type == [
+        "k_space_encode_step_0",
+        "k_space_encode_step_1",
+        "k_space_encode_step_2",
+        "object",
+        "repetition",
+        "channel",
+    ]
+    assert len(dataset.dim_type) == dataset.data.ndim
+    assert dataset.to_kspace(bart=True).ndim == 16
+
+
+def test_spectroscopy_labels_objects_and_repetitions(tmp_path):
+    """Spec 5.2: NI is objects per repetition, NR repetitions -- NA is not stored.
+
+    Labelling NR `average` sends a dynamic series to BART's average dimension,
+    where a caller that averages over it destroys the series.
+    """
+    objects, repetitions = 2, 3
+    path = write_fid(
+        tmp_path / "32",
+        acqp={
+            "GO_block_size": "continuous",
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "BYTORDA": "little",
+            "ACQ_dim": 1,
+            "ACQ_dim_desc": "Spectroscopic",
+            "ACQ_size": np.array([8]),
+            "PULPROG": "<PRESS.ppg>",
+            "NI": objects,
+            "NR": repetitions,
+            "NA": 4,
+        },
+        method={"Method": "<Bruker:PRESS>", "PVM_DigNp": 4, "PVM_EncNReceivers": 1},
+        blocks=objects * repetitions,
+    )
+
+    dataset = Dataset(path)
+    bart = dataset.to_kspace(bart=True)
+
+    assert dataset.dim_type == ["k_space_encode_step_0", "object", "repetition"]
+    assert dataset.data.shape == (4, objects, repetitions)
+    assert [(axis, size) for axis, size in enumerate(bart.shape) if size > 1] == [(0, 4), (9, repetitions), (13, objects)]
