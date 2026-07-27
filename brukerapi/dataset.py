@@ -1274,6 +1274,31 @@ class Dataset:
             )
         return self.affine_of_package(0)
 
+    @property
+    def slice_distance(self):
+        """Centre-to-centre slice spacing of each slice package, in mm.
+
+        This is the length of the affine's slice column, so it reports the step
+        the geometry is actually built from: the measured distance between two
+        ``VisuCorePosition`` centres where there are two, the encoded plane step
+        of a 3-D volume, and the declared ``VisuCoreSlicePacksSliceDist`` only
+        where nothing was measured.
+
+        Neither parameter a caller would reach for otherwise gives that number.
+        ``VisuCoreFrameThickness`` is the slab thickness of a 3-D acquisition,
+        not a plane step, and ``resolution[2]`` is zero where the third
+        dimension is not spatial and a cross-package diagonal where the
+        reconstruction holds several packages.
+
+        Spacing is not thickness: a gapped acquisition has slices thinner than
+        the distance between them, and ``VisuCoreFrameThickness`` remains the
+        source for the thickness. One value per package, because packages can
+        be spaced differently (spec 7.10).
+
+        :raise: :UnsupportedDatasetType: if the frames carry no geometry
+        """
+        return [float(np.linalg.norm(self.affine_of_package(package)[:3, 2])) for package in range(len(self.slice_packages_index()))]
+
     def get_slice_packages(self):
         """Return one in-memory 2dseq dataset per slice package.
 
