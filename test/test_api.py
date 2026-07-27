@@ -12,6 +12,7 @@ import pytest
 from brukerapi.cli import report as cli_report
 from brukerapi.cli import split as cli_split
 from brukerapi.dataset import LOAD_STAGES, Dataset
+from brukerapi.exceptions import UnsupportedDatasetType
 from brukerapi.folders import Folder
 from brukerapi.splitters import SlicePackageSplitter
 from test.synthetic import stacked_positions, write_2dseq, write_jcampdx
@@ -79,6 +80,40 @@ def test_metadata_reports_the_same_string_as_the_property_that_reads_it(tmp_path
 
     assert dataset.metadata["visu_subject"]["name"] == "synthetic"
     assert dataset.subj_id == dataset.metadata["visu_subject"]["name"]
+
+
+def test_get_returns_a_default_where_a_property_does_not_resolve(tmp_path):
+    """Which properties a dataset carries is ParaVision-version dependent.
+
+    A recipe whose parameters the files do not contain leaves its property
+    unset, which attribute access can only report as an AttributeError -- so a
+    caller had to wrap every read in try/except, and that swallows typos and
+    genuine recipe errors along with the absence.
+    """
+    with_echo_time = Dataset(study(tmp_path / "with", extra={"VisuAcqEchoTime": 3.5}), load=LOAD_STAGES["properties"])
+    without = Dataset(study(tmp_path / "without"), load=LOAD_STAGES["properties"])
+
+    assert with_echo_time.get("TE") == with_echo_time.TE == 3.5
+    assert not hasattr(without, "TE")
+    assert without.get("TE") is None
+    assert without.get("TE", "n/a") == "n/a"
+
+
+def test_get_still_raises_for_a_name_that_is_not_a_property(tmp_path):
+    """A misspelling must not quietly become the default."""
+    dataset = Dataset(study(tmp_path), load=LOAD_STAGES["properties"])
+
+    with pytest.raises(AttributeError, match="TEE"):
+        dataset.get("TEE")
+
+    # Nor may `get` turn a property's own diagnosis into an absence: a
+    # spectroscopy scan has no image geometry, and says so.
+    spectroscopy = Dataset(
+        write_2dseq(tmp_path / "spectroscopy" / "9" / "pdata" / "1", dim=1, dim_desc=("spectroscopic",), size=(16,), extent=(1.0,), frame_groups=()),
+        load=LOAD_STAGES["properties"],
+    )
+    with pytest.raises(UnsupportedDatasetType, match="rather than purely spatial"):
+        spectroscopy.get("affine")
 
 
 def test_metadata_can_be_exported(tmp_path):
