@@ -61,7 +61,7 @@ using the RARE pulse sequence only.
 
 .. code-block:: python
 
-    study.filter(parameter='PULPROG', operator='==', value='<RARE.ppg>')
+    study.filter(parameter='PULPROG', operator='==', value='RARE.ppg')
     study.filter(type=Dataset)
     study.print()
 

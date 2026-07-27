@@ -64,7 +64,7 @@ def test_rawdata_pv360_branches_match_on_the_parsed_major_version():
         assert "@pv_version.split('.')[0]=='360'" in branch["conditions"]
 
     assert all("ACQ_sw_version" not in " ".join(branch["conditions"]) for branch in config["job_desc"])
-    assert config["pv_version"][0]["cmd"].startswith("#ACQ_sw_version[1:-1]")
+    assert config["pv_version"][0]["cmd"].startswith("(#ACQ_sw_version)")
 
 
 def test_rawdata_job_layout_is_selected_by_record_arity():
@@ -72,7 +72,7 @@ def test_rawdata_job_layout_is_selected_by_record_arity():
 
     assert config["job_desc"] == [
         {
-            "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == '<{}>'.format(@subtype)][0]",
+            "cmd": "[v for v in #ACQ_jobs.nested if v[-1] == @subtype][0]",
             "conditions": ["len(#ACQ_jobs.nested[0])==9"],
         },
         {

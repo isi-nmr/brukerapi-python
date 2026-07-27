@@ -307,7 +307,7 @@ def test_ambiguous_scheme_error_names_pulse_program_and_method():
 
     with pytest.raises(
         UnknownAcqSchemeException,
-        match=r"PULPROG='<customResearchSequence.ppg>', Method='<CustomMethod>'; pass scheme_id=",
+        match=r"PULPROG='customResearchSequence.ppg', Method='CustomMethod'; pass scheme_id=",
     ):
         dataset.load_schema()
 
@@ -491,14 +491,14 @@ def test_2dseq_slice_packages_are_separate_in_memory_datasets():
 @pytest.mark.parametrize(
     ("disk_order", "reverse"),
     [
-        ("<disk_reverse_slice_order>", True),
+        ("disk_reverse_slice_order", True),
         ("disk_normal_slice_order", False),
     ],
 )
 def test_2dseq_disk_slice_order_is_applied_and_reversible(disk_order, reverse):
     dataset = SimpleNamespace(
         _state={"scale": False, "combine_complex": False},
-        dim_type=["spatial", "<FG_SLICE>", "<FG_ECHO>"],
+        dim_type=["spatial", "FG_SLICE", "FG_ECHO"],
         _parameter_value=lambda name, default=None: disk_order if name == "VisuCoreDiskSliceOrder" else default,
     )
     schema = Schema2dseq.__new__(Schema2dseq)
@@ -522,7 +522,7 @@ def test_2dseq_disk_slice_order_uses_third_encoded_axis_for_3d_volume():
     dataset = SimpleNamespace(
         _state={"scale": False, "combine_complex": False},
         encoded_dim=3,
-        dim_type=["spatial", "spatial", "spatial", "<FG_ECHO>"],
+        dim_type=["spatial", "spatial", "spatial", "FG_ECHO"],
         path="3d-volume/2dseq",
         _parameter_value=lambda name, default=None: "disk_reverse_slice_order" if name == "VisuCoreDiskSliceOrder" else default,
     )
@@ -546,7 +546,7 @@ def test_2dseq_disk_slice_order_without_slice_axis_warns_and_leaves_data_unchang
     dataset = SimpleNamespace(
         _state={"scale": False, "combine_complex": False},
         encoded_dim=2,
-        dim_type=["spatial", "spatial", "<FG_ECHO>"],
+        dim_type=["spatial", "spatial", "FG_ECHO"],
         path="no-slice-axis/2dseq",
         _parameter_value=lambda name, default=None: "disk_reverse_slice_order" if name == "VisuCoreDiskSliceOrder" else default,
     )
@@ -876,7 +876,7 @@ def test_2dseq_transposition_metadata_does_not_change_stored_data(parameter):
         shape_storage=(2, 3, 2),
         shape_final=(2, 3, 2),
         _state={"scale": False, "combine_complex": False},
-        dim_type=["spatial", "spatial", "<FG_ECHO>"],
+        dim_type=["spatial", "spatial", "FG_ECHO"],
         _parameter_value=lambda name, default=None: 1 if name == parameter else default,
     )
     schema = Schema2dseq.__new__(Schema2dseq)
@@ -1084,7 +1084,7 @@ def test_data_load(test_data):
                 (
                     axis
                     for axis, dim_type in enumerate(dataset.dim_type)
-                    if str(dim_type).strip("<>").upper() == "FG_COMPLEX"
+                    if str(dim_type).upper() == "FG_COMPLEX"
                 ),
                 None,
             )
@@ -1181,5 +1181,5 @@ def test_add_parameters_loads_the_named_parameter_file(tmp_path):
     dataset = Dataset(path, add_parameters=["subject"], load=LOAD_STAGES["properties"])
 
     assert "subject" in dataset.parameters
-    assert dataset["SUBJECT_id"].value == "<lego_phantom_3>"
-    assert dataset.metadata["subject"]["id"] == "<lego_phantom_3>"
+    assert dataset["SUBJECT_id"].value == "lego_phantom_3"
+    assert dataset.metadata["subject"]["id"] == "lego_phantom_3"

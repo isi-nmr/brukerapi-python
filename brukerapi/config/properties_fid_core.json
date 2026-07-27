@@ -1,7 +1,7 @@
 {
   "pv_version": [
     {
-      "cmd": "#ACQ_sw_version[1:-1].replace('PV-','').replace('PV ','').strip()",
+      "cmd": "(#ACQ_sw_version).replace('PV-','').replace('PV ','').strip()",
       "conditions": [],
       "comment": "spec 7.1/13: version gates compare on this parsed version, so an unlisted point release is not silently unsupported"
     },
@@ -131,7 +131,7 @@
     {
       "cmd": "#ACQ_size.tuple[0] * @channels",
       "conditions": [
-        ["#PULPROG", ["<SPIRAL.ppg>","<DtiSpiral.ppg>"]],
+        ["#PULPROG", ["SPIRAL.ppg","DtiSpiral.ppg"]],
         "@pv_version.split('.')[0]=='5'"
       ]
     },
@@ -161,23 +161,23 @@
       "conditions": [
         ["#PULPROG",
           [
-            "<FLASH.ppg>",
-            "<FLASHAngio.ppg>",
-            "<RAREVTR.ppg>",
-            "<MGE.ppg>",
-            "<RARE.ppg>",
-            "<FLASHAngio.ppg>",
-            "<FcFLASH.ppg>",
-            "<DtiStandard.ppg>",
-            "<FISP.ppg>",
-            "<MSME.ppg>",
-            "<FAIR_RARE.ppg>",
-            "<RAREst.ppg>",
-            "<FLOWMAP.ppg>",
-            "<MDEFT.ppg>",
-            "<igFLASH.ppg>",
-            "<B1Map.ppg>",
-            "<DESS.ppg>"
+            "FLASH.ppg",
+            "FLASHAngio.ppg",
+            "RAREVTR.ppg",
+            "MGE.ppg",
+            "RARE.ppg",
+            "FLASHAngio.ppg",
+            "FcFLASH.ppg",
+            "DtiStandard.ppg",
+            "FISP.ppg",
+            "MSME.ppg",
+            "FAIR_RARE.ppg",
+            "RAREst.ppg",
+            "FLOWMAP.ppg",
+            "MDEFT.ppg",
+            "igFLASH.ppg",
+            "B1Map.ppg",
+            "DESS.ppg"
           ]
         ],
         "#ACQ_dim==2"
@@ -186,7 +186,7 @@
     {
       "cmd": "'CART_3D'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "FLASH.ppg",
             "FLASHAngio.ppg",
@@ -203,7 +203,7 @@
     {
       "cmd": "'FIELD_MAP'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "FieldMap.ppg"
           ]
@@ -213,7 +213,7 @@
     {
       "cmd": "'RADIAL'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "UTE.ppg",
             "UTE3D.ppg"
@@ -224,7 +224,7 @@
     {
       "cmd": "'EPI'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "EPI.ppg",
             "navigatorEPI_OM.ppg",
@@ -240,7 +240,7 @@
     {
       "cmd": "'dEPI'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "DtiEpi.ppg",
             "EPSI.ppg"
@@ -251,7 +251,7 @@
     {
       "cmd": "'SPECTROSCOPY'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "PRESS.ppg",
             "STEAM.ppg",
@@ -269,7 +269,7 @@
     {
       "cmd": "'CSI'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "CSI.ppg"
           ]
@@ -279,7 +279,7 @@
     {
       "cmd": "'SPIRAL'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "SPIRAL.ppg",
             "DtiSpiral.ppg"
@@ -290,7 +290,7 @@
     {
       "cmd": "'ZTE'" ,
       "conditions": [
-        ["#PULPROG[1:-1]",
+        ["#PULPROG",
           [
             "ZTE.ppg"
           ]
@@ -342,7 +342,7 @@
       "cmd": "#NSegments*#ACQ_size[2]*#NI*#NR",
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG=='EPSI.ppg'"
       ]
     },
     {
@@ -484,7 +484,7 @@
       ],
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG=='EPSI.ppg'"
       ]
     },
     {
@@ -616,7 +616,7 @@
       "cmd": [0,4,3,2,1],
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG=='EPSI.ppg'"
       ]
     },
     {
@@ -726,7 +726,7 @@
       ],
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG=='EPSI.ppg'"
       ],
       "comment": "spec 6.3: matches RECO_inp_size -- read x phase x spectral points x receivers"
     },
@@ -853,7 +853,7 @@
       ],
       "conditions": [
         "#GO_block_size!='Standard_KBlock_Format'",
-        "#PULPROG[1:-1]=='EPSI.ppg'"
+        "#PULPROG=='EPSI.ppg'"
       ]
     },
     {

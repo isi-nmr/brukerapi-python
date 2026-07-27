@@ -10,7 +10,7 @@
       "cmd": "'RADIAL'",
       "conditions": [
         [
-          "#PULPROG[1:-1]",
+          "#PULPROG",
           [
             "UTE.ppg",
             "UTE3D.ppg",
@@ -23,7 +23,7 @@
       "cmd": "'SPIRAL'",
       "conditions": [
         [
-          "#PULPROG[1:-1]",
+          "#PULPROG",
           [
             "SPIRAL.ppg",
             "DtiSpiral.ppg"
@@ -35,7 +35,7 @@
       "cmd": "'ZTE'",
       "conditions": [
         [
-          "#PULPROG[1:-1]",
+          "#PULPROG",
           [
             "ZTE.ppg"
           ]

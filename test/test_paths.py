@@ -86,7 +86,7 @@ def test_parameters_resolve_through_relative_paths(study_dir, study_zip):
     """``../../acqp`` resolves inside an archive, where ``..`` is not collapsed."""
     dataset = Dataset(study_zip / "1" / "pdata" / "1" / "2dseq", scale=False,
                       parameter_files=["acqp"])
-    assert dataset["ACQ_scan_name"].value == "<demo>"
+    assert dataset["ACQ_scan_name"].value == "demo"
 
 
 def test_folder_traverses_an_archive(study_zip):

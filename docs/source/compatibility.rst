@@ -105,3 +105,10 @@ Data contract and limitations
   in PV5.1), contiguous frames with a common orientation are treated as one
   package. Consequently two adjacent inferred packages with the same
   orientation cannot be distinguished.
+* ``Dataset.slice_distance`` is the centre-to-centre slice spacing of each
+  slice package, in mm -- the length of that same slice column, so it is the
+  step the geometry is built from. It is not the slice *thickness*: a gapped
+  acquisition has slices thinner than the distance between them, and
+  ``VisuCoreFrameThickness`` stays the source for the thickness (for a 3-D
+  acquisition that parameter is the whole slab, not a plane step). It is
+  available wherever ``affine_of_package`` is.

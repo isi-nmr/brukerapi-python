@@ -181,7 +181,7 @@ class SchemaFid(Schema):
     def continuous_train(self):
         """Whether §5.3 declares a phase-factor continuous acquisition train."""
         value = self._dataset._parameter_value("ACQ_scan_size")
-        declared = None if value is None else str(value).strip("<>").casefold() == "acq_phase_factor_scans"
+        declared = None if value is None else str(value).casefold() == "acq_phase_factor_scans"
         return self._declared_or_inferred(
             "ACQ_scan_size",
             declared,
@@ -193,7 +193,7 @@ class SchemaFid(Schema):
     def mirror_odd_lines(self):
         """Whether a selected reconstruction requests §6.2 odd-line reversal."""
         value = self._dataset._parameter_value("RECO_inp_order")
-        declared = None if value is None else str(value).strip("<>").upper() == "REV_ALT_ROWS"
+        declared = None if value is None else str(value).upper() == "REV_ALT_ROWS"
         return self._declared_or_inferred(
             "RECO_inp_order",
             declared,
@@ -930,14 +930,14 @@ class Schema2dseq(Schema):
         return self._combine_complex_frames(data)
 
     def _frame_group_axis(self, name):
-        normalized_name = name.strip("<>").upper()
+        normalized_name = name.upper()
         for axis, dim_type in enumerate(self._dataset.dim_type):
-            if str(dim_type).strip("<>").upper() == normalized_name:
+            if str(dim_type).upper() == normalized_name:
                 return axis
         return None
 
     def _apply_disk_slice_order(self, data):
-        disk_order = str(self._dataset._parameter_value("VisuCoreDiskSliceOrder", "")).strip("<>").lower()
+        disk_order = str(self._dataset._parameter_value("VisuCoreDiskSliceOrder", "")).lower()
         if disk_order != "disk_reverse_slice_order":
             return data
 

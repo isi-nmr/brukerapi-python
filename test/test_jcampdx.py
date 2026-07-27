@@ -48,12 +48,55 @@ def test_jcampdx(test_jcampdx_data):
             assert value_ref == value_test
 
 
-def test_parse_value_preserves_delimiters_inside_angle_brackets():
+def test_a_string_is_read_without_its_delimiters():
+    """Spec 2.2: `<...>` delimits a string, so the brackets are not its value.
+
+    Returning them meant every consumer had to strip them, which the library
+    itself did in 26 places, and which the `metadata` surface never did -- so
+    two brukerapi APIs reported different values for one parameter.
+    """
+    assert GenericParameter.parse_value("<abc>") == "abc"
+    assert np.array_equal(GenericParameter.parse_value("<a> <b>"), np.array(["a", "b"]))
+    # A string that happens to look like a number stays a string.
+    assert np.array_equal(GenericParameter.parse_value("<1> <2>"), np.array(["1", "2"]))
+
+
+def test_an_empty_string_is_read_as_the_empty_string():
+    """`<>` is a string with nothing in it, which is what `''` says.
+
+    A parameter written with no value at all reads the same way; the two are
+    not distinguishable by value.
+    """
+    assert GenericParameter.parse_value("<>") == ""
+    assert np.array_equal(GenericParameter.parse_value("<> <>"), np.array(["", ""]))
+
+
+def test_a_string_parameter_is_written_back_inside_its_delimiters():
+    """Reading a value and putting it back must not change what is on disk.
+
+    Nothing about a Python string says whether it is a JCAMP string or an enum
+    symbol, so the parameter keeps whichever form it was written in: a struct
+    of strings stays delimited, an enum stays bare.
+    """
+    descriptor = GenericParameter("##$VisuFGOrderDesc", "( 1 )", "(9, <FG_SLICE>, <>, 0, 2)", "5.01")
+    descriptor.value = descriptor.value
+    assert descriptor.val_str == "(9, <FG_SLICE>, <>, 0, 2)"
+
+    units = GenericParameter("##$VisuCoreDataUnits", "( 2, 65 )", "<a.u.> <mm>", "5.01")
+    units.value = units.value[0]
+    assert units.val_str == "<a.u.>"
+
+    frame_type = GenericParameter("##$VisuCoreFrameType", "( 1 )", "MAGNITUDE_IMAGE", "5.01")
+    frame_type.value = "COMPLEX_IMAGE"
+    assert frame_type.val_str == "COMPLEX_IMAGE"
+
+
+def test_parse_value_does_not_split_a_string_on_a_delimiter_it_contains():
     enum = "(operation, <[1H] TX Volume, RX Surface Array>)"
     struct = "(7, <label, with comma) and parenthesis>, 9)"
 
-    assert GenericParameter.parse_value(enum) == ["operation", "<[1H] TX Volume, RX Surface Array>"]
-    assert GenericParameter.parse_value(struct) == [7, "<label, with comma) and parenthesis>", 9]
+    assert GenericParameter.parse_value(enum) == ["operation", "[1H] TX Volume, RX Surface Array"]
+    assert GenericParameter.parse_value(struct) == [7, "label, with comma) and parenthesis", 9]
 
 
 def test_parse_value_of_an_empty_parameter():
@@ -66,18 +109,18 @@ def test_parse_value_of_an_empty_parameter():
     assert GenericParameter.parse_value(" ") == ""
 
 
-def test_parallel_lists_preserve_delimiters_inside_angle_brackets():
+def test_parallel_lists_do_not_split_a_string_on_a_delimiter_it_contains():
     value = "(first, <Display, One>) (second, <Display) Two, value>)"
 
     parts = GenericParameter.split_parallel_lists(value)
 
     assert [GenericParameter.parse_value(part) for part in parts] == [
-        ["first", "<Display, One>"],
-        ["second", "<Display) Two, value>"],
+        ["first", "Display, One"],
+        ["second", "Display) Two, value"],
     ]
 
 
-def test_jcampdx_get_value_preserves_enum_display_name(tmp_path):
+def test_jcampdx_get_value_keeps_the_whole_enum_display_name(tmp_path):
     path = tmp_path / "configscan"
     path.write_text(
         "##TITLE=Parameter List\n"
@@ -89,7 +132,7 @@ def test_jcampdx_get_value_preserves_enum_display_name(tmp_path):
 
     assert JCAMPDX(path).get_value("CONFIG_SCAN_operation_mode") == [
         "operation",
-        "<[1H] TX Volume, RX Surface Array>",
+        "[1H] TX Volume, RX Surface Array",
     ]
 
 
@@ -104,14 +147,14 @@ def test_run_length_expansion_handles_angle_bracket_strings():
 
     assert np.array_equal(
         parameter.value,
-        np.array(["start", "<Name, display value>", "<Name, display value>", "end"]),
+        np.array(["start", "Name, display value", "Name, display value", "end"]),
     )
 
 
 def test_run_length_expansion_handles_multiple_and_nested_runs():
     parameter = GenericParameter("##$VALUES", "", "@2*(1) @2*(@2*(<enum>))", "4.24")
 
-    assert np.array_equal(parameter.value, np.array(["1", "1", "<enum>", "<enum>", "<enum>", "<enum>"]))
+    assert np.array_equal(parameter.value, np.array(["1", "1", "enum", "enum", "enum", "enum"]))
 
 
 def test_jcampdx_data_parameter_parses_multiline_xy_pairs(tmp_path):
@@ -206,7 +249,7 @@ def test_a_geometry_object_is_an_ordinary_nested_struct(tmp_path):
     assert np.array_equal(rotation, [1, 0, 0, 0, -1, 0, 0, 0, -1])
     assert np.array_equal(offset, [0, 0, 0])
     assert np.array_equal(first[0][1], [25, 25, 9])
-    assert np.array_equal(first[0][2], ["<+R;read>", "<+P;phase>", "<+S;slice>"])
+    assert np.array_equal(first[0][2], ["+R;read", "+P;phase", "+S;slice"])
     assert first[1:] == [5, 1, 256, 1, 0, "No"]
     assert np.array_equal(second[0][0][0], [0, -1, 0, 0, 0, -1, 1, 0, 0])
 
@@ -247,7 +290,7 @@ def test_parse_value_joins_a_wrap_between_parallel_lists():
         "5.0",
     ).value
 
-    assert value == [[1, "<FIRST>"], [2, "<SECOND>"]]
+    assert value == [[1, "FIRST"], [2, "SECOND"]]
 
 
 def test_wrap_lines_respects_78_columns_and_preserves_tokens():
@@ -329,7 +372,7 @@ def test_jcampdx_keeps_double_hash_inside_bracketed_value(tmp_path):
         "##END=\n"
     )
 
-    assert JCAMPDX(path).get_value("PULPROG") == "<HpMode,On##$EndBis,04,FA#>"
+    assert JCAMPDX(path).get_value("PULPROG") == "HpMode,On##$EndBis,04,FA#"
 
 
 def test_jcampdx_record_without_assignment_raises_typed_error():
@@ -350,7 +393,7 @@ def test_load_parameter_allows_hash_and_dollar_in_value(tmp_path):
     key, parameter = JCAMPDX.load_parameter(path, "VALUE")
 
     assert key == "VALUE"
-    assert parameter.value == "<cost $5 #tag>"
+    assert parameter.value == "cost $5 #tag"
 
 
 def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
@@ -422,8 +465,8 @@ def test_a_wrap_inside_a_string_does_not_invent_a_space(tmp_path):
 
     parameters = JCAMPDX(path)
 
-    assert [element[1] for element in parameters["ACQ_coil_elements"].value] == ["<1H>", "<1H>"]
-    assert parameters["ExcPulse"].value[1] == "<gauss.exc>"
+    assert [element[1] for element in parameters["ACQ_coil_elements"].value] == ["1H", "1H"]
+    assert parameters["ExcPulse"].value[1] == "gauss.exc"
 
 
 def test_a_wrap_at_a_space_keeps_exactly_one_space(tmp_path):
@@ -556,11 +599,13 @@ def test_escaped_delimiters_inside_a_string_are_not_delimiters(tmp_path):
 
     parameters = JCAMPDX(path)
 
+    # The escapes stay in the value: they are content, and keeping them verbatim
+    # is what lets the descriptor be written back exactly as it was read.
     assert parameters["RecoStageEdges"].value == [
-        ["<input>", 0, "<Q-\\>S>"],
-        ["<compute>", 0, "<Q0-\\>CAST0>"],
+        ["input", 0, "Q-\\>S"],
+        ["compute", 0, "Q0-\\>CAST0"],
     ]
-    assert parameters["RecoStageNodes"].value[2] == "<RecoFileSource Q{numChan=1;byteOrder=\\<BYTORDA\\>;}>"
+    assert parameters["RecoStageNodes"].value[2] == "RecoFileSource Q{numChan=1;byteOrder=\\<BYTORDA\\>;}"
 
 
 def test_a_nested_struct_keeps_its_inner_tuple(tmp_path):
@@ -576,7 +621,7 @@ def test_a_nested_struct_keeps_its_inner_tuple(tmp_path):
     )
 
     assert JCAMPDX(path)["AdjKnownList"].value == [
-        ["EMPTY", "<NO_ADJUSTMENT>", "<>", "on_demand", "HANDLE_ACQUISITION"],
+        ["EMPTY", "NO_ADJUSTMENT", "", "on_demand", "HANDLE_ACQUISITION"],
         "No",
         "No",
     ]
@@ -599,7 +644,7 @@ def test_a_trailing_backslash_in_a_string_is_content_not_an_escape(tmp_path):
         "##END=\n"
     )
 
-    assert JCAMPDX(path)["VisuStudyDescription"].value == "<\\>"
+    assert JCAMPDX(path)["VisuStudyDescription"].value == "\\"
 
 
 def test_the_last_parameter_survives_a_file_without_an_end_marker(tmp_path):

@@ -32,8 +32,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_DIFFUSION>"
+            "FG_SLICE",
+            "FG_DIFFUSION"
         ],
         "dwell_s": 2.8e-06,
         "encoded_dim": 2,
@@ -252,6 +252,9 @@
             128,
             175
         ],
+        "slice_distance": [
+            1.0499999999999998
+        ],
         "slope": [
             41.818209641992354,
             41.818209641992354,
@@ -463,8 +466,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_DTI>"
+            "FG_SLICE",
+            "FG_DTI"
         ],
         "dwell_s": 2.8e-06,
         "encoded_dim": 2,
@@ -623,6 +626,9 @@
             128,
             115
         ],
+        "slice_distance": [
+            1.0499999999999998
+        ],
         "slope": [
             5.703162738033572e-10,
             5.703162738033572e-10,
@@ -774,8 +780,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_DIFFUSION>"
+            "FG_SLICE",
+            "FG_DIFFUSION"
         ],
         "dwell_s": 2.8e-06,
         "encoded_dim": 2,
@@ -1144,6 +1150,9 @@
             128,
             325
         ],
+        "slice_distance": [
+            1.0499999999999998
+        ],
         "slope": [
             42.265919849004014,
             42.265919849004014,
@@ -1505,8 +1514,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_DTI>"
+            "FG_SLICE",
+            "FG_DTI"
         ],
         "dwell_s": 2.8e-06,
         "encoded_dim": 2,
@@ -1664,6 +1673,9 @@
             128,
             128,
             115
+        ],
+        "slice_distance": [
+            1.0499999999999998
         ],
         "slope": [
             5.703162736795691e-10,
@@ -1855,7 +1867,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -1905,6 +1917,9 @@
             384,
             384,
             9
+        ],
+        "slice_distance": [
+            0.9999999999999992
         ],
         "slope": [
             1.0110652119312826,
@@ -1998,6 +2013,9 @@
             96,
             1
         ],
+        "slice_distance": [
+            0.125
+        ],
         "slope": [
             0.2549454820972602
         ]
@@ -2035,7 +2053,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 5.2e-06,
         "encoded_dim": 2,
@@ -2086,6 +2104,9 @@
             256,
             9
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             3.3552416637796436,
             3.3552416637796436,
@@ -2131,7 +2152,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 7.499999999999999e-06,
         "encoded_dim": 2,
@@ -2181,6 +2202,9 @@
             256,
             256,
             9
+        ],
+        "slice_distance": [
+            0.9999999999999992
         ],
         "slope": [
             3.7060712879070272,
@@ -2239,8 +2263,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -2339,6 +2363,9 @@
             192,
             55
         ],
+        "slice_distance": [
+            1.3000000000000003
+        ],
         "slope": [
             9.175818853906016,
             9.175818853906016,
@@ -2430,8 +2457,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ISA>",
-            "<FG_SLICE>"
+            "FG_ISA",
+            "FG_SLICE"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -2505,6 +2532,9 @@
             192,
             30
         ],
+        "slice_distance": [
+            1.3000000000000003
+        ],
         "slope": [
             1,
             1,
@@ -2571,7 +2601,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 2.4e-06,
         "encoded_dim": 2,
@@ -2617,6 +2647,9 @@
             128,
             96,
             5
+        ],
+        "slice_distance": [
+            1.25
         ],
         "slope": [
             44.029659425184775,
@@ -2669,7 +2702,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 6.4e-06,
         "encoded_dim": 2,
@@ -2720,6 +2753,9 @@
             256,
             256,
             8
+        ],
+        "slice_distance": [
+            1.0
         ],
         "slope": [
             3.4421158749619405,
@@ -2779,7 +2815,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": 6.4e-06,
         "encoded_dim": 2,
@@ -2826,6 +2862,9 @@
             256,
             256,
             6
+        ],
+        "slice_distance": [
+            1.0
         ],
         "slope": [
             1,
@@ -2879,7 +2918,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -2930,6 +2969,9 @@
             256,
             256,
             8
+        ],
+        "slice_distance": [
+            0.8
         ],
         "slope": [
             0.9648777393544125,
@@ -2989,7 +3031,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -3036,6 +3078,9 @@
             256,
             256,
             6
+        ],
+        "slice_distance": [
+            0.8
         ],
         "slope": [
             1,
@@ -3089,7 +3134,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -3140,6 +3185,9 @@
             256,
             256,
             8
+        ],
+        "slice_distance": [
+            0.8
         ],
         "slope": [
             0.9597664168090889,
@@ -3199,7 +3247,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": 6.7e-06,
         "encoded_dim": 2,
@@ -3246,6 +3294,9 @@
             256,
             256,
             6
+        ],
+        "slice_distance": [
+            0.8
         ],
         "slope": [
             1,
@@ -3336,6 +3387,9 @@
             128,
             1
         ],
+        "slice_distance": [
+            0.1953125
+        ],
         "slope": [
             7172.934342283746
         ]
@@ -3359,7 +3413,7 @@
             4385.964912280701,
             256,
             1,
-            "<Navigator>"
+            "Navigator"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3388,7 +3442,7 @@
             178571.42857142855,
             700,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3417,7 +3471,7 @@
             178571.42857142855,
             1300,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3446,7 +3500,7 @@
             4385.964912280701,
             256,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3475,7 +3529,7 @@
             20000,
             16960,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3504,7 +3558,7 @@
             74626.86567164179,
             2592,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3533,7 +3587,7 @@
             96153.84615384616,
             2304,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3562,7 +3616,7 @@
             66666.66666666667,
             2304,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3591,7 +3645,7 @@
             74626.86567164179,
             10560,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3620,7 +3674,7 @@
             208333.33333333334,
             5,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3649,7 +3703,7 @@
             78125,
             1536,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3678,7 +3732,7 @@
             74626.86567164179,
             2048,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3707,7 +3761,7 @@
             74626.86567164179,
             2048,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",
@@ -3736,7 +3790,7 @@
             200000,
             51360,
             1,
-            "<job0>"
+            "job0"
         ],
         "numpy_dtype": "int32",
         "pv_version": "360.3.6",

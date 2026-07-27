@@ -79,6 +79,9 @@
             128,
             1
         ],
+        "slice_distance": [
+            0.390625
+        ],
         "slope": [
             182.269660998766
         ]
@@ -117,7 +120,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_FLOW>"
+            "FG_FLOW"
         ],
         "dwell_s": 6.666666666666667e-06,
         "encoded_dim": 2,
@@ -163,6 +166,9 @@
             512,
             2
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.000915569254904989,
             0.000915569254904989
@@ -201,8 +207,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -260,6 +266,9 @@
             128,
             14
         ],
+        "slice_distance": [
+            5.0
+        ],
         "slope": [
             151.31449775852,
             151.31449775852,
@@ -310,7 +319,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -356,6 +365,9 @@
             64,
             4
         ],
+        "slice_distance": [
+            5.0
+        ],
         "slope": [
             565.46586457527,
             565.46586457527,
@@ -397,8 +409,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>",
-            "<FG_IRMODE>"
+            "FG_MOVIE",
+            "FG_IRMODE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -454,6 +466,9 @@
             64,
             10
         ],
+        "slice_distance": [
+            1.5
+        ],
         "slope": [
             50.4672977064193,
             50.6269768753175,
@@ -500,8 +515,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 4.1999999999999945e-06,
         "encoded_dim": 2,
@@ -572,6 +587,9 @@
             64,
             27
         ],
+        "slice_distance": [
+            5.0
+        ],
         "slope": [
             278.415440065867,
             278.415440065867,
@@ -636,7 +654,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>"
+            "FG_MOVIE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -695,6 +713,9 @@
             128,
             128,
             16
+        ],
+        "slice_distance": [
+            2.0
         ],
         "slope": [
             65.0506197119759,
@@ -757,8 +778,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -922,6 +943,9 @@
             128,
             120
         ],
+        "slice_distance": [
+            2.0
+        ],
         "slope": [
             257.301041366432,
             257.301041366432,
@@ -1084,7 +1108,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -1132,6 +1156,9 @@
             64,
             4
         ],
+        "slice_distance": [
+            2.0
+        ],
         "slope": [
             61.0842873359424,
             61.0842873359424,
@@ -1172,7 +1199,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 3.799999999999998e-06,
         "encoded_dim": 2,
@@ -1229,6 +1256,11 @@
             256,
             15
         ],
+        "slice_distance": [
+            2.0,
+            2.0,
+            2.0
+        ],
         "slope": [
             68.0388746198903,
             68.0388746198903,
@@ -1280,7 +1312,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
@@ -1325,6 +1357,9 @@
             128,
             128,
             4
+        ],
+        "slice_distance": [
+            1.5
         ],
         "slope": [
             2.49152751238897,
@@ -1413,6 +1448,9 @@
             128,
             1
         ],
+        "slice_distance": [
+            0.390625
+        ],
         "slope": [
             1.37425787550869
         ]
@@ -1497,6 +1535,9 @@
             128,
             1
         ],
+        "slice_distance": [
+            0.390625
+        ],
         "slope": [
             1.41252549223342
         ]
@@ -1544,6 +1585,9 @@
             32,
             1
         ],
+        "slice_distance": [
+            1.5625
+        ],
         "slope": [
             0.610878945064932
         ]
@@ -1585,7 +1629,7 @@
             "spatial",
             "spatial",
             "spatial",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 2.5e-06,
         "encoded_dim": 3,
@@ -1632,6 +1676,9 @@
             128,
             2
         ],
+        "slice_distance": [
+            0.390625
+        ],
         "slope": [
             0.0015559824536877,
             0.0015559824536877
@@ -1643,7 +1690,7 @@
         "date": "2020-06-16 15:13:18",
         "dim_type": [
             "spectroscopic",
-            "<FG_CYCLE>"
+            "FG_CYCLE"
         ],
         "dwell_s": null,
         "encoded_dim": 1,
@@ -1792,7 +1839,7 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>"
+            "FG_SLICE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -1836,6 +1883,9 @@
             256,
             256,
             3
+        ],
+        "slice_distance": [
+            4.0
         ],
         "slope": [
             153.274237284458,
@@ -1890,8 +1940,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>",
-            "<FG_MOVIE>"
+            "FG_ECHO",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -1967,6 +2017,9 @@
             128,
             30
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             98.9442691872253,
             98.9442691872253,
@@ -2040,8 +2093,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>",
-            "<FG_MOVIE>"
+            "FG_ISA",
+            "FG_MOVIE"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -2116,6 +2169,9 @@
             128,
             30
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.001953125,
             0.001953125,
@@ -2188,8 +2244,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>",
-            "<FG_ECHO>"
+            "FG_ISA",
+            "FG_ECHO"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -2259,6 +2315,9 @@
             128,
             25
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.001953125,
             0.001953125,
@@ -2320,8 +2379,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1.5312499999999972e-06,
         "encoded_dim": 2,
@@ -2890,6 +2949,9 @@
             128,
             525
         ],
+        "slice_distance": [
+            1.5
+        ],
         "slope": [
             0.00396825760804928,
             0.00396825760804928,
@@ -3449,8 +3511,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_DTI>",
-            "<FG_SLICE>"
+            "FG_DTI",
+            "FG_SLICE"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -3822,6 +3884,9 @@
             128,
             128,
             330
+        ],
+        "slice_distance": [
+            1.5
         ],
         "slope": [
             1e-06,
@@ -4207,7 +4272,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>"
+            "FG_ECHO"
         ],
         "dwell_s": 8.4e-06,
         "encoded_dim": 2,
@@ -4267,6 +4332,9 @@
             128,
             16
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.00166073135632915,
             0.00166073135632915,
@@ -4318,7 +4386,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -4366,6 +4434,9 @@
             128,
             5
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.00390625,
             0.00390625,
@@ -4406,7 +4477,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ISA>"
+            "FG_ISA"
         ],
         "dwell_s": null,
         "encoded_dim": 2,
@@ -4454,6 +4525,9 @@
             128,
             5
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             0.00390625,
             0.00390625,
@@ -4496,8 +4570,8 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_ECHO>",
-            "<FG_CARDIAC_MOVIE>"
+            "FG_ECHO",
+            "FG_CARDIAC_MOVIE"
         ],
         "dwell_s": 3.3333333333333333e-06,
         "encoded_dim": 2,
@@ -4552,6 +4626,9 @@
             256,
             256,
             10
+        ],
+        "slice_distance": [
+            1.0
         ],
         "slope": [
             0.000189802173865093,
@@ -4609,8 +4686,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 6.4e-06,
         "encoded_dim": 2,
@@ -4726,6 +4803,9 @@
             256,
             72
         ],
+        "slice_distance": [
+            2.0
+        ],
         "slope": [
             76.6238619262818,
             76.6238619262818,
@@ -4837,8 +4917,8 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>"
+            "FG_ECHO",
+            "FG_SLICE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -4890,6 +4970,9 @@
             256,
             8
         ],
+        "slice_distance": [
+            4.0
+        ],
         "slope": [
             295.909058565224,
             295.909058565224,
@@ -4937,9 +5020,9 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>",
-            "<FG_CYCLE>"
+            "FG_ECHO",
+            "FG_SLICE",
+            "FG_CYCLE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -5003,6 +5086,9 @@
             256,
             18
         ],
+        "slice_distance": [
+            3.0
+        ],
         "slope": [
             76.2645359359099,
             76.2645359359099,
@@ -5058,9 +5144,9 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_MOVIE>",
-            "<FG_IRMODE>",
-            "<FG_CYCLE>"
+            "FG_MOVIE",
+            "FG_IRMODE",
+            "FG_CYCLE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -5128,6 +5214,9 @@
             128,
             20
         ],
+        "slice_distance": [
+            1.0
+        ],
         "slope": [
             116.699247196268,
             116.699247196268,
@@ -5189,9 +5278,9 @@
         "dim_type": [
             "spatial",
             "spatial",
-            "<FG_ECHO>",
-            "<FG_SLICE>",
-            "<FG_MOVIE>"
+            "FG_ECHO",
+            "FG_SLICE",
+            "FG_MOVIE"
         ],
         "dwell_s": 1e-05,
         "encoded_dim": 2,
@@ -5257,6 +5346,9 @@
             128,
             20
         ],
+        "slice_distance": [
+            2.5
+        ],
         "slope": [
             161.012696069596,
             161.012696069596,
@@ -5314,7 +5406,7 @@
             "spatial",
             "spatial",
             "frame",
-            "<FG_CYCLE>"
+            "FG_CYCLE"
         ],
         "dwell_s": 5e-06,
         "encoded_dim": 2,
@@ -5359,6 +5451,9 @@
             256,
             256,
             2
+        ],
+        "slice_distance": [
+            1.0
         ],
         "slope": [
             396.459816812455,
@@ -5444,6 +5539,9 @@
             256,
             10,
             1
+        ],
+        "slice_distance": [
+            0.5
         ],
         "slope": [
             140.677147843604

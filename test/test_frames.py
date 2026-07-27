@@ -89,7 +89,7 @@ def test_frame_group_values_follow_the_descriptor_window(tmp_path):
 
     values = dataset.frame_group_values
 
-    assert dataset.dim_type == ["spatial", "spatial", "<FG_ECHO>", "<FG_SLICE>"]
+    assert dataset.dim_type == ["spatial", "spatial", "FG_ECHO", "FG_SLICE"]
     assert values["VisuAcqEchoTime"].shape == (1, 1, 3, 1)
     assert values["VisuCorePosition"].shape == (1, 1, 1, 3, 3)
     assert values["VisuCoreOrientation"].shape == (1, 1, 1, 3, 9)
