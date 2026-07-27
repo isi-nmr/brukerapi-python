@@ -1,7 +1,7 @@
 {
   "subj_id": [
     {
-      "cmd": "#SUBJECT_id[1:-1]",
+      "cmd": "#SUBJECT_id",
       "conditions": [
 
       ]
@@ -50,13 +50,13 @@
   ],
   "date": [
     {
-        "cmd": "datetime.datetime.strptime(#ACQ_time,'<%Y-%m-%dT%X,%f%z>')",
+        "cmd": "datetime.datetime.strptime(#ACQ_time,'%Y-%m-%dT%X,%f%z')",
         "conditions": [
           "'T' in #ACQ_time"
         ]
     },
     {
-        "cmd": "datetime.datetime.strptime(#ACQ_time,'<%H:%M:%S %d %b %Y>')",
+        "cmd": "datetime.datetime.strptime(#ACQ_time,'%H:%M:%S %d %b %Y')",
         "conditions": [
           "'T' not in #ACQ_time"
         ]

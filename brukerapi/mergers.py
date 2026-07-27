@@ -12,14 +12,14 @@ class FrameGroupMerger:
 
         """
 
-        if f"<{fg}>" not in dataset.dim_type:
+        if fg not in dataset.dim_type:
             raise ValueError(f"Dataset does not contain {fg} frame group")
 
         """
         CHECK if FG and index are valid
         """
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index(f"<{fg}>")
+        fg_abs_index = dataset.dim_type.index(fg)
 
         # index of FG_SLICE among frame group dimensions of the dataset
         fg_rel_index = fg_abs_index - dataset.encoded_dim
@@ -115,7 +115,7 @@ class FrameGroupMerger:
 
         value = parameter.nested
         for fg_ in value:
-            if fg_[1] == f"<{fg}>":
+            if fg_[1] == fg:
                 value.remove(fg_)
         if value:
             parameter.value = value

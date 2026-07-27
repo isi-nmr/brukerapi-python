@@ -607,8 +607,7 @@ class Dataset:
         if not jobs:
             return None
         if len(jobs[0]) == 9:
-            title = f"<{self.subtype}>"
-            return next((index for index, job in enumerate(jobs) if job[-1] == title), None)
+            return next((index for index, job in enumerate(jobs) if job[-1] == self.subtype), None)
         try:
             return int(self.subtype.removeprefix("job"))
         except ValueError:
@@ -628,7 +627,7 @@ class Dataset:
     def rawdata_job_discarded(self):
         """Whether §13.1 says this job's data is intentionally not written."""
         settings = self.rawdata_job_settings
-        return bool(settings and str(settings[0]).strip("<>") == "STORE_discard")
+        return bool(settings and str(settings[0]) == "STORE_discard")
 
     @property
     def rawdata_stored_scans(self):
@@ -663,7 +662,7 @@ class Dataset:
         fallback = int(self._parameter_value("PVM_EncNReceivers", 1))
         if selected is not None:
             values = np.atleast_1d(selected)
-            channels = sum(str(value).strip("<>").casefold() in {"yes", "on", "1"} for value in values)
+            channels = sum(str(value).casefold() in {"yes", "on", "1"} for value in values)
             # Some systems expose more physical receiver paths than the job
             # writes. Only promote the per-channel declaration when it agrees
             # with the method's logical receiver count.
@@ -674,8 +673,8 @@ class Dataset:
     def _infer_scheme_id(self):
         # Source of truth for format inference:
         # https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md
-        pulprog = str(self._parameter_value("PULPROG", "")).strip("<>").upper()
-        method = str(self._parameter_value("Method", "")).strip("<>").upper()
+        pulprog = str(self._parameter_value("PULPROG", "")).upper()
+        method = str(self._parameter_value("Method", "")).upper()
         family = f"{pulprog} {method}"
 
         if "SPIRAL" in family or self._parameter_value("PVM_SpiralNbOfInterleaves") is not None:
@@ -1172,7 +1171,7 @@ class Dataset:
         if orientation.shape[1] != 9 or position.shape[1] != 3:
             raise UnsupportedDatasetType(f"an image affine for {self.path}, whose frames carry no 3x3 orientation and 3-vector position (spec 7.2),")
 
-        disk_order = str(self._parameter_value("VisuCoreDiskSliceOrder", "")).strip("<>").lower()
+        disk_order = str(self._parameter_value("VisuCoreDiskSliceOrder", "")).lower()
         if disk_order == "disk_reverse_slice_order" and int(self._parameter_value("VisuCoreDim", 2)) < 3 and position.shape[0] > 1:
             position = position[::-1]
             if orientation.shape[0] == position.shape[0]:
@@ -1357,14 +1356,14 @@ class Dataset:
         for descriptor in descriptors:
             try:
                 vals_start, vals_count = int(descriptor[3]), int(descriptor[4])
-                group_name = str(descriptor[1]).strip("<>")
-                axis = next(axis for axis, dim_type in enumerate(self.dim_type) if str(dim_type).strip("<>") == group_name)
+                group_name = str(descriptor[1])
+                axis = next(axis for axis, dim_type in enumerate(self.dim_type) if str(dim_type) == group_name)
             except (IndexError, StopIteration, TypeError, ValueError):
                 continue
             for index in range(vals_start, vals_start + vals_count):
                 if not (0 <= index < len(dependencies)) or len(dependencies[index]) < 2:
                     continue
-                grouped.setdefault(str(dependencies[index][0]).strip("<>"), []).append(axis)
+                grouped.setdefault(str(dependencies[index][0]), []).append(axis)
 
         values = {}
         data_shape = self._data.shape

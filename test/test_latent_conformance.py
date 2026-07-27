@@ -228,7 +228,7 @@ def test_a_dollar_comment_inside_a_string_is_data(tmp_path):
         "##END=\n"
     )
 
-    assert JCAMPDX(path)["PVM_Comment"].value == "<a$$b>"
+    assert JCAMPDX(path)["PVM_Comment"].value == "a$$b"
 
 
 def test_a_scalar_struct_is_not_eaten_as_a_size_bracket(tmp_path):

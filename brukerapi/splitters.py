@@ -130,14 +130,14 @@ class FrameGroupSplitter(Splitter):
         if write is None:
             write = False
 
-        if f"<{self.fg}>" not in dataset.dim_type:
+        if self.fg not in dataset.dim_type:
             raise ValueError(f"Dataset does not contain {self.fg} frame group")
 
         """
         CHECK if FG and index are valid
         """
         # absolute index of FG_SLICE among dimensions of the dataset
-        fg_abs_index = dataset.dim_type.index(f"<{self.fg}>")
+        fg_abs_index = dataset.dim_type.index(self.fg)
 
         # index of FG_SLICE among frame group dimensions of the dataset
         fg_rel_index = fg_abs_index - dataset.encoded_dim
@@ -243,7 +243,7 @@ class FrameGroupSplitter(Splitter):
 
         value = VisuFGOrderDesc.nested
         for fg_ in value:
-            if fg_[1] == f"<{fg}>":
+            if fg_[1] == fg:
                 value.remove(fg_)
         if value:
             VisuFGOrderDesc.value = value
@@ -301,7 +301,7 @@ class SlicePackageSplitter(Splitter):
             fg_rel_index = group_index
         else:
             groups = dataset["VisuFGOrderDesc"].sub_list(1)
-            fg_rel_index = groups.index("<FG_SLICE>") if "<FG_SLICE>" in groups else 0
+            fg_rel_index = groups.index("FG_SLICE") if "FG_SLICE" in groups else 0
 
         # index of the slice axis among the dimensions of the dataset
         fg_abs_index = fg_rel_index + dataset.encoded_dim
