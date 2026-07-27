@@ -154,7 +154,7 @@ RELATIVE_PATHS = {
 
 # Properties derived on access rather than stored on the instance, which a
 # default report should still carry.
-COMPUTED_REPORT_PROPERTIES = ("affine",)
+COMPUTED_REPORT_PROPERTIES = ("affine", "slice_distance")
 
 SUPPORTED_REPORT_FORMATS = frozenset({"json", "yml"})
 

@@ -155,7 +155,7 @@ def test_affine_refuses_frames_that_are_not_purely_spatial(tmp_path):
         _ = dataset.affine
 
 
-def test_report_carries_the_affine_and_omits_it_for_spectroscopy(tmp_path):
+def test_report_carries_computed_geometry_available_to_each_dataset(tmp_path):
     image = load(tmp_path / "image", frame_groups=(("FG_SLICE", 3),))
     spectroscopy = load(
         tmp_path / "spectroscopy",
@@ -168,8 +168,13 @@ def test_report_carries_the_affine_and_omits_it_for_spectroscopy(tmp_path):
         orientations=axial_orientation(1),
     )
 
-    assert np.allclose(image.to_dict()["affine"], image.affine)
-    assert "affine" not in spectroscopy.to_dict()
+    image_report = image.to_dict()
+    spectroscopy_report = spectroscopy.to_dict()
+
+    assert np.allclose(image_report["affine"], image.affine)
+    assert image_report["slice_distance"] == image.slice_distance
+    assert "affine" not in spectroscopy_report
+    assert spectroscopy_report["slice_distance"] == spectroscopy.slice_distance
 
 
 @pytest.mark.parametrize("relative_path", PV360_NIFTI_EXPORTS)
