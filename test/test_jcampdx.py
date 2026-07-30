@@ -48,6 +48,26 @@ def test_jcampdx(test_jcampdx_data):
             assert value_ref == value_test
 
 
+def test_jcampdx_iteration_and_length_follow_its_mapping_interface(tmp_path):
+    path = tmp_path / "visu_pars"
+    path.write_text(
+        "##TITLE=Parameter List\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        "##$VisuCoreDim=2\n"
+        "##END=\n"
+    )
+    jcamp = JCAMPDX(path)
+
+    assert list(jcamp) == list(jcamp.keys())
+    assert len(jcamp) == len(jcamp.keys())
+    assert dict(jcamp) == {key: jcamp[key] for key in jcamp}
+
+    jcamp.unload()
+    assert list(jcamp) == []
+    assert len(jcamp) == 0
+
+
 def test_a_string_is_read_without_its_delimiters():
     """Spec 2.2: `<...>` delimits a string, so the brackets are not its value.
 
