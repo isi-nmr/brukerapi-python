@@ -704,6 +704,12 @@ class JCAMPDX:
     def __getitem__(self, key):
         return self.params[key]
 
+    def __iter__(self):
+        return iter(self.params)
+
+    def __len__(self):
+        return len(self.params)
+
     def __contains__(self, item):
         return item in self.params
 
