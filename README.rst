@@ -176,7 +176,8 @@ Compatibility
 
 Tested releases are ParaVision 5.1, 6.0.1, 7.0.0, and PV360 3.x. Supported
 primary binaries are ``fid``, ``fid_proc.64``, ``2dseq``, ``traj``,
-``rawdata.jobN``, and ``rawdata.Navigator``. Known ``fid.spiral``,
+``rawdata.jobN``, and named jobs declared by ``ACQ_jobs`` (for example,
+``rawdata.Navigator`` or ``rawdata.echoNavigator``). Known ``fid.spiral``,
 ``fid.navFid``, and ``fid.orig`` files are exposed as auxiliary subdatasets of
 their parent ``fid``; they are not accepted as standalone primary datasets.
 TopSpin/NMR ``ser`` is intentionally unsupported.
