@@ -6,7 +6,14 @@ import numpy as np
 import pytest
 
 from brukerapi.dataset import Dataset
-from brukerapi.folders import DEFAULT_DATASET_STATE, Folder, Processing, Study, TypeFilter
+from brukerapi.folders import (
+    DEFAULT_DATASET_STATE,
+    Experiment,
+    Folder,
+    Processing,
+    Study,
+    TypeFilter,
+)
 from test.synthetic import Verbatim, write_binary, write_jcampdx
 
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -29,6 +36,28 @@ def test_folder_attribute_miss_supports_hasattr_deepcopy_and_pickle(tmp_path):
     assert restored.path == folder.path
     assert [child.path.name for child in copied.children] == [child.path.name for child in folder.children]
     assert [child.path.name for child in restored.children] == [child.path.name for child in folder.children]
+
+
+def test_folder_is_not_iterable_and_points_at_children(tmp_path):
+    """`__getitem__` must not make a folder iterable by the legacy protocol.
+
+    Without an explicit opt out, `for child in folder` calls `folder[0]`, which
+    misses and raises `KeyError: 0` against a name-keyed tree. `children` is the
+    route that says whether names or objects are wanted.
+    """
+    (tmp_path / "child").mkdir()
+
+    for cls in (Folder, Study, Experiment, Processing):
+        assert cls.__iter__ is None, f"{cls.__name__} must opt out of iteration"
+
+    folder = Folder(tmp_path)
+    with pytest.raises(TypeError, match="not iterable"):
+        iter(folder)
+    with pytest.raises(TypeError, match="not iterable"):
+        list(folder)
+
+    assert [child.path.name for child in folder.children] == ["child"]
+    assert folder["child"] is folder.children[0]
 
 
 def test_type_filter_forwards_nondefault_filter_options(tmp_path):

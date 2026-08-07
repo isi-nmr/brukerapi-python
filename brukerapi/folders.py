@@ -136,6 +136,15 @@ class Folder:
         except AttributeError:
             raise KeyError(f"Child '{name}' not found in {self.path}") from None
 
+    #: A folder is not iterable. Without this, ``__getitem__`` above would make
+    #: Python fall back to the legacy iteration protocol, call ``self[0]`` and
+    #: raise ``KeyError: 0`` -- an error that points at the tree rather than at
+    #: the loop. Iterating a folder is also ambiguous, because ``__getitem__``
+    #: takes a child *name* while the obvious result is the child *objects*.
+    #: Use :attr:`children`, or one of the ``get_*_list`` methods, which say
+    #: which of the two is wanted.
+    __iter__ = None
+
     def query(self, query):
         """Query each dataset in the folder recursively.
 
