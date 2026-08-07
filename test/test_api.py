@@ -212,6 +212,20 @@ def test_procno_files_are_reachable(tmp_path):
     assert dataset["RefCopyId"].value == 1
 
 
+def test_the_scan_configuration_is_optional_and_reachable(tmp_path):
+    """configscan sits in the scan folder next to acqp and method, and is the
+    only record of the gradient system. It was in neither RELATIVE_PATHS nor
+    the optional files, so its parameters could not be read at all."""
+    path = study(tmp_path)
+    write_jcampdx(path.parents[2] / "configscan", {"CONFIG_SCAN_gradient_system": ["<Micro 2.5>"]})
+
+    assert Dataset(path, load=LOAD_STAGES["parameters"])["CONFIG_SCAN_gradient_system"].value == "Micro 2.5"
+
+    # Optional, like reco and d3proc: not every export carries one.
+    without = Dataset(study(tmp_path / "no_configscan"), load=LOAD_STAGES["parameters"])
+    assert "CONFIG_SCAN_gradient_system" not in without
+
+
 def test_single_slice_datasets_do_not_claim_a_third_spatial_axis(tmp_path):
     """The synthetic axis a single-slice dataset gets is not an encoding axis;
     labelling it `spatial` made dim_type[encoded_dim:] start with a bogus entry."""

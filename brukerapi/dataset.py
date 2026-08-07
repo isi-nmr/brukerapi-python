@@ -71,7 +71,7 @@ DEFAULT_STATES = {
     },
     "2dseq": {
         "parameter_files": ["visu_pars"],
-        "optional_parameter_files": ["reco", "d3proc"],
+        "optional_parameter_files": ["reco", "d3proc", "configscan"],
         "property_files": [Path(__file__).parents[0] / "config/properties_2dseq_core.json", Path(__file__).parents[0] / "config/properties_2dseq_custom.json"],
         "load": LOAD_STAGES["all"],
         "scale": True,
@@ -96,6 +96,7 @@ RELATIVE_PATHS = {
     "fid": {
         "method": "./method",
         "acqp": "./acqp",
+        "configscan": "./configscan",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
         "methreco": "./pdata/1/methreco",
@@ -107,6 +108,7 @@ RELATIVE_PATHS = {
     "fid_proc": {
         "method": "../../method",
         "acqp": "../../acqp",
+        "configscan": "../../configscan",
         "subject": "../../../subject",
         "reco": "./reco",
         "methreco": "./methreco",
@@ -119,6 +121,7 @@ RELATIVE_PATHS = {
     "2dseq": {
         "method": "../../method",
         "acqp": "../../acqp",
+        "configscan": "../../configscan",
         "subject": "../../../subject",
         "reco": "./reco",
         "methreco": "./methreco",
@@ -131,6 +134,7 @@ RELATIVE_PATHS = {
     "traj": {
         "method": "./method",
         "acqp": "./acqp",
+        "configscan": "./configscan",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
         "methreco": "./pdata/1/methreco",
@@ -142,6 +146,7 @@ RELATIVE_PATHS = {
     "rawdata": {
         "method": "./method",
         "acqp": "./acqp",
+        "configscan": "./configscan",
         "subject": "../subject",
         "reco": "./pdata/1/reco",
         "methreco": "./pdata/1/methreco",
