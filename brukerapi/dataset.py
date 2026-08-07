@@ -245,12 +245,19 @@ class Dataset:
                 (name for name in content if re.fullmatch(r"rawdata\.job\d+", name)),
                 key=lambda name: int(name.rsplit("job", 1)[1]),
             )
+            named_rawdata_jobs = sorted(
+                name
+                for name in content
+                if name not in rawdata_jobs and self.is_supported_path(self.path / name, {"rawdata"})
+            )
             if "fid" in content:
                 self.path = self.path / "fid"
             elif "2dseq" in content:
                 self.path = self.path / "2dseq"
             elif rawdata_jobs:
                 self.path = self.path / rawdata_jobs[0]
+            elif named_rawdata_jobs:
+                self.path = self.path / named_rawdata_jobs[0]
             elif state.get("load") is LOAD_STAGES["empty"] and self.path.stem in DEFAULT_STATES:
                 pass
             else:
@@ -287,7 +294,11 @@ class Dataset:
 
     @staticmethod
     def is_supported_path(path, dataset_types=None):
-        """Return whether a filename denotes a supported primary dataset binary."""
+        """Return whether a path denotes a supported primary dataset binary.
+
+        Named PV360 rawdata jobs are inferred from the output-name field of
+        the experiment's nine-field ``ACQ_jobs`` records.
+        """
         path = as_path(path)
         dataset_type = path.stem
         subtype = path.suffix.removeprefix(".")
@@ -295,8 +306,16 @@ class Dataset:
             return False
         if dataset_types is not None and dataset_type not in dataset_types:
             return False
-        if dataset_type == "rawdata" and re.fullmatch(r"job\d+", subtype):
-            return True
+        if dataset_type == "rawdata":
+            if re.fullmatch(r"job\d+", subtype) or subtype in SUPPORTED_SUBTYPES[dataset_type]:
+                return True
+            if not subtype:
+                return False
+            try:
+                jobs = JCAMPDX(path.parent / "acqp")["ACQ_jobs"].nested
+            except Exception:
+                return False
+            return any(len(job) == 9 and str(job[8]) == subtype for job in jobs)
         return subtype in SUPPORTED_SUBTYPES[dataset_type]
 
     def __enter__(self):
@@ -664,8 +683,11 @@ class Dataset:
             jobs = []
         if not jobs:
             return None
-        if len(jobs[0]) == 9:
-            return next((index for index, job in enumerate(jobs) if job[-1] == self.subtype), None)
+        if any(len(job) == 9 for job in jobs):
+            return next(
+                (index for index, job in enumerate(jobs) if len(job) == 9 and str(job[8]) == self.subtype),
+                None,
+            )
         try:
             return int(self.subtype.removeprefix("job"))
         except ValueError:

@@ -13,7 +13,7 @@ from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, ParametersNotLoaded, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
 from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
-from test.synthetic import write_2dseq, write_jcampdx
+from test.synthetic import Verbatim, write_2dseq, write_jcampdx
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -208,6 +208,48 @@ def test_directory_constructor_selects_lowest_numbered_rawdata_job(tmp_path):
     assert dataset.path == experiment / "rawdata.job2"
     assert dataset.type == "rawdata"
     assert dataset.subtype == "job2"
+
+
+def test_named_rawdata_job_is_inferred_from_acq_jobs(tmp_path):
+    write_jcampdx(
+        tmp_path / "acqp",
+        {"ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 1, 101, 1, 1, 1, <echoNavigator>)")},
+    )
+    path = tmp_path / "rawdata.echoNavigator"
+    path.touch()
+
+    dataset = Dataset(path, load=LOAD_STAGES["empty"])
+
+    assert dataset.type == "rawdata"
+    assert dataset.subtype == "echoNavigator"
+
+
+def test_eight_field_acq_job_does_not_treat_its_last_value_as_a_filename(tmp_path):
+    write_jcampdx(
+        tmp_path / "acqp",
+        {"ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 1, 101, 1, 1, 7)")},
+    )
+    path = tmp_path / "rawdata.7"
+    path.touch()
+
+    assert not Dataset.is_supported_path(path)
+    with pytest.raises(UnsupportedDatasetType):
+        Dataset(path, load=LOAD_STAGES["empty"])
+
+
+def test_directory_constructor_selects_declared_named_rawdata_job(tmp_path):
+    experiment = tmp_path / "1"
+    write_jcampdx(
+        experiment / "acqp",
+        {"ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 1, 101, 1, 1, 1, <echoNavigator>)")},
+    )
+    (experiment / "rawdata.echoNavigator").touch()
+    (experiment / "rawdata.anything").touch()
+
+    dataset = Dataset(experiment, load=LOAD_STAGES["empty"])
+
+    assert dataset.path == experiment / "rawdata.echoNavigator"
+    assert dataset.subtype == "echoNavigator"
 
 
 @pytest.mark.skipif(not PV51_STUDY_PATH.is_dir(), reason="PV51 test data is not available")

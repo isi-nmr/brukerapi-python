@@ -18,7 +18,8 @@ Supported primary binary names are:
 * ``2dseq``
 * ``traj``
 * ``rawdata.jobN``
-* ``rawdata.Navigator``
+* named jobs declared by ``ACQ_jobs``, such as ``rawdata.Navigator`` and
+  ``rawdata.echoNavigator``
 
 Unknown suffixes such as ``fid.npz`` and ``2dseq.json`` are rejected instead
 of being interpreted as scanner data. ``fid.spiral``, ``fid.navFid``, and

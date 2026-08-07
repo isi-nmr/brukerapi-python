@@ -109,6 +109,11 @@ def test_folder_discovery_reuses_dataset_rawdata_subtype_rules(tmp_path):
         "rawdata.anything",
     ]:
         (tmp_path / name).touch()
+    write_jcampdx(
+        tmp_path / "acqp",
+        {"ACQ_jobs": Verbatim("( 1 )\n(8, 20, 5, 1, 101, 1, 1, 1, <echoNavigator>)")},
+    )
+    (tmp_path / "rawdata.echoNavigator").touch()
 
     folder = Folder(
         tmp_path,
@@ -117,7 +122,7 @@ def test_folder_discovery_reuses_dataset_rawdata_subtype_rules(tmp_path):
     )
 
     datasets = {child.path.name for child in folder.children if isinstance(child, Dataset)}
-    assert datasets == {"rawdata.job0", "rawdata.Navigator"}
+    assert datasets == {"rawdata.job0", "rawdata.Navigator", "rawdata.echoNavigator"}
 
 
 def test_folder_skips_empty_reconstruction_with_warning(tmp_path):
