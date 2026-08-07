@@ -326,6 +326,31 @@ class Dataset:
     def __contains__(self, item):
         return any(item in parameter_file for parameter_file in self._parameters.values())
 
+    def keys(self):
+        """Every parameter name reachable through ``[]``, listed once.
+
+        A data set merges several JCAMP-DX files, and ``__getitem__`` returns
+        the first file that holds the name. A name carried by more than one
+        file therefore denotes one reachable value, and is listed once, in the
+        order the files are searched.
+
+        :raises :obj:`.ParametersNotLoaded`: if the parameters are not loaded
+        """
+        names = {}
+        for parameter_file in self.parameters.values():
+            names.update(dict.fromkeys(parameter_file))
+        return names.keys()
+
+    def __iter__(self):
+        """Iterate the parameter names, so ``dict(dataset)`` matches ``[]``.
+
+        There is deliberately no ``__len__``: a data set is an image first, so
+        ``len(dataset)`` would read as a count of frames rather than of
+        parameters. Use ``len(dataset.keys())`` for the parameter count, and
+        :attr:`shape` for the data.
+        """
+        return iter(self.keys())
+
     def __call__(self, **kwargs):
         self._set_state(kwargs)
         return self

@@ -11,7 +11,7 @@ import pytest
 
 from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
-from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
+from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, ParametersNotLoaded, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
 from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
 from test.synthetic import write_2dseq, write_jcampdx
 
@@ -1183,3 +1183,37 @@ def test_add_parameters_loads_the_named_parameter_file(tmp_path):
     assert "subject" in dataset.parameters
     assert dataset["SUBJECT_id"].value == "lego_phantom_3"
     assert dataset.metadata["subject"]["id"] == "lego_phantom_3"
+
+
+def test_dataset_iteration_lists_the_names_getitem_can_reach(tmp_path):
+    """`__getitem__` searches several files, so iteration must list the union.
+
+    A name carried by more than one file resolves to one value -- the first
+    file searched wins -- so it is listed once, and `dict(dataset)` agrees with
+    `[]` for every name.
+    """
+    study = tmp_path / "20200612_094625_study_1_1"
+    write_jcampdx(study / "subject", {"SUBJECT_id": ["<phantom>"], "SUBJECT_study_nr": 2})
+    path = write_2dseq(study / "8" / "pdata" / "1")
+
+    dataset = Dataset(path, add_parameters=["subject"], load=LOAD_STAGES["parameters"])
+
+    names = list(dataset)
+    assert names == list(dataset.keys())
+    assert len(names) == len(set(names)), "a shadowed name must be listed once"
+    assert set(names) == {name for parameters in dataset.parameters.values() for name in parameters}
+
+    # Both files carry the JCAMP-DX preamble, so the fixture really does shadow
+    # and the check above is not vacuous.
+    assert len(names) < sum(len(parameters) for parameters in dataset.parameters.values())
+    assert all(name in dataset for name in names)
+    assert dict(dataset) == {name: dataset[name] for name in names}
+
+    # TITLE is written by every JCAMP-DX file, so it is the shadowed case.
+    assert "TITLE" in names
+    first_file = next(iter(dataset.parameters.values()))
+    assert dataset["TITLE"] is first_file["TITLE"]
+
+    dataset.unload_parameters()
+    with pytest.raises(ParametersNotLoaded):
+        list(dataset)
