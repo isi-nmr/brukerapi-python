@@ -212,6 +212,35 @@ def test_procno_files_are_reachable(tmp_path):
     assert dataset["RefCopyId"].value == 1
 
 
+def test_documented_optional_parameter_files_are_reachable(tmp_path):
+    """FILE_FORMAT.md 1.1-1.3 place further JCAMP-DX files at the study,
+    experiment and reconstruction levels; none were in RELATIVE_PATHS, so
+    add_parameter_file raised KeyError for all of them."""
+    path = study(tmp_path)
+    procno, expno, study_dir = path.parent, path.parents[2], path.parents[3]
+    locations = {
+        "uxnmr.par": (expno, {"SFO1": 400.3}),
+        "specpar": (expno, {"LOCNUC": ["<2H>"]}),
+        "ResultState": (study_dir, {"AdjResultChain": 1}),
+        "study.MR": (study_dir, {"MR_study_gradient_system": ["<Micro 2.5>"]}),
+        "study.PT": (study_dir, {"PT_study_version": 1}),
+        "id": (procno, {"DATASET_KEY": ["<key>"]}),
+        "procs": (procno, {"OFFSET": 62.4}),
+        "roi": (procno, {"ROI_n": 1}),
+        "isa": (procno, {"ISA_first_image": 25}),
+    }
+    for name, (folder, records) in locations.items():
+        write_jcampdx(folder / name, records)
+
+    dataset = Dataset(path, load=LOAD_STAGES["parameters"])
+    for name in locations:
+        dataset.add_parameter_file(name)
+
+    assert set(locations) <= set(dataset._parameters)
+    assert dataset["MR_study_gradient_system"].value == "Micro 2.5"
+    assert dataset["ISA_first_image"].value == 25
+
+
 def test_the_scan_configuration_is_optional_and_reachable(tmp_path):
     """configscan sits in the scan folder next to acqp and method, and is the
     only record of the gradient system. It was in neither RELATIVE_PATHS nor
