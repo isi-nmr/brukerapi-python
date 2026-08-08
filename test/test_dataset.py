@@ -13,7 +13,7 @@ from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, ParametersNotLoaded, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
 from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
-from test.synthetic import Verbatim, write_2dseq, write_jcampdx
+from test.synthetic import Verbatim, write_2dseq, write_fid, write_jcampdx
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -1249,3 +1249,50 @@ def test_dataset_iteration_lists_the_names_getitem_can_reach(tmp_path):
     dataset.unload_parameters()
     with pytest.raises(ParametersNotLoaded):
         list(dataset)
+
+
+def test_an_unreadable_optional_parameter_file_does_not_abort_the_load(tmp_path):
+    """Spec 1.3: every PROCNO entry is optional -- a derived reconstruction
+    carries no `reco` at all -- so a `fid` must not depend on one.
+
+    Absence was already tolerated. A file that is present but unusable, which is
+    what an aborted reconstruction leaves behind, was not: a zero-byte
+    `pdata/1/reco` made a complete raw acquisition unloadable.
+    """
+    experiment = tmp_path / "1"
+    acqp = {
+        "ACQ_sw_version": ["<PV 6.0.1>"],
+        "GO_raw_data_format": "GO_32BIT_SGN_INT",
+        "GO_block_size": "continuous",
+        "BYTORDA": "little",
+        "ACQ_dim": 2,
+        "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+        "ACQ_size": np.array([8, 2]),
+        "NI": 1,
+        "NR": 1,
+        "ACQ_phase_factor": 1,
+        "PULPROG": ["<FLASH.ppg>"],
+    }
+    method = {"PVM_EncNReceivers": 1, "PVM_EncMatrix": np.array([4, 2]), "PVM_DigNp": 4}
+    fid = write_fid(experiment, acqp, method, blocks=2)
+
+    reference = Dataset(fid).data
+
+    (experiment / "pdata" / "1").mkdir(parents=True)
+    (experiment / "pdata" / "1" / "reco").write_text("")
+
+    with pytest.warns(RuntimeWarning, match="ignoring unreadable optional parameter file reco"):
+        dataset = Dataset(fid)
+
+    assert np.array_equal(dataset.data, reference)
+    assert "reco" not in dataset.parameters
+
+
+def test_a_missing_required_parameter_file_is_still_fatal(tmp_path):
+    experiment = tmp_path / "1"
+    experiment.mkdir(parents=True)
+    write_jcampdx(experiment / "acqp", {"ACQ_dim": 2})
+    (experiment / "fid").write_bytes(b"\0" * 16)
+
+    with pytest.raises(IncompleteDataset):
+        Dataset(experiment / "fid")
