@@ -1,0 +1,63 @@
+{
+  "subj_id": [
+    {
+      "cmd": "#SUBJECT_id",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "study_id": [
+    {
+      "cmd": "str(#SUBJECT_study_nr)",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "exp_id": [
+    {
+      "cmd": "@path.parents[2].name",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "proc_id": [
+    {
+      "cmd": "@path.parents[0].name",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "id": [
+    {
+      "cmd": "'{}_{}_{}_{}_{}'.format(@type.upper(), @exp_id, @proc_id, @subj_id, @study_id)",
+      "conditions": [],
+      "comment": "spec 3.5: these live in the PROCNO, so the id names the reconstruction as a 2dseq id does"
+    }
+  ],
+  "TE": [
+    {
+      "cmd": "#PVM_EchoTime",
+      "conditions": [],
+      "unit": "ms"
+    }
+  ],
+  "TR": [
+    {
+      "cmd": "#PVM_RepetitionTime",
+      "conditions": [],
+      "unit": "ms"
+    }
+  ]
+}

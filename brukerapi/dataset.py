@@ -63,9 +63,18 @@ DEFAULT_STATES = {
         "load": LOAD_STAGES["all"],
         "mmap": False,
     },
+    # Spec 3.5: the PV360 spectroscopy PROCNO files, 64-bit doubles with real and
+    # imaginary interleaved -- not the acquisition word type, and not the fid
+    # block model, so they get recipes of their own.
     "fid_proc": {
         "parameter_files": ["acqp", "method"],
-        "property_files": [Path(__file__).parents[0] / "config/properties_fid_core.json", Path(__file__).parents[0] / "config/properties_fid_custom.json"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_fid_proc_core.json", Path(__file__).parents[0] / "config/properties_fid_proc_custom.json"],
+        "load": LOAD_STAGES["all"],
+        "mmap": False,
+    },
+    "fid_refscan": {
+        "parameter_files": ["acqp", "method"],
+        "property_files": [Path(__file__).parents[0] / "config/properties_fid_proc_core.json", Path(__file__).parents[0] / "config/properties_fid_proc_custom.json"],
         "load": LOAD_STAGES["all"],
         "mmap": False,
     },
@@ -105,6 +114,18 @@ RELATIVE_PATHS = {
         "AdjStatePerStudy": "../AdjStatePerStudy",
     },
     "fid_proc": {
+        "method": "../../method",
+        "acqp": "../../acqp",
+        "subject": "../../../subject",
+        "reco": "./reco",
+        "methreco": "./methreco",
+        "pvmeta": "./pvmeta",
+        "d3proc": "./d3proc",
+        "visu_pars": "./visu_pars",
+        "AdjStatePerScan": "../../AdjStatePerScan",
+        "AdjStatePerStudy": "../../../AdjStatePerStudy",
+    },
+    "fid_refscan": {
         "method": "../../method",
         "acqp": "../../acqp",
         "subject": "../../../subject",
@@ -174,6 +195,7 @@ METADATA_GROUPS = {
 SUPPORTED_SUBTYPES = {
     "fid": {""},
     "fid_proc": {"64"},
+    "fid_refscan": {"64"},
     "2dseq": {""},
     "traj": {""},
     "rawdata": {"Navigator"},
@@ -522,7 +544,7 @@ class Dataset:
         reco_path = self._state.get("reco_path")
         if reco_path is not None:
             self.add_parameter_file(reco_path)
-        elif self.type in {"fid", "fid_proc"}:
+        elif self.type == "fid":
             with suppress(FileNotFoundError):
                 self.add_parameter_file("reco")
 
@@ -850,8 +872,10 @@ class Dataset:
         """
         Load the schema for given data set.
         """
-        if self.type in ["fid", "fid_proc"]:
+        if self.type == "fid":
             self._schema = SchemaFid(self)
+        elif self.type in {"fid_proc", "fid_refscan"}:
+            self._schema = SchemaFidCompanion(self)
         elif self.type == "2dseq":
             self._schema = Schema2dseq(self)
         elif self.type == "rawdata":
@@ -1391,7 +1415,7 @@ class Dataset:
         API: EPI and non-Cartesian raw data require acquisition-specific
         handling.
         """
-        if self.type not in {"fid", "fid_proc", "rawdata"}:
+        if self.type not in {"fid", "rawdata"}:
             raise UnsupportedDatasetType(f"k-space conversion is not available for {self.type} datasets")
         return self._schema.to_kspace(bart=bart)
 
