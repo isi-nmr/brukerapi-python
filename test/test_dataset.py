@@ -13,7 +13,7 @@ from brukerapi.cli import report as cli_report
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import FilterEvalFalse, IncompleteDataset, InvalidDataset, ParametersNotLoaded, TrajNotLoaded, UnknownAcqSchemeException, UnsupportedDatasetType
 from brukerapi.schemas import Schema2dseq, SchemaFid, SchemaRawdata
-from test.synthetic import Verbatim, write_2dseq, write_jcampdx
+from test.synthetic import Verbatim, write_2dseq, write_binary, write_jcampdx
 
 data = 0
 PV51_STUDY_PATH = Path("test/test_data/PV51/0.2H2")
@@ -1249,3 +1249,38 @@ def test_dataset_iteration_lists_the_names_getitem_can_reach(tmp_path):
     dataset.unload_parameters()
     with pytest.raises(ParametersNotLoaded):
         list(dataset)
+
+
+def test_rawdata_receiver_count_follows_the_jobs_channel(tmp_path):
+    """Spec 3.3/14.4: the receiver count is `ACQ_ReceiverSelectPerChan[chanNum-1]`.
+
+    Counting `Yes` across the whole 2-D array reports every channel's receivers
+    at once, which sizes `rawdata.jobN` wrongly whenever a system declares more
+    than one channel. `PVM_EncNReceivers` is the method-side mirror, so it is the
+    last resort rather than the arbiter.
+    """
+    experiment = tmp_path / "1"
+    acqp = {
+        "ACQ_sw_version": ["<PV-360.3.6>"],
+        "ACQ_word_size": "_32_BIT",
+        "BYTORDA": "little",
+        "ACQ_dim": 2,
+        "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+        "ACQ_size": np.array([8, 1]),
+        # channel 1 has one active receiver, channel 2 has three
+        "ACQ_ReceiverSelectPerChan": Verbatim("( 2, 7 )\nNo Yes No No No No No Yes Yes Yes No No No No"),
+        "ACQ_jobs": Verbatim("( 2 )\n(8, 1, 0, 4, 101, 5000, 4, 2, <job0>) (8, 1, 0, 4, 101, 5000, 4, 1, <Navigator>)"),
+    }
+    experiment.mkdir(parents=True, exist_ok=True)
+    write_jcampdx(experiment / "acqp", acqp)
+    write_jcampdx(experiment / "method", {"PVM_EncNReceivers": 1})
+    for name, receivers in (("rawdata.job0", 3), ("rawdata.Navigator", 1)):
+        write_binary(experiment / name, np.arange(8 * receivers * 4), np.dtype("int32"))
+
+    job0 = Dataset(experiment / "rawdata.job0")
+    navigator = Dataset(experiment / "rawdata.Navigator")
+
+    assert job0.rawdata_job_channel == 2
+    assert job0.rawdata_channels == 3
+    assert navigator.rawdata_job_channel == 1
+    assert navigator.rawdata_channels == 1

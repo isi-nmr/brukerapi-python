@@ -728,19 +728,48 @@ class Dataset:
         return settings_stored
 
     @property
+    def rawdata_job_channel(self):
+        """The RF channel this rawdata job is acquired on -- ``chanNum``, spec 3.3.
+
+        Only the nine-field PV360 form of ``ACQ_jobs`` carries it; the eight-field
+        PV6/PV7 form has no channel field, and there is one channel to select from.
+        """
+        index = self._rawdata_job_index()
+        try:
+            jobs = self["ACQ_jobs"].nested
+        except KeyError:
+            return 1
+        if index is None or index >= len(jobs) or len(jobs[index]) != 9:
+            return 1
+        return int(jobs[index][7])
+
+    @property
     def rawdata_channels(self):
-        """Number of receivers recorded for this job (spec 3.3)."""
+        """Number of receivers stored for this job (spec 3.3, 14.4).
+
+        Spec 3.3 keys the count on the job's own channel: look up
+        ``c = ACQ_jobs[n].chanNum``, then count the ``Yes`` entries of
+        ``ACQ_ReceiverSelectPerChan`` row ``c-1``. The flat ``ACQ_ReceiverSelect``
+        gives the same count for the common single-channel case, and
+        ``PVM_EncNReceivers`` is the method-side mirror -- a last resort, not the
+        arbiter.
+        """
         selected = self._parameter_value("ACQ_ReceiverSelectPerChan")
-        fallback = int(self._parameter_value("PVM_EncNReceivers", 1))
         if selected is not None:
-            values = np.atleast_1d(selected)
-            channels = sum(str(value).casefold() in {"yes", "on", "1"} for value in values)
-            # Some systems expose more physical receiver paths than the job
-            # writes. Only promote the per-channel declaration when it agrees
-            # with the method's logical receiver count.
-            if channels == fallback:
-                return channels
-        return fallback
+            selected = np.atleast_2d(selected)
+            channel = self.rawdata_job_channel
+            row = channel - 1 if 0 < channel <= selected.shape[0] else 0
+            return self._count_selected(selected[row])
+
+        selected = self._parameter_value("ACQ_ReceiverSelect")
+        if selected is not None:
+            return self._count_selected(np.atleast_1d(selected))
+
+        return int(self._parameter_value("PVM_EncNReceivers", 1))
+
+    @staticmethod
+    def _count_selected(values):
+        return sum(str(value).casefold() in {"yes", "on", "1"} for value in values)
 
     def _infer_scheme_id(self):
         # Source of truth for format inference:
