@@ -602,3 +602,30 @@ def test_a_malformed_record_raises_a_typed_error(tmp_path):
         _ = parameters["SHORT"].value
     with pytest.raises(InvalidJcampdxFile, match="is not an integer"):
         _ = parameters["BADSIZE"].size
+
+
+def test_a_blank_after_the_opening_paren_is_layout_not_value(tmp_path):
+    """Spec 2.2/2.3: `<...>` delimits a string and `(` opens a struct.
+
+    ParaVision writes the PV6/PV360 `(name, display-name)` enum tuple padded --
+    `( <A> , <B> )` -- and the blank stayed glued to the first element, so it
+    never matched the string branch and kept its delimiters while its sibling
+    lost them. The same blank made a leading number parse as a string.
+    """
+    assert GenericParameter.parse_value("( <A>, <B> )") == ["A", "B"]
+    assert GenericParameter.parse_value("(<A> , <B>)") == ["A", "B"]
+    assert GenericParameter.parse_value("( 1, 2 )") == [1, 2]
+
+    path = tmp_path / "subject"
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$SUBJECT_study_adj_config=( <MRI_Default> , <MRI Default> )\n##END=\n")
+
+    assert JCAMPDX(path).get_value("SUBJECT_study_adj_config") == ["MRI_Default", "MRI Default"]
+
+
+def test_blanks_inside_a_wrapped_string_are_kept(tmp_path):
+    """The wrap inserts a newline after a space, so joining must not touch the
+    blanks the value itself carries -- only those at either end of the block."""
+    path = tmp_path / "visu_pars"
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuFGElemComment=( 2, 65 )\n<Signal Intensity> <T2 Relaxation \nTime>\n##END=\n")
+
+    assert list(JCAMPDX(path).get_value("VisuFGElemComment")) == ["Signal Intensity", "T2 Relaxation Time"]
