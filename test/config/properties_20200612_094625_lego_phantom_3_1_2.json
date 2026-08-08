@@ -134,7 +134,7 @@
         "extent": [
             40.0,
             40.0,
-            15.0
+            12.5
         ],
         "id": "2DSEQ_11_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -335,7 +335,7 @@
         "extent": [
             40.0,
             40.0,
-            13.999999999999996
+            11.999999999999996
         ],
         "id": "2DSEQ_13_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -441,9 +441,9 @@
         "dwell_s": 5e-06,
         "encoded_dim": 2,
         "extent": [
-            40,
-            40,
-            28
+            40.0,
+            40.0,
+            21.0
         ],
         "id": "2DSEQ_14_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -537,9 +537,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            40,
-            40,
-            6
+            40.0,
+            40.0,
+            4.0
         ],
         "id": "2DSEQ_15_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -835,9 +835,9 @@
         "dwell_s": 2.5000000000000044e-06,
         "encoded_dim": 2,
         "extent": [
-            64,
-            64,
-            12
+            64.0,
+            64.0,
+            10.0
         ],
         "id": "2DSEQ_18_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -1401,7 +1401,7 @@
         "extent": [
             40.0,
             40.0,
-            6.0
+            4.5
         ],
         "id": "2DSEQ_23_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -2608,9 +2608,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            40,
-            40,
-            80
+            40.0,
+            40.0,
+            84.8528137423857
         ],
         "id": "2DSEQ_3_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -2699,7 +2699,7 @@
         "extent": [
             40.0,
             40.0,
-            3.75
+            2.5
         ],
         "id": "2DSEQ_40_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -3194,7 +3194,7 @@
         "extent": [
             40.0,
             40.0,
-            6.6000000000000005
+            5.5
         ],
         "id": "2DSEQ_44_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -3576,7 +3576,7 @@
         "extent": [
             40.0,
             40.0,
-            6.6000000000000005
+            5.5
         ],
         "id": "2DSEQ_44_2_lego_phantom_3_2",
         "is_single_slice": false,
@@ -3708,7 +3708,7 @@
         "extent": [
             40.0,
             40.0,
-            7.5
+            6.25
         ],
         "id": "2DSEQ_45_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -3799,7 +3799,7 @@
         "extent": [
             40.0,
             40.0,
-            13.000000000000004
+            11.700000000000003
         ],
         "id": "2DSEQ_47_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -4197,9 +4197,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            40,
-            40,
-            80
+            40.0,
+            40.0,
+            84.8528137423857
         ],
         "id": "2DSEQ_4_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -4287,9 +4287,9 @@
         "dwell_s": 5e-06,
         "encoded_dim": 2,
         "extent": [
-            40,
-            40,
-            10
+            40.0,
+            40.0,
+            8.0
         ],
         "id": "2DSEQ_5_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -4444,7 +4444,7 @@
         "extent": [
             40.0,
             40.0,
-            37.2
+            31.0
         ],
         "id": "2DSEQ_6_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,
@@ -4678,7 +4678,7 @@
         "extent": [
             40.0,
             40.0,
-            21.0
+            19.5
         ],
         "id": "2DSEQ_8_1_lego_phantom_3_2",
         "imaging_frequency": 400.322496492311,

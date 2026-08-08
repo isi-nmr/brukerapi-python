@@ -215,7 +215,7 @@
         "extent": [
             50.0,
             50.0,
-            15.0
+            10.0
         ],
         "id": "2DSEQ_12_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -326,7 +326,7 @@
         "extent": [
             50.0,
             50.0,
-            25.0
+            20.0
         ],
         "id": "2DSEQ_13_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -521,9 +521,9 @@
         "dwell_s": 4.1999999999999945e-06,
         "encoded_dim": 2,
         "extent": [
-            50,
-            50,
-            20
+            50.0,
+            50.0,
+            15.0
         ],
         "id": "2DSEQ_15_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -784,9 +784,9 @@
         "dwell_s": 2.5e-06,
         "encoded_dim": 2,
         "extent": [
-            50,
-            50,
-            32
+            50.0,
+            50.0,
+            30.0
         ],
         "id": "2DSEQ_17_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -1204,9 +1204,9 @@
         "dwell_s": 3.799999999999998e-06,
         "encoded_dim": 2,
         "extent": [
-            60,
-            60,
-            32
+            60.0,
+            60.0,
+            30.0
         ],
         "id": "2DSEQ_1_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -1319,7 +1319,7 @@
         "extent": [
             50.0,
             50.0,
-            7.5
+            6.0
         ],
         "id": "2DSEQ_21_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -1844,9 +1844,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            50,
-            50,
-            16
+            50.0,
+            50.0,
+            12.0
         ],
         "id": "2DSEQ_2_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -2387,7 +2387,7 @@
         "extent": [
             40.0,
             40.0,
-            24.0
+            22.5
         ],
         "id": "2DSEQ_32_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -3519,7 +3519,7 @@
         "extent": [
             40.0,
             40.0,
-            24.0
+            22.5
         ],
         "id": "2DSEQ_32_2_LEGO_PHANTOM_2",
         "is_single_slice": false,
@@ -4694,7 +4694,7 @@
         "extent": [
             60.0,
             60.0,
-            18.0
+            16.0
         ],
         "id": "2DSEQ_3_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -4923,9 +4923,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            50,
-            50,
-            20
+            50.0,
+            50.0,
+            16.0
         ],
         "id": "2DSEQ_4_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -5027,9 +5027,9 @@
         "dwell_s": 1e-05,
         "encoded_dim": 2,
         "extent": [
-            50,
-            50,
-            12
+            50.0,
+            50.0,
+            9.0
         ],
         "id": "2DSEQ_5_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
@@ -5287,7 +5287,7 @@
         "extent": [
             50.0,
             50.0,
-            15.0
+            12.5
         ],
         "id": "2DSEQ_7_1_LEGO_PHANTOM_2",
         "imaging_frequency": 400.322522538113,
