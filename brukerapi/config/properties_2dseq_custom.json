@@ -56,7 +56,7 @@
   ],
   "extent": [
     {
-      "cmd": "np.array([#PVM_VoxArrSize[0,0] * #VisuAcqSize[1], #PVM_VoxArrSize[0,1] * #VisuAcqSize[2], #VisuCoreFrameThickness])",
+      "cmd": "np.array([#PVM_VoxArrSize[0,0] * #VisuAcqSize[1], #PVM_VoxArrSize[0,1] * #VisuAcqSize[2], np.atleast_1d(#VisuCoreFrameThickness)[0]])",
       "conditions": [
         "@pv_version.split('.')[0]=='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
@@ -74,15 +74,15 @@
     {
       "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], np.shape(#VisuCorePosition)[0] * np.linalg.norm(#VisuCorePosition[1,:] - #VisuCorePosition[0,:])])",
       "conditions": [
-        "#VisuCorePosition.size[0]>1",
+        "@is_single_slice==False",
         "#VisuCoreDim==2"
       ],
       "comment": "spec 7.2/12: VisuCorePosition is a 3-vector in patient coordinates and the slice normal is the third row of VisuCoreOrientation, so the step is the length of the whole difference -- the z component alone is zero for every coronal, sagittal or oblique stack. n slices span n steps, matching resolution[2] and the in-plane extent = size * resolution"
     },
     {
-      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], #VisuCoreFrameThickness])",
+      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], np.atleast_1d(#VisuCoreFrameThickness)[0]])",
       "conditions": [
-        "#VisuCorePosition.size[0]==1",
+        "@is_single_slice==True",
         "#VisuCoreDim==2"
       ]
     },
@@ -96,7 +96,7 @@
   ],
   "resolution": [
     {
-      "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], #VisuCoreFrameThickness])",
+      "cmd": "np.array([#PVM_VoxArrSize[0,0], #PVM_VoxArrSize[0,1], np.atleast_1d(#VisuCoreFrameThickness)[0]])",
       "conditions": [
         "@pv_version.split('.')[0]=='5'",
         "#VisuCoreDimDesc.list[0]=='spectroscopic'",
@@ -114,7 +114,7 @@
     {
       "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], np.linalg.norm(#VisuCorePosition[1,:] - #VisuCorePosition[0,:])])",
       "conditions": [
-        "#VisuCorePosition.size[0]>1",
+        "@is_single_slice==False",
         "#VisuCoreDim==2"],
       "comment": "spec 7.10: the distance between two measured slice centres. VisuCoreSlicePacksSliceDist is already centre-to-centre, so it must not be added to VisuCoreFrameThickness"
     },
@@ -124,7 +124,7 @@
         "#VisuCoreDim==2"]
     },
     {
-      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], #VisuCoreFrameThickness])",
+      "cmd": "np.array([#VisuCoreExtent[0] / #VisuCoreSize[0], #VisuCoreExtent[1] / #VisuCoreSize[1], np.atleast_1d(#VisuCoreFrameThickness)[0]])",
       "conditions": [
         "#VisuCoreDim==2"]
     },

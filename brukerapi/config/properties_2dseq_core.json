@@ -86,9 +86,10 @@
       {
         "cmd": "True",
         "conditions": [
-          "#VisuCorePosition.shape[0]==1",
-          "#VisuCoreDim<3"
-        ]
+          "#VisuCoreDim<3",
+          "np.allclose(np.atleast_2d(#VisuCorePosition), np.atleast_2d(#VisuCorePosition)[0])"
+        ],
+        "comment": "spec 7.4 cardinality: a parameter that is not frame-group dependent may carry one value or VisuCoreFrameCount values, so the leading size of VisuCorePosition is not a slice count -- an FG_ISA parameter-map PROCNO repeats one position per map. What makes a dataset multi-slice is the positions differing"
       },
       {
         "cmd": "False",

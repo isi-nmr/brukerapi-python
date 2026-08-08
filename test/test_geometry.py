@@ -437,3 +437,32 @@ def test_extent_spans_the_slice_axis_whatever_direction_it_points(tmp_path, norm
     assert dataset.extent[2] == pytest.approx(slices * spacing)
     assert dataset.resolution[2] == pytest.approx(spacing)
     assert dataset.slice_distance[0] == pytest.approx(spacing)
+
+
+def test_repeated_positions_are_one_slice_not_a_stack(tmp_path):
+    """Spec 7.4 cardinality: a parameter that is not frame-group dependent may
+    carry no value, one value, or `VisuCoreFrameCount` values.
+
+    An FG_ISA parameter-map PROCNO writes one position per map, all identical.
+    Reading the leading size as a slice count made the step the difference
+    between two copies of the same position -- exactly zero -- so the maps came
+    out with a degenerate slice resolution.
+    """
+    maps = 6
+    path = write_2dseq(
+        tmp_path / "pdata" / "2",
+        frame_groups=(("FG_ISA", maps),),
+        positions=np.tile([9.8, 11.4, -1.7], (maps, 1)),
+        frame_thickness=np.full(maps, 0.8),
+        extent=(20.0, 20.0),
+        size=(4, 4),
+    )
+
+    dataset = Dataset(path)
+
+    assert dataset.is_single_slice is True
+    assert dataset.resolution[2] == pytest.approx(0.8)
+    assert dataset.extent[2] == pytest.approx(0.8)
+    # the maps are frames of one slice, so the slice axis is a singleton
+    assert dataset.shape == (4, 4, 1, maps)
+    assert [str(label) for label in dataset.dim_type] == ["spatial", "spatial", "frame", "FG_ISA"]

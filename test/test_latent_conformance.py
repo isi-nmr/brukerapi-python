@@ -13,7 +13,7 @@ from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.folders import Experiment
 from brukerapi.jcampdx import JCAMPDX
 from brukerapi.utils import transposed_size
-from test.synthetic import Verbatim, write_2dseq, write_binary, write_jcampdx
+from test.synthetic import Verbatim, stacked_positions, write_2dseq, write_binary, write_jcampdx
 
 
 def test_the_reco_scaling_fallback_is_the_inverse_of_the_visu_one(tmp_path):
@@ -71,7 +71,9 @@ def test_a_legacy_d3proc_reconstruction_uses_the_in_plane_matrix_only(tmp_path):
             "VisuCoreExtent": np.array([20.0, 15.0]),
             "VisuCoreFrameThickness": np.array([1.0]),
             "VisuCoreOrientation": np.tile(np.eye(3).reshape(-1), (3, 1)),
-            "VisuCorePosition": np.zeros((3, 3)),
+            # three slices, so three distinct centres -- repeating one position would
+            # make this a single slice carrying three frames (spec 7.4)
+            "VisuCorePosition": stacked_positions((0.0, 0.0, 0.0), (0.0, 0.0, 1.0), 3),
             "VisuCoreDataSlope": np.ones(3),
             "VisuCoreDataOffs": np.zeros(3),
             "VisuFGOrderDescDim": 1,
