@@ -50,13 +50,7 @@ def test_jcampdx(test_jcampdx_data):
 
 def test_jcampdx_iteration_and_length_follow_its_mapping_interface(tmp_path):
     path = tmp_path / "visu_pars"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$VisuCoreDim=2\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuCoreDim=2\n##END=\n")
     jcamp = JCAMPDX(path)
 
     assert list(jcamp) == list(jcamp.keys())
@@ -142,13 +136,7 @@ def test_parallel_lists_do_not_split_a_string_on_a_delimiter_it_contains():
 
 def test_jcampdx_get_value_keeps_the_whole_enum_display_name(tmp_path):
     path = tmp_path / "configscan"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$CONFIG_SCAN_operation_mode=(operation, <[1H] TX Volume, RX Surface Array>)\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$CONFIG_SCAN_operation_mode=(operation, <[1H] TX Volume, RX Surface Array>)\n##END=\n")
 
     assert JCAMPDX(path).get_value("CONFIG_SCAN_operation_mode") == [
         "operation",
@@ -179,15 +167,7 @@ def test_run_length_expansion_handles_multiple_and_nested_runs():
 
 def test_jcampdx_data_parameter_parses_multiline_xy_pairs(tmp_path):
     path = tmp_path / "data"
-    path.write_text(
-        "##TITLE=XY Data\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$POINTS=(XY..XY)\n"
-        "1.0, 2.0\n"
-        "3.0, 4.0\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=XY Data\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$POINTS=(XY..XY)\n1.0, 2.0\n3.0, 4.0\n##END=\n")
 
     assert np.array_equal(
         JCAMPDX(path).get_value("POINTS"),
@@ -197,15 +177,7 @@ def test_jcampdx_data_parameter_parses_multiline_xy_pairs(tmp_path):
 
 def test_jcampdx_float_and_list_serialization_round_trip(tmp_path):
     source = tmp_path / "source"
-    source.write_text(
-        "##TITLE=Serialization Test\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$FLOAT=0.0\n"
-        "##$VALUES=( 2 )\n"
-        "0.0 0.0\n"
-        "##END=\n"
-    )
+    source.write_text("##TITLE=Serialization Test\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$FLOAT=0.0\n##$VALUES=( 2 )\n0.0 0.0\n##END=\n")
     jcamp = JCAMPDX(source)
 
     jcamp.get_parameter("FLOAT").value = 1.25
@@ -222,15 +194,7 @@ def test_jcampdx_float_and_list_serialization_round_trip(tmp_path):
 
 def test_jcampdx_data_parameter_setter_round_trip(tmp_path):
     source = tmp_path / "source-data"
-    source.write_text(
-        "##TITLE=XY Data\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$POINTS=(XY..XY)\n"
-        "1.0, 2.0\n"
-        "3.0, 4.0\n"
-        "##END=\n"
-    )
+    source.write_text("##TITLE=XY Data\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$POINTS=(XY..XY)\n1.0, 2.0\n3.0, 4.0\n##END=\n")
     jcamp = JCAMPDX(source)
     expected = np.array([[5.0, 6.0], [7.0, 8.0]])
 
@@ -337,18 +301,7 @@ def test_parse_value_does_not_treat_unclosed_parenthesis_as_list():
 
 def test_jcampdx_size_parsing_accepts_compact_and_padded_brackets(tmp_path):
     path = tmp_path / "sizes"
-    path.write_text(
-        "##TITLE=Size Test\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$COMPACT=(2)\n"
-        "1 2\n"
-        "##$PADDED=(   2   )\n"
-        "3 4\n"
-        "##$MATRIX=(2, 3)\n"
-        "1 2 3 4 5 6\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Size Test\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$COMPACT=(2)\n1 2\n##$PADDED=(   2   )\n3 4\n##$MATRIX=(2, 3)\n1 2 3 4 5 6\n##END=\n")
     jcamp = JCAMPDX(path)
 
     assert jcamp.get_parameter("COMPACT").size == (2,)
@@ -385,12 +338,7 @@ def test_jcampdx_detects_whitespace_padded_supported_versions(tmp_path, header, 
 
 def test_jcampdx_keeps_double_hash_inside_bracketed_value(tmp_path):
     path = tmp_path / "configscan"
-    path.write_text(
-        "##TITLE=Config Scan\n"
-        "##JCAMPDX= 5.0\n"
-        "##$PULPROG=<HpMode,On##$EndBis,04,FA#>\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Config Scan\n##JCAMPDX= 5.0\n##$PULPROG=<HpMode,On##$EndBis,04,FA#>\n##END=\n")
 
     assert JCAMPDX(path).get_value("PULPROG") == "HpMode,On##$EndBis,04,FA#"
 
@@ -402,13 +350,7 @@ def test_jcampdx_record_without_assignment_raises_typed_error():
 
 def test_load_parameter_allows_hash_and_dollar_in_value(tmp_path):
     path = tmp_path / "special-value"
-    path.write_text(
-        "##TITLE=Special Value\n"
-        "##JCAMPDX=5.0\n"
-        "##$VALUE=<cost $5 #tag>\n"
-        "##$NEXT=2\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Special Value\n##JCAMPDX=5.0\n##$VALUE=<cost $5 #tag>\n##$NEXT=2\n##END=\n")
 
     key, parameter = JCAMPDX.load_parameter(path, "VALUE")
 
@@ -444,16 +386,7 @@ def test_jcampdx_round_trip_preserves_comments_and_end_marker(tmp_path):
 
 def test_jcampdx_version_detection_is_label_based_within_header(tmp_path):
     path = tmp_path / "reordered-header"
-    path.write_text(
-        "##TITLE=Reordered Header\n"
-        "##DATATYPE=Parameter Values\n"
-        "##ORIGIN=Test\n"
-        "$$ header comment\n"
-        "##OWNER=Tester\n"
-        "##JCAMPDX=4.24\n"
-        "##$VALUE=42\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Reordered Header\n##DATATYPE=Parameter Values\n##ORIGIN=Test\n$$ header comment\n##OWNER=Tester\n##JCAMPDX=4.24\n##$VALUE=42\n##END=\n")
 
     jcamp = JCAMPDX(path)
 
@@ -491,15 +424,7 @@ def test_a_wrap_inside_a_string_does_not_invent_a_space(tmp_path):
 
 def test_a_wrap_at_a_space_keeps_exactly_one_space(tmp_path):
     path = tmp_path / "acqp"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$ACQ_size=( 4 )\n"
-        "128 64 \n"
-        "32 16\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$ACQ_size=( 4 )\n128 64 \n32 16\n##END=\n")
 
     assert np.array_equal(JCAMPDX(path)["ACQ_size"].value, np.array([128, 64, 32, 16]))
 
@@ -523,16 +448,7 @@ def test_write_does_not_wrap_comment_records(tmp_path):
     """
     comment = "$$ /opt/PV6.0.1/data/imag/20200913_160003_In_situ_experiment_with_a_very_long_name/74/acqp"
     path = tmp_path / "acqp"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##OWNER=imag\n"
-        f"{comment}\n"
-        "##$ACQ_size=( 2 )\n"
-        "128 64\n"
-        "##END=\n"
-    )
+    path.write_text(f"##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##OWNER=imag\n{comment}\n##$ACQ_size=( 2 )\n128 64\n##END=\n")
 
     original = JCAMPDX(path)
     original.write(tmp_path / "acqp.written")
@@ -654,15 +570,7 @@ def test_a_trailing_backslash_in_a_string_is_content_not_an_escape(tmp_path):
     would drop the record.
     """
     path = tmp_path / "visu_pars"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$VisuStudyDescription=( 2048 )\n"
-        "<\\\n"
-        ">\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuStudyDescription=( 2048 )\n<\\\n>\n##END=\n")
 
     assert JCAMPDX(path)["VisuStudyDescription"].value == "\\"
 
@@ -675,13 +583,7 @@ def test_the_last_parameter_survives_a_file_without_an_end_marker(tmp_path):
     exception and no warning.
     """
     path = tmp_path / "visu_pars"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$VisuCoreDim=2\n"
-        "##$VisuRespSynchUsed=No\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuCoreDim=2\n##$VisuRespSynchUsed=No\n")
 
     parameters = JCAMPDX(path)
 
@@ -693,16 +595,7 @@ def test_a_malformed_record_raises_a_typed_error(tmp_path):
     """Spec 2.3: an element count that does not fill the declared size is a
     diagnosable condition, not a raw numpy ValueError."""
     path = tmp_path / "acqp"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$SHORT=( 3, 3 )\n"
-        "1 2 3 4\n"
-        "##$BADSIZE=( a )\n"
-        "1 2\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$SHORT=( 3, 3 )\n1 2 3 4\n##$BADSIZE=( a )\n1 2\n##END=\n")
     parameters = JCAMPDX(path)
 
     with pytest.raises(InvalidJcampdxFile, match="do not fill the declared size"):

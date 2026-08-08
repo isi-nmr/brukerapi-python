@@ -218,15 +218,7 @@ def test_rawdata_settings_control_stored_scans_receivers_and_discarded_jobs(tmp_
 def test_a_dollar_comment_inside_a_string_is_data(tmp_path):
     """Spec 2.2: the text inside `<...>` is free-form, `$$` included."""
     path = tmp_path / "method"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$PVM_Comment=( 64 )\n"
-        "<a\n"
-        "$$b>\n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$PVM_Comment=( 64 )\n<a\n$$b>\n##END=\n")
 
     assert JCAMPDX(path)["PVM_Comment"].value == "a$$b"
 
@@ -235,12 +227,6 @@ def test_a_scalar_struct_is_not_eaten_as_a_size_bracket(tmp_path):
     """`##$VisuCoreSlicePacksDef=(0, 1)` is a value, not a size -- including when
     the line has a trailing blank."""
     path = tmp_path / "visu_pars"
-    path.write_text(
-        "##TITLE=Parameter List\n"
-        "##JCAMPDX=4.24\n"
-        "##DATATYPE=Parameter Values\n"
-        "##$VisuCoreSlicePacksDef=(0, 1) \n"
-        "##END=\n"
-    )
+    path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuCoreSlicePacksDef=(0, 1) \n##END=\n")
 
     assert JCAMPDX(path)["VisuCoreSlicePacksDef"].value == [0, 1]

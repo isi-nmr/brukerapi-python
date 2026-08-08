@@ -84,8 +84,7 @@ def test_dataset_reads_from_archive_identically(study_dir, study_zip):
 
 def test_parameters_resolve_through_relative_paths(study_dir, study_zip):
     """``../../acqp`` resolves inside an archive, where ``..`` is not collapsed."""
-    dataset = Dataset(study_zip / "1" / "pdata" / "1" / "2dseq", scale=False,
-                      parameter_files=["acqp"])
+    dataset = Dataset(study_zip / "1" / "pdata" / "1" / "2dseq", scale=False, parameter_files=["acqp"])
     assert dataset["ACQ_scan_name"].value == "demo"
 
 
@@ -111,7 +110,7 @@ def test_get_value_default_for_absent_key(study_dir):
 
 def test_path_helpers_work_for_both_kinds(study_dir, study_zip):
     assert isinstance(as_path(str(study_dir)), Path)
-    assert as_path(study_zip) is study_zip                        # passed through, not coerced
+    assert as_path(study_zip) is study_zip  # passed through, not coerced
 
     for root in (study_dir, study_zip):
         proc = root / "1" / "pdata" / "1"

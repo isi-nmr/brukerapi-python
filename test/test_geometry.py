@@ -19,9 +19,7 @@ SAGITTAL_ORIENTATION = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0])
 PV360_NIFTI_ROOT = Path("test/test_data/PV360_StdData")
 # Every reconstruction that ships a NIfTI export, rather than a fixed list, so
 # a dataset added to the corpus is checked without editing this file.
-PV360_NIFTI_EXPORTS = sorted(
-    directory.parent.relative_to(PV360_NIFTI_ROOT).as_posix() for directory in PV360_NIFTI_ROOT.glob("*/pdata/*/nifti") if any(directory.glob("*.nii"))
-)
+PV360_NIFTI_EXPORTS = sorted(directory.parent.relative_to(PV360_NIFTI_ROOT).as_posix() for directory in PV360_NIFTI_ROOT.glob("*/pdata/*/nifti") if any(directory.glob("*.nii")))
 
 
 def nifti_affine(path):
