@@ -88,23 +88,14 @@
   ],
   "channels": [
     {
-      "cmd": "1",
-      "conditions": [
-        "#ACQ_dim_desc.__class__.__name__=='str'",
-        "#ACQ_dim_desc=='Spectroscopic'"
-      ]
+      "cmd": "int(#PVM_EncNReceivers)",
+      "conditions": [],
+      "comment": "spec 3.1: Nchan is the number of active receiver channels, with no spectroscopy exception -- ACQ_dim_desc says whether a dimension is Spatial or Spectroscopic (spec 5.1) and nothing about receivers. The PV360 PRESS_1H scans are spectroscopic with PVM_EncNReceivers=4, so 'spectroscopic implies one channel' is simply false. PVM_EncNReceivers is the method-side mirror of the Yes count in ACQ_ReceiverSelect"
     },
     {
       "cmd": "1",
-      "conditions": [
-        "#ACQ_dim_desc[0]=='Spectroscopic'"
-      ]
-    },
-    {
-      "cmd": "#PVM_EncNReceivers",
-      "conditions": [
-        "#ACQ_dim_desc[0]!='Spectroscopic'"
-      ]
+      "conditions": [],
+      "comment": "a method file that declares no receiver count describes a single-channel acquisition"
     }
   ],
   "block_size": [

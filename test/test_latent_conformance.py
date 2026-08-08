@@ -13,7 +13,7 @@ from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.folders import Experiment
 from brukerapi.jcampdx import JCAMPDX
 from brukerapi.utils import transposed_size
-from test.synthetic import Verbatim, write_2dseq, write_binary, write_jcampdx
+from test.synthetic import Verbatim, write_2dseq, write_binary, write_fid, write_jcampdx
 
 
 def test_the_reco_scaling_fallback_is_the_inverse_of_the_visu_one(tmp_path):
@@ -230,3 +230,41 @@ def test_a_scalar_struct_is_not_eaten_as_a_size_bracket(tmp_path):
     path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuCoreSlicePacksDef=(0, 1) \n##END=\n")
 
     assert JCAMPDX(path)["VisuCoreSlicePacksDef"].value == [0, 1]
+
+
+def test_a_spectroscopic_acquisition_keeps_its_receiver_count(tmp_path):
+    """Spec 3.1: Nchan is the number of active receiver channels, with no
+    spectroscopy exception.
+
+    `ACQ_dim_desc` says whether a dimension is Spatial or Spectroscopic (spec
+    5.1) and nothing about receivers, yet it was used to assert Nchan == 1 --
+    which sizes the per-scan block short by the receiver factor. The PV360
+    PRESS_1H scans are spectroscopic with PVM_EncNReceivers = 4, so the premise
+    is false; they are job-based, so no `fid` in the corpus exercises it.
+
+    The hard-code fired wherever ACQ_dim_desc is an array whose first entry is
+    Spectroscopic, i.e. CSI.
+    """
+    receivers, points = 2, 8
+    experiment = tmp_path / "1"
+    acqp = {
+        "ACQ_sw_version": ["<PV 6.0.1>"],
+        "GO_raw_data_format": "GO_32BIT_SGN_INT",
+        "GO_block_size": "Standard_KBlock_Format",
+        "BYTORDA": "little",
+        "ACQ_dim": 3,
+        "ACQ_dim_desc": Verbatim("( 3 )\nSpectroscopic Spatial Spatial"),
+        "ACQ_size": np.array([2 * points, 4, 4]),
+        "NI": 1,
+        "NR": 1,
+        "PULPROG": ["<CSI.ppg>"],
+    }
+    method = {"PVM_EncNReceivers": receivers, "PVM_DigNp": points}
+    write_fid(experiment, acqp, method, blocks=1)
+
+    dataset = Dataset(experiment / "fid", load=LOAD_STAGES["properties"])
+
+    assert dataset.scheme_id == "CSI"
+    assert dataset.channels == receivers
+    # spec 3.1: the per-scan block holds every active channel's samples
+    assert dataset.acq_length == 2 * points * receivers
