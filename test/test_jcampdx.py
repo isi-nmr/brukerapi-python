@@ -1,3 +1,8 @@
+import json
+import os
+import subprocess
+import sys
+
 import numpy as np
 import pytest
 
@@ -602,3 +607,38 @@ def test_a_malformed_record_raises_a_typed_error(tmp_path):
         _ = parameters["SHORT"].value
     with pytest.raises(InvalidJcampdxFile, match="is not an integer"):
         _ = parameters["BADSIZE"].size
+
+
+def test_utf8_values_survive_a_non_utf8_locale(tmp_path):
+    """Spec 2.2: ParaVision 360 writes parameter files as UTF-8.
+
+    The encoding belongs to the format, so it must not come from the process
+    locale.  Read back under ``LC_ALL=C`` with UTF-8 mode off -- what a container,
+    a CI runner or a batch scheduler gives you -- a `visu_pars` carrying the
+    PV360 T2-map comments has to parse to the same strings it was written with.
+    """
+    # the non-ASCII characters are the point of the test, verbatim from the PV360 3.6 T2map_MSME
+    comments = ["Signal Intensity", "σ of Signal Intensity", "Fit χ²"]  # noqa: RUF001
+    path = tmp_path / "visu_pars"
+    path.write_text(
+        "##TITLE=Parameter List, ParaVision 360 V3.6\n"
+        "##JCAMPDX=4.24\n"
+        "##DATATYPE=Parameter Values\n"
+        f"##$VisuFGElemComment=( {len(comments)}, 65 )\n" + " ".join(f"<{comment}>" for comment in comments) + "\n##END=\n",
+        encoding="utf-8",
+    )
+
+    assert list(JCAMPDX(path).get_value("VisuFGElemComment")) == comments
+
+    script = f"import json\nfrom brukerapi.jcampdx import JCAMPDX\nprint(json.dumps(list(JCAMPDX({str(path)!r}).get_value('VisuFGElemComment'))))\n"
+    result = subprocess.run(
+        [sys.executable, "-X", "utf8=0", "-c", script],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env={**os.environ, "LC_ALL": "C", "LANG": "C", "PYTHONUTF8": "0", "PYTHONCOERCECLOCALE": "0"},
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout) == comments
