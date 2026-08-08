@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from brukerapi.exceptions import InvalidJcampdxFile
+from brukerapi.exceptions import InvalidJcampdxFile, JcampdxVersionError
 from brukerapi.jcampdx import JCAMPDX, DataParameter, GenericParameter
 
 
@@ -602,3 +602,39 @@ def test_a_malformed_record_raises_a_typed_error(tmp_path):
         _ = parameters["SHORT"].value
     with pytest.raises(InvalidJcampdxFile, match="is not an integer"):
         _ = parameters["BADSIZE"].size
+
+
+@pytest.mark.parametrize(
+    ("record", "expected"),
+    [
+        ("##JCAMPDX=4.24", "4.24"),
+        ("##JCAMPDX= 5.0", "5.0"),
+        ("##JCAMP-DX= 5.00 Bruker JCAMP library", "5.00"),
+        ("##JCAMP-DX= 5.00 BRUKER JCAMP library", "5.00"),
+        ("##JCAMP-DX= 5.00 $$ BRUKER JCAMP library (alpha version)", "5.00"),
+    ],
+)
+def test_the_version_record_is_read_as_a_version_not_as_a_whole_line(tmp_path, record, expected):
+    """Spec 2.1: `$$` starts a comment, so it is not part of the version.
+
+    ParaVision writes one on this very record -- a real `spnam1` in the PV6 and
+    PV7 studies carries `##JCAMP-DX= 5.00 $$ BRUKER JCAMP library (alpha
+    version)` -- and also appends a bare library identification. Matching the
+    whole line tail against a list of literals rejected the `$$` form, which
+    `Folder` then dropped silently.
+    """
+    path = tmp_path / "spnam1"
+    path.write_text(f"##TITLE= /d/exp/stan/nmr/lists/wave/bp\n{record}\n##DATA TYPE= Shape Data\n##$SHAPE_TOTROT=1.8e+02\n##END=\n")
+
+    parameters = JCAMPDX(path)
+
+    assert parameters.version == expected
+    assert parameters["SHAPE_TOTROT"].value == 180.0
+
+
+def test_an_unsupported_version_is_still_rejected(tmp_path):
+    path = tmp_path / "spnam1"
+    path.write_text("##TITLE=Shape\n##JCAMP-DX= 6.00 $$ some library\n##DATA TYPE= Shape Data\n##END=\n")
+
+    with pytest.raises(JcampdxVersionError):
+        JCAMPDX(path)

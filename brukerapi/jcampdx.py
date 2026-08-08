@@ -8,7 +8,10 @@ import numpy as np
 from .exceptions import InvalidJcampdxFile, JcampdxFileError, JcampdxVersionError, ParameterNotFound
 from .paths import as_path
 
-SUPPORTED_VERSIONS = ["4.24", "5.0", "5.00 Bruker JCAMP library", "5.00 BRUKER JCAMP library", "5.01"]
+# Spec 2.1: parameter lists are 4.24; the spnamN shape files are JCAMP-DX 5.00.
+# These are version numbers only -- whatever Bruker appends to the record is a
+# library identification or a `$$` comment, and is stripped before the check.
+SUPPORTED_VERSIONS = ["4.24", "5.0", "5.00", "5.01"]
 GRAMMAR = {
     "COMMENT_LINE": r"\$\$[^\n]*\n",
     "PARAMETER": r"^##",
@@ -756,7 +759,7 @@ class JCAMPDX:
 
         for key in ("JCAMPDX", "JCAMP-DX"):
             if key in self.params:
-                return self.params[key].value
+                return self.parse_version(self.params[key].value)
 
         try:
             with self.path.open("r") as f:
@@ -879,17 +882,30 @@ class JCAMPDX:
     @classmethod
     def verify_version(cls, version):
         if isinstance(version, str):
-            version = version.strip()
+            version = cls.parse_version(version)
         if version not in SUPPORTED_VERSIONS:
             raise JcampdxVersionError(version)
 
     @staticmethod
-    def _detect_version(lines):
+    def parse_version(value):
+        """The version number out of a ``##JCAMP-DX=`` record's value.
+
+        Spec 2.1: ``$$`` starts a JCAMP-DX comment, and ParaVision writes one on
+        this very record -- a real `spnam1` carries
+        ``##JCAMP-DX= 5.00 $$ BRUKER JCAMP library (alpha version)``.  Bruker also
+        appends a bare library identification (``5.00 Bruker JCAMP library``).
+        Neither is part of the version, so take the first token and leave the rest
+        as what it is: a comment.
+        """
+        return str(value).split("$$", 1)[0].strip().split(maxsplit=1)[0] if str(value).strip() else ""
+
+    @classmethod
+    def _detect_version(cls, lines):
         for index, line in enumerate(lines):
             if index >= 10:
                 break
             if line.startswith(("##JCAMPDX=", "##JCAMP-DX=")):
-                return line.split("=", 1)[1].strip()
+                return cls.parse_version(line.split("=", 1)[1])
         return None
 
     @classmethod
