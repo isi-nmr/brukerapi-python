@@ -277,8 +277,31 @@ class GenericParameter(Parameter):
                     # declared dimensions, and a mismatch is a diagnosable
                     # condition, not an internal error
                     raise InvalidJcampdxFile(f"{self.key}: {value.size} values do not fill the declared size {self.size}") from error
-            return value
+            return np.reshape(value, self._text_shape(value.size), order="C")
         return value
+
+    def _text_shape(self, count):
+        """The shape `count` parsed text values take under the declared size.
+
+        Spec 2.3 writes a **string** array with one length indicator per array
+        dimension plus a final one for the string length -- ``( 6, 65 )`` is six
+        strings, not 390 -- while an **enum** array carries no string-length
+        dimension at all, so ``ACQ_ReceiverSelectPerChan=( 2, 7 )`` really is two
+        channels of seven receivers. Both parse to a text dtype, and the element
+        count is what separates them.
+
+        Leaving every text array flat, as this used to, made the 2-D enum arrays
+        unindexable: spec 3.3 asks for ``ACQ_ReceiverSelectPerChan[chanNum-1]``
+        and there were no rows to index.
+        """
+        size = tuple(int(length) for length in self.size)
+        if count == int(np.prod(size)):
+            return size
+        if len(size) > 1 and count == int(np.prod(size[:-1])):
+            return size[:-1]
+        # An unrecognised shape stays flat rather than raising: unlike the numeric
+        # case above, a text array has always been delivered this way.
+        return (count,)
 
     @value.setter
     def value(self, value):

@@ -705,3 +705,25 @@ def test_blanks_inside_a_wrapped_string_are_kept(tmp_path):
     path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuFGElemComment=( 2, 65 )\n<Signal Intensity> <T2 Relaxation \nTime>\n##END=\n")
 
     assert list(JCAMPDX(path).get_value("VisuFGElemComment")) == ["Signal Intensity", "T2 Relaxation Time"]
+
+
+def test_a_text_array_takes_its_declared_shape():
+    """Spec 2.3: a string array's last length indicator is the string length, an
+    enum array's is not.
+
+    ``VisuCoreDataUnits=( 2, 65 )`` is two strings; ``ACQ_ReceiverSelectPerChan=
+    ( 2, 7 )`` is two channels of seven receivers. Both parse to a text dtype,
+    and only the element count separates them. Delivering every text array flat
+    made the 2-D enum arrays unindexable, so spec 3.3's
+    ``ACQ_ReceiverSelectPerChan[chanNum-1]`` had no row to select.
+    """
+    receivers = GenericParameter("##$ACQ_ReceiverSelectPerChan", "( 2, 7 )", "No Yes No No No No No Yes No No No No No No", "4.24")
+    assert receivers.value.shape == (2, 7)
+    assert list(receivers.value[0]) == ["No", "Yes", "No", "No", "No", "No", "No"]
+
+    units = GenericParameter("##$VisuCoreDataUnits", "( 2, 65 )", "<a.u.> <mm>", "4.24")
+    assert units.value.shape == (2,)
+    assert list(units.value) == ["a.u.", "mm"]
+
+    flat = GenericParameter("##$ACQ_ReceiverSelect", "( 4 )", "Yes Yes No No", "4.24")
+    assert flat.value.shape == (4,)
