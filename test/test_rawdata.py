@@ -5,6 +5,7 @@ import pytest
 
 from brukerapi.dataset import Dataset
 from brukerapi.exceptions import InvalidDataset, UnknownAcqSchemeException
+from test.synthetic import Verbatim, write_binary, write_jcampdx
 
 RAWDATA_JOB_PATHS = sorted(Path("test/test_data").rglob("rawdata.job*"))
 
@@ -100,3 +101,50 @@ def test_pv360_epi_rawdata_job_requires_an_acquisition_specific_reader(test_data
 
     with pytest.raises(UnknownAcqSchemeException, match="is EPI"):
         dataset.to_kspace()
+
+
+def test_to_kspace_nests_the_object_loop_inside_the_phase_loop(tmp_path):
+    """Spec 5.2, "Acquisition loop nesting (default)":
+
+        NS > ACQ_phase_factor > NSLICES > NI or NSLICES > NA
+           > ACQ_size[1]/ACQ_phase_factor > ACQ_size[1] > ACQ_size[2] > NAE > NR
+
+    The object level sits INSIDE the phase-encode-group level, so consecutive
+    scans step the object first. Reading it the other way round interleaves the
+    slice and phase-encode indices of every 2-D multi-slice job, silently: the
+    array keeps its shape and dtype.
+    """
+    readout, phase, objects = 2, 3, 2
+    # scan s = object + NI*group, and each scan carries 1000*object + group so a
+    # misplaced sample is visible
+    scans = [1000 * obj + group for group in range(phase) for obj in range(objects)]
+    samples = np.zeros((2 * readout, 1, len(scans)), dtype="<i4")
+    for index, value in enumerate(scans):
+        samples[0::2, 0, index] = value
+
+    experiment = tmp_path / "1"
+    write_jcampdx(
+        experiment / "acqp",
+        {
+            "ACQ_sw_version": ["<PV-360.3.6>"],
+            "ACQ_word_size": "_32_BIT",
+            "BYTORDA": "little",
+            "ACQ_dim": 2,
+            "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+            # spec 13.1: ACQ_size[0] need not equal the job scan size
+            "ACQ_size": np.array([8, phase]),
+            "ACQ_phase_factor": 1,
+            "NI": objects,
+            "NR": 1,
+            "ACQ_jobs": Verbatim(f"( 1 )\n({2 * readout}, 1, 0, {len(scans)}, 101, 5000, {len(scans)}, 1, <job0>)"),
+        },
+    )
+    write_jcampdx(experiment / "method", {"PVM_EncNReceivers": 1, "PVM_EncMatrix": np.array([readout, phase])})
+    write_binary(experiment / "rawdata.job0", samples, np.dtype("<i4"))
+
+    k_space = Dataset(experiment / "rawdata.job0").to_kspace()
+
+    assert k_space.shape == (readout, phase, objects, 1, 1)
+    for obj in range(objects):
+        for group in range(phase):
+            assert np.all(k_space[:, group, obj, 0, 0].real == 1000 * obj + group)

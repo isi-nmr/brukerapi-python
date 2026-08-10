@@ -730,13 +730,24 @@ class SchemaRawdata(Schema):
             return self._as_bart(k_space, axes) if bart else k_space
 
         if encoded_dim == 2:
-            encoding_space = (readout, receivers, phase, objects, repetitions)
-            permute = (0, 2, 3, 4, 1)
+            # Spec 5.2, "Acquisition loop nesting (default)":
+            #   NS > ACQ_phase_factor > NSLICES > NI or NSLICES > NA
+            #     > ACQ_size[1]/ACQ_phase_factor > ACQ_size[1] > ACQ_size[2] > NAE > NR
+            # The object level sits INSIDE the phase-encode-group level, so the scan
+            # index runs object + NI*group, not phase + Nphase*object. This is the
+            # same nesting the fid path uses (properties_fid_core.json, CART_2D).
+            phase_factor = int(self._dataset._parameter_value("ACQ_phase_factor", 1)) or 1
+            if phase % phase_factor:
+                raise UnknownAcqSchemeException(f"ACQ_phase_factor={phase_factor} does not divide the {phase} phase-encode steps of {self._dataset.path}")
+            encoding_space = (readout, receivers, phase_factor, objects, phase // phase_factor, repetitions)
+            permute = (0, 2, 4, 3, 5, 1)
+            k_space_shape = (readout, phase, objects, repetitions, receivers)
         else:
             if objects != 1:
                 raise UnknownAcqSchemeException(f"cannot establish a 3-D Cartesian rawdata layout with NI={objects} for {self._dataset.path}")
             encoding_space = (readout, receivers, phase, matrix[2], repetitions)
             permute = (0, 2, 3, 4, 1)
+            k_space_shape = (readout, phase, matrix[2], repetitions, receivers)
 
         if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers:
             raise InvalidDataset(f"rawdata sample layout {data.shape} does not match Cartesian metadata (readout={readout}, receivers={receivers}) for {self._dataset.path}")
@@ -746,6 +757,7 @@ class SchemaRawdata(Schema):
             )
 
         k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
+        k_space = np.reshape(k_space, k_space_shape, order="F")
         k_space = self._reorder_phase_lines(k_space)
         k_space = self._reorder_objects(k_space)
         axes = (
