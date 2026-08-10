@@ -39,20 +39,6 @@ BART_DIM_BY_TYPE = {
 # properties required for loading of the data array for each dataset type
 REQUIRED_PROPERTIES = {
     "fid": ["numpy_dtype", "channels", "block_size", "acq_length", "scheme_id", "block_count", "encoding_space", "permute", "k_space", "encoded_dim", "shape_storage", "dim_type"],
-    "fid_proc": [
-        "numpy_dtype",
-        "channels",
-        "block_size",
-        "acq_length",
-        "scheme_id",
-        "block_count",
-        "encoding_space",
-        "permute",
-        "k_space",
-        "encoded_dim",
-        "shape_storage",
-        "dim_type",
-    ],
     "2dseq": [
         "pv_version",
         "numpy_dtype",

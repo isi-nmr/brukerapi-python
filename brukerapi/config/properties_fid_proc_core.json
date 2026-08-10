@@ -1,0 +1,44 @@
+{
+  "pv_version": [
+    {
+      "cmd": "(#ACQ_sw_version).replace('PV-','').replace('PV ','').strip()",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "numpy_dtype": [
+    {
+      "cmd": "np.dtype('f8').newbyteorder('>' if #BYTORDA=='big' else '<')",
+      "conditions": [],
+      "comment": "spec 3.5: fid_proc.64 / fid_refscan.64 hold 64-bit doubles, whatever the raw acquisition word type is. The .64 suffix is the word size"
+    }
+  ],
+  "shape_final": [
+    {
+      "cmd": "(int(np.prod(np.atleast_1d(#PVM_SpecMatrix))),)",
+      "conditions": [],
+      "comment": "spec 3.5: one complex float64 pair per spectral point, so the file is 8 * 2 * PVM_SpecMatrix bytes"
+    },
+    {
+      "cmd": "(int(file_size(self.path) // @numpy_dtype.itemsize // 2),)",
+      "conditions": [],
+      "comment": "PVM_SpecMatrix is a method parameter and need not be there; fall back on the file itself"
+    }
+  ],
+  "shape_storage": [
+    {
+      "cmd": "(2 * @shape_final[0],)",
+      "conditions": [],
+      "comment": "real and imaginary interleaved"
+    }
+  ],
+  "dim_type": [
+    {
+      "cmd": ["'k_space_encode_step_0'"],
+      "conditions": []
+    }
+  ]
+}

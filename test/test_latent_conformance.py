@@ -232,3 +232,34 @@ def test_a_scalar_struct_is_not_eaten_as_a_size_bracket(tmp_path):
     path.write_text("##TITLE=Parameter List\n##JCAMPDX=4.24\n##DATATYPE=Parameter Values\n##$VisuCoreSlicePacksDef=(0, 1) \n##END=\n")
 
     assert JCAMPDX(path)["VisuCoreSlicePacksDef"].value == [0, 1]
+
+
+@pytest.mark.parametrize("stem", ["fid_proc", "fid_refscan"])
+def test_the_procno_spectroscopy_fids_are_interleaved_float64(tmp_path, stem):
+    """Spec 3.5: `fid_proc.64` / `fid_refscan.64` are 64-bit doubles with real and
+    imaginary interleaved, 8 * 2 * PVM_SpecMatrix bytes -- one complex pair per
+    spectral point.
+
+    They were wired to the raw-fid recipes, so on PV360 the word type came from
+    ACQ_word_size (int32) and the shape from the acquisition block model. The
+    computed size was exactly half the file, and every real one was rejected.
+    """
+    points = 8
+    proc = tmp_path / "1" / "pdata" / "1"
+    proc.mkdir(parents=True)
+    write_jcampdx(
+        tmp_path / "1" / "acqp",
+        {"ACQ_sw_version": ["<PV-360.3.6>"], "ACQ_word_size": "_32_BIT", "BYTORDA": "little", "ACQ_jobs": Verbatim("( 1 )\n(4096, 256, 2, 256, 101, 4385.9, 256, 1, <job0>)")},
+    )
+    write_jcampdx(tmp_path / "1" / "method", {"PVM_SpecMatrix": np.array([points]), "PVM_EncNReceivers": 1})
+    spectrum = np.arange(1, points + 1) + 1j * np.arange(101, 101 + points)
+    interleaved = np.empty(2 * points, dtype="<f8")
+    interleaved[0::2] = spectrum.real
+    interleaved[1::2] = spectrum.imag
+    write_binary(proc / f"{stem}.64", interleaved, np.dtype("<f8"))
+
+    dataset = Dataset(proc / f"{stem}.64")
+
+    assert dataset.numpy_dtype == np.dtype("<f8")
+    assert dataset.shape_storage == (2 * points,)
+    assert np.array_equal(dataset.data, spectrum)
