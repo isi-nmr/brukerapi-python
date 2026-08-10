@@ -1331,3 +1331,47 @@ def test_rawdata_receiver_count_follows_the_jobs_channel(tmp_path):
     assert job0.rawdata_channels == 3
     assert navigator.rawdata_job_channel == 1
     assert navigator.rawdata_channels == 1
+
+
+def test_two_frame_groups_can_share_one_dependent_parameter(tmp_path):
+    """Spec 7.4: `VisuGroupDepVals[k].valsStart` is where that group's block
+    begins inside the dependent array.
+
+    A DTI PROCNO concatenates the cycle labels and the map labels into one
+    `VisuFGElemComment` and gives each group its own start. Ignoring the start
+    recorded both axes under the one name, so the concatenated array no longer
+    divided and the labels -- the only thing saying which volume is which -- were
+    dropped without a word.
+    """
+    labels = ["R 1", "R 2", "Fractional Anisotropy", "Trace", "Intensity", "Trace Weighted Image"]
+    path = write_2dseq(
+        tmp_path / "pdata" / "1",
+        frame_groups=(("FG_DIFFUSION", 4, 0, 1), ("FG_CYCLE", 2, 1, 1)),
+        extra={
+            "VisuGroupDepVals": Verbatim("( 2 )\n(<VisuFGElemComment>, 2) (<VisuFGElemComment>, 0)"),
+            "VisuFGElemComment": Verbatim(f"( {len(labels)}, 65 )\n" + " ".join(f"<{label}>" for label in labels)),
+        },
+    )
+
+    values = Dataset(path).frame_group_values
+
+    assert list(values["VisuFGElemComment[FG_CYCLE]"].reshape(-1)) == labels[:2]
+    assert list(values["VisuFGElemComment[FG_DIFFUSION]"].reshape(-1)) == labels[2:]
+    # the diffusion group is axis 2, the cycle group axis 3
+    assert values["VisuFGElemComment[FG_DIFFUSION]"].shape == (1, 1, 4, 1)
+    assert values["VisuFGElemComment[FG_CYCLE]"].shape == (1, 1, 1, 2)
+
+
+def test_a_parameter_owned_by_one_frame_group_keeps_its_plain_name(tmp_path):
+    path = write_2dseq(
+        tmp_path / "pdata" / "1",
+        frame_groups=(("FG_SLICE", 3, 0, 1),),
+        extra={
+            "VisuGroupDepVals": Verbatim("( 1 )\n(<VisuCoreDataUnits>, 0)"),
+            "VisuCoreDataUnits": Verbatim("( 3, 65 )\n<a.u.> <a.u.> <a.u.>"),
+        },
+    )
+
+    values = Dataset(path).frame_group_values
+
+    assert list(values["VisuCoreDataUnits"].reshape(-1)) == ["a.u."] * 3

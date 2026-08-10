@@ -1564,41 +1564,66 @@ class Dataset:
             for index in range(vals_start, vals_start + vals_count):
                 if not (0 <= index < len(dependencies)) or len(dependencies[index]) < 2:
                     continue
-                grouped.setdefault(str(dependencies[index][0]), []).append(axis)
+                try:
+                    offset = int(dependencies[index][1])
+                except (TypeError, ValueError):
+                    offset = 0
+                grouped.setdefault(str(dependencies[index][0]), []).append((axis, offset, group_name))
 
         values = {}
-        data_shape = self._data.shape
-        for name, axes in grouped.items():
+        for name, windows in grouped.items():
             if name not in self:
                 continue
-            parameter = np.asarray(self[name].value)
-            parameter_axes = axes
-            if len(parameter_axes) == 1 and parameter.ndim and parameter.shape[0] != data_shape[parameter_axes[0]]:
-                matches = [axis for axis in range(self.encoded_dim, self._data.ndim) if data_shape[axis] == parameter.shape[0]]
-                if len(matches) == 1:
-                    parameter_axes = matches
-            axis_sizes = tuple(data_shape[axis] for axis in parameter_axes)
-            leading_size = int(np.prod(axis_sizes, dtype=int))
-            if parameter.size == 0 or parameter.size % leading_size:
-                continue
-            payload_shape = parameter.shape[len(parameter_axes) :]
-            if parameter.ndim < len(parameter_axes) or parameter.shape[: len(parameter_axes)] != axis_sizes:
-                payload_shape = (parameter.size // leading_size,)
-            aligned = np.reshape(parameter, axis_sizes + payload_shape, order="F")
-
-            payload_axes = tuple(range(self._data.ndim, self._data.ndim + len(payload_shape)))
-            source_positions = tuple(parameter_axes) + payload_axes
-            aligned = np.transpose(aligned, np.argsort(source_positions))
-            target_shape = []
-            source_axis = 0
-            for axis in range(self._data.ndim + len(payload_shape)):
-                if axis in source_positions:
-                    target_shape.append(aligned.shape[source_axis])
-                    source_axis += 1
-                else:
-                    target_shape.append(1)
-            values[name] = np.reshape(aligned, target_shape)
+            for axis, offset, group_name in windows:
+                # Spec 7.4: `valsStart` is where this group's block begins inside
+                # the dependent array. Two groups may share one array -- a DTI
+                # PROCNO concatenates the cycle labels and the map labels into a
+                # single VisuFGElemComment -- and then each needs its own window.
+                # Only such a shared array is keyed by group, so a parameter owned
+                # by one group keeps its plain name.
+                key = name if len(windows) == 1 else f"{name}[{group_name}]"
+                value = self._frame_group_window(name, axis, offset, shared=len(windows) > 1)
+                if value is not None:
+                    values[key] = value
         return values
+
+    def _frame_group_window(self, name, axis, offset, *, shared):
+        """The slice of dependent parameter `name` that the group on `axis` owns."""
+        data_shape = self._data.shape
+        parameter = np.asarray(self[name].value)
+        axis_size = data_shape[axis]
+        if (offset or shared) and parameter.ndim and parameter.shape[0] >= offset + axis_size:
+            parameter = parameter[offset : offset + axis_size]
+        return self._align_to_frame_groups(parameter, [axis])
+
+    def _align_to_frame_groups(self, parameter, parameter_axes):
+        """`parameter` reshaped so its leading axes line up with :attr:`data`."""
+        data_shape = self._data.shape
+        if len(parameter_axes) == 1 and parameter.ndim and parameter.shape[0] != data_shape[parameter_axes[0]]:
+            matches = [axis for axis in range(self.encoded_dim, self._data.ndim) if data_shape[axis] == parameter.shape[0]]
+            if len(matches) == 1:
+                parameter_axes = matches
+        axis_sizes = tuple(data_shape[axis] for axis in parameter_axes)
+        leading_size = int(np.prod(axis_sizes, dtype=int))
+        if parameter.size == 0 or parameter.size % leading_size:
+            return None
+        payload_shape = parameter.shape[len(parameter_axes) :]
+        if parameter.ndim < len(parameter_axes) or parameter.shape[: len(parameter_axes)] != axis_sizes:
+            payload_shape = (parameter.size // leading_size,)
+        aligned = np.reshape(parameter, axis_sizes + payload_shape, order="F")
+
+        payload_axes = tuple(range(self._data.ndim, self._data.ndim + len(payload_shape)))
+        source_positions = tuple(parameter_axes) + payload_axes
+        aligned = np.transpose(aligned, np.argsort(source_positions))
+        target_shape = []
+        source_axis = 0
+        for axis in range(self._data.ndim + len(payload_shape)):
+            if axis in source_positions:
+                target_shape.append(aligned.shape[source_axis])
+                source_axis += 1
+            else:
+                target_shape.append(1)
+        return np.reshape(aligned, target_shape)
 
     @staticmethod
     def _metadata_field(name, prefix):
