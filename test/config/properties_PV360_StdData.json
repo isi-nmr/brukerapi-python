@@ -2815,18 +2815,19 @@
         "dim_type": [
             "spatial",
             "spatial",
+            "frame",
             "FG_ISA"
         ],
         "dwell_s": 6.4e-06,
         "encoded_dim": 2,
         "extent": [
-            20.0,
-            20.0,
-            0.0
+            20,
+            20,
+            1
         ],
         "id": "2DSEQ_T2star_map_MGE_2_std_PV360_3.6^^^^_1",
         "imaging_frequency": 400.38072797888503,
-        "is_single_slice": false,
+        "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "float32",
         "offset": [
@@ -2841,18 +2842,20 @@
         "resolution": [
             0.078125,
             0.078125,
-            0.0
+            1.0
         ],
         "shape_block": [
             256,
             256
         ],
         "shape_fg": [
+            1,
             6
         ],
         "shape_final": [
             256,
             256,
+            1,
             6
         ],
         "shape_frames": [
@@ -3031,6 +3034,7 @@
         "dim_type": [
             "spatial",
             "spatial",
+            "frame",
             "FG_ISA"
         ],
         "dwell_s": 6.7e-06,
@@ -3038,11 +3042,11 @@
         "extent": [
             20.0,
             20.0,
-            0.0
+            0.8
         ],
         "id": "2DSEQ_T2star_map_MGE_mod_all_2_std_PV360_3.6^^^^_3",
         "imaging_frequency": 400.3322244201979,
-        "is_single_slice": false,
+        "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "float32",
         "offset": [
@@ -3057,18 +3061,20 @@
         "resolution": [
             0.078125,
             0.078125,
-            0.0
+            0.8
         ],
         "shape_block": [
             256,
             256
         ],
         "shape_fg": [
+            1,
             6
         ],
         "shape_final": [
             256,
             256,
+            1,
             6
         ],
         "shape_frames": [
@@ -3247,6 +3253,7 @@
         "dim_type": [
             "spatial",
             "spatial",
+            "frame",
             "FG_ISA"
         ],
         "dwell_s": 6.7e-06,
@@ -3254,11 +3261,11 @@
         "extent": [
             20.0,
             20.0,
-            0.0
+            0.8
         ],
         "id": "2DSEQ_T2star_map_MGE_mod_pos_2_std_PV360_3.6^^^^_3",
         "imaging_frequency": 400.3322244201979,
-        "is_single_slice": false,
+        "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "float32",
         "offset": [
@@ -3273,18 +3280,20 @@
         "resolution": [
             0.078125,
             0.078125,
-            0.0
+            0.8
         ],
         "shape_block": [
             256,
             256
         ],
         "shape_fg": [
+            1,
             6
         ],
         "shape_final": [
             256,
             256,
+            1,
             6
         ],
         "shape_frames": [
