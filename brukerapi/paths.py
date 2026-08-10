@@ -71,9 +71,14 @@ def read_array(path, dtype, shape, order="F"):
     A filesystem path is memory-mapped as before. An archive member cannot be
     (a memory map cannot address a compressed member), so it degrades to a full
     read.
+
+    The map is opened read-only. numpy's default mode is "r+", which asks the
+    operating system for write access and so fails with EACCES on a read-only file
+    or mount -- the usual way a shared scanner archive is exposed. Nothing here
+    writes: the array is copied out on the same line.
     """
     if isinstance(path, (str, os.PathLike)):
-        return np.array(np.memmap(path, dtype=dtype, shape=shape, order=order)[:])
+        return np.array(np.memmap(path, dtype=dtype, mode="r", shape=shape, order=order)[:])
     with path.open("rb") as binary:
         buffer = binary.read()
     return np.frombuffer(buffer, dtype=dtype).reshape(shape, order=order)
