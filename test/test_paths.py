@@ -82,6 +82,28 @@ def test_dataset_reads_from_archive_identically(study_dir, study_zip):
     assert from_zip.shape_final == from_dir.shape_final
 
 
+def test_dataset_reads_from_a_read_only_source(study_dir):
+    """A dataset whose files are not writable must still load.
+
+    Scanner archives are normally exposed read-only, and nothing here writes: the
+    array is copied out of the map immediately. numpy's default memmap mode is
+    "r+", which asks the operating system for write access and fails with EACCES
+    on such a source, so the mode has to be given explicitly.
+    """
+    for path in sorted(study_dir.rglob("*")):
+        if path.is_file():
+            path.chmod(0o444)
+
+    try:
+        dataset = Dataset(study_dir / "1" / "pdata" / "1" / "2dseq", scale=False)
+        assert np.array_equal(dataset.data, DATA)
+    finally:
+        # restore, so pytest can clean the temporary directory up
+        for path in sorted(study_dir.rglob("*")):
+            if path.is_file():
+                path.chmod(0o644)
+
+
 def test_parameters_resolve_through_relative_paths(study_dir, study_zip):
     """``../../acqp`` resolves inside an archive, where ``..`` is not collapsed."""
     dataset = Dataset(study_zip / "1" / "pdata" / "1" / "2dseq", scale=False,
