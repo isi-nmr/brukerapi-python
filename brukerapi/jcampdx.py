@@ -487,16 +487,17 @@ class GenericParameter(Parameter):
 
     @staticmethod
     def _normalize_line_breaks(value):
-        # A value block ends where the next ## record begins, so blanks at its
-        # very end are layout, not content -- unlike blanks inside it, which the
-        # wrap does not touch.
+        # A value block ends where the next ## record begins, and it begins after
+        # the `##$name=` or after a `(` or `, ` delimiter, so blanks at either end
+        # are layout, not content -- unlike blanks inside it, which the wrap does
+        # not touch.
         # Spec 2.2: ParaVision hard-wraps a value near column 80 by INSERTING a
         # newline; no character of the value is removed, and the wrap can fall
         # inside a <...> string or a struct tuple. Undoing it therefore means
         # deleting the newline and nothing else -- substituting a space invents
-        # one that was never on disk, and stripping the blanks around it deletes
-        # data (leading blanks on a continuation line belong to the value).
-        return re.sub(r"\r?\n", "", value).rstrip()
+        # one that was never on disk. The wrapped line already carries the space
+        # before its newline, so joining preserves the blanks inside the value.
+        return re.sub(r"\r?\n", "", value).strip()
 
     @classmethod
     def serialize_value(cls, value, version):
