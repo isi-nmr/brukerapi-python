@@ -51,7 +51,7 @@ REQUIRED_PROPERTIES = {
         "k_space",
         "encoded_dim",
         "shape_storage",
-        "dim_type"
+        "dim_type",
     ],
     "2dseq": [
         "pv_version",
@@ -223,9 +223,7 @@ class SchemaFid(Schema):
             for name in ("encoding_space", "k_space"):
                 logical_samples = int(np.prod(layouts[name]))
                 if stored_samples % logical_samples:
-                    raise InvalidDataset(
-                        f"real-only AQ_mod=qf sample count {stored_samples} is incompatible with {name} layout {layouts[name]}"
-                    )
+                    raise InvalidDataset(f"real-only AQ_mod=qf sample count {stored_samples} is incompatible with {name} layout {layouts[name]}")
                 ratio = stored_samples // logical_samples
                 if ratio > 1:
                     layouts[name] = (layouts[name][0] * ratio,) + tuple(layouts[name][1:])
@@ -282,10 +280,7 @@ class SchemaFid(Schema):
         data = self._decode_raw_stream(stored, self.layouts)
         receivers = int(self._dataset.channels)
         if data.shape[0] % receivers:
-            raise InvalidDataset(
-                f"decoded FID sample count {data.shape[0]} is not divisible by "
-                f"the receiver count {receivers} for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"decoded FID sample count {data.shape[0]} is not divisible by the receiver count {receivers} for {self._dataset.path}")
         samples = data.shape[0] // receivers
         return np.transpose(
             np.reshape(data, (samples, receivers, data.shape[1]), order="F"),
@@ -302,9 +297,7 @@ class SchemaFid(Schema):
         try:
             axes = tuple(BART_DIM_BY_TYPE[label] for label in self._dataset.dim_type)
         except KeyError as error:
-            raise UnknownAcqSchemeException(
-                f"cannot map FID axis {error.args[0]!r} to BART for {self._dataset.path}"
-            ) from error
+            raise UnknownAcqSchemeException(f"cannot map FID axis {error.args[0]!r} to BART for {self._dataset.path}") from error
         return self._as_bart(data, axes)
 
     def _reorder_objects(self, data, dir="FW"):
@@ -391,9 +384,7 @@ class SchemaFid(Schema):
             PVM_EncSteps1_sorted = self.permutation_inverse(PVM_EncSteps1_sorted)
 
         if data.shape[1] != len(PVM_EncSteps1_sorted):
-            raise InvalidDataset(
-                f"phase-encode reorder length {len(PVM_EncSteps1_sorted)} does not match k-space axis length {data.shape[1]} for scheme {self._dataset.scheme_id}"
-            )
+            raise InvalidDataset(f"phase-encode reorder length {len(PVM_EncSteps1_sorted)} does not match k-space axis length {data.shape[1]} for scheme {self._dataset.scheme_id}")
 
         if np.array_equal(PVM_EncSteps1_sorted, np.arange(len(PVM_EncSteps1_sorted))):
             return data
@@ -712,17 +703,13 @@ class SchemaRawdata(Schema):
         scheme_id = self._dataset._infer_scheme_id()
         if scheme_id is not None:
             raise UnknownAcqSchemeException(
-                f"rawdata-to-k-space is currently supported only for Cartesian PV-360 jobs, "
-                f"but {self._dataset.path} is {scheme_id}; use its acquisition-specific reader"
+                f"rawdata-to-k-space is currently supported only for Cartesian PV-360 jobs, but {self._dataset.path} is {scheme_id}; use its acquisition-specific reader"
             )
 
         encoded_dim = self._dataset._parameter_value("ACQ_dim")
         matrix = np.atleast_1d(self._dataset._parameter_value("PVM_EncMatrix", []))
         if encoded_dim not in (2, 3) or matrix.size < encoded_dim:
-            raise UnknownAcqSchemeException(
-                f"cannot establish a Cartesian rawdata layout for {self._dataset.path}; "
-                "pass data through an acquisition-specific reader"
-            )
+            raise UnknownAcqSchemeException(f"cannot establish a Cartesian rawdata layout for {self._dataset.path}; pass data through an acquisition-specific reader")
 
         matrix = tuple(int(value) for value in matrix[:encoded_dim])
         receivers = int(self._dataset.channels)
@@ -747,22 +734,15 @@ class SchemaRawdata(Schema):
             permute = (0, 2, 3, 4, 1)
         else:
             if objects != 1:
-                raise UnknownAcqSchemeException(
-                    f"cannot establish a 3-D Cartesian rawdata layout with NI={objects} for "
-                    f"{self._dataset.path}"
-                )
+                raise UnknownAcqSchemeException(f"cannot establish a 3-D Cartesian rawdata layout with NI={objects} for {self._dataset.path}")
             encoding_space = (readout, receivers, phase, matrix[2], repetitions)
             permute = (0, 2, 3, 4, 1)
 
         if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers:
-            raise InvalidDataset(
-                f"rawdata sample layout {data.shape} does not match Cartesian metadata "
-                f"(readout={readout}, receivers={receivers}) for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"rawdata sample layout {data.shape} does not match Cartesian metadata (readout={readout}, receivers={receivers}) for {self._dataset.path}")
         if data.size != int(np.prod(encoding_space)):
             raise InvalidDataset(
-                f"rawdata contains {data.size} complex samples but Cartesian layout {encoding_space} "
-                f"requires {int(np.prod(encoding_space))} for {self._dataset.path}"
+                f"rawdata contains {data.size} complex samples but Cartesian layout {encoding_space} requires {int(np.prod(encoding_space))} for {self._dataset.path}"
             )
 
         k_space = np.transpose(np.reshape(data, encoding_space, order="F"), permute)
@@ -779,10 +759,7 @@ class SchemaRawdata(Schema):
         """Arrange retrospectively gated Cartesian data before cine binning."""
         steps = np.atleast_1d(self._dataset._parameter_value("PVM_EncGenSteps1", []))
         if steps.size == 0 or steps.size % phase:
-            raise InvalidDataset(
-                f"self-gated phase-encode sequence has {steps.size} steps, which is incompatible "
-                f"with phase size {phase} for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"self-gated phase-encode sequence has {steps.size} steps, which is incompatible with phase size {phase} for {self._dataset.path}")
         acquired_frames = steps.size // phase
         output_frames = int(self._dataset._parameter_value("PVM_NMovieFrames", objects))
         if output_frames != objects or acquired_frames % (objects * repetitions):
@@ -793,10 +770,7 @@ class SchemaRawdata(Schema):
         acquisition_cycles = acquired_frames // (objects * repetitions)
         layout = (readout, receivers, phase, acquired_frames)
         if data.ndim != 3 or data.shape[0] != readout or data.shape[1] != receivers or data.size != int(np.prod(layout)):
-            raise InvalidDataset(
-                f"rawdata sample layout {data.shape} does not match self-gated Cartesian layout "
-                f"{layout} for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"rawdata sample layout {data.shape} does not match self-gated Cartesian layout {layout} for {self._dataset.path}")
 
         k_space = np.transpose(np.reshape(data, layout, order="F"), (0, 2, 3, 1))
         order = np.argsort(np.reshape(steps, (phase, acquired_frames), order="F"), axis=0)
@@ -813,10 +787,7 @@ class SchemaRawdata(Schema):
             return data
         indices = np.argsort(np.atleast_1d(steps))
         if indices.size != data.shape[1]:
-            raise InvalidDataset(
-                f"phase-encode reorder length {indices.size} does not match k-space axis length "
-                f"{data.shape[1]} for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"phase-encode reorder length {indices.size} does not match k-space axis length {data.shape[1]} for {self._dataset.path}")
         return np.take(data, indices, axis=1)
 
     def _reorder_objects(self, data):
@@ -827,11 +798,9 @@ class SchemaRawdata(Schema):
             return data
         indices = np.argsort(np.atleast_1d(order).astype(int))
         if indices.size != data.shape[2]:
-            raise InvalidDataset(
-                f"object-order length {indices.size} does not match k-space axis length "
-                f"{data.shape[2]} for {self._dataset.path}"
-            )
+            raise InvalidDataset(f"object-order length {indices.size} does not match k-space axis length {data.shape[2]} for {self._dataset.path}")
         return np.take(data, indices, axis=2)
+
 
 class Schema2dseq(Schema):
     """
@@ -948,8 +917,7 @@ class Schema2dseq(Schema):
             axis = 2
         if axis is None or axis >= data.ndim:
             warnings.warn(
-                "VisuCoreDiskSliceOrder requests reversed slices but no slice axis is identifiable "
-                f"for {getattr(self._dataset, 'path', '<unknown>')}; leaving order unchanged",
+                f"VisuCoreDiskSliceOrder requests reversed slices but no slice axis is identifiable for {getattr(self._dataset, 'path', '<unknown>')}; leaving order unchanged",
                 RuntimeWarning,
                 stacklevel=2,
             )
@@ -974,9 +942,7 @@ class Schema2dseq(Schema):
             # component: there is nothing to combine, keep the axis as it is
             return None
         if data.shape[axis] != 2:
-            raise InvalidDataset(
-                f"complex 2dseq requires a two-element real/imag frame-group axis, got shape {data.shape} on axis {axis}"
-            )
+            raise InvalidDataset(f"complex 2dseq requires a two-element real/imag frame-group axis, got shape {data.shape} on axis {axis}")
         return axis
 
     def _combine_complex_frames(self, data):
@@ -1100,9 +1066,7 @@ class Schema2dseq(Schema):
         # Frame-group selection above does not alter encoded dimensions.
         # Apply their requested selection after deserializing the selected
         # frames, preserving singleton axes for the final squeeze below.
-        encoded_slice = tuple(
-            slice(index, index + 1) if isinstance(index, int) else index for index in slice_[: self._dataset.encoded_dim]
-        )
+        encoded_slice = tuple(slice(index, index + 1) if isinstance(index, int) else index for index in slice_[: self._dataset.encoded_dim])
         array_ra = array_ra[encoded_slice + (slice(None),) * (array_ra.ndim - self._dataset.encoded_dim)]
 
         singletons = tuple(i for i, v in enumerate(slice_) if isinstance(v, int))

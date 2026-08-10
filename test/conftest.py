@@ -78,8 +78,7 @@ def pytest_sessionstart(session):
 
     if _available_test_data_root() is None:
         pytest.exit(
-            "No Bruker test-data corpus is available. Provide test/test_data or resources/testdata, "
-            "or run pytest with --download_test_data.",
+            "No Bruker test-data corpus is available. Provide test/test_data or resources/testdata, or run pytest with --download_test_data.",
             returncode=1,
         )
 

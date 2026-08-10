@@ -27,6 +27,13 @@ GRAMMAR = {
 
 MAX_LINE_LEN = 78
 
+# Spec 2.2: ParaVision 360 writes parameter files as UTF-8, and string values may
+# contain non-ASCII characters. The encoding is a property of the format, so it is
+# named here rather than left to the process locale -- under LC_ALL=C a valid
+# `visu_pars` would otherwise be rejected, and under a single-byte code page it
+# would decode without error into the wrong string.
+ENCODING = "utf-8"
+
 # Precompile all regexes
 _COMPILED_GRAMMAR = {k: re.compile(v) if k not in ["LIST_DELIMETER", "EQUAL_SIGN"] else v for k, v in GRAMMAR.items()}
 
@@ -759,7 +766,7 @@ class JCAMPDX:
                 return self.params[key].value
 
         try:
-            with self.path.open("r") as f:
+            with self.path.open("r", encoding=ENCODING) as f:
                 version = self._detect_version(f)
         except (UnicodeDecodeError, OSError) as e:
             raise InvalidJcampdxFile from e
@@ -894,7 +901,7 @@ class JCAMPDX:
 
     @classmethod
     def load_parameter(cls, path, key):
-        with open(path) as f:
+        with open(path, encoding=ENCODING) as f:
             try:
                 content = f.read()
             except (UnicodeDecodeError, OSError) as e:
@@ -928,14 +935,16 @@ class JCAMPDX:
         params = {}
 
         try:
-            with path.open() as f:
+            with path.open(encoding=ENCODING) as f:
                 content = f.read()
         except FileNotFoundError:
             # a caller distinguishes "not there" from "not readable": an optional
             # parameter file is allowed to be absent
             raise
-        except (UnicodeDecodeError, OSError) as e:
-            raise JcampdxFileError(f"file {path} is not a text file") from e
+        except UnicodeDecodeError as e:
+            raise JcampdxFileError(f"file {path} is not {ENCODING} text") from e
+        except OSError as e:
+            raise JcampdxFileError(f"file {path} could not be read") from e
 
         comments_by_parameter = []
         pending_comments = []
@@ -1078,5 +1087,5 @@ class JCAMPDX:
         :param path:
         :return:
         """
-        with Path(path).open("w") as f:
+        with Path(path).open("w", encoding=ENCODING) as f:
             f.write(f"{self!s}\n")

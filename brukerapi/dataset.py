@@ -298,11 +298,7 @@ class Dataset:
                 (name for name in content if re.fullmatch(r"rawdata\.job\d+", name)),
                 key=lambda name: int(name.rsplit("job", 1)[1]),
             )
-            named_rawdata_jobs = sorted(
-                name
-                for name in content
-                if name not in rawdata_jobs and self.is_supported_path(self.path / name, {"rawdata"})
-            )
+            named_rawdata_jobs = sorted(name for name in content if name not in rawdata_jobs and self.is_supported_path(self.path / name, {"rawdata"}))
             if "fid" in content:
                 self.path = self.path / "fid"
             elif "2dseq" in content:
@@ -326,10 +322,7 @@ class Dataset:
         if self.type not in DEFAULT_STATES:
             raise UnsupportedDatasetType(self.type)
         if self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES and not state.get("_auxiliary"):
-            raise UnsupportedDatasetType(
-                f"{self.path.name} is a fid companion (spec §3.5); load it as "
-                f"Dataset({with_suffix(self.path, '')!s}).fid_companions[{self.subtype!r}]"
-            )
+            raise UnsupportedDatasetType(f"{self.path.name} is a fid companion (spec §3.5); load it as Dataset({with_suffix(self.path, '')!s}).fid_companions[{self.subtype!r}]")
         if not self._is_supported_subtype() and not (state.get("_auxiliary") and self.type == "fid" and self.subtype in FID_COMPANION_SUBTYPES):
             raise UnsupportedDatasetType(self.path.name)
 
@@ -649,9 +642,9 @@ class Dataset:
         A name no configuration declares still raises, so a typo does not
         quietly become `default`::
 
-            dataset.get("TE")           # 4.0, or None where there is no echo time
-            dataset.get("TE", "n/a")    # 4.0, or "n/a"
-            dataset.get("TEE")          # AttributeError
+            dataset.get("TE")  # 4.0, or None where there is no echo time
+            dataset.get("TE", "n/a")  # 4.0, or "n/a"
+            dataset.get("TEE")  # AttributeError
 
         Parameters are a separate layer, read with ``dataset[key]`` or
         ``dataset.parameters``.
@@ -780,8 +773,7 @@ class Dataset:
         settings_stored = int(settings[9])
         if settings_stored != job_stored and not getattr(self, "_warned_rawdata_stored_scans", False):
             warnings.warn(
-                f"ACQ_ScanPipeJobSettings nStoredScans={settings_stored} disagrees with "
-                f"ACQ_jobs nStoredScans={job_stored} for {self.path}; using the settings value",
+                f"ACQ_ScanPipeJobSettings nStoredScans={settings_stored} disagrees with ACQ_jobs nStoredScans={job_stored} for {self.path}; using the settings value",
                 RuntimeWarning,
                 stacklevel=2,
             )
@@ -832,9 +824,7 @@ class Dataset:
         if descriptions and descriptions[0] == "Spectroscopic":
             return "SPECTROSCOPY" if int(dim) == 1 else "CSI"
 
-        if n_projections is not None and int(n_projections) > 0 and (
-            (self.path.parent / "traj").exists() or "RADIAL" in family or "UTE" in family
-        ):
+        if n_projections is not None and int(n_projections) > 0 and ((self.path.parent / "traj").exists() or "RADIAL" in family or "UTE" in family):
             return "RADIAL"
 
         acq_size = np.atleast_1d(self._parameter_value("ACQ_size", []))
@@ -993,9 +983,7 @@ class Dataset:
                     f"expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}"
                 )
 
-            raise InvalidDataset(
-                f"Invalid dataset size at {path}: expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}, got {actual_bytes} bytes"
-            )
+            raise InvalidDataset(f"Invalid dataset size at {path}: expected {expected_bytes} bytes for shape {tuple(shape)} and dtype {dtype}, got {actual_bytes} bytes")
 
         return read_array(path, dtype, shape)
 
@@ -1396,9 +1384,7 @@ class Dataset:
         """
         descriptors = np.atleast_1d(np.asarray(self._parameter_value("VisuCoreDimDesc", []))).astype(str)
         if descriptors.size and any(descriptor != "spatial" for descriptor in descriptors):
-            raise UnsupportedDatasetType(
-                f"an image affine for {self.path}, whose frames are {sorted(set(descriptors))} rather than purely spatial (spec 7.2),"
-            )
+            raise UnsupportedDatasetType(f"an image affine for {self.path}, whose frames are {sorted(set(descriptors))} rather than purely spatial (spec 7.2),")
         if len(self.slice_packages_index()) > 1:
             warnings.warn(
                 f"{self.path} has multiple slice packages; a single affine cannot describe them -- use get_slice_packages() / affine_of_package(i)",

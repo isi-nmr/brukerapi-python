@@ -85,7 +85,8 @@ def write_jcampdx(path, records, *, version="4.24", title="Parameter List, synth
     lines.extend(format_record(key, value) for key, value in records.items())
     lines.append("##END=")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines) + "\n")
+    # spec 2.2: ParaVision 360 writes parameter files as UTF-8
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
 
 

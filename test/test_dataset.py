@@ -768,10 +768,7 @@ def test_recipe_substitution_preserves_overlapping_identifiers():
 
     substituted = dataset._sub_parameters(recipe)
 
-    assert substituted == (
-        "self.Foo + self.FooBar + self['X'].value + "
-        "self['XY'].value + self['Matrix'].tuple"
-    )
+    assert substituted == ("self.Foo + self.FooBar + self['X'].value + self['XY'].value + self['Matrix'].tuple")
 
 
 @pytest.mark.parametrize(
@@ -1033,10 +1030,7 @@ def test_frame_group_values_align_echo_times_and_diffusion_matrices_to_data_axes
             continue
         candidate = Dataset(path)
         try:
-            if (
-                "VisuAcqEchoTime" in candidate.frame_group_values
-                and np.atleast_1d(candidate["VisuAcqEchoTime"].value).size > 1
-            ):
+            if "VisuAcqEchoTime" in candidate.frame_group_values and np.atleast_1d(candidate["VisuAcqEchoTime"].value).size > 1:
                 echo = candidate
                 break
         except KeyError:
@@ -1123,11 +1117,7 @@ def test_data_load(test_data):
             reference = np.transpose(reference, (0, 2, 1))
         if dataset.type == "2dseq" and np.iscomplexobj(actual) and not np.iscomplexobj(reference):
             complex_axis = next(
-                (
-                    axis
-                    for axis, dim_type in enumerate(dataset.dim_type)
-                    if str(dim_type).upper() == "FG_COMPLEX"
-                ),
+                (axis for axis, dim_type in enumerate(dataset.dim_type) if str(dim_type).upper() == "FG_COMPLEX"),
                 None,
             )
             if complex_axis is None:
