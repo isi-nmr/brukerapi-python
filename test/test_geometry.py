@@ -405,3 +405,35 @@ def test_slice_distance_needs_geometry_and_nothing_else(tmp_path):
     without_geometry = Dataset(flat / "2dseq", load=LOAD_STAGES["properties"])
     with pytest.raises(UnsupportedDatasetType, match="carries no VisuCorePosition"):
         _ = without_geometry.slice_distance
+
+
+@pytest.mark.parametrize(
+    ("normal", "step"),
+    [
+        ("axial", (0.0, 0.0, 1.0)),
+        ("coronal", (0.0, -1.0, 0.0)),
+        ("sagittal", (-1.0, 0.0, 0.0)),
+        ("oblique", (-0.12, -0.993, 0.0)),
+    ],
+)
+def test_extent_spans_the_slice_axis_whatever_direction_it_points(tmp_path, normal, step):
+    """Spec 7.2/12: `VisuCorePosition` is a 3-vector in patient coordinates and
+    the slice normal is the third row of `VisuCoreOrientation`.
+
+    Taking only the patient-z component of the slice step made the slice extent
+    exactly zero for every coronal, sagittal and oblique stack, and the step was
+    counted once per slice plus one.
+    """
+    slices = 5
+    path = write_2dseq(
+        tmp_path / normal / "pdata" / "1",
+        frame_groups=(("FG_SLICE", slices),),
+        positions=stacked_positions((-20.0, -20.0, -3.0), step, slices),
+    )
+
+    dataset = Dataset(path)
+    spacing = float(np.linalg.norm(step))
+
+    assert dataset.extent[2] == pytest.approx(slices * spacing)
+    assert dataset.resolution[2] == pytest.approx(spacing)
+    assert dataset.slice_distance[0] == pytest.approx(spacing)

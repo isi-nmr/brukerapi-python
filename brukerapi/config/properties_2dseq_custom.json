@@ -72,11 +72,12 @@
         "#VisuCoreDimDesc.list[2]=='spatial'"]
     },
     {
-      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], (np.shape(#VisuCorePosition)[0] + 1 ) * abs(#VisuCorePosition[1,2] - #VisuCorePosition[0,2])])",
+      "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], np.shape(#VisuCorePosition)[0] * np.linalg.norm(#VisuCorePosition[1,:] - #VisuCorePosition[0,:])])",
       "conditions": [
         "#VisuCorePosition.size[0]>1",
         "#VisuCoreDim==2"
-      ]
+      ],
+      "comment": "spec 7.2/12: VisuCorePosition is a 3-vector in patient coordinates and the slice normal is the third row of VisuCoreOrientation, so the step is the length of the whole difference -- the z component alone is zero for every coronal, sagittal or oblique stack. n slices span n steps, matching resolution[2] and the in-plane extent = size * resolution"
     },
     {
       "cmd": "np.array([#VisuCoreExtent[0], #VisuCoreExtent[1], #VisuCoreFrameThickness])",
