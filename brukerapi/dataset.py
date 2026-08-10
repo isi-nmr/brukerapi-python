@@ -4,7 +4,6 @@ import os
 import os.path
 import re
 import warnings
-from contextlib import suppress
 from copy import deepcopy
 from pathlib import Path
 
@@ -18,6 +17,9 @@ from .exceptions import (
     FilterEvalFalse,
     IncompleteDataset,
     InvalidDataset,
+    InvalidJcampdxFile,
+    JcampdxFileError,
+    JcampdxVersionError,
     NotADatasetDir,
     ParametersNotLoaded,
     PropertyConditionNotMet,
@@ -223,6 +225,11 @@ METADATA_GROUPS = {
     "visu_acq": (("VisuAcq", "VisuAcquisition"), ()),
     "subject": (("SUBJECT_",), ()),
 }
+
+# What "could not read this parameter file" looks like. FileNotFoundError is the
+# ordinary case; the rest are a file that exists but is not a usable JCAMP-DX
+# parameter list -- empty, truncated, or of an unsupported version.
+OPTIONAL_PARAMETER_ERRORS = (FileNotFoundError, InvalidJcampdxFile, JcampdxFileError, JcampdxVersionError)
 
 SUPPORTED_SUBTYPES = {
     "fid": {""},
@@ -558,16 +565,17 @@ class Dataset:
         # stored as an inert state key, so every caller that asked for the
         # subject silently got a dataset without it -- and an `id` degenerate
         # enough that reporting two studies into one directory overwrote.
+        required = DEFAULT_STATES[self.type]["parameter_files"]
         parameter_files = self._state["parameter_files"] + self._state.get("optional_parameter_files", []) + self._state.get("add_parameters", [])
         for file in parameter_files:
             try:
                 self.add_parameter_file(file)
-            except FileNotFoundError as e:
-                # if jcampdx file is required but not found raise Error
-                if file in DEFAULT_STATES[self.type]["parameter_files"]:
-                    raise e
-                # if jcampdx file is not found, but not required, pass
-                pass
+            except OPTIONAL_PARAMETER_ERRORS as error:
+                # A required file that is missing or unreadable is fatal; an
+                # optional one is not.
+                if file in required:
+                    raise
+                self._skip_optional_parameter_file(file, error)
 
         # The vendor's first reconstruction is the conventional default. A
         # fid can have several reconstructions, however, so callers can select
@@ -576,8 +584,28 @@ class Dataset:
         if reco_path is not None:
             self.add_parameter_file(reco_path)
         elif self.type in {"fid", "fid_proc"}:
-            with suppress(FileNotFoundError):
+            try:
                 self.add_parameter_file("reco")
+            except OPTIONAL_PARAMETER_ERRORS as error:
+                self._skip_optional_parameter_file("reco", error)
+
+    @staticmethod
+    def _skip_optional_parameter_file(file, error):
+        """Carry on without an optional parameter file, saying so unless it is absent.
+
+        Spec 1.3 makes every PROCNO entry optional -- a derived reconstruction
+        carries no `reco` at all -- so a `fid` must not depend on one. Absence was
+        already tolerated; a file that is present but unreadable, which is what an
+        aborted reconstruction leaves behind, was not, and took the whole
+        experiment down with it.
+        """
+        if isinstance(error, FileNotFoundError):
+            return
+        warnings.warn(
+            f"ignoring unreadable optional parameter file {file}: {type(error).__name__}: {error}",
+            RuntimeWarning,
+            stacklevel=3,
+        )
 
     def _write_parameters(self, parent):
         for type_, jcampdx in self._parameters.items():
