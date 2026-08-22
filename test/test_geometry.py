@@ -13,13 +13,29 @@ import pytest
 
 from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import UnsupportedDatasetType
-from test.synthetic import axial_orientation, stacked_positions, visu_pars_records, write_2dseq, write_binary, write_jcampdx
+from test.synthetic import Verbatim, axial_orientation, stacked_positions, visu_pars_records, write_2dseq, write_binary, write_fid, write_jcampdx
 
 SAGITTAL_ORIENTATION = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0])
 PV360_NIFTI_ROOT = Path("test/test_data/PV360_StdData")
 # Every reconstruction that ships a NIfTI export, rather than a fixed list, so
 # a dataset added to the corpus is checked without editing this file.
 PV360_NIFTI_EXPORTS = sorted(directory.parent.relative_to(PV360_NIFTI_ROOT).as_posix() for directory in PV360_NIFTI_ROOT.glob("*/pdata/*/nifti") if any(directory.glob("*.nii")))
+CORPUS_ROOT = Path("test/test_data")
+# Every raw acquisition of the test corpus that has a first reconstruction to
+# compare against: the study/experiment layout, and the PV360 standard data's
+# flat one (rawdata.job0 per scan).
+ACQUISITIONS_WITH_RECONSTRUCTION = sorted(
+    path.relative_to(CORPUS_ROOT).as_posix()
+    for pattern in ("*/*/*/fid", "*/*/rawdata.job0")
+    for path in CORPUS_ROOT.glob(pattern)
+    if (path.parent / "pdata" / "1" / "2dseq").exists()
+)
+
+# Spec 5.4 geometry of real scans, used as fixtures: Zenodo 4048286 (PV5.1 0.2H2/13,
+# 0.2H2/10), Zenodo 4522220 (PV6.0.1 lego phantom/3) and PV360_StdData T2_TurboRARE.
+AXIAL = np.eye(3)
+SAGITTAL = np.array([[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
+CORONAL = np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
 
 
 def nifti_affine(path):
@@ -466,3 +482,332 @@ def test_repeated_positions_are_one_slice_not_a_stack(tmp_path):
     # the maps are frames of one slice, so the slice axis is a singleton
     assert dataset.shape == (4, 4, 1, maps)
     assert [str(label) for label in dataset.dim_type] == ["spatial", "spatial", "frame", "FG_ISA"]
+
+
+def write_acquisition(
+    tmp_path,
+    *,
+    version="PV 6.0.1",
+    patient_pos="Head_Supine",
+    grad_matrix,
+    obj_order,
+    slice_offsets,
+    read_offset=0.0,
+    phase_offset=0.0,
+    fov=(40.0, 40.0),
+    matrix=(8, 8),
+    slice_thick=1.0,
+    slice_sepn=None,
+    dim=2,
+    drop=(),
+    method=None,
+):
+    """An experiment whose acqp carries the spec 5.4 geometry of `grad_matrix` (acquisition order), and its fid path."""
+    slices = len(obj_order)
+    acqp = {
+        "ACQ_sw_version": [f"<{version}>"],
+        "GO_raw_data_format": "GO_32BIT_SGN_INT",
+        "GO_block_size": "continuous",
+        "BYTORDA": "little",
+        "ACQ_dim": dim,
+        "ACQ_dim_desc": Verbatim(f"( {dim} )\n" + " ".join(["Spatial"] * dim)),
+        "ACQ_size": np.array([2 * matrix[0], *matrix[1:]]),
+        "NI": slices,
+        "NR": 1,
+        "NSLICES": slices,
+        "ACQ_phase_factor": 1,
+        "PULPROG": ["<FLASH.ppg>"],
+        "ACQ_patient_pos": patient_pos,
+        "ACQ_obj_order": np.asarray(obj_order, dtype=int),
+        "ACQ_grad_matrix": np.asarray(grad_matrix, dtype=float).reshape(-1, 3, 3),
+        "ACQ_slice_offset": np.atleast_1d(np.asarray(slice_offsets, dtype=float)),
+        "ACQ_read_offset": np.full(slices, read_offset),
+        "ACQ_phase1_offset": np.full(slices, phase_offset),
+        "ACQ_fov": np.asarray(fov, dtype=float) / 10.0,  # acqp keeps the field of view in cm (spec 5.1)
+        "ACQ_slice_thick": slice_thick,
+    }
+    if slice_sepn is not None:
+        acqp["ACQ_slice_sepn"] = slice_sepn
+    for name in drop:
+        del acqp[name]
+    method = {"PVM_EncNReceivers": 1, "PVM_EncMatrix": np.asarray(matrix), "PVM_DigNp": matrix[0], **(method or {})}
+    return write_fid(tmp_path / "1", acqp, method, blocks=slices * int(np.prod(matrix[1:])))
+
+
+def test_acquisition_affine_places_every_slice_where_the_reconstruction_does(tmp_path):
+    """Spec 5.4/12: the first voxel of slice k from acqp must be the 2dseq's VisuCorePosition[k].
+
+    PV5.1 0.2H2/13 -- four interleaved axial slices, 50 mm field of view, offsets
+    -7.5 .. 7.5 -- reconstructs to VisuCorePosition (-25, -25, offset) with an
+    identity VisuCoreOrientation: index N/2 is the field-of-view centre, and the
+    image axes run against the gradient directions.
+    """
+    fid = write_acquisition(
+        tmp_path,
+        version="PV 5.1",
+        grad_matrix=[AXIAL] * 4,
+        obj_order=[0, 2, 1, 3],
+        slice_offsets=[-7.5, -2.5, 2.5, 7.5],
+        fov=(50.0, 50.0),
+        matrix=(64, 64),
+        slice_thick=2.0,
+        slice_sepn=5.0,
+    )
+    acquisition = Dataset(fid, load=LOAD_STAGES["properties"])
+
+    affines = acquisition.acquisition_affines()
+
+    assert len(affines) == 4
+    for affine, offset in zip(affines, (-7.5, -2.5, 2.5, 7.5)):
+        assert np.allclose(affine[:3, 3], (-25.0, -25.0, offset))
+        assert np.allclose(affine[:3, :3], np.diag((50 / 64, 50 / 64, 5.0)))
+    assert np.allclose(acquisition.acquisition_affine(3), affines[3])
+
+
+def test_acquisition_affine_reads_the_gradient_matrix_in_acquisition_order(tmp_path):
+    """ACQ_grad_matrix is one matrix per *acquisition position*, the offsets are per slice.
+
+    Spec 5.4 says the matrix is built from the slice-pack orientations and the
+    slice order, and the three-package scouts of the corpus confirm it: reading
+    it per slice id puts the sagittal and coronal slices 5.7 mm off.  PV6.0.1
+    lego phantom/3 acquires its axial, sagittal and coronal slices in the order
+    0, 2, 1 and reconstructs them at (-20, -20, 0), (0, -20, 20) and
+    (-20, 0, 20) with the orientations below.
+    """
+    fid = write_acquisition(tmp_path, grad_matrix=[AXIAL, CORONAL, SAGITTAL], obj_order=[0, 2, 1], slice_offsets=[0.0, 0.0, 0.0], matrix=(256, 256))
+
+    axial, sagittal, coronal = Dataset(fid, load=LOAD_STAGES["properties"]).acquisition_affines()
+
+    assert np.allclose(axial[:3, 3], (-20.0, -20.0, 0.0))
+    assert np.allclose(sagittal[:3, 3], (0.0, -20.0, 20.0))
+    assert np.allclose(coronal[:3, 3], (-20.0, 0.0, 20.0))
+    # image read axis, phase axis and slice normal in the patient frame (the
+    # reconstruction stores these two transposed: VisuCoreOrientation swaps the first two)
+    assert np.allclose(sagittal[:3, :2] / (40 / 256), np.column_stack(((0.0, 0.0, -1.0), (0.0, 1.0, 0.0))))
+    assert np.allclose(sagittal[:3, 2], (-1.0, 0.0, 0.0))
+    assert np.allclose(coronal[:3, :2] / (40 / 256), np.column_stack(((0.0, 0.0, -1.0), (1.0, 0.0, 0.0))))
+    assert np.allclose(coronal[:3, 2], (0.0, -1.0, 0.0))  # the slice normal, along which the offsets of a package grow
+
+
+def test_acquisition_affine_follows_the_slice_offsets_between_packages(tmp_path):
+    """The slice column is the step to the neighbouring slice of the same package.
+
+    Five sagittal slices 2 mm apart (PV5.1 0.2H2/1, package 2) sit at
+    x = 4, 2, 0, -2, -4: the offsets run along the slice normal, which for that
+    package points towards -x in the patient frame.
+    """
+    fid = write_acquisition(
+        tmp_path, version="PV 5.1", grad_matrix=[SAGITTAL] * 5, obj_order=[0, 2, 4, 1, 3], slice_offsets=[-4.0, -2.0, 0.0, 2.0, 4.0], fov=(60.0, 60.0), slice_sepn=2.0
+    )
+
+    affines = Dataset(fid, load=LOAD_STAGES["properties"]).acquisition_affines()
+
+    assert np.allclose([affine[:3, 3] for affine in affines], [(4.0, -30.0, 30.0), (2.0, -30.0, 30.0), (0.0, -30.0, 30.0), (-2.0, -30.0, 30.0), (-4.0, -30.0, 30.0)])
+    assert all(np.allclose(affine[:3, 2], (-2.0, 0.0, 0.0)) for affine in affines)
+
+
+def test_acquisition_affine_of_a_3d_volume_spans_the_slab(tmp_path):
+    """A 3-D acquisition is one object whose third axis is the partition step.
+
+    PV5.1 0.2H2/10 (50 mm cube, 128 partitions) reconstructs to
+    VisuCorePosition (-25, -25, -25); from PV6 on the partition grid is
+    centred between partitions, half a step in.
+    """
+    volume = write_acquisition(tmp_path / "pv5", version="PV 5.1", grad_matrix=[AXIAL], obj_order=[0], slice_offsets=[0.0], fov=(50.0, 50.0, 50.0), matrix=(8, 8, 8), dim=3)
+    affine = Dataset(volume, load=LOAD_STAGES["properties"]).acquisition_affine()
+
+    assert np.allclose(affine[:3, 3], (-25.0, -25.0, -25.0))
+    assert np.allclose(affine[:3, :3], np.diag((50 / 8, 50 / 8, 50 / 8)))
+
+    later = write_acquisition(tmp_path / "pv6", grad_matrix=[AXIAL], obj_order=[0], slice_offsets=[0.0], fov=(50.0, 50.0, 50.0), matrix=(8, 8, 8), dim=3)
+    assert np.allclose(Dataset(later, load=LOAD_STAGES["properties"]).acquisition_affine()[:3, 3], (-25.0, -25.0, -25.0 + 50 / 16))
+
+
+def test_acquisition_affine_applies_the_declared_position_on_pv360(tmp_path):
+    """PV360 writes the gradient matrix in the magnet frame; ACQ_patient_pos maps it to the subject (spec 5.6, 12).
+
+    PV360 3.6 T2_TurboRARE, Head_Prone: a 2 degree tilt about y, phase offset
+    0.9375 mm and a first slice at -5.7578 mm reconstructs to VisuCorePosition
+    (10.1949, 10.9375, -5.4053), read axis (-0.9994, 0, -0.0349), phase axis
+    (0, -1, 0) and a 1 mm slice step along (-0.0349, 0, 0.9994).  Declared
+    Head_Supine instead, the same acquisition comes out rotated by pi about the
+    bore (x and y negated) -- the position is not folded into the PV360 matrix,
+    unlike PV5.1/6/7, so a reader applies it once (spec 12).
+    """
+    tilted = np.array([[-0.9993908270190958, 0.0, -0.03489949670250097], [0.0, 1.0, 0.0], [0.03489949670250097, 0.0, -0.9993908270190958]])
+    prone = write_acquisition(
+        tmp_path / "prone",
+        version="PV-360.3.6",
+        patient_pos="Head_Prone",
+        grad_matrix=[tilted] * 2,
+        obj_order=[0, 1],
+        slice_offsets=[-5.7578, -4.7578],
+        phase_offset=0.9375,
+        fov=(20.0, 20.0),
+        matrix=(256, 256),
+        slice_thick=0.7,
+    )
+    affine = Dataset(prone, load=LOAD_STAGES["properties"]).acquisition_affine()
+
+    assert np.allclose(affine[:3, 3], (10.1949, 10.9375, -5.4053), atol=1e-4)
+    assert np.allclose(affine[:3, :2] / (20 / 256), np.column_stack(((-0.99939, 0.0, -0.0349), (0.0, -1.0, 0.0))), atol=1e-4)
+    assert np.allclose(affine[:3, 2], (-0.0349, 0.0, 0.99939), atol=1e-4)
+
+    supine = write_acquisition(
+        tmp_path / "supine",
+        version="PV-360.3.6",
+        patient_pos="Head_Supine",
+        grad_matrix=[tilted] * 2,
+        obj_order=[0, 1],
+        slice_offsets=[-5.7578, -4.7578],
+        phase_offset=0.9375,
+        fov=(20.0, 20.0),
+        matrix=(256, 256),
+        slice_thick=0.7,
+    )
+    assert np.allclose(Dataset(supine, load=LOAD_STAGES["properties"]).acquisition_affine()[:3, 3], (-10.1949, -10.9375, -5.4053), atol=1e-4)
+
+    with pytest.raises(UnsupportedDatasetType, match="not a subject position"):
+        Dataset(
+            write_acquisition(tmp_path / "unknown", version="PV-360.3.6", patient_pos="Sideways", grad_matrix=[tilted], obj_order=[0], slice_offsets=[0.0]),
+            load=LOAD_STAGES["properties"],
+        ).acquisition_affines()
+
+
+def test_acquisition_affine_of_a_pv360_head_supine_volume(tmp_path):
+    """The one PV360 Head_Supine acquisition of the corpus, a compressed-sensing 3-D FLASH (PV-360.3.4).
+
+    Read, phase and slice along -z, -x and +y of the magnet, offsets (0.7055,
+    0.1527, 1.7413) mm, 20 x 15 x 12.5 mm; VISU_DICOM_PV_MATRIX . M_Head_Supine
+    reproduces its VisuCorePosition (-7.6527, -7.9132, 10.7055) -- the far end of
+    the slab, since the reconstruction stores the partitions reversed (spec 7.2)
+    -- where the Head_Prone map puts x on the wrong side.
+    """
+    fid = write_acquisition(
+        tmp_path,
+        version="PV-360.3.4",
+        patient_pos="Head_Supine",
+        grad_matrix=[[[0.0, 0.0, -1.0], [-1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]],
+        obj_order=[0],
+        slice_offsets=[1.74134],
+        read_offset=0.705521,
+        phase_offset=0.152749,
+        fov=(20.0, 15.0, 12.5),
+        matrix=(128, 96, 80),
+        dim=3,
+    )
+
+    affine = Dataset(fid, load=LOAD_STAGES["properties"]).acquisition_affine()
+
+    assert np.allclose(affine[:3, 3], (-7.652749, 4.430535, 10.705521), atol=1e-5)
+    assert np.allclose(affine[:3, 3] + 79 * affine[:3, 2], (-7.652749, -7.913215, 10.705521), atol=1e-5)
+    assert np.allclose(affine[:3, :3], np.column_stack(((0.0, 0.0, -20 / 128), (15 / 96, 0.0, 0.0), (0.0, -12.5 / 80, 0.0))))
+
+
+def test_acquisition_affine_falls_back_to_the_method_slice_packages(tmp_path):
+    """acqp is the primary source; a custom sequence may maintain only the GeoObject values.
+
+    Without ACQ_grad_matrix and the offsets, the method's PVM_SPackArr* carry the
+    same geometry per package -- the slice centre spread by the slice distance --
+    and say so in a warning.
+    """
+    method = {
+        "PVM_Fov": np.array([50.0, 50.0]),
+        "PVM_SPackArrGradOrient": np.array([AXIAL]),
+        "PVM_SPackArrNSlices": np.array([4]),
+        "PVM_SPackArrSliceOffset": np.array([0.0]),
+        "PVM_SPackArrReadOffset": np.array([0.0]),
+        "PVM_SPackArrPhase1Offset": np.array([2.0]),
+        "PVM_SPackArrSliceDistance": np.array([5.0]),
+    }
+    fid = write_acquisition(
+        tmp_path,
+        version="PV 5.1",
+        grad_matrix=[AXIAL] * 4,
+        obj_order=[0, 2, 1, 3],
+        slice_offsets=[0.0] * 4,
+        fov=(50.0, 50.0),
+        matrix=(64, 64),
+        drop=("ACQ_grad_matrix", "ACQ_slice_offset", "ACQ_read_offset", "ACQ_phase1_offset", "ACQ_fov"),
+        method=method,
+    )
+
+    with pytest.warns(RuntimeWarning, match="acqp carries no ACQ_grad_matrix"):
+        affines = Dataset(fid, load=LOAD_STAGES["properties"]).acquisition_affines()
+
+    assert np.allclose([affine[:3, 3] for affine in affines], [(-25.0, -27.0, -7.5), (-25.0, -27.0, -2.5), (-25.0, -27.0, 2.5), (-25.0, -27.0, 7.5)])
+
+
+def test_acquisition_affine_refuses_a_spectroscopic_acquisition(tmp_path):
+    experiment = tmp_path / "1"
+    experiment.mkdir()
+    write_jcampdx(
+        experiment / "acqp",
+        {
+            "ACQ_dim": 1,
+            "ACQ_dim_desc": "Spectroscopic",
+            "ACQ_grad_matrix": np.eye(3).reshape(1, 3, 3),
+            "ACQ_sw_version": ["<PV 6.0.1>"],
+            "GO_raw_data_format": "GO_32BIT_SGN_INT",
+            "GO_block_size": "continuous",
+            "BYTORDA": "little",
+            "ACQ_size": np.array([16]),
+            "NI": 1,
+            "NR": 1,
+            "PULPROG": ["<PRESS.ppg>"],
+        },
+    )
+    write_jcampdx(experiment / "method", {"PVM_EncNReceivers": 1})
+    write_binary(experiment / "fid", np.zeros(16), np.dtype("int32"))
+
+    with pytest.raises(UnsupportedDatasetType, match="rather than 2 or 3 spatial"):
+        Dataset(experiment / "fid", load=LOAD_STAGES["parameters"]).acquisition_affines()
+
+
+@pytest.mark.parametrize("relative_path", ACQUISITIONS_WITH_RECONSTRUCTION)
+def test_acquisition_affine_agrees_with_the_reconstruction(relative_path):
+    """ParaVision's own reconstruction is the oracle for the acquisition geometry (#166).
+
+    Spec 12: both end in the Visu/DICOM patient frame, so every slice's first
+    voxel must land on its VisuCorePosition and the image axes on
+    VisuCoreOrientation -- read and phase exchanged where the reconstruction
+    transposed them, since the acquisition affine describes the k-space image;
+    the slice normal up to the sign, which for a lone slice Visu completes
+    right-handedly.  A 3-D slab may be cropped (anti-aliasing) and stored
+    reversed, so there the first partition is compared at either end, to
+    within half a partition.
+    """
+    raw = Dataset(CORPUS_ROOT / relative_path, load=LOAD_STAGES["properties"])
+    try:
+        affines = raw.acquisition_affines()
+    except UnsupportedDatasetType as reason:
+        pytest.skip(str(reason))
+    image = Dataset(CORPUS_ROOT / relative_path.rsplit("/", 1)[0] / "pdata" / "1" / "2dseq", load=LOAD_STAGES["properties"])
+    positions = np.atleast_2d(np.asarray(image.get("VisuCorePosition", [[]]) if False else image._parameter_value("VisuCorePosition", np.empty((0, 3))), dtype=float))
+    orientations = np.atleast_2d(np.asarray(image._parameter_value("VisuCoreOrientation", np.empty((0, 9))), dtype=float))
+    if positions.size == 0 or orientations.size == 0 or positions.shape[0] not in (1, len(affines)):
+        pytest.skip("the reconstruction carries no per-slice geometry to compare with")
+    dimension = int(raw["ACQ_dim"].value)
+    sizes = np.atleast_1d(np.asarray(image._parameter_value("VisuCoreSize"), dtype=float))
+    extents = np.atleast_1d(np.asarray(image._parameter_value("VisuCoreExtent"), dtype=float))
+    fov = np.atleast_1d(np.asarray(raw["ACQ_fov"].value, dtype=float)) * 10
+
+    for index, affine in enumerate(affines):
+        orientation = orientations[min(index, orientations.shape[0] - 1)].reshape(3, 3)
+        axes = affine[:3, :3] / np.linalg.norm(affine[:3, :3], axis=0)
+        # RECO_transposition stores the image with read and phase exchanged (spec 6.9); the k-space image is not
+        assert np.allclose(axes[:, :2].T, orientation[:2], atol=1e-6) or np.allclose(axes[:, [1, 0]].T, orientation[:2], atol=1e-6), relative_path
+        assert np.isclose(abs(axes[:, 2] @ orientation[2]), 1.0, atol=1e-6), relative_path
+
+        # the reconstruction crops an anti-aliased field of view (PVM_AntiAlias), so the
+        # first voxel of the k-space image sits (ACQ_fov - VisuCoreExtent) / 2 further out
+        swapped = not np.allclose(axes[:, :2].T, orientation[:2], atol=1e-6)
+        corner = affine[:3, 3] + sum(axes[:, axis] * (fov[axis] - extents[1 - axis if swapped else axis]) / 2 for axis in (0, 1))
+        expected = positions[min(index, positions.shape[0] - 1)]
+        if dimension == 2:
+            assert np.allclose(corner, expected, atol=1e-3), (relative_path, index)
+        else:
+            step = affine[:3, 2]
+            acquired = round(fov[2] / np.linalg.norm(step))
+            ends = (corner + step * (acquired - sizes[2]) / 2, corner + step * ((acquired + sizes[2]) / 2 - 1))
+            assert min(np.linalg.norm(end - expected) for end in ends) <= 0.5 * np.linalg.norm(step) + 1e-6, relative_path
