@@ -244,7 +244,7 @@ METADATA_GROUPS = {
     "visu_series": (("VisuSeries",), ("VisuExperimentNumber", "VisuProcessingNumber")),
     "visu_equipment": ((), ("VisuManufacturer", "VisuAcqSoftwareVersion", "VisuInstitution", "VisuStation")),
     "visu_acq": (("VisuAcq", "VisuAcquisition"), ()),
-    "subject": (("SUBJECT_",), ()),
+    "subject": (("SUBJECT_", "CMN_study_"), ()),
 }
 
 # What "could not read this parameter file" looks like. FileNotFoundError is the

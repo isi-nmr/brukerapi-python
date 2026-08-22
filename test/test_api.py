@@ -69,6 +69,22 @@ def test_metadata_groups_follow_the_specification(tmp_path):
     assert "uisition_protocol" not in metadata["visu_acq"]
 
 
+def test_subject_group_carries_the_pv360_study_level_cmn_parameters(tmp_path):
+    """PV360 writes two CMN_ parameters into `subject`, next to SUBJECT_study_*.
+
+    `CMN_study_use_ats` says whether the Animal Transport System was in use,
+    which shifts the coordinate origin; selecting the group by `SUBJECT_` alone
+    dropped it and `CMN_study_bed` silently.
+    """
+    root = tmp_path / "20200612_094625_study_1_1"
+    write_jcampdx(root / "subject", {"SUBJECT_id": ["<phantom>"], "SUBJECT_study_nr": 1, "CMN_study_use_ats": "Yes", "CMN_study_bed": ["<Rat bed>"]})
+    dataset = Dataset(write_2dseq(root / "8" / "pdata" / "1"), add_parameters=["subject"], load=LOAD_STAGES["properties"])
+
+    assert dataset.metadata["subject"]["id"] == "phantom"
+    assert dataset.metadata["subject"]["use_ats"] == "Yes"
+    assert dataset.metadata["subject"]["bed"] == "Rat bed"
+
+
 def test_metadata_reports_the_same_string_as_the_property_that_reads_it(tmp_path):
     """`subj_id` and `metadata` read VisuSubjectName; they must agree.
 
