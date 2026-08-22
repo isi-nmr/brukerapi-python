@@ -1,5 +1,5 @@
 {
-    "2DSEQ_10_1_LEGO_PHANTOM_2": {
+    "2DSEQ_10_1_0_2": {
         "TE": 2,
         "TR": 4,
         "affine": [
@@ -42,7 +42,7 @@
             50,
             50
         ],
-        "id": "2DSEQ_10_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_10_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -86,7 +86,7 @@
             182.269660998766
         ]
     },
-    "2DSEQ_11_1_LEGO_PHANTOM_2": {
+    "2DSEQ_11_1_0_2": {
         "TE": 6,
         "TR": 20,
         "affine": [
@@ -129,7 +129,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_11_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_11_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -174,7 +174,7 @@
             0.000915569254904989
         ]
     },
-    "2DSEQ_12_1_LEGO_PHANTOM_2": {
+    "2DSEQ_12_1_0_2": {
         "TE": 20,
         "TR": 1500,
         "affine": [
@@ -217,7 +217,7 @@
             50.0,
             10.0
         ],
-        "id": "2DSEQ_12_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_12_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -286,7 +286,7 @@
             151.31449775852
         ]
     },
-    "2DSEQ_13_1_LEGO_PHANTOM_2": {
+    "2DSEQ_13_1_0_2": {
         "TE": 24.818,
         "TR": 1000,
         "affine": [
@@ -328,7 +328,7 @@
             50.0,
             20.0
         ],
-        "id": "2DSEQ_13_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_13_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -375,7 +375,7 @@
             565.46586457527
         ]
     },
-    "2DSEQ_14_1_LEGO_PHANTOM_2": {
+    "2DSEQ_14_1_0_2": {
         "TE": 24.279,
         "TR": 4000,
         "affine": [
@@ -419,7 +419,7 @@
             50.0,
             1.5
         ],
-        "id": "2DSEQ_14_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_14_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -482,7 +482,7 @@
             52.6828980096941
         ]
     },
-    "2DSEQ_15_1_LEGO_PHANTOM_2": {
+    "2DSEQ_15_1_0_2": {
         "TE": 49.0008,
         "TR": 1500.001,
         "affine": [
@@ -525,7 +525,7 @@
             50.0,
             15.0
         ],
-        "id": "2DSEQ_15_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_15_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -620,7 +620,7 @@
             53.6282571882034
         ]
     },
-    "2DSEQ_16_1_LEGO_PHANTOM_2": {
+    "2DSEQ_16_1_0_2": {
         "TE": 45.788,
         "TR": 10000,
         "affine": [
@@ -663,7 +663,7 @@
             50,
             2
         ],
-        "id": "2DSEQ_16_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_16_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -736,7 +736,7 @@
             65.0506197119759
         ]
     },
-    "2DSEQ_17_1_LEGO_PHANTOM_2": {
+    "2DSEQ_17_1_0_2": {
         "TE": [
             90.362,
             180.724,
@@ -788,7 +788,7 @@
             50.0,
             30.0
         ],
-        "id": "2DSEQ_17_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_17_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1069,7 +1069,7 @@
             257.301041366432
         ]
     },
-    "2DSEQ_18_1_LEGO_PHANTOM_2": {
+    "2DSEQ_18_1_0_2": {
         "TE": [
             17.438,
             39.93,
@@ -1117,7 +1117,7 @@
             50,
             2
         ],
-        "id": "2DSEQ_18_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_18_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -1166,7 +1166,7 @@
             61.0842873359424
         ]
     },
-    "2DSEQ_1_1_LEGO_PHANTOM_2": {
+    "2DSEQ_1_1_0_2": {
         "TE": 3,
         "TR": 200,
         "affine": [
@@ -1208,7 +1208,7 @@
             60.0,
             30.0
         ],
-        "id": "2DSEQ_1_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_1_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 3,
@@ -1279,7 +1279,7 @@
             68.0388746198903
         ]
     },
-    "2DSEQ_21_1_LEGO_PHANTOM_2": {
+    "2DSEQ_21_1_0_2": {
         "TE": 0.316319272829721,
         "TR": 30,
         "affine": [
@@ -1321,7 +1321,7 @@
             50.0,
             6.0
         ],
-        "id": "2DSEQ_21_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_21_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1368,7 +1368,7 @@
             2.49152751238897
         ]
     },
-    "2DSEQ_22_1_LEGO_PHANTOM_2": {
+    "2DSEQ_22_1_0_2": {
         "TE": 0.02,
         "TR": 8,
         "affine": [
@@ -1411,7 +1411,7 @@
             50,
             50
         ],
-        "id": "2DSEQ_22_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_22_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1455,7 +1455,7 @@
             1.37425787550869
         ]
     },
-    "2DSEQ_23_1_LEGO_PHANTOM_2": {
+    "2DSEQ_23_1_0_2": {
         "TE": 0,
         "TR": 4,
         "affine": [
@@ -1498,7 +1498,7 @@
             50,
             50
         ],
-        "id": "2DSEQ_23_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_23_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1542,7 +1542,7 @@
             1.41252549223342
         ]
     },
-    "2DSEQ_24_1_LEGO_PHANTOM_2": {
+    "2DSEQ_24_1_0_2": {
         "TR": 1200,
         "date": "2020-06-16 15:13:18",
         "dim_type": [
@@ -1553,7 +1553,7 @@
         ],
         "dwell_s": 0.00012480000000000002,
         "encoded_dim": 3,
-        "id": "2DSEQ_24_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_24_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1592,7 +1592,7 @@
             0.610878945064932
         ]
     },
-    "2DSEQ_25_1_LEGO_PHANTOM_2": {
+    "2DSEQ_25_1_0_2": {
         "TE": [
             1.537,
             5.537
@@ -1638,7 +1638,7 @@
             50,
             50
         ],
-        "id": "2DSEQ_25_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_25_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1684,7 +1684,7 @@
             0.0015559824536877
         ]
     },
-    "2DSEQ_26_1_LEGO_PHANTOM_2": {
+    "2DSEQ_26_1_0_2": {
         "TE": 0,
         "TR": 800,
         "date": "2020-06-16 15:13:18",
@@ -1694,7 +1694,7 @@
         ],
         "dwell_s": null,
         "encoded_dim": 1,
-        "id": "2DSEQ_26_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_26_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1728,7 +1728,7 @@
             32031.3476742137
         ]
     },
-    "2DSEQ_27_1_LEGO_PHANTOM_2": {
+    "2DSEQ_27_1_0_2": {
         "TE": 0,
         "date": "2020-06-16 15:13:18",
         "dim_type": [
@@ -1737,7 +1737,7 @@
         ],
         "dwell_s": 0.00012480000000000002,
         "encoded_dim": 1,
-        "id": "2DSEQ_27_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_27_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1767,7 +1767,7 @@
             0.0783475008622457
         ]
     },
-    "2DSEQ_28_1_LEGO_PHANTOM_2": {
+    "2DSEQ_28_1_0_2": {
         "TE": 0,
         "date": "2020-06-16 15:13:18",
         "dim_type": [
@@ -1776,7 +1776,7 @@
         ],
         "dwell_s": 8.320000000000002e-05,
         "encoded_dim": 1,
-        "id": "2DSEQ_28_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_28_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1806,7 +1806,7 @@
             0.0188149760445386
         ]
     },
-    "2DSEQ_2_1_LEGO_PHANTOM_2": {
+    "2DSEQ_2_1_0_2": {
         "TE": 6,
         "TR": 100,
         "affine": [
@@ -1848,7 +1848,7 @@
             50.0,
             12.0
         ],
-        "id": "2DSEQ_2_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_2_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1893,7 +1893,7 @@
             153.274237284458
         ]
     },
-    "2DSEQ_31_1_LEGO_PHANTOM_2": {
+    "2DSEQ_31_1_0_2": {
         "TE": [
             10,
             30,
@@ -1950,7 +1950,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_31_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_31_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -2053,7 +2053,7 @@
             98.9442691872253
         ]
     },
-    "2DSEQ_31_2_LEGO_PHANTOM_2": {
+    "2DSEQ_31_2_0_2": {
         "TR": [
             5500,
             3000,
@@ -2103,7 +2103,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_31_2_LEGO_PHANTOM_2",
+        "id": "2DSEQ_31_2_0_2",
         "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "int32",
@@ -2205,7 +2205,7 @@
             0.000244140625
         ]
     },
-    "2DSEQ_31_3_LEGO_PHANTOM_2": {
+    "2DSEQ_31_3_0_2": {
         "TE": [
             10,
             30,
@@ -2254,7 +2254,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_31_3_LEGO_PHANTOM_2",
+        "id": "2DSEQ_31_3_0_2",
         "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "int32",
@@ -2346,7 +2346,7 @@
             3.0517578125e-05
         ]
     },
-    "2DSEQ_32_1_LEGO_PHANTOM_2": {
+    "2DSEQ_32_1_0_2": {
         "TE": 23.5,
         "TR": 3800,
         "affine": [
@@ -2389,7 +2389,7 @@
             40.0,
             22.5
         ],
-        "id": "2DSEQ_32_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_32_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -3480,7 +3480,7 @@
             0.00396825760804928
         ]
     },
-    "2DSEQ_32_2_LEGO_PHANTOM_2": {
+    "2DSEQ_32_2_0_2": {
         "affine": [
             [
                 0.3125,
@@ -3521,7 +3521,7 @@
             40.0,
             22.5
         ],
-        "id": "2DSEQ_32_2_LEGO_PHANTOM_2",
+        "id": "2DSEQ_32_2_0_2",
         "is_single_slice": false,
         "num_slice_packages": 1,
         "numpy_dtype": "int32",
@@ -4221,7 +4221,7 @@
             1e-06
         ]
     },
-    "2DSEQ_33_1_LEGO_PHANTOM_2": {
+    "2DSEQ_33_1_0_2": {
         "TE": [
             11,
             22,
@@ -4281,7 +4281,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_33_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_33_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -4354,7 +4354,7 @@
             0.00166073135632915
         ]
     },
-    "2DSEQ_33_2_LEGO_PHANTOM_2": {
+    "2DSEQ_33_2_0_2": {
         "affine": [
             [
                 0.390625,
@@ -4395,7 +4395,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_33_2_LEGO_PHANTOM_2",
+        "id": "2DSEQ_33_2_0_2",
         "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "int32",
@@ -4445,7 +4445,7 @@
             0.0009765625
         ]
     },
-    "2DSEQ_33_3_LEGO_PHANTOM_2": {
+    "2DSEQ_33_3_0_2": {
         "affine": [
             [
                 0.390625,
@@ -4486,7 +4486,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_33_3_LEGO_PHANTOM_2",
+        "id": "2DSEQ_33_3_0_2",
         "is_single_slice": true,
         "num_slice_packages": 1,
         "numpy_dtype": "int32",
@@ -4536,7 +4536,7 @@
             0.0009765625
         ]
     },
-    "2DSEQ_35_1_LEGO_PHANTOM_2": {
+    "2DSEQ_35_1_0_2": {
         "TE": 2.90666666666667,
         "TR": 8,
         "affine": [
@@ -4580,7 +4580,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_35_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_35_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -4643,7 +4643,7 @@
             0.000189802173865093
         ]
     },
-    "2DSEQ_3_1_LEGO_PHANTOM_2": {
+    "2DSEQ_3_1_0_2": {
         "TE": [
             4,
             10,
@@ -4696,7 +4696,7 @@
             60.0,
             16.0
         ],
-        "id": "2DSEQ_3_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_3_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -4881,7 +4881,7 @@
             76.6238619262818
         ]
     },
-    "2DSEQ_4_1_LEGO_PHANTOM_2": {
+    "2DSEQ_4_1_0_2": {
         "TE": [
             15.8175,
             36.9075
@@ -4927,7 +4927,7 @@
             50.0,
             16.0
         ],
-        "id": "2DSEQ_4_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_4_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -4984,7 +4984,7 @@
             295.909058565224
         ]
     },
-    "2DSEQ_5_1_LEGO_PHANTOM_2": {
+    "2DSEQ_5_1_0_2": {
         "TE": [
             56,
             168
@@ -5031,7 +5031,7 @@
             50.0,
             9.0
         ],
-        "id": "2DSEQ_5_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_5_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -5110,7 +5110,7 @@
             76.2645359359099
         ]
     },
-    "2DSEQ_6_1_LEGO_PHANTOM_2": {
+    "2DSEQ_6_1_0_2": {
         "TE": 15,
         "TR": 3000,
         "affine": [
@@ -5155,7 +5155,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_6_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_6_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -5240,7 +5240,7 @@
             116.699247196268
         ]
     },
-    "2DSEQ_7_1_LEGO_PHANTOM_2": {
+    "2DSEQ_7_1_0_2": {
         "TE": [
             14,
             42,
@@ -5289,7 +5289,7 @@
             50.0,
             12.5
         ],
-        "id": "2DSEQ_7_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_7_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -5372,7 +5372,7 @@
             161.012696069596
         ]
     },
-    "2DSEQ_8_1_LEGO_PHANTOM_2": {
+    "2DSEQ_8_1_0_2": {
         "TE": 19,
         "TR": 3000,
         "affine": [
@@ -5415,7 +5415,7 @@
             50,
             1
         ],
-        "id": "2DSEQ_8_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_8_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -5460,7 +5460,7 @@
             396.459816812455
         ]
     },
-    "2DSEQ_9_1_LEGO_PHANTOM_2": {
+    "2DSEQ_9_1_0_2": {
         "TE": 5,
         "TR": 4000,
         "affine": [
@@ -5503,7 +5503,7 @@
             50,
             5
         ],
-        "id": "2DSEQ_9_1_LEGO_PHANTOM_2",
+        "id": "2DSEQ_9_1_0_2",
         "imaging_frequency": 400.322522538113,
         "is_single_slice": false,
         "num_slice_packages": 1,

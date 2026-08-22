@@ -70,7 +70,7 @@ def test_metadata_groups_follow_the_specification(tmp_path):
 
 
 def test_metadata_reports_the_same_string_as_the_property_that_reads_it(tmp_path):
-    """`subj_id` and `metadata` read VisuSubjectName; they must agree.
+    """`subj_id` and `metadata` read VisuSubjectId; they must agree.
 
     `subj_id` stripped the `<...>` delimiters in its recipe, `metadata` -- the
     newer surface -- did not, so the two APIs reported different values for one
@@ -78,8 +78,23 @@ def test_metadata_reports_the_same_string_as_the_property_that_reads_it(tmp_path
     """
     dataset = Dataset(study(tmp_path), load=LOAD_STAGES["properties"])
 
+    assert dataset.metadata["visu_subject"]["id"] == "phantom"
+    assert dataset.subj_id == dataset.metadata["visu_subject"]["id"]
+
+
+def test_subj_id_is_the_subject_identifier_not_the_subject_name(tmp_path):
+    """A 2dseq read VisuSubjectName while fid/rawdata/traj read SUBJECT_id (#216).
+
+    ParaVision keeps the two apart -- VisuSubjectName is the DICOM patient
+    name, `family^given^middle^prefix^suffix` on PV360 -- and VisuSubjectId is
+    the Visu copy of SUBJECT_id. `subj_id`, and the `id` built from it, must
+    mean the same thing for every dataset type.
+    """
+    dataset = Dataset(study(tmp_path), add_parameters=["subject"], load=LOAD_STAGES["properties"])
+
     assert dataset.metadata["visu_subject"]["name"] == "synthetic"
-    assert dataset.subj_id == dataset.metadata["visu_subject"]["name"]
+    assert dataset.subj_id == dataset["SUBJECT_id"].value == "phantom"
+    assert dataset.id == "2DSEQ_8_1_phantom_1"
 
 
 def test_get_returns_a_default_where_a_property_does_not_resolve(tmp_path):

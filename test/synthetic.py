@@ -153,6 +153,7 @@ def visu_pars_records(
         "VisuCoreByteOrder": "littleEndian",
         "VisuSubjectPosition": subject_position,
         "VisuSubjectName": ["<synthetic>"],
+        "VisuSubjectId": ["<phantom>"],
         "VisuStudyNumber": 1,
     }
 
