@@ -11,7 +11,17 @@
   ],
   "study_id": [
     {
-      "cmd": "str(#SUBJECT_study_nr)",
+      "cmd": "#SUBJECT_study_name",
+      "conditions": []
+    },
+    {
+      "cmd": "''",
+      "conditions": []
+    }
+  ],
+  "study_nr": [
+    {
+      "cmd": "#SUBJECT_study_nr",
       "conditions": []
     },
     {
@@ -41,7 +51,7 @@
   ],
   "id": [
     {
-      "cmd": "'{}_{}_{}_{}_{}'.format(@type.upper(), @exp_id, @proc_id, @subj_id, @study_id)",
+      "cmd": "'{}_{}_{}_{}_{}'.format(@type.upper(), @exp_id, @proc_id, @subj_id, @study_nr)",
       "conditions": [],
       "comment": "spec 3.5: these live in the PROCNO, so the id names the reconstruction as a 2dseq id does"
     }

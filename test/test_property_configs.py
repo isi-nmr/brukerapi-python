@@ -105,8 +105,8 @@ def test_traj_scheme_detection_is_not_version_gated():
 def test_traj_custom_properties_define_a_stable_id():
     traj = _load_config("properties_traj_custom.json")
 
-    assert [*traj] == ["subj_id", "study_id", "exp_id", "id"]
-    assert traj["id"][0]["cmd"] == "'Traj_{}*{}*{}'.format(@exp_id, @subj_id, @study_id)"
+    assert [*traj] == ["subj_id", "study_id", "study_nr", "exp_id", "id"]
+    assert traj["id"][0]["cmd"] == "'Traj_{}*{}*{}'.format(@exp_id, @subj_id, @study_nr)"
 
 
 def test_fid_scheme_config_keeps_exact_matches_before_code_fallback():

@@ -15,7 +15,7 @@ from brukerapi.dataset import LOAD_STAGES, Dataset
 from brukerapi.exceptions import UnsupportedDatasetType
 from brukerapi.folders import Folder
 from brukerapi.splitters import SlicePackageSplitter
-from test.synthetic import stacked_positions, write_2dseq, write_jcampdx
+from test.synthetic import Verbatim, stacked_positions, write_2dseq, write_fid, write_jcampdx
 
 
 def study(tmp_path, **kwargs):
@@ -95,6 +95,41 @@ def test_subj_id_is_the_subject_identifier_not_the_subject_name(tmp_path):
     assert dataset.metadata["visu_subject"]["name"] == "synthetic"
     assert dataset.subj_id == dataset["SUBJECT_id"].value == "phantom"
     assert dataset.id == "2DSEQ_8_1_phantom_1"
+
+
+def test_study_id_is_the_study_identifier_and_study_nr_the_number(tmp_path):
+    """`study_id` read the study *number* for every dataset type (#216).
+
+    ParaVision's study identifier is a different parameter -- VisuStudyId /
+    SUBJECT_study_name, the user-given string set at study registration -- and
+    the number is VisuStudyNumber / SUBJECT_study_nr. `id` keeps using the
+    number, which is what makes it unique within a subject.
+    """
+    root = tmp_path / "20200612_094625_study_1_1"
+    write_jcampdx(root / "subject", {"SUBJECT_id": ["<phantom>"], "SUBJECT_study_nr": 1, "SUBJECT_study_name": ["<TEST_IO>"]})
+    image = Dataset(write_2dseq(root / "8" / "pdata" / "1", extra={"VisuStudyId": ["<TEST_IO>"]}), add_parameters=["subject"], load=LOAD_STAGES["properties"])
+    acqp = {
+        "ACQ_sw_version": ["<PV 6.0.1>"],
+        "GO_raw_data_format": "GO_32BIT_SGN_INT",
+        "GO_block_size": "continuous",
+        "BYTORDA": "little",
+        "ACQ_dim": 2,
+        "ACQ_dim_desc": Verbatim("( 2 )\nSpatial Spatial"),
+        "ACQ_size": np.array([8, 2]),
+        "NI": 1,
+        "NR": 1,
+        "ACQ_phase_factor": 1,
+        "PULPROG": ["<FLASH.ppg>"],
+    }
+    method = {"PVM_EncNReceivers": 1, "PVM_EncMatrix": np.array([4, 2]), "PVM_DigNp": 4}
+    raw = Dataset(write_fid(root / "8", acqp, method), add_parameters=["subject"], load=LOAD_STAGES["properties"])
+
+    for dataset in (image, raw):
+        assert dataset.study_id == "TEST_IO"
+        assert dataset.study_nr == 1
+        assert dataset.subj_id == "phantom"
+    assert image.id == "2DSEQ_8_1_phantom_1"
+    assert raw.id == "FID_8_phantom_1"
 
 
 def test_get_returns_a_default_where_a_property_does_not_resolve(tmp_path):

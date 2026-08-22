@@ -1252,6 +1252,7 @@ class Dataset:
             "_schema",
             "random_access",
             "study_id",
+            "study_nr",
             "exp_id",
             "proc_id",
             "subj_id",

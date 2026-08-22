@@ -15,7 +15,21 @@
   ],
   "study_id": [
     {
-      "cmd": "str(#SUBJECT_study_nr)",
+      "cmd": "#SUBJECT_study_name",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "study_nr": [
+    {
+      "cmd": "#SUBJECT_study_nr",
       "conditions": [
 
       ]
@@ -43,7 +57,7 @@
   ],
   "id": [
     {
-      "cmd": "'FID_{}_{}_{}'.format(@exp_id, @subj_id, @study_id)",
+      "cmd": "'FID_{}_{}_{}'.format(@exp_id, @subj_id, @study_nr)",
       "conditions": [
       ]
     }
