@@ -167,7 +167,7 @@ File format reference
 =====================
 
 `Bruker ParaVision Raw Data Format
-<https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md>`_ is the source of truth
+<https://github.com/CoBrALab/pvraw/blob/main/FILE_FORMAT.md>`_ is the source of truth
 for file-format parsing, binary layouts, dataset typing, and metadata-driven acquisition
 scheme inference in this project.
 

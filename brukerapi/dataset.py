@@ -896,7 +896,7 @@ class Dataset:
 
     def _infer_scheme_id(self):
         # Source of truth for format inference:
-        # https://github.com/gdevenyi/brkraw-legacy/blob/main/FILE_FORMAT.md
+        # https://github.com/CoBrALab/pvraw/blob/main/FILE_FORMAT.md
         pulprog = str(self._parameter_value("PULPROG", "")).upper()
         method = str(self._parameter_value("Method", "")).upper()
         family = f"{pulprog} {method}"
