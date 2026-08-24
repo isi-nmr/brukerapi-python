@@ -1,7 +1,7 @@
 {
   "subj_id": [
       {
-        "cmd": "#VisuSubjectName",
+        "cmd": "#VisuSubjectId",
         "conditions": [
         ]
       },

@@ -1,5 +1,5 @@
 {
-    "2DSEQ_DTI_EPI_seg_30dir_sat_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_DTI_EPI_seg_30dir_sat_1_std_PV360_3.6_1": {
         "TE": 36,
         "TR": 2000,
         "affine": [
@@ -42,7 +42,7 @@
             15.0,
             5.249999999999999
         ],
-        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_1_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -433,7 +433,7 @@
             41.818209641992354
         ]
     },
-    "2DSEQ_DTI_EPI_seg_30dir_sat_2_std_PV360_3.6^^^^_1": {
+    "2DSEQ_DTI_EPI_seg_30dir_sat_2_std_PV360_3.6_1": {
         "TE": 36,
         "TR": 2000,
         "affine": [
@@ -476,7 +476,7 @@
             15.0,
             5.249999999999999
         ],
-        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_2_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_2_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -747,7 +747,7 @@
             4.656612876329999e-10
         ]
     },
-    "2DSEQ_DTI_EPI_seg_30dir_sat_multi_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_DTI_EPI_seg_30dir_sat_multi_1_std_PV360_3.6_1": {
         "TE": 36,
         "TR": 2000,
         "affine": [
@@ -790,7 +790,7 @@
             15.0,
             5.249999999999999
         ],
-        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_multi_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_multi_1_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1481,7 +1481,7 @@
             42.265919849004014
         ]
     },
-    "2DSEQ_DTI_EPI_seg_30dir_sat_multi_2_std_PV360_3.6^^^^_1": {
+    "2DSEQ_DTI_EPI_seg_30dir_sat_multi_2_std_PV360_3.6_1": {
         "TE": 36,
         "TR": 2000,
         "affine": [
@@ -1524,7 +1524,7 @@
             15.0,
             5.249999999999999
         ],
-        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_multi_2_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_DTI_EPI_seg_30dir_sat_multi_2_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1795,7 +1795,7 @@
             4.656612876329999e-10
         ]
     },
-    "2DSEQ_PRESS_1H_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_PRESS_1H_1_std_PV360_3.6_1": {
         "TE": 0,
         "date": "2024-07-25 09:02:12.259000+02:00",
         "dim_type": [
@@ -1804,7 +1804,7 @@
         ],
         "dwell_s": 6.25e-07,
         "encoded_dim": 1,
-        "id": "2DSEQ_PRESS_1H_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_PRESS_1H_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807277403667,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1834,7 +1834,7 @@
             8.380509974458529e-06
         ]
     },
-    "2DSEQ_T1_FLASH_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T1_FLASH_1_std_PV360_3.6_1": {
         "TE": 4,
         "TR": 200,
         "affine": [
@@ -1876,7 +1876,7 @@
             20.0,
             8.999999999999993
         ],
-        "id": "2DSEQ_T1_FLASH_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T1_FLASH_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -1933,7 +1933,7 @@
             1.0110652119312826
         ]
     },
-    "2DSEQ_T1_FLASH_3D_iso_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T1_FLASH_3D_iso_1_std_PV360_3.6_1": {
         "TE": 8,
         "TR": 50,
         "affine": [
@@ -1976,7 +1976,7 @@
             20,
             12
         ],
-        "id": "2DSEQ_T1_FLASH_3D_iso_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T1_FLASH_3D_iso_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2020,7 +2020,7 @@
             0.2549454820972602
         ]
     },
-    "2DSEQ_T1_RARE_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T1_RARE_1_std_PV360_3.6_1": {
         "TE": 7.5,
         "TR": 800,
         "affine": [
@@ -2062,7 +2062,7 @@
             20.0,
             9.0
         ],
-        "id": "2DSEQ_T1_RARE_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T1_RARE_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2119,7 +2119,7 @@
             3.3552416637796436
         ]
     },
-    "2DSEQ_T2_TurboRARE_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2_TurboRARE_1_std_PV360_3.6_1": {
         "TE": 33,
         "TR": 2500,
         "affine": [
@@ -2161,7 +2161,7 @@
             20.0,
             8.999999999999993
         ],
-        "id": "2DSEQ_T2_TurboRARE_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2_TurboRARE_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2218,7 +2218,7 @@
             3.7060712879070272
         ]
     },
-    "2DSEQ_T2map_MSME_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2map_MSME_1_std_PV360_3.6_1": {
         "TE": [
             8,
             16,
@@ -2273,7 +2273,7 @@
             20.0,
             6.500000000000002
         ],
-        "id": "2DSEQ_T2map_MSME_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2map_MSME_1_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2424,7 +2424,7 @@
             9.175818853906016
         ]
     },
-    "2DSEQ_T2map_MSME_2_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2map_MSME_2_std_PV360_3.6_1": {
         "TE": 8,
         "TR": 2200,
         "affine": [
@@ -2467,7 +2467,7 @@
             20.0,
             6.500000000000002
         ],
-        "id": "2DSEQ_T2map_MSME_2_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2map_MSME_2_std_PV360_3.6_1",
         "imaging_frequency": 400.3807239646813,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2568,7 +2568,7 @@
             1
         ]
     },
-    "2DSEQ_T2star_FID_EPI_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2star_FID_EPI_1_std_PV360_3.6_1": {
         "TE": 24.5,
         "TR": 2000,
         "affine": [
@@ -2610,7 +2610,7 @@
             20.0,
             6.25
         ],
-        "id": "2DSEQ_T2star_FID_EPI_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2star_FID_EPI_1_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
@@ -2659,7 +2659,7 @@
             44.029659425184775
         ]
     },
-    "2DSEQ_T2star_map_MGE_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2star_map_MGE_1_std_PV360_3.6_1": {
         "TE": [
             4.5,
             10.0,
@@ -2711,7 +2711,7 @@
             20,
             1
         ],
-        "id": "2DSEQ_T2star_map_MGE_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2star_map_MGE_1_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -2768,7 +2768,7 @@
             3.4421158749619405
         ]
     },
-    "2DSEQ_T2star_map_MGE_2_std_PV360_3.6^^^^_1": {
+    "2DSEQ_T2star_map_MGE_2_std_PV360_3.6_1": {
         "TE": [
             4.5,
             4.5,
@@ -2825,7 +2825,7 @@
             20,
             1
         ],
-        "id": "2DSEQ_T2star_map_MGE_2_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_T2star_map_MGE_2_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -2878,7 +2878,7 @@
             1
         ]
     },
-    "2DSEQ_T2star_map_MGE_mod_all_1_std_PV360_3.6^^^^_3": {
+    "2DSEQ_T2star_map_MGE_mod_all_1_std_PV360_3.6_3": {
         "TE": [
             3.5,
             8.5,
@@ -2930,7 +2930,7 @@
             20.0,
             0.8
         ],
-        "id": "2DSEQ_T2star_map_MGE_mod_all_1_std_PV360_3.6^^^^_3",
+        "id": "2DSEQ_T2star_map_MGE_mod_all_1_std_PV360_3.6_3",
         "imaging_frequency": 400.3322244201979,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -2987,7 +2987,7 @@
             0.9648777393544125
         ]
     },
-    "2DSEQ_T2star_map_MGE_mod_all_2_std_PV360_3.6^^^^_3": {
+    "2DSEQ_T2star_map_MGE_mod_all_2_std_PV360_3.6_3": {
         "TE": [
             3.5,
             3.5,
@@ -3044,7 +3044,7 @@
             20.0,
             0.8
         ],
-        "id": "2DSEQ_T2star_map_MGE_mod_all_2_std_PV360_3.6^^^^_3",
+        "id": "2DSEQ_T2star_map_MGE_mod_all_2_std_PV360_3.6_3",
         "imaging_frequency": 400.3322244201979,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -3097,7 +3097,7 @@
             1
         ]
     },
-    "2DSEQ_T2star_map_MGE_mod_pos_1_std_PV360_3.6^^^^_3": {
+    "2DSEQ_T2star_map_MGE_mod_pos_1_std_PV360_3.6_3": {
         "TE": [
             3.5,
             8.5,
@@ -3149,7 +3149,7 @@
             20.0,
             0.8
         ],
-        "id": "2DSEQ_T2star_map_MGE_mod_pos_1_std_PV360_3.6^^^^_3",
+        "id": "2DSEQ_T2star_map_MGE_mod_pos_1_std_PV360_3.6_3",
         "imaging_frequency": 400.3322244201979,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -3206,7 +3206,7 @@
             0.9597664168090889
         ]
     },
-    "2DSEQ_T2star_map_MGE_mod_pos_2_std_PV360_3.6^^^^_3": {
+    "2DSEQ_T2star_map_MGE_mod_pos_2_std_PV360_3.6_3": {
         "TE": [
             3.5,
             3.5,
@@ -3263,7 +3263,7 @@
             20.0,
             0.8
         ],
-        "id": "2DSEQ_T2star_map_MGE_mod_pos_2_std_PV360_3.6^^^^_3",
+        "id": "2DSEQ_T2star_map_MGE_mod_pos_2_std_PV360_3.6_3",
         "imaging_frequency": 400.3322244201979,
         "is_single_slice": true,
         "num_slice_packages": 1,
@@ -3316,7 +3316,7 @@
             1
         ]
     },
-    "2DSEQ_UTE3D_1_std_PV360_3.6^^^^_1": {
+    "2DSEQ_UTE3D_1_std_PV360_3.6_1": {
         "TE": 0.006883333333333333,
         "TR": 2.3,
         "affine": [
@@ -3359,7 +3359,7 @@
             25,
             25
         ],
-        "id": "2DSEQ_UTE3D_1_std_PV360_3.6^^^^_1",
+        "id": "2DSEQ_UTE3D_1_std_PV360_3.6_1",
         "imaging_frequency": 400.38072797888503,
         "is_single_slice": false,
         "num_slice_packages": 1,
