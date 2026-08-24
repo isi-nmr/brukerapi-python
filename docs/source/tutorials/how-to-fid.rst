@@ -58,6 +58,19 @@ metadata. An explicit override is available when inference is ambiguous:
 
    dataset = Dataset('path/to/fid', scheme_id='RADIAL')
 
+For a 2-D or 3-D spatial acquisition, generate the geometry of the image that
+a Fourier transform of the encoded k-space matrix would produce:
+
+.. code-block:: python
+
+   slice_affines = dataset.acquisition_affines()
+   first_slice_affine = dataset.acquisition_affine(0)
+
+The matrices map voxel indices to millimetres in the Visu/DICOM patient frame,
+the same frame as a reconstructed 2dseq ``affine``. There is one matrix per
+2-D slice and one for a 3-D volume. See :ref:`raw-acquisition-geometry` for the
+coordinate convention, limitations, and NIfTI conversion.
+
 Random-access ``mmap=True`` is currently supported for ``2dseq`` only. Load a
 FID normally, then select the desired k-space array slice.
 

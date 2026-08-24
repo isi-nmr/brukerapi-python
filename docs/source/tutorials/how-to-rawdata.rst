@@ -27,6 +27,19 @@ metadata-reordered array. BART consumers can request its 16-axis layout:
    kspace = rawdata.kspace
    bart_kspace = rawdata.to_kspace(bart=True)
 
+Generate patient-space geometry for a spatial rawdata acquisition in the same
+way as for a FID:
+
+.. code-block:: python
+
+   slice_affines = rawdata.acquisition_affines()
+   first_slice_affine = rawdata.acquisition_affine(0)
+
+The declared ``ACQ_patient_pos`` is applied when converting PV360 gradient
+directions to the Visu/DICOM patient frame. An unknown position raises
+``UnsupportedDatasetType``. See :ref:`raw-acquisition-geometry` for the full
+coordinate convention and limitations.
+
 ``rawdata.data`` is retained for compatibility and exposes the historical
 decoded job layout. It emits ``FutureWarning`` because that layout differs from
 FID ``data``. Prefer ``raw`` or ``kspace`` in new applications. EPI and
