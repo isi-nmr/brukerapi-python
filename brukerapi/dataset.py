@@ -1577,9 +1577,10 @@ class Dataset:
         the reconstruction's ``VisuFGOrderDesc`` records; for ``NI == NSLICES``
         object *k* is slice *k*.
 
-        :raise: :UnsupportedDatasetType: for anything but a 2-D or 3-D spatial
+        :raises UnsupportedDatasetType: for anything but a 2-D or 3-D spatial
             fid/rawdata acquisition, one without a gradient matrix, or a PV360
             one without a known subject position
+
         """
         if self.type not in ("fid", "rawdata"):
             raise UnsupportedDatasetType(f"an acquisition affine for {self.path}, which is not a raw acquisition,")

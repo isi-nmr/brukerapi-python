@@ -113,3 +113,12 @@ Data contract and limitations
   ``VisuCoreFrameThickness`` stays the source for the thickness (for a 3-D
   acquisition that parameter is the whole slab, not a plane step). It is
   available wherever ``affine_of_package`` is.
+* ``Dataset.acquisition_affines()`` generates the acquisition-side equivalent
+  for 2-D/3-D spatial FID and rawdata datasets, one transform per 2-D slice or
+  one per 3-D volume. It uses the encoded matrix size rather than the raw sample
+  array shape and returns the same Visu/DICOM patient frame as ``affine``.
+  ParaVision 5.1/6/7 gradient matrices already encode the subject position;
+  PV360 matrices require the declared ``ACQ_patient_pos`` conversion. Method
+  slice-package geometry is a warning-emitting fallback for missing ``acqp``
+  values. Spectroscopy/CSI and incomplete or unknown geometry raise
+  ``UnsupportedDatasetType``.
