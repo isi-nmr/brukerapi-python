@@ -232,6 +232,26 @@ RELATIVE_PATHS = {
 # default report should still carry.
 COMPUTED_REPORT_PROPERTIES = ("affine", "slice_distance")
 
+# Spec 5.4/12: ACQ_grad_matrix rows are the read, phase and slice direction cosines,
+# and Visu's DICOM patient frame follows from them in two steps.  On PV5.1/6/7 the
+# matrix is written in the ParaVision subject frame (L->R, P->A, F->H), so only the
+# DICOM conversion remains and ACQ_patient_pos cancels -- 1,341 Head_Supine and
+# 221 Head_Prone corpus acquisitions share the one map.  On PV360 the matrix is in
+# the magnet frame, and the declared position's magnet -> subject map (spec 5.6,
+# ParaVision's GTB_ObjPosMatrix) comes first: Head_Prone and Head_Supine scans
+# give the two maps the table predicts (#166).
+VISU_DICOM_PV_MATRIX = np.diag((-1.0, -1.0, 1.0))
+SUBJECT_POSITION_MATRICES = {  # subject = M_pos . magnet; the manual's "negates Gx and Gz" etc.
+    "Head_Supine": np.diag((-1.0, 1.0, -1.0)),
+    "Head_Prone": np.diag((1.0, -1.0, -1.0)),
+    "Head_Left": np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, -1.0]]),
+    "Head_Right": np.array([[0.0, -1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0]]),
+    "Foot_Supine": np.eye(3),
+    "Foot_Prone": np.diag((-1.0, -1.0, 1.0)),
+    "Foot_Left": np.array([[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0]]),
+    "Foot_Right": np.array([[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]]),
+}
+
 SUPPORTED_REPORT_FORMATS = frozenset({"json", "yml"})
 
 # Metadata groups of the specification, as (name prefixes, explicit names).
@@ -1499,6 +1519,165 @@ class Dataset:
         :raise: :UnsupportedDatasetType: if the frames carry no geometry
         """
         return [float(np.linalg.norm(self.affine_of_package(package)[:3, 2])) for package in range(len(self.slice_packages_index()))]
+
+    def _acquisition_value(self, name, fallback, *, per_package=False):
+        """`name` from acqp, else `fallback` from the method (spec 4.2), repeated per slice if per package.
+
+        acqp is the primary source (spec 5.4).  A custom sequence can leave the
+        ACQ_* geometry unset and maintain only the GeoObject values, so the
+        method's ``PVM_SPackArr*`` stand in -- with a warning, because the corpus
+        shows ``PVM_SPackArrGradOrient`` equal to ``ACQ_grad_matrix`` on every
+        PV6/PV7 scan but differing by a read-axis sign on some PV5.1 and most
+        PV360 ones.
+        """
+        value = self._parameter_value(name)
+        if value is not None:
+            return np.asarray(value, dtype=float)
+        value = self._parameter_value(fallback)
+        if value is None:
+            return None
+        warnings.warn(f"{self.path}: acqp carries no {name}; using the method's {fallback}", RuntimeWarning, stacklevel=3)
+        value = np.asarray(value, dtype=float)
+        if per_package:
+            counts = np.atleast_1d(np.asarray(self._parameter_value("PVM_SPackArrNSlices", 1), dtype=int))
+            value = np.repeat(value.reshape(counts.size, -1), counts, axis=0)
+        return value
+
+    def _slice_acquisition_order(self, count):
+        """The slice acquired at each position: ACQ_obj_order while it counts slices, else the method's list (spec 5.2)."""
+        for name in ("ACQ_obj_order", "PVM_ObjOrderList"):
+            order = self._parameter_value(name)
+            if order is not None and np.atleast_1d(order).size == count:
+                return np.atleast_1d(order).astype(int)
+        return np.arange(count)
+
+    def acquisition_affines(self):
+        """4x4 voxel-index -> patient-coordinate transforms of a raw acquisition, one per slice.
+
+        The acquisition-side counterpart of :attr:`affine`, built from ``acqp``
+        (spec 5.4, 12) so that k-space can be related to anatomy in the same
+        Visu/DICOM patient frame as the reconstruction: ``ACQ_grad_matrix`` gives
+        the read, phase and slice directions, the ``ACQ_*_offset`` the slice
+        centre along them, ``ACQ_fov`` the extent.  The matrix is stored in
+        acquisition order (``ACQ_obj_order``), the offsets per slice.
+
+        Voxel ``(i, j[, k])`` of the image a Fourier transform of the k-space
+        matrix yields -- ``PVM_EncMatrix`` points per axis -- is at
+        ``affine @ (i, j, k, 1)``: index N/2 is the field-of-view centre and the
+        in-plane image axes run against the gradient directions, as ParaVision's
+        own reconstruction has it.  A 3-D volume gets one affine whose third
+        column is the partition step.  The frame is that of the *declared*
+        subject position (``ACQ_patient_pos``), as Visu's is (spec 12): on
+        PV5.1/6/7 the gradient matrix already carries the position, on PV360 it
+        is applied here.  Validated against the matching 2dseq on 1,507 corpus
+        acquisitions: every 2-D slice reproduces its ``VisuCorePosition``
+        exactly, 3-D volumes to within half a partition.
+
+        Objects (``NI``) map onto slices by a method-dependent nesting that only
+        the reconstruction's ``VisuFGOrderDesc`` records; for ``NI == NSLICES``
+        object *k* is slice *k*.
+
+        :raise: :UnsupportedDatasetType: for anything but a 2-D or 3-D spatial
+            fid/rawdata acquisition, one without a gradient matrix, or a PV360
+            one without a known subject position
+        """
+        if self.type not in ("fid", "rawdata"):
+            raise UnsupportedDatasetType(f"an acquisition affine for {self.path}, which is not a raw acquisition,")
+        dimension = int(self._parameter_value("ACQ_dim", 0))
+        descriptors = np.atleast_1d(np.asarray(self._parameter_value("ACQ_dim_desc", []))).astype(str)
+        if dimension not in (2, 3) or any(descriptor != "Spatial" for descriptor in descriptors):
+            raise UnsupportedDatasetType(f"an acquisition affine for {self.path}, whose {dimension} dimensions are {descriptors.tolist()} rather than 2 or 3 spatial (spec 5.1),")
+        matrices = self._acquisition_value("ACQ_grad_matrix", "PVM_SPackArrGradOrient", per_package=True)
+        if matrices is None:
+            raise UnsupportedDatasetType(f"an acquisition affine for {self.path}, which carries neither ACQ_grad_matrix nor PVM_SPackArrGradOrient (spec 5.4),")
+
+        generation = str(getattr(self, "pv_version", "") or "").split(".")[0]
+        frame = VISU_DICOM_PV_MATRIX
+        if generation == "360":
+            position = str(self._parameter_value("ACQ_patient_pos", ""))
+            if position not in SUBJECT_POSITION_MATRICES:
+                raise UnsupportedDatasetType(
+                    f"an acquisition affine for {self.path}, a PV360 acquisition whose ACQ_patient_pos {position!r} is not a subject position of spec 5.6,"
+                )
+            frame = VISU_DICOM_PV_MATRIX @ SUBJECT_POSITION_MATRICES[position]
+        matrices = matrices.reshape(-1, 3, 3)  # C-order (spec 2.3)
+        if matrices.shape[0] > 1:
+            # spec 5.4: built from the slice-pack orientations *and the slice
+            # order* -- one matrix per acquisition position; the offsets are per slice
+            matrices = matrices[np.argsort(self._slice_acquisition_order(matrices.shape[0]))]
+        slices = int(self._parameter_value("NSLICES") or matrices.shape[0])
+
+        offsets = [
+            self._acquisition_value("ACQ_read_offset", "PVM_SPackArrReadOffset", per_package=True),
+            self._acquisition_value("ACQ_phase1_offset", "PVM_SPackArrPhase1Offset", per_package=True),
+        ]
+        slice_offsets = self._parameter_value("ACQ_slice_offset")
+        if slice_offsets is None:
+            # the package centre, spread over its slices (spec 4.2: PVM_SPackArrSliceDistance is centre to centre)
+            warnings.warn(f"{self.path}: acqp carries no ACQ_slice_offset; spreading the method's PVM_SPackArrSliceOffset over its slices", RuntimeWarning, stacklevel=2)
+            centres = np.atleast_1d(np.asarray(self._parameter_value("PVM_SPackArrSliceOffset", 0.0), dtype=float))
+            counts = np.atleast_1d(np.asarray(self._parameter_value("PVM_SPackArrNSlices", slices), dtype=int))
+            distances = np.resize(
+                np.atleast_1d(np.asarray(self._parameter_value("PVM_SPackArrSliceDistance", self._parameter_value("PVM_SliceThick", 1.0)), dtype=float)), counts.size
+            )
+            slice_offsets = np.concatenate([centre + (np.arange(count) - (count - 1) / 2) * distance for centre, count, distance in zip(centres, counts, distances)])
+        offsets.append(slice_offsets)
+        offsets = [np.zeros(1) if values is None else np.atleast_1d(np.asarray(values, dtype=float)).reshape(-1) for values in offsets]
+
+        fov = self._parameter_value("ACQ_fov")
+        fov = np.atleast_1d(np.asarray(self._acquisition_value("ACQ_fov", "PVM_Fov") if fov is None else fov, dtype=float)) * (1.0 if fov is None else 10.0)  # ACQ_fov is in cm
+        candidates = [np.atleast_1d(np.asarray(self._parameter_value(name, []), dtype=float)) for name in ("PVM_EncMatrix", "PVM_Matrix")]
+        size = next((values[:dimension] for values in candidates if values.size >= dimension), None)
+        if size is None:
+            # a non-Cartesian or legacy method lists fewer sizes (spec 4.2); the acquired phase-encode counts complete them
+            acquired = np.atleast_1d(np.asarray(self._parameter_value("ACQ_size", []), dtype=float))
+            longest = max(candidates, key=np.size)
+            size = np.array([longest[k] if k < longest.size else acquired[k] if k < acquired.size else 1.0 for k in range(dimension)])
+        spacing = next(
+            (
+                float(np.atleast_1d(value)[0])
+                for value in (
+                    self._parameter_value("ACQ_slice_sepn"),
+                    self._parameter_value("PVM_SPackArrSliceDistance"),
+                    self._parameter_value("ACQ_slice_thick"),
+                    self._parameter_value("PVM_SliceThick"),
+                )
+                if value is not None
+            ),
+            1.0,
+        )
+
+        def at(values, index):
+            return values[min(index, len(values) - 1)]
+
+        affines = []
+        for index in range(slices):
+            matrix = at(matrices, index)
+            read, phase, normal = (frame @ matrix.T).T  # the three directions in the patient frame
+            centre = frame @ (matrix.T @ [at(values, index) for values in offsets])
+            columns = [-read * fov[0] / size[0], -phase * fov[1] / size[1]]
+            origin = centre + read * fov[0] / 2 + phase * fov[1] / 2
+            if dimension == 3:
+                step = fov[2] / size[2]
+                columns.append(normal * step)
+                # PV5.1 puts partition N/2 at the centre like the in-plane axes; PV6 onwards centres the grid between partitions
+                origin = origin - normal * (fov[2] / 2 - (0.0 if generation == "5" else step / 2))
+            else:
+                step = spacing
+                for other in (index + 1, index - 1):
+                    if 0 <= other < slices and np.allclose(at(matrices, other), matrix) and at(offsets[2], other) != at(offsets[2], index):
+                        step = (at(offsets[2], other) - at(offsets[2], index)) * (1 if other > index else -1)
+                        break
+                columns.append(normal * step)
+            affine = np.eye(4)
+            affine[:3, :3] = np.column_stack(columns)
+            affine[:3, 3] = origin
+            affines.append(affine)
+        return affines
+
+    def acquisition_affine(self, index=0):
+        """4x4 voxel-index -> patient-coordinate transform of slice `index` of a raw acquisition; see :meth:`acquisition_affines`."""
+        return self.acquisition_affines()[index]
 
     def get_slice_packages(self):
         """Return one in-memory 2dseq dataset per slice package.
