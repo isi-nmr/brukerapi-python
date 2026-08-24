@@ -13,7 +13,19 @@
   ],
   "study_id": [
       {
-        "cmd": "str(#VisuStudyNumber)",
+        "cmd": "#VisuStudyId",
+        "conditions": [
+        ]
+      },
+      {
+        "cmd": "''",
+        "conditions": [
+        ]
+      }
+  ],
+  "study_nr": [
+      {
+        "cmd": "#VisuStudyNumber",
         "conditions": [
         ]
       },
@@ -49,7 +61,7 @@
   ],
   "id": [
       {
-        "cmd": "'2DSEQ_{}_{}_{}_{}'.format(@exp_id, @proc_id, @subj_id, @study_id)",
+        "cmd": "'2DSEQ_{}_{}_{}_{}'.format(@exp_id, @proc_id, @subj_id, @study_nr)",
         "conditions": [
         ]
       }

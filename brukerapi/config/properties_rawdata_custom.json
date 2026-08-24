@@ -15,7 +15,21 @@
   ],
   "study_id": [
     {
-      "cmd": "str(#SUBJECT_study_nr)",
+      "cmd": "#SUBJECT_study_name",
+      "conditions": [
+
+      ]
+    },
+    {
+      "cmd": "''",
+      "conditions": [
+
+      ]
+    }
+  ],
+  "study_nr": [
+    {
+      "cmd": "#SUBJECT_study_nr",
       "conditions": [
 
       ]
@@ -43,7 +57,7 @@
   ],
   "id": [
     {
-      "cmd": "f'RawData_{@subtype}_{@exp_id}_{@subj_id}_{@study_id}'",
+      "cmd": "f'RawData_{@subtype}_{@exp_id}_{@subj_id}_{@study_nr}'",
       "conditions": [
       ]
     }
